@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LCIC Photo Gallery</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f0f0f; color: #fff; }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    padding: 40px 20px 20px;
+    text-align: center;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .header h1 { font-size: 2rem; font-weight: 300; letter-spacing: 4px; margin-bottom: 8px; }
+  .header p { color: #8899aa; font-size: 0.9rem; margin-bottom: 20px; }
+
+  /* Category Tabs */
+  .tabs {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+    max-width: 900px; margin: 0 auto;
+  }
+  .tab {
+    padding: 8px 18px; border-radius: 25px; cursor: pointer;
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+    font-size: 0.85rem; transition: all 0.3s; color: #aaa;
+  }
+  .tab:hover { background: rgba(255,255,255,0.15); color: #fff; }
+  .tab.active { background: #e94560; border-color: #e94560; color: #fff; font-weight: 600; }
+  .tab .count { font-size: 0.7rem; opacity: 0.7; margin-left: 4px; }
+
+  /* Gallery Grid */
+  .gallery {
+    max-width: 1400px; margin: 30px auto; padding: 0 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  /* Category Section Label */
+  .category-label {
+    grid-column: 1 / -1;
+    font-size: 1.3rem; font-weight: 300; letter-spacing: 2px;
+    padding: 20px 0 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-top: 10px;
+    color: #e94560;
+  }
+  .category-label:first-child { margin-top: 0; }
+
+  /* Photo Card */
+  .card {
+    position: relative; border-radius: 12px; overflow: hidden;
+    background: #1a1a1a; cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    aspect-ratio: 4/3;
+  }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,0.6); }
+  .card img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.5s;
+  }
+  .card:hover img { transform: scale(1.05); }
+  .card .label { display: none; }
+
+  /* Lightbox */
+  .lightbox {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.95); z-index: 1000;
+    justify-content: center; align-items: center; flex-direction: column;
+  }
+  .lightbox.active { display: flex; }
+  .lightbox img {
+    max-width: 90vw; max-height: 80vh; object-fit: contain;
+    border-radius: 8px; box-shadow: 0 0 40px rgba(0,0,0,0.8);
+  }
+  .lightbox .info {
+    margin-top: 16px; text-align: center; color: #aaa; font-size: 0.9rem;
+  }
+  .lightbox .close {
+    position: absolute; top: 20px; right: 30px; font-size: 2.5rem;
+    color: #fff; cursor: pointer; opacity: 0.7; transition: opacity 0.2s;
+    background: none; border: none;
+  }
+  .lightbox .close:hover { opacity: 1; }
+  .lightbox .nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    font-size: 3rem; color: #fff; cursor: pointer; opacity: 0.5;
+    transition: opacity 0.2s; background: none; border: none; padding: 20px;
+  }
+  .lightbox .nav:hover { opacity: 1; }
+  .lightbox .nav.prev { left: 10px; }
+  .lightbox .nav.next { right: 10px; }
+  .lightbox .counter {
+    position: absolute; top: 24px; left: 30px; color: #888; font-size: 0.9rem;
+  }
+
+  /* Loading placeholder */
+  .card img { background: #222; }
+  .card .loading-spinner {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    width: 30px; height: 30px; border: 3px solid #333; border-top-color: #e94560;
+    border-radius: 50%; animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: translate(-50%,-50%) rotate(360deg); } }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .gallery { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+    .header h1 { font-size: 1.4rem; }
+    .tab { padding: 6px 12px; font-size: 0.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>LCIC PHOTO GALLERY</h1>
+  <p>Lipa City Colleges International Campus</p>
+  <div class="tabs" id="tabs"></div>
+</div>
+
+<div class="gallery" id="gallery"></div>
+
+<div class="lightbox" id="lightbox">
+  <span class="counter" id="lb-counter"></span>
+  <button class="close" id="lb-close">&times;</button>
+  <button class="nav prev" id="lb-prev">&#10094;</button>
+  <button class="nav next" id="lb-next">&#10095;</button>
+  <img id="lb-img" src="" alt="">
+  <div class="info" id="lb-info"></div>
+</div>
+
+<script>
+const photos = [
+  // Cafeteria
+  {cat:"Cafeteria",name:"Cafeteria_1",src:"LCIC Cafeteria/Cafeteria_1.jpg"},
+  {cat:"Cafeteria",name:"Cafeteria_2",src:"LCIC Cafeteria/Cafeteria_2.jpg"},
+  {cat:"Cafeteria",name:"Cafeteria_3",src:"LCIC Cafeteria/Cafeteria_3.jpg"},
+  {cat:"Cafeteria",name:"Cafeteria_4",src:"LCIC Cafeteria/Cafeteria_4.jpg"},
+  {cat:"Cafeteria",name:"Cafeteria_5",src:"LCIC Cafeteria/Cafeteria_5.jpg"},
+  {cat:"Cafeteria",name:"Cafeteria_6",src:"LCIC Cafeteria/Cafeteria_6.jpg"},
+  {cat:"Cafeteria",name:"Cafeteria_7",src:"LCIC Cafeteria/Cafeteria_7.jpg"},
+  {cat:"Cafeteria",name:"Cafeteria_8",src:"LCIC Cafeteria/Cafeteria_8.jpg"},
+  {cat:"Cafeteria",name:"Cafeteria_9",src:"LCIC Cafeteria/Cafeteria_9.jpg"},
+  {cat:"Cafeteria",name:"Cafeteria_10",src:"LCIC Cafeteria/Cafeteria_10.jpg"},
+  {cat:"Cafeteria",name:"Cafeteria_11",src:"LCIC Cafeteria/Cafeteria_11.jpg"},
+  {cat:"Cafeteria",name:"Cafeteria_12",src:"LCIC Cafeteria/Cafeteria_12.jpg"},
+  {cat:"Cafeteria",name:"Cafeteria_13",src:"LCIC Cafeteria/Cafeteria_13.jpg"},
+  {cat:"Cafeteria",name:"Cafeteria_14",src:"LCIC Cafeteria/Cafeteria_14.jpg"},
+  {cat:"Cafeteria",name:"Cafeteria_15",src:"LCIC Cafeteria/Cafeteria_15.jpg"},
+  {cat:"Cafeteria",name:"Cafeteria_16",src:"LCIC Cafeteria/Cafeteria_16.jpg"},
+  {cat:"Cafeteria",name:"Meal_1",src:"LCIC Cafeteria/Meal_1.jpg"},
+  {cat:"Cafeteria",name:"Meal_2",src:"LCIC Cafeteria/Meal_2.jpg"},
+  {cat:"Cafeteria",name:"Meal_3",src:"LCIC Cafeteria/Meal_3.jpg"},
+  {cat:"Cafeteria",name:"Meal_4",src:"LCIC Cafeteria/Meal_4.jpg"},
+  {cat:"Cafeteria",name:"Meal_5",src:"LCIC Cafeteria/Meal_5.jpg"},
+  {cat:"Cafeteria",name:"Meal_6",src:"LCIC Cafeteria/Meal_6.jpg"},
+
+  // Campus
+  {cat:"Campus",name:"Adin Building_1",src:"LCIC Campus/Adin Building_1.jpg"},
+  {cat:"Campus",name:"Admin Building_2",src:"LCIC Campus/Admin Building_2.jpg"},
+  {cat:"Campus",name:"Auditorium_1",src:"LCIC Campus/Auditorium_1.jpg"},
+  {cat:"Campus",name:"Auditorium_2",src:"LCIC Campus/Auditorium_2.jpg"},
+  {cat:"Campus",name:"Auditorium_3",src:"LCIC Campus/Auditorium_3.jpg"},
+  {cat:"Campus",name:"Campus Maingate_1",src:"LCIC Campus/Campus Maingate_1.jpg"},
+  {cat:"Campus",name:"Campus Maingate_2",src:"LCIC Campus/Campus Maingate_2.jpg"},
+  {cat:"Campus",name:"Campus Maingate_3",src:"LCIC Campus/Campus Maingate_3.jpg"},
+  {cat:"Campus",name:"Campus Night View_1",src:"LCIC Campus/Campus Night View_1.jpg"},
+  {cat:"Campus",name:"Campus Night View_2",src:"LCIC Campus/Campus Night View_2.jpg"},
+  {cat:"Campus",name:"Campus Night View_3",src:"LCIC Campus/Campus Night View_3.jpg"},
+  {cat:"Campus",name:"Campus_1",src:"LCIC Campus/Campus_1.jpg"},
+  {cat:"Campus",name:"Campus_2",src:"LCIC Campus/Campus_2.jpg"},
+  {cat:"Campus",name:"Campus_3",src:"LCIC Campus/Campus_3.jpg"},
+  {cat:"Campus",name:"Campus_4",src:"LCIC Campus/Campus_4.jpg"},
+  {cat:"Campus",name:"Campus_5",src:"LCIC Campus/Campus_5.jpg"},
+  {cat:"Campus",name:"Campus_6 (2022)",src:"LCIC Campus/Campus_6(2022).jpg"},
+  {cat:"Campus",name:"Campus_7 (2022)",src:"LCIC Campus/Campus_7(2022).jpg"},
+  {cat:"Campus",name:"Campus_8 (2022)",src:"LCIC Campus/Campus_8(2022).jpg"},
+  {cat:"Campus",name:"Dormitory Exterior_1",src:"LCIC Campus/Dormitory Exterior_1.jpg"},
+  {cat:"Campus",name:"Dormitory Exterior_2",src:"LCIC Campus/Dormitory Exterior_2.png"},
+  {cat:"Campus",name:"Health & Sciences Building_1",src:"LCIC Campus/Health&Sciences Building_1.jpg"},
+  {cat:"Campus",name:"Health & Sciences Building_2",src:"LCIC Campus/Health&Sciences Building_2.jpg"},
+  {cat:"Campus",name:"Language Building Exterior_1",src:"LCIC Campus/Language Building Exterior_1.jpg"},
+  {cat:"Campus",name:"Language Building Exterior_2",src:"LCIC Campus/Language Building Exterior_2.jpg"},
+  {cat:"Campus",name:"Language Building Exterior_3",src:"LCIC Campus/Language Building Exterior_3.jpg"},
+  {cat:"Campus",name:"Language Building Exterior_4",src:"LCIC Campus/Language Building Exterior_4.jpg"},
+  {cat:"Campus",name:"Sport Courts",src:"LCIC Campus/Sport Courts.jpg"},
+  {cat:"Campus",name:"Sports Area_1",src:"LCIC Campus/Sports Area_1.jpg"},
+  {cat:"Campus",name:"Sports Area_2",src:"LCIC Campus/Sports Area_2.jpg"},
+  {cat:"Campus",name:"Sports Area_3",src:"LCIC Campus/Sports Area_3.jpg"},
+  {cat:"Campus",name:"Sports Area_4",src:"LCIC Campus/Sports Area_4.jpg"},
+  {cat:"Campus",name:"Sports Area_5",src:"LCIC Campus/Sports Area_5.jpg"},
+  {cat:"Campus",name:"Valleyball Court_1",src:"LCIC Campus/Valleyball Court_1.jpg"},
+  {cat:"Campus",name:"Valleyball Court_2",src:"LCIC Campus/Valleyball Court_2.jpg"},
+  {cat:"Campus",name:"Valleyball Court_3",src:"LCIC Campus/Valleyball Court_3.jpg"},
+
+  // Classroom
+  {cat:"Classroom",name:"Classroom Exterior_1",src:"LCIC Classroom/Classroom Exterior_1.jpg"},
+  {cat:"Classroom",name:"Classroom Interior_1",src:"LCIC Classroom/Classroom Interior_1.jpg"},
+  {cat:"Classroom",name:"Classroom Interior_2",src:"LCIC Classroom/Classroom Interior_2.jpg"},
+  {cat:"Classroom",name:"Classroom Interior_3",src:"LCIC Classroom/Classroom Interior_3.jpg"},
+  {cat:"Classroom",name:"Classroom Interior_4",src:"LCIC Classroom/Classroom Interior_4.jpg"},
+  {cat:"Classroom",name:"GYM_1",src:"LCIC Classroom/GYM_1.jpg"},
+  {cat:"Classroom",name:"GYM_2",src:"LCIC Classroom/GYM_2.jpg"},
+  {cat:"Classroom",name:"GYM_3",src:"LCIC Classroom/GYM_3.jpg"},
+  {cat:"Classroom",name:"GYM_4",src:"LCIC Classroom/GYM_4.jpg"},
+  {cat:"Classroom",name:"GYM_5",src:"LCIC Classroom/GYM_5.jpg"},
+  {cat:"Classroom",name:"Hallway_1",src:"LCIC Classroom/Hallway_1.jpg"},
+  {cat:"Classroom",name:"Hallway_2",src:"LCIC Classroom/Hallway_2.jpg"},
+  {cat:"Classroom",name:"Local Students Classroom_1",src:"LCIC Classroom/Local Students Classroom_1.jpg"},
+  {cat:"Classroom",name:"Local Students Classroom_2",src:"LCIC Classroom/Local Students Classroom_2.jpg"},
+  {cat:"Classroom",name:"Open Area",src:"LCIC Classroom/Open Area.jpg"},
+  {cat:"Classroom",name:"SALC_1",src:"LCIC Classroom/SALC_1.jpg"},
+  {cat:"Classroom",name:"SALC_2",src:"LCIC Classroom/SALC_2.jpg"},
+  {cat:"Classroom",name:"SALC_3",src:"LCIC Classroom/SALC_3.jpg"},
+  {cat:"Classroom",name:"SALC_4",src:"LCIC Classroom/SALC_4.jpg"},
+
+  // Clinic
+  {cat:"Clinic",name:"Clinic_1",src:"LCIC Clinic/Clinic_1.jpg"},
+  {cat:"Clinic",name:"Clinic_2",src:"LCIC Clinic/Clinic_2.jpg"},
+  {cat:"Clinic",name:"Clinic_3",src:"LCIC Clinic/Clinic_3.jpg"},
+  {cat:"Clinic",name:"Clinic_4",src:"LCIC Clinic/Clinic_4.jpg"},
+  {cat:"Clinic",name:"Clinic_5",src:"LCIC Clinic/Clinic_5.jpg"},
+  {cat:"Clinic",name:"Clinic_6",src:"LCIC Clinic/Clinic_6.jpg"},
+
+  // Dormitory
+  {cat:"Dormitory",name:"Entrance_1",src:"LCIC Dormitory/Entrance_1.jpg"},
+  {cat:"Dormitory",name:"Ground Floor",src:"LCIC Dormitory/Ground Floor.jpg"},
+  {cat:"Dormitory",name:"Laundry Space_1",src:"LCIC Dormitory/Laundry Space_1.jpg"},
+  {cat:"Dormitory",name:"Laundry Space_2",src:"LCIC Dormitory/Laundry Space_2.jpg"},
+  {cat:"Dormitory",name:"Lobby_1",src:"LCIC Dormitory/Lobby_1.jpg"},
+  {cat:"Dormitory",name:"Lobby_2",src:"LCIC Dormitory/Lobby_2.jpg"},
+  {cat:"Dormitory",name:"Bedroom_1",src:"LCIC Dormitory/Bedroom/Bedroom_1.jpg"},
+  {cat:"Dormitory",name:"Bedroom_2",src:"LCIC Dormitory/Bedroom/Bedroom_2.jpg"},
+  {cat:"Dormitory",name:"Bedroom_3",src:"LCIC Dormitory/Bedroom/Bedroom_3.jpg"},
+  {cat:"Dormitory",name:"Bathroom Locker_1",src:"LCIC Dormitory/Bathroom/Bathroom Locker_1.jpg"},
+  {cat:"Dormitory",name:"Bathroom Outside_1",src:"LCIC Dormitory/Bathroom/Bathroom Outside_1.jpg"},
+  {cat:"Dormitory",name:"Bathroom Outside_2",src:"LCIC Dormitory/Bathroom/Bathroom Outside_2.jpg"},
+  {cat:"Dormitory",name:"Bathroom Outside_3",src:"LCIC Dormitory/Bathroom/Bathroom Outside_3.jpg"},
+  {cat:"Dormitory",name:"Bathroom Outside_4",src:"LCIC Dormitory/Bathroom/Bathroom Outside_4.jpg"},
+  {cat:"Dormitory",name:"Bathroom Outside_5",src:"LCIC Dormitory/Bathroom/Bathroom Outside_5.jpg"},
+  {cat:"Dormitory",name:"Bathroom Outside_6",src:"LCIC Dormitory/Bathroom/Bathroom Outside_6.jpg"},
+  {cat:"Dormitory",name:"Bathroom Outside_7",src:"LCIC Dormitory/Bathroom/Bathroom Outside_7.jpg"},
+  {cat:"Dormitory",name:"Sauna (F)_1",src:"LCIC Dormitory/Bathroom/Sauna(F)_1.jpg"},
+  {cat:"Dormitory",name:"Sauna (F)_2",src:"LCIC Dormitory/Bathroom/Sauna(F)_2.jpg"},
+  {cat:"Dormitory",name:"Sauna (F)_3",src:"LCIC Dormitory/Bathroom/Sauna(F)_3.jpg"},
+  {cat:"Dormitory",name:"Sauna (F)_4",src:"LCIC Dormitory/Bathroom/Sauna(F)_4.jpg"},
+  {cat:"Dormitory",name:"Sauna (M)_1",src:"LCIC Dormitory/Bathroom/Sauna(M)_1.jpg"},
+  {cat:"Dormitory",name:"Sauna (M)_2",src:"LCIC Dormitory/Bathroom/Sauna(M)_2.jpg"},
+  {cat:"Dormitory",name:"Sauna (M)_3",src:"LCIC Dormitory/Bathroom/Sauna(M)_3.jpg"},
+
+  // Facilities
+  {cat:"Facilities",name:"DJI_0630",src:"LCIC Facilities/DJI_0630.JPG"},
+  {cat:"Facilities",name:"DSC00037",src:"LCIC Facilities/DSC00037.jpg"},
+  {cat:"Facilities",name:"DSC00052",src:"LCIC Facilities/DSC00052.jpg"},
+  {cat:"Facilities",name:"DSC00061",src:"LCIC Facilities/DSC00061.jpg"},
+  {cat:"Facilities",name:"DSC00509",src:"LCIC Facilities/DSC00509.jpg"},
+  {cat:"Facilities",name:"DSC00518",src:"LCIC Facilities/DSC00518.jpg"},
+  {cat:"Facilities",name:"DSC00521",src:"LCIC Facilities/DSC00521.jpg"},
+  {cat:"Facilities",name:"DSC00526",src:"LCIC Facilities/DSC00526.jpg"},
+  {cat:"Facilities",name:"DSC00534",src:"LCIC Facilities/DSC00534.jpg"},
+  {cat:"Facilities",name:"DSC00536",src:"LCIC Facilities/DSC00536.jpg"},
+  {cat:"Facilities",name:"DSC00562",src:"LCIC Facilities/DSC00562.jpg"},
+  {cat:"Facilities",name:"DSC00575",src:"LCIC Facilities/DSC00575.jpg"},
+  {cat:"Facilities",name:"DSC00580",src:"LCIC Facilities/DSC00580.jpg"},
+  {cat:"Facilities",name:"DSC00585",src:"LCIC Facilities/DSC00585.jpg"},
+  {cat:"Facilities",name:"DSC00588",src:"LCIC Facilities/DSC00588.jpg"},
+  {cat:"Facilities",name:"DSC00590",src:"LCIC Facilities/DSC00590.jpg"},
+  {cat:"Facilities",name:"DSC00591",src:"LCIC Facilities/DSC00591.jpg"},
+  {cat:"Facilities",name:"DSC00592",src:"LCIC Facilities/DSC00592.jpg"},
+  {cat:"Facilities",name:"DSC00593",src:"LCIC Facilities/DSC00593.jpg"},
+  {cat:"Facilities",name:"DSC00596",src:"LCIC Facilities/DSC00596.jpg"},
+  {cat:"Facilities",name:"DSC00598",src:"LCIC Facilities/DSC00598.jpg"},
+  {cat:"Facilities",name:"DSC00612",src:"LCIC Facilities/DSC00612.jpg"},
+  {cat:"Facilities",name:"DSC00654",src:"LCIC Facilities/DSC00654.jpg"},
+  {cat:"Facilities",name:"DSC00675",src:"LCIC Facilities/DSC00675.jpg"},
+  {cat:"Facilities",name:"DSC00676",src:"LCIC Facilities/DSC00676.jpg"},
+  {cat:"Facilities",name:"DSC00682",src:"LCIC Facilities/DSC00682.jpg"},
+  {cat:"Facilities",name:"DSC00686",src:"LCIC Facilities/DSC00686.jpg"},
+  {cat:"Facilities",name:"DSC08094",src:"LCIC Facilities/DSC08094.jpg"},
+  {cat:"Facilities",name:"DSC08105",src:"LCIC Facilities/DSC08105.jpg"},
+  {cat:"Facilities",name:"DSC08114",src:"LCIC Facilities/DSC08114.jpg"},
+  {cat:"Facilities",name:"DSC08117",src:"LCIC Facilities/DSC08117.jpg"},
+  {cat:"Facilities",name:"DSC08119",src:"LCIC Facilities/DSC08119.jpg"},
+  {cat:"Facilities",name:"DSC08135",src:"LCIC Facilities/DSC08135.jpg"},
+  {cat:"Facilities",name:"DSC08137",src:"LCIC Facilities/DSC08137.jpg"},
+  {cat:"Facilities",name:"DSC08142",src:"LCIC Facilities/DSC08142.jpg"},
+  {cat:"Facilities",name:"DSC08247",src:"LCIC Facilities/DSC08247.jpg"},
+  {cat:"Facilities",name:"DSC08248",src:"LCIC Facilities/DSC08248.jpg"},
+  {cat:"Facilities",name:"DSC08250",src:"LCIC Facilities/DSC08250.jpg"},
+  {cat:"Facilities",name:"DSC08252",src:"LCIC Facilities/DSC08252.jpg"},
+  {cat:"Facilities",name:"DSC08253",src:"LCIC Facilities/DSC08253.jpg"},
+  {cat:"Facilities",name:"DSC08257",src:"LCIC Facilities/DSC08257.jpg"},
+  {cat:"Facilities",name:"DSC08258",src:"LCIC Facilities/DSC08258.jpg"},
+  {cat:"Facilities",name:"DSC08265",src:"LCIC Facilities/DSC08265.jpg"},
+  {cat:"Facilities",name:"DSC08266",src:"LCIC Facilities/DSC08266.jpg"},
+  {cat:"Facilities",name:"DSC09683",src:"LCIC Facilities/DSC09683.jpg"},
+  {cat:"Facilities",name:"DSC09685",src:"LCIC Facilities/DSC09685.jpg"},
+  {cat:"Facilities",name:"DSC09696",src:"LCIC Facilities/DSC09696.jpg"},
+  {cat:"Facilities",name:"DSC09706",src:"LCIC Facilities/DSC09706.jpg"},
+  {cat:"Facilities",name:"DSC09713",src:"LCIC Facilities/DSC09713.jpg"},
+  {cat:"Facilities",name:"DSC09741",src:"LCIC Facilities/DSC09741.jpg"},
+  {cat:"Facilities",name:"DSC09743",src:"LCIC Facilities/DSC09743.jpg"},
+  {cat:"Facilities",name:"DSC09750",src:"LCIC Facilities/DSC09750.jpg"},
+  {cat:"Facilities",name:"DSC09758",src:"LCIC Facilities/DSC09758.jpg"},
+  {cat:"Facilities",name:"DSC09765",src:"LCIC Facilities/DSC09765.jpg"},
+  {cat:"Facilities",name:"DSC09767",src:"LCIC Facilities/DSC09767.jpg"},
+  {cat:"Facilities",name:"DSC09769",src:"LCIC Facilities/DSC09769.jpg"},
+  {cat:"Facilities",name:"DSC09770",src:"LCIC Facilities/DSC09770.jpg"},
+  {cat:"Facilities",name:"DSC09783",src:"LCIC Facilities/DSC09783.jpg"},
+  {cat:"Facilities",name:"DSC09787",src:"LCIC Facilities/DSC09787.jpg"},
+  {cat:"Facilities",name:"DSC09792",src:"LCIC Facilities/DSC09792.jpg"},
+  {cat:"Facilities",name:"DSC09801",src:"LCIC Facilities/DSC09801.jpg"},
+  {cat:"Facilities",name:"DSC09870",src:"LCIC Facilities/DSC09870.jpg"},
+  {cat:"Facilities",name:"DSC09893",src:"LCIC Facilities/DSC09893.jpg"},
+  {cat:"Facilities",name:"DSC09987",src:"LCIC Facilities/DSC09987.jpg"},
+  {cat:"Facilities",name:"DSCF1587",src:"LCIC Facilities/DSCF1587.JPG"},
+  {cat:"Facilities",name:"DSCF1591",src:"LCIC Facilities/DSCF1591.JPG"},
+  {cat:"Facilities",name:"DSCF1594",src:"LCIC Facilities/DSCF1594.JPG"},
+  {cat:"Facilities",name:"DSCF1610",src:"LCIC Facilities/DSCF1610.JPG"},
+  {cat:"Facilities",name:"DSCF1612",src:"LCIC Facilities/DSCF1612.JPG"},
+  {cat:"Facilities",name:"DSCF1616",src:"LCIC Facilities/DSCF1616.JPG"},
+  {cat:"Facilities",name:"IMG_9963",src:"LCIC Facilities/IMG_9963.PNG"},
+
+  // Library
+  {cat:"Library",name:"Book Shelf_1",src:"LCIC Library/Book Shelf_1.jpg"},
+  {cat:"Library",name:"Book Shelf_2",src:"LCIC Library/Book Shelf_2.jpg"},
+  {cat:"Library",name:"Book Shelf_3",src:"LCIC Library/Book Shelf_3.jpg"},
+  {cat:"Library",name:"Book Shelf_4",src:"LCIC Library/Book Shelf_4.jpg"},
+  {cat:"Library",name:"Information Desk_1",src:"LCIC Library/Information Desk_1.jpg"},
+  {cat:"Library",name:"Information Desk_2",src:"LCIC Library/Information Desk_2.jpg"},
+  {cat:"Library",name:"Library Exterior (Night)_1",src:"LCIC Library/Library Exterior(Night)_1.jpg"},
+  {cat:"Library",name:"Library Exterior (Night)_2",src:"LCIC Library/Library Exterior(Night)_2.jpg"},
+  {cat:"Library",name:"Library Interior_1",src:"LCIC Library/Library Interior_1.jpg"},
+  {cat:"Library",name:"Library Interior_2",src:"LCIC Library/Library Interior_2.jpg"},
+  {cat:"Library",name:"Library Interior_3",src:"LCIC Library/Library Interior_3.jpg"},
+  {cat:"Library",name:"Library Interior_4",src:"LCIC Library/Library Interior_4.jpg"},
+  {cat:"Library",name:"Library Interior_5",src:"LCIC Library/Library Interior_5.jpg"},
+  {cat:"Library",name:"Library Interior_6",src:"LCIC Library/Library Interior_6.jpg"},
+  {cat:"Library",name:"Library Interior_7",src:"LCIC Library/Library Interior_7.jpg"},
+  {cat:"Library",name:"Library Interior_8",src:"LCIC Library/Library Interior_8.jpg"},
+  {cat:"Library",name:"Library Interior_9",src:"LCIC Library/Library Interior_9.jpg"},
+  {cat:"Library",name:"Library Interior_10",src:"LCIC Library/Library Interior_10.jpg"},
+  {cat:"Library",name:"Library Interior_11",src:"LCIC Library/Library Interior_11.jpg"},
+  {cat:"Library",name:"Library Interior_12",src:"LCIC Library/Library Interior_12.jpg"},
+
+  // School Life
+  {cat:"School Life",name:"Buddy System (2022)_1",src:"LCIC School Life/Buddy System(2022)_1.jpg"},
+  {cat:"School Life",name:"Buddy System (2023)_2",src:"LCIC School Life/Buddy System(2023)_2.jpg"},
+  {cat:"School Life",name:"Buddy System (2023)_3",src:"LCIC School Life/Buddy System(2023)_3.jpg"},
+  {cat:"School Life",name:"Buddy System (2023)_4",src:"LCIC School Life/Buddy System(2023)_4.jpg"},
+  {cat:"School Life",name:"Buddy System (2023)_5",src:"LCIC School Life/Buddy System(2023)_5.jpg"},
+  {cat:"School Life",name:"Buddy System (2023)_6",src:"LCIC School Life/Buddy System(2023)_6.jpg"},
+  {cat:"School Life",name:"Buddy System (2023)_7",src:"LCIC School Life/Buddy System(2023)_7.jpg"},
+  {cat:"School Life",name:"Buddy System (2023)_8",src:"LCIC School Life/Buddy System(2023)_8.jpg"},
+  {cat:"School Life",name:"Buddy System (2023)_9",src:"LCIC School Life/Buddy System(2023)_9.jpg"},
+  {cat:"School Life",name:"Buddy System (2023)_10",src:"LCIC School Life/Buddy System(2023)_10.jpg"},
+  {cat:"School Life",name:"Class (2022)_1",src:"LCIC School Life/Class(2022)_1.jpg"},
+  {cat:"School Life",name:"Class (2022)_2",src:"LCIC School Life/Class(2022)_2.jpg"},
+  {cat:"School Life",name:"Class (2022)_3",src:"LCIC School Life/Class(2022)_3.jpg"},
+  {cat:"School Life",name:"Class (2023)_4",src:"LCIC School Life/Class(2023)_4.jpg"},
+  {cat:"School Life",name:"Class (2023)_5",src:"LCIC School Life/Class(2023)_5.jpg"},
+  {cat:"School Life",name:"Class (2023)_6",src:"LCIC School Life/Class(2023)_6.jpg"},
+  {cat:"School Life",name:"Class (2023)_7",src:"LCIC School Life/Class(2023)_7.jpg"},
+  {cat:"School Life",name:"Class (2023)_8",src:"LCIC School Life/Class(2023)_8.jpg"},
+  {cat:"School Life",name:"Dormitory_1",src:"LCIC School Life/Dormitory_1.jpg"},
+  {cat:"School Life",name:"Dormitory_2",src:"LCIC School Life/Dormitory_2.jpg"},
+  {cat:"School Life",name:"Library (2022)_1",src:"LCIC School Life/Library(2022)_1.jpg"},
+  {cat:"School Life",name:"Library (2022)_2",src:"LCIC School Life/Library(2022)_2.jpg"},
+  {cat:"School Life",name:"Library (2022)_3",src:"LCIC School Life/Library(2022)_3.jpg"},
+  {cat:"School Life",name:"Library (2023)_4",src:"LCIC School Life/Library(2023)_4.jpg"},
+  {cat:"School Life",name:"Library (2023)_5",src:"LCIC School Life/Library(2023)_5.jpg"},
+  {cat:"School Life",name:"Orientation Performance (2023)_1",src:"LCIC School Life/Orientation Performance(2023)_1.jpg"},
+  {cat:"School Life",name:"Orientation Performance (2023)_2",src:"LCIC School Life/Orientation Performance(2023)_2.jpg"},
+  {cat:"School Life",name:"Orientation Performance (2023)_3",src:"LCIC School Life/Orientation Performance(2023)_3.jpg"},
+  {cat:"School Life",name:"Orientation Performance (2023)_4",src:"LCIC School Life/Orientation Performance(2023)_4.jpg"},
+  {cat:"School Life",name:"Orientation Performance (2023)_5",src:"LCIC School Life/Orientation Performance(2023)_5.jpg"},
+  {cat:"School Life",name:"Orientation Performance (2023)_6",src:"LCIC School Life/Orientation Performance(2023)_6.jpg"},
+  {cat:"School Life",name:"Orientation Performance (2023)_7",src:"LCIC School Life/Orientation Performance(2023)_7.jpg"},
+];
+
+// Build categories
+const categories = ["All", ...new Set(photos.map(p => p.cat))];
+const tabsEl = document.getElementById("tabs");
+const galleryEl = document.getElementById("gallery");
+
+// Render tabs
+categories.forEach(cat => {
+  const count = cat === "All" ? photos.length : photos.filter(p => p.cat === cat).length;
+  const tab = document.createElement("div");
+  tab.className = "tab" + (cat === "All" ? " active" : "");
+  tab.innerHTML = `${cat}<span class="count">(${count})</span>`;
+  tab.onclick = () => filterCategory(cat);
+  tabsEl.appendChild(tab);
+});
+
+let currentFilter = "All";
+let visiblePhotos = [...photos];
+let currentIndex = 0;
+
+function filterCategory(cat) {
+  currentFilter = cat;
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  [...tabsEl.children].find(t => t.textContent.startsWith(cat)).classList.add("active");
+  renderGallery();
+}
+
+function renderGallery() {
+  visiblePhotos = currentFilter === "All" ? [...photos] : photos.filter(p => p.cat === currentFilter);
+  galleryEl.innerHTML = "";
+
+  let lastCat = "";
+  visiblePhotos.forEach((photo, i) => {
+    // Category label for "All" view
+    if (currentFilter === "All" && photo.cat !== lastCat) {
+      const label = document.createElement("div");
+      label.className = "category-label";
+      label.textContent = photo.cat;
+      galleryEl.appendChild(label);
+      lastCat = photo.cat;
+    }
+
+    const card = document.createElement("div");
+    card.className = "card";
+    const thumbSrc = "https://rzsmcysgijeshiiuyqjn.supabase.co/storage/v1/object/public/lcic-gallery/thumbs/" + photo.src;
+    card.innerHTML = `
+      <div class="loading-spinner"></div>
+      <img data-src="${encodeURI(thumbSrc)}" alt="${photo.name}" loading="lazy" onload="this.previousElementSibling.style.display='none'">
+      <div class="label">${photo.name}</div>
+    `;
+    card.onclick = () => openLightbox(i);
+    galleryEl.appendChild(card);
+  });
+}
+
+// Lightbox
+const lightbox = document.getElementById("lightbox");
+const lbImg = document.getElementById("lb-img");
+const lbInfo = document.getElementById("lb-info");
+const lbCounter = document.getElementById("lb-counter");
+
+function openLightbox(index) {
+  currentIndex = index;
+  updateLightbox();
+  lightbox.classList.add("active");
+  document.body.style.overflow = "hidden";
+}
+
+function closeLightbox() {
+  lightbox.classList.remove("active");
+  document.body.style.overflow = "";
+}
+
+function updateLightbox() {
+  const photo = visiblePhotos[currentIndex];
+  lbImg.src = encodeURI("https://rzsmcysgijeshiiuyqjn.supabase.co/storage/v1/object/public/lcic-gallery/photos/" + photo.src);
+  lbInfo.textContent = photo.cat;
+  lbCounter.textContent = `${currentIndex + 1} / ${visiblePhotos.length}`;
+}
+
+document.getElementById("lb-close").onclick = closeLightbox;
+document.getElementById("lb-prev").onclick = () => {
+  currentIndex = (currentIndex - 1 + visiblePhotos.length) % visiblePhotos.length;
+  updateLightbox();
+};
+document.getElementById("lb-next").onclick = () => {
+  currentIndex = (currentIndex + 1) % visiblePhotos.length;
+  updateLightbox();
+};
+
+// Keyboard navigation
+document.addEventListener("keydown", e => {
+  if (!lightbox.classList.contains("active")) return;
+  if (e.key === "Escape") closeLightbox();
+  if (e.key === "ArrowLeft") { currentIndex = (currentIndex - 1 + visiblePhotos.length) % visiblePhotos.length; updateLightbox(); }
+  if (e.key === "ArrowRight") { currentIndex = (currentIndex + 1) % visiblePhotos.length; updateLightbox(); }
+});
+
+// Click outside image to close
+lightbox.addEventListener("click", e => { if (e.target === lightbox) closeLightbox(); });
+
+// Lazy load with IntersectionObserver
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const img = entry.target;
+      if (img.dataset.src) {
+        img.src = img.dataset.src;
+        img.removeAttribute("data-src");
+      }
+      observer.unobserve(img);
+    }
+  });
+}, { rootMargin: "200px" });
+
+function observeImages() {
+  document.querySelectorAll("img[data-src]").forEach(img => observer.observe(img));
+}
+
+// Override renderGallery to also observe
+const _origRender = renderGallery;
+renderGallery = function() { _origRender(); observeImages(); };
+
+// Initial render
+renderGallery();
+</script>
+</body>
+</html>
