@@ -191,6 +191,108 @@
   }
   .footnote a:hover { color: var(--accent); }
 
+  /* Manual accordion inside Step 1 */
+  .manual-toggle {
+    margin-top: 16px;
+    border-top: 1px solid var(--hairline);
+    padding-top: 16px;
+  }
+  .manual-toggle summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--hairline);
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .manual-toggle summary::-webkit-details-marker { display: none; }
+  .manual-toggle summary:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(233, 69, 96, 0.3);
+  }
+  .manual-toggle summary > iconify-icon:first-child {
+    color: var(--accent);
+    font-size: 20px;
+  }
+  .manual-toggle summary .chevron {
+    margin-left: auto;
+    display: inline-flex;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    color: var(--text-dim);
+  }
+  .manual-toggle[open] summary .chevron { transform: rotate(180deg); }
+  .manual-toggle[open] summary {
+    background: rgba(233, 69, 96, 0.06);
+    border-color: rgba(233, 69, 96, 0.25);
+  }
+
+  .manual-body {
+    padding: 22px 4px 4px;
+    animation: manualReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes manualReveal {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .manual-steps {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .m-step {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .m-step .m-num {
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid rgba(233, 69, 96, 0.45);
+    background: rgba(233, 69, 96, 0.08);
+    color: var(--accent);
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+  .m-step .m-text { flex: 1; min-width: 0; }
+  .m-step h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+    letter-spacing: -0.005em;
+  }
+  .m-step p {
+    color: var(--text-dim);
+    font-size: 0.88rem;
+    line-height: 1.7;
+  }
+  .m-note {
+    margin-top: 18px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px dashed var(--hairline);
+    color: var(--text-faint);
+    font-size: 0.8rem;
+    line-height: 1.6;
+  }
+
   @media (max-width: 640px) {
     .timeline::before { left: 24px; }
     .step { padding-left: 70px; }
@@ -200,6 +302,8 @@
     .step-actor { margin-left: 0; }
     .cta-block { padding: 28px 22px; }
     .btn-jumbo { padding: 16px 28px; font-size: 0.95rem; width: 100%; justify-content: center; }
+    .manual-toggle summary { font-size: 0.85rem; }
+    .m-step .m-num { width: 26px; height: 26px; font-size: 0.78rem; }
   }
 </style>
 </head>
@@ -253,6 +357,56 @@
             <span>왕복 항공권</span>
           </div>
         </div>
+
+        <details class="manual-toggle">
+          <summary>
+            <iconify-icon icon="solar:book-2-bold-duotone"></iconify-icon>
+            <span>등록 메뉴얼 자세히 보기</span>
+            <span class="chevron"><iconify-icon icon="solar:alt-arrow-down-linear"></iconify-icon></span>
+          </summary>
+          <div class="manual-body">
+            <ol class="manual-steps">
+              <li class="m-step">
+                <span class="m-num">1</span>
+                <div class="m-text">
+                  <h4>회원가입</h4>
+                  <p>학생 등록 사이트에 처음 방문하시면 우측 상단 "회원가입" 버튼을 눌러 이름·이메일·비밀번호로 계정을 만들어주세요. 가입 후 받은 인증 메일에서 링크를 클릭하면 활성화됩니다.</p>
+                </div>
+              </li>
+              <li class="m-step">
+                <span class="m-num">2</span>
+                <div class="m-text">
+                  <h4>레벨 테스트 자료 업로드</h4>
+                  <p>로그인 후 메뉴에서 "레벨 테스트"를 선택해 시험지를 다운로드합니다. 시간 안에 풀고 답안을 작성한 파일(PDF 또는 사진)을 업로드 칸에 첨부해주세요.</p>
+                </div>
+              </li>
+              <li class="m-step">
+                <span class="m-num">3</span>
+                <div class="m-text">
+                  <h4>여권 사본 업로드</h4>
+                  <p>여권의 사진이 있는 면을 깨끗이 스캔하거나 촬영합니다. 이름·여권번호·만료일이 또렷하게 보여야 하며, JPG 또는 PDF로 업로드하세요.</p>
+                </div>
+              </li>
+              <li class="m-step">
+                <span class="m-num">4</span>
+                <div class="m-text">
+                  <h4>왕복 항공권 업로드</h4>
+                  <p>항공권 발권 후 받은 e-ticket 또는 일정표를 PDF나 이미지로 저장해 업로드해주세요. 출국편과 귀국편이 모두 포함된 파일이어야 합니다.</p>
+                </div>
+              </li>
+              <li class="m-step">
+                <span class="m-num">5</span>
+                <div class="m-text">
+                  <h4>제출 확인</h4>
+                  <p>세 가지 서류 업로드가 끝나면 "제출" 버튼을 눌러 마무리합니다. 정상 접수되면 화면에 확인 메시지가 뜨고, 등록한 이메일로도 알림이 갑니다.</p>
+                </div>
+              </li>
+            </ol>
+            <div class="m-note">
+              ※ 위 안내는 일반적인 흐름을 기준으로 작성되었습니다. 실제 학생 등록 시스템 화면과 다른 부분이 있으면 공지사항이나 궁금한 사항을 참고해주세요.
+            </div>
+          </div>
+        </details>
       </div>
     </div>
 
