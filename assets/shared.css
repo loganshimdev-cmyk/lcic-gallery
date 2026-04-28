@@ -14,8 +14,11 @@
 
 * { box-sizing: border-box; }
 
-html, body {
+html {
   background: var(--bg);
+}
+
+html, body {
   color: var(--text);
   font-family: "Pretendard", -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -27,8 +30,8 @@ html, body {
 body {
   min-height: 100dvh;
   margin: 0;
-  background: var(--bg);
   position: relative;
+  background: transparent;
 }
 
 /* Campus photo background — set via assets/background.js */
