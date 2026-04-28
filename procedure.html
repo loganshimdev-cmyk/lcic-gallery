@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>입학 절차 · LCIC</title>
+<script src="assets/background.js"></script>
+<link rel="stylesheet" href="assets/shared.css">
+<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+<style>
+  .timeline {
+    position: relative;
+    margin: 0 auto;
+    padding: 0;
+  }
+
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 30px;
+    top: 30px;
+    bottom: 30px;
+    width: 1px;
+    background: linear-gradient(180deg,
+      rgba(233, 69, 96, 0.4),
+      rgba(255, 255, 255, 0.1) 60%,
+      transparent
+    );
+  }
+
+  .step {
+    position: relative;
+    padding-left: 90px;
+    margin-bottom: 36px;
+  }
+  .step:last-child { margin-bottom: 0; }
+
+  .step-num {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--hairline);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text);
+    font-size: 1.4rem;
+    font-weight: 600;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .step:hover .step-num {
+    border-color: rgba(233, 69, 96, 0.5);
+    background: rgba(233, 69, 96, 0.1);
+    color: var(--accent);
+  }
+
+  .step-num.featured {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 24px rgba(233, 69, 96, 0.4);
+  }
+
+  .step-card {
+    padding: 24px 28px;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--hairline);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .step:hover .step-card {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--hairline-strong);
+  }
+
+  .step-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .step-head iconify-icon {
+    color: var(--accent);
+    font-size: 22px;
+  }
+  .step-head h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .step-actor {
+    display: inline-block;
+    margin-left: auto;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-dim);
+    border: 1px solid var(--hairline);
+  }
+
+  .step-desc {
+    color: var(--text-dim);
+    font-size: 0.93rem;
+    line-height: 1.7;
+  }
+
+  .sub-list {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .sub-list .item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--hairline);
+    font-size: 0.88rem;
+    color: var(--text);
+  }
+  .sub-list .item iconify-icon {
+    color: var(--accent);
+    font-size: 18px;
+  }
+
+  .cta-block {
+    margin-top: 60px;
+    padding: 36px 32px;
+    border-radius: 28px;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(233, 69, 96, 0.15), rgba(15, 52, 96, 0.15));
+    border: 1px solid rgba(233, 69, 96, 0.25);
+    box-shadow: 0 0 40px rgba(233, 69, 96, 0.1);
+  }
+  .cta-block h2 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+  .cta-block p {
+    color: var(--text-dim);
+    font-size: 0.92rem;
+    margin-bottom: 22px;
+  }
+
+  .btn-jumbo {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 36px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 0 30px rgba(233, 69, 96, 0.3);
+  }
+  .btn-jumbo:hover {
+    transform: scale(1.03) translateY(-1px);
+    box-shadow: 0 0 50px rgba(233, 69, 96, 0.5);
+  }
+  .btn-jumbo iconify-icon { font-size: 22px; }
+
+  .footnote {
+    margin-top: 24px;
+    text-align: center;
+    color: var(--text-faint);
+    font-size: 0.82rem;
+  }
+  .footnote a {
+    color: var(--text-dim);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .footnote a:hover { color: var(--accent); }
+
+  @media (max-width: 640px) {
+    .timeline::before { left: 24px; }
+    .step { padding-left: 70px; }
+    .step-num { width: 48px; height: 48px; font-size: 1.15rem; }
+    .step-card { padding: 18px 20px; border-radius: 18px; }
+    .step-head { flex-wrap: wrap; }
+    .step-actor { margin-left: 0; }
+    .cta-block { padding: 28px 22px; }
+    .btn-jumbo { padding: 16px 28px; font-size: 0.95rem; width: 100%; justify-content: center; }
+  }
+</style>
+</head>
+<body data-page="procedure">
+
+<nav class="nav-pill">
+  <a href="index.html"><iconify-icon icon="solar:home-2-bold-duotone" inline></iconify-icon> 홈</a>
+  <a href="gallery.html"><iconify-icon icon="solar:gallery-bold-duotone" inline></iconify-icon> 갤러리</a>
+  <a href="procedure.html" class="active"><iconify-icon icon="solar:list-check-bold-duotone" inline></iconify-icon> 입학 절차</a>
+  <a href="notice.html"><iconify-icon icon="solar:bell-bold" inline></iconify-icon> 공지사항</a>
+  <a href="faq.html"><iconify-icon icon="solar:question-circle-bold-duotone" inline></iconify-icon> 궁금한 사항</a>
+</nav>
+
+<header style="padding: 140px 20px 60px; text-align: center;">
+  <div class="fade-up">
+    <span class="eyebrow"><span class="dot"></span> APPLICATION PROCEDURE</span>
+  </div>
+  <h1 class="headline fade-up delay-1" style="margin-top: 24px;">입학 절차 안내</h1>
+  <p class="subhead fade-up delay-2">
+    LCIC 입학 결정부터 도착까지, 학생이 거쳐야 하는 4단계입니다.<br>
+    각 단계는 학생 등록 시스템에서 진행됩니다.
+  </p>
+</header>
+
+<main class="container-narrow" style="padding-bottom: 80px;">
+  <div class="timeline">
+
+    <!-- Step 1 -->
+    <div class="step fade-up delay-3">
+      <div class="step-num">1</div>
+      <div class="step-card">
+        <div class="step-head">
+          <iconify-icon icon="solar:document-add-bold-duotone"></iconify-icon>
+          <h3>학생 등록</h3>
+          <span class="step-actor">학생 진행</span>
+        </div>
+        <p class="step-desc">
+          학생 등록 시스템에 가입하고, 입학에 필요한 서류 3종을 업로드합니다.
+        </p>
+        <div class="sub-list">
+          <div class="item">
+            <iconify-icon icon="solar:document-text-bold"></iconify-icon>
+            <span>레벨 테스트 자료</span>
+          </div>
+          <div class="item">
+            <iconify-icon icon="solar:passport-bold"></iconify-icon>
+            <span>여권 사본</span>
+          </div>
+          <div class="item">
+            <iconify-icon icon="solar:plain-bold"></iconify-icon>
+            <span>왕복 항공권</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step fade-up delay-3">
+      <div class="step-num">2</div>
+      <div class="step-card">
+        <div class="step-head">
+          <iconify-icon icon="solar:medal-ribbon-bold-duotone"></iconify-icon>
+          <h3>레벨 배정 완료</h3>
+          <span class="step-actor">LCIC 처리</span>
+        </div>
+        <p class="step-desc">
+          LCIC 어학팀이 제출하신 레벨 테스트 자료를 검토하여 적합한 클래스 레벨을 배정해드립니다.
+          결과는 학생 등록 시스템에 알림으로 전달됩니다.
+        </p>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step fade-up delay-3">
+      <div class="step-num">3</div>
+      <div class="step-card">
+        <div class="step-head">
+          <iconify-icon icon="solar:notebook-bookmark-bold-duotone"></iconify-icon>
+          <h3>수강 신청</h3>
+          <span class="step-actor">학생 진행</span>
+        </div>
+        <p class="step-desc">
+          배정받은 레벨에 맞춰 수강 과목을 선택합니다.
+          정규 수업 외에도 선택 과목이 마련되어 있으니 학생 등록 시스템에서 안내에 따라 신청해주세요.
+        </p>
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step fade-up delay-3">
+      <div class="step-num featured">4</div>
+      <div class="step-card">
+        <div class="step-head">
+          <iconify-icon icon="solar:users-group-rounded-bold-duotone"></iconify-icon>
+          <h3>버디 신청</h3>
+          <span class="step-actor">도착 1주 전</span>
+        </div>
+        <p class="step-desc">
+          출국 1주일 전까지 버디(buddy)를 신청해주세요.
+          현지 적응을 도와줄 LCIC 재학생 또는 현지 학생이 매칭되어, 도착 후 학교생활 정착을 지원합니다.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-block fade-up delay-4">
+    <h2>지금 등록을 시작하세요</h2>
+    <p>모든 단계는 LCIC 학생 등록 시스템에서 진행됩니다.</p>
+    <a class="btn-jumbo" href="https://lcic-students-system.com/application/request/kr" target="_blank" rel="noopener noreferrer">
+      <iconify-icon icon="solar:square-top-down-bold-duotone"></iconify-icon>
+      학생 등록 사이트로 이동
+      <iconify-icon icon="solar:arrow-right-up-linear"></iconify-icon>
+    </a>
+  </div>
+
+  <p class="footnote fade-up delay-4">
+    절차 관련 문의는 <a href="faq.html">궁금한 사항</a>을 확인하시거나
+    <a href="notice.html">공지사항</a>의 최신 안내를 참고해주세요.
+  </p>
+</main>
+
+</body>
+</html>
