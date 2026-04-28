@@ -293,6 +293,88 @@
     line-height: 1.6;
   }
 
+  .m-figure {
+    margin: 14px 0 4px;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid var(--hairline);
+    background: #0a0a0a;
+    cursor: zoom-in;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .m-figure:hover {
+    border-color: rgba(233, 69, 96, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  }
+  .m-figure img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .m-figure-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 14px 0 4px;
+  }
+  .m-figure-row .m-figure { margin: 0; }
+  @media (max-width: 640px) {
+    .m-figure-row { grid-template-columns: 1fr; }
+  }
+
+  .m-caption {
+    text-align: center;
+    color: var(--text-faint);
+    font-size: 0.78rem;
+    margin-top: 6px;
+    margin-bottom: 4px;
+  }
+
+  /* Image lightbox */
+  .img-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 1500;
+    background: rgba(5, 5, 5, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    cursor: zoom-out;
+  }
+  .img-lightbox.active { display: flex; }
+  .img-lightbox img {
+    max-width: 95vw;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 10px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8);
+  }
+  .img-lightbox .lb-close {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--hairline);
+    color: var(--text);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .img-lightbox .lb-close:hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: scale(1.05);
+  }
+
   @media (max-width: 640px) {
     .timeline::before { left: 24px; }
     .step { padding-left: 70px; }
@@ -366,44 +448,100 @@
           </summary>
           <div class="manual-body">
             <ol class="manual-steps">
+
               <li class="m-step">
                 <span class="m-num">1</span>
                 <div class="m-text">
-                  <h4>회원가입</h4>
-                  <p>학생 등록 사이트에 처음 방문하시면 우측 상단 "회원가입" 버튼을 눌러 이름·이메일·비밀번호로 계정을 만들어주세요. 가입 후 받은 인증 메일에서 링크를 클릭하면 활성화됩니다.</p>
+                  <h4>신청서 시작 — 이메일 등록</h4>
+                  <p>학생 등록 시스템 (<a href="https://lcic-students-system.com/application/request/kr" target="_blank" rel="noopener" style="color:var(--accent); text-decoration:underline; text-underline-offset:2px;">lcic-students-system.com/application/request/kr</a>) 에 접속하면 "신청서" 화면이 나옵니다. 본인 이메일을 입력하고 <b>제출</b> 버튼을 누르면, 입력한 이메일로 신청 URL이 발송됩니다.</p>
+                  <figure class="m-figure"><img src="assets/manual/01-email-request.png" alt="신청서 이메일 입력 화면"></figure>
+                  <div class="m-caption">신청서 첫 화면 — 이메일 입력 후 제출</div>
                 </div>
               </li>
+
               <li class="m-step">
                 <span class="m-num">2</span>
                 <div class="m-text">
-                  <h4>레벨 테스트 자료 업로드</h4>
-                  <p>로그인 후 메뉴에서 "레벨 테스트"를 선택해 시험지를 다운로드합니다. 시간 안에 풀고 답안을 작성한 파일(PDF 또는 사진)을 업로드 칸에 첨부해주세요.</p>
+                  <h4>제출 확인 + 이메일 메일 수신</h4>
+                  <p>"제출해주셔서 감사합니다!" 안내가 뜨면 정상 접수된 것입니다. 이메일 수신함에서 LCIC가 보낸 <b>"Continue Your Application"</b> 메일을 열고, <b>Continue Application</b> 버튼을 눌러 다음 단계로 이동하세요.</p>
+                  <div class="m-figure-row">
+                    <figure class="m-figure"><img src="assets/manual/02-email-sent.png" alt="제출 완료 안내"></figure>
+                    <figure class="m-figure"><img src="assets/manual/03-continue-mail.png" alt="Continue Your Application 메일"></figure>
+                  </div>
+                  <div class="m-caption">제출 안내 화면 (좌) · 받은 메일에서 Continue Application 클릭 (우)</div>
                 </div>
               </li>
+
               <li class="m-step">
                 <span class="m-num">3</span>
                 <div class="m-text">
-                  <h4>여권 사본 업로드</h4>
-                  <p>여권의 사진이 있는 면을 깨끗이 스캔하거나 촬영합니다. 이름·여권번호·만료일이 또렷하게 보여야 하며, JPG 또는 PDF로 업로드하세요.</p>
+                  <h4>Step 1: 기본 정보 + 여권 정보 입력</h4>
+                  <p>이름·성과 함께 <b>여권에 표시된 영문 이름</b>(이름/성/중간이름)을 입력합니다. <b>여권 번호·발행일·유효기간</b>까지 같이 입력해주세요. 여권 정보는 이후 비자 발급에 그대로 사용되니 정확히 기재해야 합니다.</p>
+                  <div class="m-figure-row">
+                    <figure class="m-figure"><img src="assets/manual/04-step1-empty.png" alt="Step 1 빈 화면"></figure>
+                    <figure class="m-figure"><img src="assets/manual/05-step1-filled.png" alt="Step 1 작성 예시"></figure>
+                  </div>
+                  <div class="m-caption">Step 1 입력 폼 (좌) · 작성 예시 (우)</div>
                 </div>
               </li>
+
               <li class="m-step">
                 <span class="m-num">4</span>
                 <div class="m-text">
-                  <h4>왕복 항공권 업로드</h4>
-                  <p>항공권 발권 후 받은 e-ticket 또는 일정표를 PDF나 이미지로 저장해 업로드해주세요. 출국편과 귀국편이 모두 포함된 파일이어야 합니다.</p>
+                  <h4>Step 2: 개인 정보 + 비상 연락처</h4>
+                  <p>성별, 생년월일, 국가/국적, 전화번호, 우편번호, 도·시·군·구·주소 등 개인 정보를 입력합니다. 마지막으로 <b>비상 연락처(이름·관계·전화·이메일·주소)</b> 까지 채우고 <b>다음</b>을 누릅니다.</p>
+                  <figure class="m-figure"><img src="assets/manual/06-step2.png" alt="Step 2 개인 정보 화면"></figure>
+                  <div class="m-caption">Step 2 — 개인 정보 + 비상 연락처</div>
                 </div>
               </li>
+
               <li class="m-step">
                 <span class="m-num">5</span>
                 <div class="m-text">
-                  <h4>제출 확인</h4>
-                  <p>세 가지 서류 업로드가 끝나면 "제출" 버튼을 눌러 마무리합니다. 정상 접수되면 화면에 확인 메시지가 뜨고, 등록한 이메일로도 알림이 갑니다.</p>
+                  <h4>이용 약관 확인</h4>
+                  <p>제출 직전 단계에서 <b>"이용 약관"</b> 링크를 누르면 라푸라푸세부국제대학(LCIC) 프로그램 등록 및 유의 사항 안내가 표시됩니다. 등록 방법, 프로그램 비용, 기숙사·식비, 학사 일정 등 중요한 내용이니 꼼꼼히 읽어주세요. 동의 후 다음으로 진행합니다.</p>
+                  <figure class="m-figure"><img src="assets/manual/07-terms.png" alt="이용 약관"></figure>
+                  <div class="m-caption">이용 약관 모달 — 등록 전 필수 확인</div>
                 </div>
               </li>
+
+              <li class="m-step">
+                <span class="m-num">6</span>
+                <div class="m-text">
+                  <h4>Step 3: 추가 정보 입력 → 신청서 제출</h4>
+                  <p>본인의 <b>대학·학부·학과·학년</b>과 <b>유학 시작 기수, 주(week) 수, 시작/종료일, Course</b> 를 선택합니다. 알레르기·만성 질환 같은 기타 사항이 있으면 같이 적어주세요. 마지막으로 약관 동의 체크 후 <b>신청서 제출</b> 버튼.</p>
+                  <figure class="m-figure"><img src="assets/manual/08-step3.png" alt="Step 3 추가 정보"></figure>
+                  <div class="m-caption">Step 3 — 학교/유학 일정 입력 + 신청서 제출</div>
+                </div>
+              </li>
+
+              <li class="m-step">
+                <span class="m-num">7</span>
+                <div class="m-text">
+                  <h4>학생 계정 발급 메일 수신</h4>
+                  <p>LCIC 측 검토가 완료되면, 등록한 이메일로 <b>"Your Student Account Credentials"</b> 메일이 도착합니다. 본문에 <b>로그인 이메일, 임시 비밀번호, 학습 기간(Study Period), 로그인 링크</b> 가 포함되어 있습니다. 보안을 위해 첫 로그인 후 비밀번호를 바꿔주세요.</p>
+                  <figure class="m-figure"><img src="assets/manual/09-credentials.png" alt="학생 계정 발급 메일"></figure>
+                  <div class="m-caption">계정 발급 메일 — 임시 비밀번호 + 로그인 링크 포함</div>
+                </div>
+              </li>
+
+              <li class="m-step">
+                <span class="m-num">8</span>
+                <div class="m-text">
+                  <h4>로그인 → 학생 대시보드</h4>
+                  <p>받은 자격으로 <a href="https://lcic-students-system.com/login" target="_blank" rel="noopener" style="color:var(--accent); text-decoration:underline; text-underline-offset:2px;">lcic-students-system.com/login</a> 에 로그인하면 학생 대시보드가 열립니다. 좌측 메뉴에서 <b>Student Buddy</b>(버디 신청), <b>Travel Waiver</b>(항공권/이동 관련), <b>Student Profile</b>(개인 정보), <b>Student Guideline</b>(안내) 등을 진행할 수 있습니다.</p>
+                  <div class="m-figure-row">
+                    <figure class="m-figure"><img src="assets/manual/10-login.png" alt="로그인 화면"></figure>
+                    <figure class="m-figure"><img src="assets/manual/11-dashboard.png" alt="학생 대시보드"></figure>
+                  </div>
+                  <div class="m-caption">로그인 (좌) · 로그인 후 대시보드 (우)</div>
+                </div>
+              </li>
+
             </ol>
             <div class="m-note">
-              ※ 위 안내는 일반적인 흐름을 기준으로 작성되었습니다. 실제 학생 등록 시스템 화면과 다른 부분이 있으면 공지사항이나 궁금한 사항을 참고해주세요.
+              ※ 스크린샷의 이름·이메일·여권번호·주소 등은 작성 예시이며 실제 데이터가 아닙니다.<br>
+              ※ 화면 디자인은 시스템 업데이트로 일부 달라질 수 있습니다. 추가 문의는 <a href="faq.html" style="color:var(--text-dim); text-decoration:underline; text-underline-offset:2px;">궁금한 사항</a> 페이지를 참고해주세요.
             </div>
           </div>
         </details>
@@ -476,6 +614,48 @@
     <a href="notice.html">공지사항</a>의 최신 안내를 참고해주세요.
   </p>
 </main>
+
+<!-- Image lightbox -->
+<div class="img-lightbox" id="img-lightbox" role="dialog" aria-label="이미지 확대 보기">
+  <button class="lb-close" id="lb-close" aria-label="닫기">
+    <iconify-icon icon="solar:close-circle-linear"></iconify-icon>
+  </button>
+  <img id="lb-image" src="" alt="">
+</div>
+
+<script>
+(function () {
+  const lightbox = document.getElementById("img-lightbox");
+  const lbImg = document.getElementById("lb-image");
+  const closeBtn = document.getElementById("lb-close");
+
+  function open(src, alt) {
+    lbImg.src = src;
+    lbImg.alt = alt || "";
+    lightbox.classList.add("active");
+    document.body.style.overflow = "hidden";
+  }
+  function close() {
+    lightbox.classList.remove("active");
+    document.body.style.overflow = "";
+  }
+
+  document.querySelectorAll(".m-figure").forEach((fig) => {
+    fig.addEventListener("click", () => {
+      const img = fig.querySelector("img");
+      if (img) open(img.src, img.alt);
+    });
+  });
+
+  closeBtn.addEventListener("click", close);
+  lightbox.addEventListener("click", (e) => {
+    if (e.target === lightbox) close();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && lightbox.classList.contains("active")) close();
+  });
+})();
+</script>
 
 </body>
 </html>
