@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>궁금한 사항 · LCIC</title>
+<script src="assets/background.js"></script>
+<link rel="stylesheet" href="assets/shared.css">
+<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+<style>
+  .search-wrap {
+    position: relative;
+    margin-bottom: 32px;
+  }
+  .search-wrap iconify-icon {
+    position: absolute;
+    top: 50%; left: 20px;
+    transform: translateY(-50%);
+    color: var(--text-faint);
+    font-size: 18px;
+    pointer-events: none;
+  }
+  .search-wrap input {
+    padding-left: 50px;
+    border-radius: 999px;
+  }
+
+  .faq-cat-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 36px 0 14px;
+    padding-left: 4px;
+  }
+  .faq-cat-title:first-of-type { margin-top: 0; }
+
+  .faq-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--hairline);
+    border-radius: 18px;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    margin-bottom: 8px;
+  }
+  .faq-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--hairline-strong);
+  }
+  .faq-item[open] {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(233, 69, 96, 0.25);
+  }
+  .faq-item summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 18px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text);
+    transition: color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary .icon-wrap {
+    flex-shrink: 0;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .faq-item[open] summary .icon-wrap {
+    background: var(--accent);
+    transform: rotate(45deg);
+  }
+  .faq-item[open] summary .icon-wrap iconify-icon { color: #fff; }
+  .faq-item .answer {
+    padding: 4px 22px 22px 22px;
+    color: var(--text-dim);
+    font-size: 0.92rem;
+    line-height: 1.75;
+    white-space: pre-wrap;
+    border-top: 1px solid var(--hairline);
+    margin-top: 0;
+    padding-top: 18px;
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav-pill">
+  <a href="index.html"><iconify-icon icon="solar:gallery-bold-duotone" inline></iconify-icon> 갤러리</a>
+  <a href="notice.html"><iconify-icon icon="solar:bell-bold" inline></iconify-icon> 공지사항</a>
+  <a href="faq.html" class="active"><iconify-icon icon="solar:question-circle-bold-duotone" inline></iconify-icon> 궁금한 사항</a>
+  <a href="admin.html"><iconify-icon icon="solar:shield-user-bold-duotone" inline></iconify-icon> 관리자</a>
+</nav>
+
+<header style="padding: 140px 20px 60px; text-align: center;">
+  <div class="fade-up">
+    <span class="eyebrow"><span class="dot"></span> FREQUENTLY ASKED</span>
+  </div>
+  <h1 class="headline fade-up delay-1" style="margin-top: 24px;">궁금한 사항</h1>
+  <p class="subhead fade-up delay-2">자주 묻는 질문과 답변을 카테고리별로 정리했습니다.</p>
+</header>
+
+<main class="container-narrow" style="padding-bottom: 120px;">
+  <div class="search-wrap fade-up delay-3">
+    <iconify-icon icon="solar:magnifer-linear"></iconify-icon>
+    <input type="text" id="search" class="input" placeholder="질문 또는 답변에서 검색…">
+  </div>
+
+  <div id="list" class="fade-up delay-4">
+    <div style="text-align:center; padding: 60px 20px; color: var(--text-faint);">
+      <iconify-icon icon="svg-spinners:ring-resize" inline style="font-size: 24px;"></iconify-icon>
+    </div>
+  </div>
+</main>
+
+<script type="module">
+import { supabase } from "./assets/supabase.js";
+
+const listEl = document.getElementById("list");
+const searchEl = document.getElementById("search");
+let allFaqs = [];
+
+function emptyState(msg, icon = "solar:inbox-bold-duotone") {
+  return `<div style="text-align:center; padding: 80px 20px; color: var(--text-faint);">
+    <iconify-icon icon="${icon}" style="font-size: 48px; opacity: 0.5;"></iconify-icon>
+    <div style="margin-top: 16px;">${msg}</div>
+  </div>`;
+}
+
+function render(faqs) {
+  if (!faqs || faqs.length === 0) {
+    listEl.innerHTML = emptyState("검색 결과가 없습니다.", "solar:magnifer-linear");
+    return;
+  }
+
+  const groups = new Map();
+  faqs.forEach((f) => {
+    const cat = f.category || "기타";
+    if (!groups.has(cat)) groups.set(cat, []);
+    groups.get(cat).push(f);
+  });
+
+  listEl.innerHTML = "";
+  groups.forEach((items, category) => {
+    const title = document.createElement("div");
+    title.className = "faq-cat-title";
+    title.textContent = category;
+    listEl.appendChild(title);
+
+    items.forEach((f) => {
+      const details = document.createElement("details");
+      details.className = "faq-item";
+      const summary = document.createElement("summary");
+      summary.innerHTML = `
+        <span></span>
+        <span class="icon-wrap"><iconify-icon icon="solar:add-circle-linear" style="font-size: 18px; color: var(--text-dim);"></iconify-icon></span>
+      `;
+      summary.querySelector("span").textContent = f.question;
+      const answer = document.createElement("div");
+      answer.className = "answer";
+      answer.textContent = f.answer;
+      details.appendChild(summary);
+      details.appendChild(answer);
+      listEl.appendChild(details);
+    });
+  });
+}
+
+function applyFilter() {
+  const q = searchEl.value.trim().toLowerCase();
+  if (!q) return render(allFaqs);
+  const filtered = allFaqs.filter(
+    (f) =>
+      f.question.toLowerCase().includes(q) ||
+      f.answer.toLowerCase().includes(q) ||
+      (f.category || "").toLowerCase().includes(q)
+  );
+  render(filtered);
+}
+
+searchEl.addEventListener("input", applyFilter);
+
+async function loadFaqs() {
+  const { data, error } = await supabase
+    .from("faqs")
+    .select("*")
+    .order("category", { ascending: true, nullsFirst: false })
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    listEl.innerHTML = emptyState(`불러오기 실패: ${error.message}`, "solar:danger-triangle-bold-duotone");
+    return;
+  }
+  if (!data || data.length === 0) {
+    listEl.innerHTML = emptyState("아직 등록된 FAQ가 없습니다.");
+    return;
+  }
+
+  allFaqs = data;
+  render(allFaqs);
+}
+
+loadFaqs();
+</script>
+</body>
+</html>

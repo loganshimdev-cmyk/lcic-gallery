@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>공지사항 · LCIC</title>
+<script src="assets/background.js"></script>
+<link rel="stylesheet" href="assets/shared.css">
+<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+</head>
+<body>
+
+<nav class="nav-pill">
+  <a href="index.html"><iconify-icon icon="solar:gallery-bold-duotone" inline></iconify-icon> 갤러리</a>
+  <a href="notice.html" class="active"><iconify-icon icon="solar:bell-bold" inline></iconify-icon> 공지사항</a>
+  <a href="faq.html"><iconify-icon icon="solar:question-circle-bold-duotone" inline></iconify-icon> 궁금한 사항</a>
+  <a href="admin.html"><iconify-icon icon="solar:shield-user-bold-duotone" inline></iconify-icon> 관리자</a>
+</nav>
+
+<header style="padding: 140px 20px 60px; text-align: center;">
+  <div class="fade-up">
+    <span class="eyebrow"><span class="dot"></span> NOTICE BOARD</span>
+  </div>
+  <h1 class="headline fade-up delay-1" style="margin-top: 24px;">공지사항</h1>
+  <p class="subhead fade-up delay-2">LCIC 학생을 위한 안내 사항을 한곳에 모았습니다.</p>
+</header>
+
+<main class="container-narrow" style="padding-bottom: 120px;">
+  <div id="list" class="fade-up delay-3" style="display: flex; flex-direction: column; gap: 14px;">
+    <div style="text-align:center; padding: 60px 20px; color: var(--text-faint);">
+      <iconify-icon icon="svg-spinners:ring-resize" inline style="font-size: 24px;"></iconify-icon>
+    </div>
+  </div>
+</main>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="close-btn" id="modal-close" aria-label="닫기">
+      <iconify-icon icon="solar:close-circle-linear"></iconify-icon>
+    </button>
+    <div id="modal-pin" style="margin-bottom: 12px;"></div>
+    <h2 id="modal-title" style="font-size: 1.6rem; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 8px; padding-right: 30px;"></h2>
+    <div id="modal-meta" style="color: var(--text-faint); font-size: 0.85rem; margin-bottom: 24px;"></div>
+    <div id="modal-body" style="white-space: pre-wrap; color: var(--text); line-height: 1.8; font-size: 0.95rem;"></div>
+  </div>
+</div>
+
+<script type="module">
+import { supabase, formatDate } from "./assets/supabase.js";
+
+const listEl = document.getElementById("list");
+const modal = document.getElementById("modal");
+const modalTitle = document.getElementById("modal-title");
+const modalMeta = document.getElementById("modal-meta");
+const modalBody = document.getElementById("modal-body");
+const modalPin = document.getElementById("modal-pin");
+
+document.getElementById("modal-close").onclick = closeModal;
+modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
+
+function closeModal() {
+  modal.classList.remove("active");
+  document.body.style.overflow = "";
+}
+
+function openModal(notice) {
+  modalTitle.textContent = notice.title;
+  modalMeta.textContent = formatDate(notice.created_at);
+  modalBody.textContent = notice.body;
+  modalPin.innerHTML = notice.pinned
+    ? '<span class="pin-badge"><iconify-icon icon="solar:pin-bold" inline></iconify-icon> 고정 공지</span>'
+    : "";
+  modal.classList.add("active");
+  document.body.style.overflow = "hidden";
+}
+
+function emptyState(msg, icon = "solar:inbox-bold-duotone") {
+  return `<div style="text-align:center; padding: 80px 20px; color: var(--text-faint);">
+    <iconify-icon icon="${icon}" style="font-size: 48px; opacity: 0.5;"></iconify-icon>
+    <div style="margin-top: 16px;">${msg}</div>
+  </div>`;
+}
+
+async function loadNotices() {
+  const { data, error } = await supabase
+    .from("notices")
+    .select("*")
+    .order("pinned", { ascending: false })
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    listEl.innerHTML = emptyState(`불러오기 실패: ${error.message}`, "solar:danger-triangle-bold-duotone");
+    return;
+  }
+  if (!data || data.length === 0) {
+    listEl.innerHTML = emptyState("아직 등록된 공지가 없습니다.");
+    return;
+  }
+
+  listEl.innerHTML = "";
+  data.forEach((n, i) => {
+    const card = document.createElement("article");
+    card.className = "bezel fade-up";
+    card.style.animationDelay = `${0.04 * i}s`;
+    card.style.cursor = "pointer";
+
+    const inner = document.createElement("div");
+    inner.className = "bezel-inner";
+    inner.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+        <div style="display:flex; gap:8px; align-items:center;">
+          ${n.pinned ? '<span class="pin-badge"><iconify-icon icon="solar:pin-bold" inline></iconify-icon> 고정</span>' : ''}
+          <span style="color: var(--text-faint); font-size: 0.78rem; letter-spacing: 0.05em;">${formatDate(n.created_at)}</span>
+        </div>
+        <iconify-icon icon="solar:arrow-right-linear" style="color: var(--text-faint); font-size: 18px;"></iconify-icon>
+      </div>
+      <h3 style="font-size: 1.05rem; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 8px;"></h3>
+      <p style="color: var(--text-dim); font-size: 0.9rem; line-height: 1.6;
+                display:-webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"></p>
+    `;
+    inner.querySelector("h3").textContent = n.title;
+    inner.querySelector("p").textContent = n.body;
+    card.appendChild(inner);
+    card.onclick = () => openModal(n);
+    listEl.appendChild(card);
+  });
+}
+
+loadNotices();
+</script>
+</body>
+</html>

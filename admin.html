@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>관리자 · LCIC</title>
+<script src="assets/background.js"></script>
+<link rel="stylesheet" href="assets/shared.css">
+<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+<style>
+  .login-card {
+    max-width: 420px;
+    margin: 60px auto 0;
+    padding: 40px 36px;
+    border-radius: 28px;
+    text-align: left;
+  }
+  .login-card h2 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-bottom: 6px;
+  }
+  .login-card p {
+    color: var(--text-dim);
+    font-size: 0.88rem;
+    margin-bottom: 28px;
+  }
+  .field { margin-bottom: 16px; }
+  .field label {
+    display: block;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+    letter-spacing: 0.04em;
+  }
+  .check-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--hairline);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .check-row:hover { background: rgba(255, 255, 255, 0.05); }
+  .check-row input { accent-color: var(--accent); width: 16px; height: 16px; }
+  .check-row label { font-size: 0.9rem; cursor: pointer; }
+
+  /* Tabs */
+  .tabs {
+    display: inline-flex;
+    padding: 5px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--hairline);
+    border-radius: 999px;
+    margin-bottom: 28px;
+  }
+  .tabs button {
+    padding: 8px 22px;
+    border-radius: 999px;
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .tabs button.active {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 20px rgba(233, 69, 96, 0.35);
+  }
+
+  .section-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin: 32px 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--hairline);
+  }
+
+  .form-card {
+    padding: 28px 28px;
+    border-radius: 24px;
+  }
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .item-card {
+    padding: 18px 22px;
+    border-radius: 18px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 14px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .item-card:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
+  .item-card .info { flex: 1; min-width: 0; }
+  .item-card .title {
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 4px;
+    word-break: break-word;
+  }
+  .item-card .meta {
+    font-size: 0.78rem;
+    color: var(--text-faint);
+  }
+  .item-card .actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .item-card .actions button {
+    padding: 6px 14px;
+    font-size: 0.78rem;
+  }
+
+  @media (max-width: 640px) {
+    .item-card { flex-direction: column; }
+    .item-card .actions { width: 100%; justify-content: flex-end; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav-pill">
+  <a href="index.html"><iconify-icon icon="solar:gallery-bold-duotone" inline></iconify-icon> 갤러리</a>
+  <a href="notice.html"><iconify-icon icon="solar:bell-bold" inline></iconify-icon> 공지사항</a>
+  <a href="faq.html"><iconify-icon icon="solar:question-circle-bold-duotone" inline></iconify-icon> 궁금한 사항</a>
+  <a href="admin.html" class="active"><iconify-icon icon="solar:shield-user-bold-duotone" inline></iconify-icon> 관리자</a>
+</nav>
+
+<header style="padding: 140px 20px 40px; text-align: center;">
+  <div class="fade-up">
+    <span class="eyebrow"><span class="dot"></span> ADMIN PANEL</span>
+  </div>
+  <h1 class="headline fade-up delay-1" style="margin-top: 24px;">관리자</h1>
+  <p class="subhead fade-up delay-2">공지사항과 FAQ를 관리합니다.</p>
+</header>
+
+<main class="container-narrow" style="padding-bottom: 120px;">
+
+  <!-- Login view -->
+  <div id="login-view" class="hidden fade-up delay-3">
+    <div class="login-card glass">
+      <h2>관리자 로그인</h2>
+      <p>등록된 계정으로 로그인하세요.</p>
+      <form id="login-form">
+        <div class="field">
+          <label for="email">이메일</label>
+          <input type="email" id="email" class="input" required autocomplete="username" placeholder="admin@example.com">
+        </div>
+        <div class="field">
+          <label for="password">비밀번호</label>
+          <input type="password" id="password" class="input" required autocomplete="current-password" placeholder="••••••••">
+        </div>
+        <div style="display:flex; justify-content: flex-end; margin-top: 24px;">
+          <button type="submit" class="btn-primary" id="login-btn">
+            <iconify-icon icon="solar:login-3-bold-duotone" inline></iconify-icon>
+            로그인
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin view -->
+  <div id="admin-view" class="hidden">
+    <div class="fade-up" style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 28px; padding: 14px 20px; background: rgba(255,255,255,0.03); border: 1px solid var(--hairline); border-radius: 18px;">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--accent-soft); display:inline-flex; align-items:center; justify-content:center;">
+          <iconify-icon icon="solar:user-circle-bold" style="color: var(--accent); font-size: 22px;"></iconify-icon>
+        </div>
+        <div>
+          <div style="font-size: 0.78rem; color: var(--text-faint); letter-spacing: 0.05em;">로그인됨</div>
+          <div id="user-email" style="font-size: 0.9rem; font-weight: 500;"></div>
+        </div>
+      </div>
+      <button class="btn-ghost" id="logout-btn">
+        <iconify-icon icon="solar:logout-3-linear" inline></iconify-icon>
+        로그아웃
+      </button>
+    </div>
+
+    <div class="fade-up delay-1" style="text-align: center;">
+      <div class="tabs">
+        <button data-tab="notices" class="active">
+          <iconify-icon icon="solar:bell-bold" inline></iconify-icon>
+          공지사항
+        </button>
+        <button data-tab="faqs">
+          <iconify-icon icon="solar:question-circle-bold-duotone" inline></iconify-icon>
+          FAQ
+        </button>
+      </div>
+    </div>
+
+    <!-- Notices tab -->
+    <div id="tab-notices" class="fade-up delay-2">
+      <div class="section-label" id="notice-form-title">새 공지 작성</div>
+      <div class="form-card glass">
+        <form id="notice-form">
+          <input type="hidden" id="notice-id">
+          <div class="field">
+            <label for="notice-title">제목</label>
+            <input type="text" id="notice-title" class="input" required maxlength="200" placeholder="예: 5월 휴일 운영 안내">
+          </div>
+          <div class="field">
+            <label for="notice-body">본문</label>
+            <textarea id="notice-body" class="input" required placeholder="자세한 내용을 적어주세요"></textarea>
+          </div>
+          <div class="field">
+            <label class="check-row" for="notice-pinned">
+              <input type="checkbox" id="notice-pinned">
+              <span>상단에 고정하기</span>
+            </label>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-ghost" id="notice-cancel" hidden>취소</button>
+            <button type="submit" class="btn-primary" id="notice-submit">
+              <iconify-icon icon="solar:add-circle-bold-duotone" inline></iconify-icon>
+              등록
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="section-label">기존 공지</div>
+      <div id="notice-list">
+        <div style="text-align:center; padding: 40px 20px; color: var(--text-faint);">
+          <iconify-icon icon="svg-spinners:ring-resize" inline style="font-size: 22px;"></iconify-icon>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQs tab -->
+    <div id="tab-faqs" class="hidden fade-up delay-2">
+      <div class="section-label" id="faq-form-title">새 FAQ 작성</div>
+      <div class="form-card glass">
+        <form id="faq-form">
+          <input type="hidden" id="faq-id">
+          <div class="field">
+            <label for="faq-category">카테고리 (선택)</label>
+            <input type="text" id="faq-category" class="input" placeholder="예: 입학, 기숙사, 수업" maxlength="50">
+          </div>
+          <div class="field">
+            <label for="faq-question">질문</label>
+            <input type="text" id="faq-question" class="input" required maxlength="300" placeholder="학생들이 자주 묻는 질문">
+          </div>
+          <div class="field">
+            <label for="faq-answer">답변</label>
+            <textarea id="faq-answer" class="input" required placeholder="명확하고 친절하게"></textarea>
+          </div>
+          <div class="field">
+            <label for="faq-sort">정렬 순서 (작을수록 위)</label>
+            <input type="number" id="faq-sort" class="input" value="0">
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-ghost" id="faq-cancel" hidden>취소</button>
+            <button type="submit" class="btn-primary" id="faq-submit">
+              <iconify-icon icon="solar:add-circle-bold-duotone" inline></iconify-icon>
+              등록
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="section-label">기존 FAQ</div>
+      <div id="faq-list">
+        <div style="text-align:center; padding: 40px 20px; color: var(--text-faint);">
+          <iconify-icon icon="svg-spinners:ring-resize" inline style="font-size: 22px;"></iconify-icon>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { supabase, formatDate } from "./assets/supabase.js";
+
+const loginView = document.getElementById("login-view");
+const adminView = document.getElementById("admin-view");
+const userEmail = document.getElementById("user-email");
+const toast = document.getElementById("toast");
+
+function showToast(msg, type = "") {
+  toast.textContent = msg;
+  toast.className = `toast show ${type}`;
+  setTimeout(() => toast.classList.remove("show"), 2400);
+}
+
+function emptyState(msg, icon = "solar:inbox-bold-duotone") {
+  return `<div style="text-align:center; padding: 60px 20px; color: var(--text-faint);">
+    <iconify-icon icon="${icon}" style="font-size: 40px; opacity: 0.5;"></iconify-icon>
+    <div style="margin-top: 12px; font-size: 0.9rem;">${msg}</div>
+  </div>`;
+}
+
+// Auth
+async function refreshAuthUI() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) {
+    loginView.classList.add("hidden");
+    adminView.classList.remove("hidden");
+    userEmail.textContent = session.user.email;
+    loadNotices();
+    loadFaqs();
+  } else {
+    adminView.classList.add("hidden");
+    loginView.classList.remove("hidden");
+  }
+}
+
+document.getElementById("login-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById("login-btn");
+  btn.disabled = true;
+  btn.innerHTML = '<iconify-icon icon="svg-spinners:ring-resize" inline></iconify-icon> 로그인 중…';
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  btn.disabled = false;
+  btn.innerHTML = '<iconify-icon icon="solar:login-3-bold-duotone" inline></iconify-icon> 로그인';
+  if (error) {
+    showToast(`로그인 실패: ${error.message}`, "error");
+    return;
+  }
+  document.getElementById("password").value = "";
+  refreshAuthUI();
+});
+
+document.getElementById("logout-btn").addEventListener("click", async () => {
+  await supabase.auth.signOut();
+  refreshAuthUI();
+});
+
+supabase.auth.onAuthStateChange(() => refreshAuthUI());
+
+// Tabs
+document.querySelectorAll(".tabs button").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tabs button").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    const tab = btn.dataset.tab;
+    document.getElementById("tab-notices").classList.toggle("hidden", tab !== "notices");
+    document.getElementById("tab-faqs").classList.toggle("hidden", tab !== "faqs");
+  });
+});
+
+// Notices
+const noticeForm = document.getElementById("notice-form");
+const noticeListEl = document.getElementById("notice-list");
+
+function resetNoticeForm() {
+  document.getElementById("notice-id").value = "";
+  document.getElementById("notice-title").value = "";
+  document.getElementById("notice-body").value = "";
+  document.getElementById("notice-pinned").checked = false;
+  document.getElementById("notice-form-title").textContent = "새 공지 작성";
+  document.getElementById("notice-submit").innerHTML =
+    '<iconify-icon icon="solar:add-circle-bold-duotone" inline></iconify-icon> 등록';
+  document.getElementById("notice-cancel").hidden = true;
+}
+
+document.getElementById("notice-cancel").addEventListener("click", resetNoticeForm);
+
+noticeForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const id = document.getElementById("notice-id").value;
+  const payload = {
+    title: document.getElementById("notice-title").value.trim(),
+    body: document.getElementById("notice-body").value.trim(),
+    pinned: document.getElementById("notice-pinned").checked,
+  };
+  let error;
+  if (id) {
+    payload.updated_at = new Date().toISOString();
+    ({ error } = await supabase.from("notices").update(payload).eq("id", id));
+  } else {
+    ({ error } = await supabase.from("notices").insert(payload));
+  }
+  if (error) return showToast(`저장 실패: ${error.message}`, "error");
+  showToast(id ? "수정 완료" : "등록 완료", "success");
+  resetNoticeForm();
+  loadNotices();
+});
+
+async function loadNotices() {
+  const { data, error } = await supabase
+    .from("notices")
+    .select("*")
+    .order("pinned", { ascending: false })
+    .order("created_at", { ascending: false });
+  if (error) {
+    noticeListEl.innerHTML = emptyState(error.message, "solar:danger-triangle-bold-duotone");
+    return;
+  }
+  if (!data || data.length === 0) {
+    noticeListEl.innerHTML = emptyState("아직 등록된 공지가 없습니다.");
+    return;
+  }
+  noticeListEl.innerHTML = "";
+  data.forEach((n) => {
+    const item = document.createElement("div");
+    item.className = "item-card glass";
+    const pinIcon = n.pinned
+      ? '<span class="pin-badge" style="margin-right: 6px;"><iconify-icon icon="solar:pin-bold" inline></iconify-icon> 고정</span>'
+      : "";
+    item.innerHTML = `
+      <div class="info">
+        <div class="title"></div>
+        <div class="meta">${pinIcon}${formatDate(n.created_at)}</div>
+      </div>
+      <div class="actions">
+        <button class="btn-ghost" data-action="edit">
+          <iconify-icon icon="solar:pen-2-linear" inline></iconify-icon> 수정
+        </button>
+        <button class="btn-danger" data-action="delete">
+          <iconify-icon icon="solar:trash-bin-trash-linear" inline></iconify-icon> 삭제
+        </button>
+      </div>
+    `;
+    item.querySelector(".title").textContent = n.title;
+    item.querySelector('[data-action="edit"]').onclick = () => editNotice(n);
+    item.querySelector('[data-action="delete"]').onclick = () => deleteNotice(n);
+    noticeListEl.appendChild(item);
+  });
+}
+
+function editNotice(n) {
+  document.getElementById("notice-id").value = n.id;
+  document.getElementById("notice-title").value = n.title;
+  document.getElementById("notice-body").value = n.body;
+  document.getElementById("notice-pinned").checked = !!n.pinned;
+  document.getElementById("notice-form-title").textContent = "공지 수정";
+  document.getElementById("notice-submit").innerHTML =
+    '<iconify-icon icon="solar:check-circle-bold-duotone" inline></iconify-icon> 수정';
+  document.getElementById("notice-cancel").hidden = false;
+  noticeForm.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+async function deleteNotice(n) {
+  if (!confirm(`"${n.title}" 공지를 삭제할까요?`)) return;
+  const { error } = await supabase.from("notices").delete().eq("id", n.id);
+  if (error) return showToast(`삭제 실패: ${error.message}`, "error");
+  showToast("삭제됨", "success");
+  loadNotices();
+}
+
+// FAQs
+const faqForm = document.getElementById("faq-form");
+const faqListEl = document.getElementById("faq-list");
+
+function resetFaqForm() {
+  document.getElementById("faq-id").value = "";
+  document.getElementById("faq-category").value = "";
+  document.getElementById("faq-question").value = "";
+  document.getElementById("faq-answer").value = "";
+  document.getElementById("faq-sort").value = "0";
+  document.getElementById("faq-form-title").textContent = "새 FAQ 작성";
+  document.getElementById("faq-submit").innerHTML =
+    '<iconify-icon icon="solar:add-circle-bold-duotone" inline></iconify-icon> 등록';
+  document.getElementById("faq-cancel").hidden = true;
+}
+
+document.getElementById("faq-cancel").addEventListener("click", resetFaqForm);
+
+faqForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const id = document.getElementById("faq-id").value;
+  const payload = {
+    category: document.getElementById("faq-category").value.trim() || null,
+    question: document.getElementById("faq-question").value.trim(),
+    answer: document.getElementById("faq-answer").value.trim(),
+    sort_order: parseInt(document.getElementById("faq-sort").value, 10) || 0,
+  };
+  let error;
+  if (id) {
+    payload.updated_at = new Date().toISOString();
+    ({ error } = await supabase.from("faqs").update(payload).eq("id", id));
+  } else {
+    ({ error } = await supabase.from("faqs").insert(payload));
+  }
+  if (error) return showToast(`저장 실패: ${error.message}`, "error");
+  showToast(id ? "수정 완료" : "등록 완료", "success");
+  resetFaqForm();
+  loadFaqs();
+});
+
+async function loadFaqs() {
+  const { data, error } = await supabase
+    .from("faqs")
+    .select("*")
+    .order("category", { ascending: true, nullsFirst: false })
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: true });
+  if (error) {
+    faqListEl.innerHTML = emptyState(error.message, "solar:danger-triangle-bold-duotone");
+    return;
+  }
+  if (!data || data.length === 0) {
+    faqListEl.innerHTML = emptyState("아직 등록된 FAQ가 없습니다.");
+    return;
+  }
+  faqListEl.innerHTML = "";
+  data.forEach((f) => {
+    const item = document.createElement("div");
+    item.className = "item-card glass";
+    item.innerHTML = `
+      <div class="info">
+        <div class="title"></div>
+        <div class="meta"></div>
+      </div>
+      <div class="actions">
+        <button class="btn-ghost" data-action="edit">
+          <iconify-icon icon="solar:pen-2-linear" inline></iconify-icon> 수정
+        </button>
+        <button class="btn-danger" data-action="delete">
+          <iconify-icon icon="solar:trash-bin-trash-linear" inline></iconify-icon> 삭제
+        </button>
+      </div>
+    `;
+    item.querySelector(".title").textContent = f.question;
+    item.querySelector(".meta").textContent =
+      `${f.category || "(카테고리 없음)"} · 순서 ${f.sort_order}`;
+    item.querySelector('[data-action="edit"]').onclick = () => editFaq(f);
+    item.querySelector('[data-action="delete"]').onclick = () => deleteFaq(f);
+    faqListEl.appendChild(item);
+  });
+}
+
+function editFaq(f) {
+  document.getElementById("faq-id").value = f.id;
+  document.getElementById("faq-category").value = f.category || "";
+  document.getElementById("faq-question").value = f.question;
+  document.getElementById("faq-answer").value = f.answer;
+  document.getElementById("faq-sort").value = f.sort_order;
+  document.getElementById("faq-form-title").textContent = "FAQ 수정";
+  document.getElementById("faq-submit").innerHTML =
+    '<iconify-icon icon="solar:check-circle-bold-duotone" inline></iconify-icon> 수정';
+  document.getElementById("faq-cancel").hidden = false;
+  faqForm.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+async function deleteFaq(f) {
+  if (!confirm(`"${f.question}" FAQ를 삭제할까요?`)) return;
+  const { error } = await supabase.from("faqs").delete().eq("id", f.id);
+  if (error) return showToast(`삭제 실패: ${error.message}`, "error");
+  showToast("삭제됨", "success");
+  loadFaqs();
+}
+
+refreshAuthUI();
+</script>
+</body>
+</html>
