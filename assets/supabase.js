@@ -2,8 +2,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 export const SUPABASE_URL = "https://rzsmcysgijeshiiuyqjn.supabase.co";
 
-// Supabase 대시보드 → Settings → API Keys → Publishable key 전체 값으로 교체하세요.
-export const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_REPLACE_WITH_FULL_KEY";
+export const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_K3R4FuCygdQj6t-WJEdk1A_TFKjF_eu";
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
