@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>생활백서 · LCIC</title>
+<script src="assets/background.js"></script>
+<link rel="stylesheet" href="assets/shared.css">
+<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+<style>
+  .guide-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .guide-page {
+    position: relative;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid var(--hairline);
+    background: #fff;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    cursor: zoom-in;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .guide-page:hover {
+    border-color: rgba(233, 69, 96, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+  }
+  .guide-page img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .guide-page .page-tag {
+    position: absolute;
+    top: 12px; left: 12px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: rgba(5, 5, 5, 0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #fff;
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    pointer-events: none;
+  }
+
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    width: 0%;
+    background: var(--accent);
+    box-shadow: 0 0 12px rgba(233, 69, 96, 0.5);
+    z-index: 250;
+    transition: width 0.1s linear;
+  }
+
+  .scroll-cue {
+    position: fixed;
+    bottom: 24px; right: 24px;
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: rgba(20, 20, 20, 0.9);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--hairline);
+    color: var(--text);
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    z-index: 200;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  }
+  .scroll-cue.show { display: inline-flex; }
+  .scroll-cue:hover { background: var(--accent); transform: translateY(-2px); }
+
+  /* Lightbox */
+  .img-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 1500;
+    background: rgba(5, 5, 5, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    cursor: zoom-out;
+  }
+  .img-lightbox.active { display: flex; }
+  .img-lightbox img {
+    max-width: 95vw;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 10px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8);
+  }
+  .img-lightbox .lb-close {
+    position: absolute;
+    top: 24px; right: 24px;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--hairline);
+    color: var(--text);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .img-lightbox .lb-close:hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: scale(1.05);
+  }
+  .img-lightbox .lb-counter {
+    position: absolute;
+    top: 28px; left: 28px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--hairline);
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+  }
+  .img-lightbox .lb-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--hairline);
+    color: var(--text);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .img-lightbox .lb-nav:hover {
+    background: rgba(255, 255, 255, 0.12);
+  }
+  .img-lightbox .lb-prev { left: 24px; }
+  .img-lightbox .lb-next { right: 24px; }
+
+  @media (max-width: 640px) {
+    .guide-page { border-radius: 14px; }
+    .img-lightbox .lb-nav { width: 40px; height: 40px; font-size: 18px; }
+    .img-lightbox .lb-prev { left: 12px; }
+    .img-lightbox .lb-next { right: 12px; }
+    .img-lightbox .lb-close { top: 16px; right: 16px; }
+    .img-lightbox .lb-counter { top: 20px; left: 16px; font-size: 0.75rem; padding: 6px 12px; }
+    .scroll-cue { bottom: 16px; right: 16px; width: 40px; height: 40px; font-size: 18px; }
+  }
+</style>
+</head>
+<body data-page="life-guide">
+
+<div class="progress-bar" id="progress"></div>
+
+<nav class="nav-pill">
+  <a href="index.html"><iconify-icon icon="solar:home-2-bold-duotone" inline></iconify-icon> 홈</a>
+  <a href="gallery.html"><iconify-icon icon="solar:gallery-bold-duotone" inline></iconify-icon> 갤러리</a>
+  <a href="procedure.html"><iconify-icon icon="solar:list-check-bold-duotone" inline></iconify-icon> 입학 절차</a>
+  <a href="life-guide.html" class="active"><iconify-icon icon="solar:book-bookmark-bold-duotone" inline></iconify-icon> 생활백서</a>
+  <a href="notice.html"><iconify-icon icon="solar:bell-bold" inline></iconify-icon> 공지사항</a>
+  <a href="faq.html"><iconify-icon icon="solar:question-circle-bold-duotone" inline></iconify-icon> 궁금한 사항</a>
+</nav>
+
+<header style="padding: 140px 20px 60px; text-align: center;">
+  <div class="fade-up">
+    <span class="eyebrow"><span class="dot"></span> CAMPUS LIFE GUIDE</span>
+  </div>
+  <h1 class="headline fade-up delay-1" style="margin-top: 24px;">생활백서</h1>
+  <p class="subhead fade-up delay-2">
+    필리핀 세부 생활 완전 정복하기 —<br>
+    Team Korea가 만든 LCIC 학생 생활 가이드입니다.
+  </p>
+</header>
+
+<main class="container-narrow" style="padding-bottom: 140px;">
+  <div id="guide-list" class="guide-list fade-up delay-3"></div>
+</main>
+
+<button class="scroll-cue" id="scroll-top" aria-label="맨 위로">
+  <iconify-icon icon="solar:alt-arrow-up-linear"></iconify-icon>
+</button>
+
+<!-- Lightbox -->
+<div class="img-lightbox" id="img-lightbox" role="dialog" aria-label="페이지 확대 보기">
+  <span class="lb-counter" id="lb-counter"></span>
+  <button class="lb-close" id="lb-close" aria-label="닫기">
+    <iconify-icon icon="solar:close-circle-linear"></iconify-icon>
+  </button>
+  <button class="lb-nav lb-prev" id="lb-prev" aria-label="이전 페이지">
+    <iconify-icon icon="solar:alt-arrow-left-linear"></iconify-icon>
+  </button>
+  <button class="lb-nav lb-next" id="lb-next" aria-label="다음 페이지">
+    <iconify-icon icon="solar:alt-arrow-right-linear"></iconify-icon>
+  </button>
+  <img id="lb-image" src="" alt="">
+</div>
+
+<script>
+const TOTAL = 54;
+const BASE = "assets/life-guide/page-";
+
+// Build the list
+const listEl = document.getElementById("guide-list");
+for (let i = 1; i <= TOTAL; i++) {
+  const num = String(i).padStart(2, "0");
+  const fig = document.createElement("figure");
+  fig.className = "guide-page";
+  fig.dataset.idx = String(i);
+  fig.innerHTML = `
+    <span class="page-tag">${i} / ${TOTAL}</span>
+    <img loading="lazy" decoding="async" src="${BASE}${num}.jpg" alt="LCIC 생활백서 ${i}쪽">
+  `;
+  fig.addEventListener("click", () => openLightbox(i));
+  listEl.appendChild(fig);
+}
+
+// Lightbox
+const lightbox = document.getElementById("img-lightbox");
+const lbImg = document.getElementById("lb-image");
+const lbCounter = document.getElementById("lb-counter");
+let currentIdx = 1;
+
+function pageUrl(i) { return `${BASE}${String(i).padStart(2, "0")}.jpg`; }
+
+function updateLightbox() {
+  lbImg.src = pageUrl(currentIdx);
+  lbImg.alt = `LCIC 생활백서 ${currentIdx}쪽`;
+  lbCounter.textContent = `${currentIdx} / ${TOTAL}`;
+}
+
+function openLightbox(i) {
+  currentIdx = i;
+  updateLightbox();
+  lightbox.classList.add("active");
+  document.body.style.overflow = "hidden";
+}
+function closeLightbox() {
+  lightbox.classList.remove("active");
+  document.body.style.overflow = "";
+}
+function prev() { currentIdx = currentIdx > 1 ? currentIdx - 1 : TOTAL; updateLightbox(); }
+function next() { currentIdx = currentIdx < TOTAL ? currentIdx + 1 : 1; updateLightbox(); }
+
+document.getElementById("lb-close").addEventListener("click", closeLightbox);
+document.getElementById("lb-prev").addEventListener("click", (e) => { e.stopPropagation(); prev(); });
+document.getElementById("lb-next").addEventListener("click", (e) => { e.stopPropagation(); next(); });
+lightbox.addEventListener("click", (e) => { if (e.target === lightbox) closeLightbox(); });
+document.addEventListener("keydown", (e) => {
+  if (!lightbox.classList.contains("active")) return;
+  if (e.key === "Escape") closeLightbox();
+  else if (e.key === "ArrowLeft") prev();
+  else if (e.key === "ArrowRight") next();
+});
+
+// Scroll progress + back-to-top button
+const progress = document.getElementById("progress");
+const scrollTop = document.getElementById("scroll-top");
+window.addEventListener("scroll", () => {
+  const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
+  progress.style.width = pct + "%";
+  scrollTop.classList.toggle("show", window.scrollY > 600);
+}, { passive: true });
+scrollTop.addEventListener("click", () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+</script>
+
+</body>
+</html>
