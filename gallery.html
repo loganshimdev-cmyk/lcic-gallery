@@ -4,9 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LCIC · 캠퍼스 갤러리</title>
-<script src="assets/background.js"></script>
-<link rel="stylesheet" href="assets/shared.css">
-<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+<link rel="icon" type="image/png" href="assets/brand/lcic-logo.png">
+<script src="assets/background.js?v=7"></script>
+<link rel="stylesheet" href="assets/shared.css?v=7">
+<script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
 <style>
   /* Tabs */
   .cat-tabs {
@@ -149,22 +150,26 @@
   }
   .lightbox .lb-btn {
     position: absolute;
-    width: 48px; height: 48px;
+    width: 52px; height: 52px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid var(--hairline);
-    color: var(--text);
+    background: rgba(255, 255, 255, 0.14);
+    border: 1.5px solid rgba(255, 255, 255, 0.28);
+    color: #fff;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    font-size: 22px;
+    font-size: 24px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
   }
   .lightbox .lb-btn:hover {
-    background: rgba(255, 255, 255, 0.12);
-    border-color: var(--hairline-strong);
-    transform: scale(1.05);
+    background: #fff;
+    border-color: #fff;
+    color: var(--accent);
+    transform: scale(1.08);
   }
   .lightbox .lb-close { top: 28px; right: 28px; }
   .lightbox .lb-prev { left: 28px; top: 50%; transform: translateY(-50%); }
@@ -174,13 +179,19 @@
   .lightbox .lb-counter {
     position: absolute;
     top: 36px; left: 36px;
-    color: var(--text-faint);
-    font-size: 0.85rem;
+    color: #fff;
+    font-size: 0.88rem;
+    font-weight: 600;
     letter-spacing: 0.05em;
     padding: 8px 16px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid var(--hairline);
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.22);
     border-radius: 999px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .lightbox .info {
+    color: rgba(255, 255, 255, 0.85) !important;
   }
 
   @media (max-width: 768px) {
@@ -200,13 +211,23 @@
 </head>
 <body>
 
+<a class="brand-mark" href="index.html" aria-label="LCIC 홈으로">
+  <img src="assets/brand/lcic-logo.png" alt="LCIC 로고">
+  <span class="brand-name">
+    <span>Lapulapu Cebu</span>
+    <span>International</span>
+    <span>College</span>
+  </span>
+</a>
+
 <nav class="nav-pill">
   <a href="index.html"><iconify-icon icon="solar:home-2-bold-duotone" inline></iconify-icon> 홈</a>
-  <a href="gallery.html" class="active"><iconify-icon icon="solar:gallery-bold-duotone" inline></iconify-icon> 갤러리</a>
   <a href="procedure.html"><iconify-icon icon="solar:list-check-bold-duotone" inline></iconify-icon> 입학 절차</a>
+  <a href="curriculum.html"><iconify-icon icon="solar:notebook-bold-duotone" inline></iconify-icon> 커리큘럼</a>
   <a href="life-guide.html"><iconify-icon icon="solar:book-bookmark-bold-duotone" inline></iconify-icon> 생활백서</a>
   <a href="notice.html"><iconify-icon icon="solar:bell-bold" inline></iconify-icon> 공지사항</a>
   <a href="faq.html"><iconify-icon icon="solar:question-circle-bold-duotone" inline></iconify-icon> 궁금한 사항</a>
+    <a href="gallery.html" class="active"><iconify-icon icon="solar:gallery-bold-duotone" inline></iconify-icon> 갤러리</a>
 </nav>
 
 <header style="padding: 140px 20px 0; text-align: center;">
@@ -485,7 +506,17 @@ const photos = [
 ];
 
 const STORAGE = "https://rzsmcysgijeshiiuyqjn.supabase.co/storage/v1/object/public/lcic-gallery";
-const categories = ["All", ...new Set(photos.map(p => p.cat))];
+const CAT_ORDER = ["Campus", "Cafeteria", "Classroom", "Clinic", "Dormitory", "Facilities", "Library", "School Life"];
+const presentCats = new Set(photos.map(p => p.cat));
+const categories = ["All", ...CAT_ORDER.filter(c => presentCats.has(c)),
+                          ...[...presentCats].filter(c => !CAT_ORDER.includes(c))];
+
+// Sort photos so Campus appears first in the "전체" view (preserves within-category order)
+photos.sort((a, b) => {
+  const ia = CAT_ORDER.indexOf(a.cat);
+  const ib = CAT_ORDER.indexOf(b.cat);
+  return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
+});
 const tabsEl = document.getElementById("tabs");
 const galleryEl = document.getElementById("gallery");
 

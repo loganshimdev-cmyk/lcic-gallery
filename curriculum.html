@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>커리큘럼 · LCIC</title>
+<link rel="icon" type="image/png" href="assets/brand/lcic-logo.png">
+<script src="assets/background.js?v=7"></script>
+<link rel="stylesheet" href="assets/shared.css?v=7">
+<script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+<style>
+  .one-efl {
+    margin: 0 auto;
+    padding: 28px 32px;
+    border-radius: 26px;
+    background: linear-gradient(135deg, var(--accent-tint), rgba(30, 58, 138, 0.05));
+    border: 1px solid var(--accent-soft);
+    box-shadow: var(--shadow-md);
+    display: grid;
+    gap: 18px;
+  }
+  .one-efl .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--bg-elev);
+    border: 1px solid var(--accent-soft);
+    color: var(--accent);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 700;
+    width: max-content;
+  }
+  .one-efl h2 {
+    font-size: clamp(1.5rem, 3vw, 1.9rem);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    color: var(--accent-deep);
+    line-height: 1.3;
+  }
+  .one-efl p {
+    color: var(--text-dim);
+    font-size: 0.96rem;
+    line-height: 1.75;
+  }
+  .one-efl .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .one-efl .meta-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: var(--bg-elev);
+    border: 1px solid var(--hairline);
+    color: var(--text);
+    font-size: 0.82rem;
+    font-weight: 600;
+    box-shadow: var(--shadow-sm);
+  }
+  .one-efl .meta-chip iconify-icon {
+    color: var(--accent);
+    font-size: 16px;
+  }
+  .one-efl .textbook-note {
+    margin-top: 4px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px dashed var(--accent-soft);
+    color: var(--accent-deep);
+    font-size: 0.84rem;
+    font-weight: 600;
+    width: max-content;
+  }
+
+  .course-grid {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .course-card {
+    position: relative;
+    padding: 24px 24px 22px;
+    border-radius: 20px;
+    background: var(--bg-elev);
+    border: 1px solid var(--hairline);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+  }
+  .course-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-deep));
+    opacity: 0;
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .course-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent-soft);
+    box-shadow: var(--shadow-lg);
+  }
+  .course-card:hover::before { opacity: 1; }
+
+  .course-card .head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .course-card .ic {
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: var(--accent-tint);
+    color: var(--accent);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+  .course-card .head .titles { flex: 1; min-width: 0; }
+  .course-card h3 {
+    font-size: 1.02rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    line-height: 1.35;
+  }
+  .course-card .subtitle {
+    font-size: 0.72rem;
+    color: var(--text-faint);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .course-card p {
+    color: var(--text-dim);
+    font-size: 0.88rem;
+    line-height: 1.7;
+  }
+  .course-card .tag-row {
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .course-card .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--text-dim);
+    font-size: 0.74rem;
+    font-weight: 600;
+    border: 1px solid var(--hairline);
+  }
+  .course-card .tag.required {
+    color: #fff;
+    background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+    border-color: var(--accent-deep);
+  }
+
+  /* Color variants by category */
+  .course-card.cat-foundation .ic { background: rgba(59, 130, 246, 0.10); color: var(--accent); }
+  .course-card.cat-test .ic       { background: rgba(16, 185, 129, 0.12); color: #047857; }
+  .course-card.cat-career .ic     { background: rgba(245, 158, 11, 0.13); color: #b45309; }
+  .course-card.cat-culture .ic    { background: rgba(168, 85, 247, 0.12); color: #7e22ce; }
+  .course-card.cat-foreign .ic    { background: rgba(236, 72, 153, 0.12); color: #be185d; }
+
+  .section-title {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin: 56px 0 8px;
+    flex-wrap: wrap;
+  }
+  .section-title h2 {
+    font-size: clamp(1.3rem, 2.5vw, 1.55rem);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    color: var(--text);
+  }
+  .section-title .label {
+    font-size: 0.72rem;
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .section-title .count {
+    font-size: 0.72rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--text-dim);
+    font-weight: 600;
+    border: 1px solid var(--hairline);
+  }
+  .section-desc {
+    color: var(--text-dim);
+    font-size: 0.92rem;
+    line-height: 1.7;
+    margin-bottom: 18px;
+  }
+
+  @media (max-width: 640px) {
+    .one-efl { padding: 22px 22px; border-radius: 22px; }
+    .course-grid { grid-template-columns: 1fr; gap: 14px; }
+    .course-card { padding: 22px 22px 20px; border-radius: 18px; }
+  }
+</style>
+</head>
+<body data-page="curriculum">
+
+<a class="brand-mark" href="index.html" aria-label="LCIC 홈으로">
+  <img src="assets/brand/lcic-logo.png" alt="LCIC 로고">
+  <span class="brand-name">
+    <span>Lapulapu Cebu</span>
+    <span>International</span>
+    <span>College</span>
+  </span>
+</a>
+
+<nav class="nav-pill">
+  <a href="index.html"><iconify-icon icon="solar:home-2-bold-duotone" inline></iconify-icon> 홈</a>
+  <a href="procedure.html"><iconify-icon icon="solar:list-check-bold-duotone" inline></iconify-icon> 입학 절차</a>
+  <a href="curriculum.html" class="active"><iconify-icon icon="solar:notebook-bold-duotone" inline></iconify-icon> 커리큘럼</a>
+  <a href="life-guide.html"><iconify-icon icon="solar:book-bookmark-bold-duotone" inline></iconify-icon> 생활백서</a>
+  <a href="notice.html"><iconify-icon icon="solar:bell-bold" inline></iconify-icon> 공지사항</a>
+  <a href="faq.html"><iconify-icon icon="solar:question-circle-bold-duotone" inline></iconify-icon> 궁금한 사항</a>
+  <a href="gallery.html"><iconify-icon icon="solar:gallery-bold-duotone" inline></iconify-icon> 갤러리</a>
+</nav>
+
+<header style="padding: 160px 20px 60px; text-align: center;">
+  <div class="fade-up">
+    <span class="eyebrow"><span class="dot"></span> CURRICULUM</span>
+  </div>
+  <h1 class="headline fade-up delay-1" style="margin-top: 28px;">ONE-EFL 커리큘럼</h1>
+  <p class="subhead fade-up delay-2" style="margin-top: 20px;">
+    LCIC가 자체 개발한 통합 영어 교육 시스템 ONE-EFL.<br>
+    회화·문법·시험·실무·문화·제2외국어까지 한 학기에 함께 수강할 수 있습니다.
+  </p>
+</header>
+
+<main class="container-narrow" style="padding-bottom: 100px;">
+
+  <section class="fade-up delay-3">
+    <div class="one-efl">
+      <span class="badge"><iconify-icon icon="solar:cup-star-bold-duotone"></iconify-icon> LCIC SIGNATURE PROGRAM</span>
+      <h2>다양한 관점에서 영어를 접하고 배울 수 있도록</h2>
+      <p>
+        ONE-EFL은 학생들이 회화·문법·발음·시험·실무·문화·제2외국어 등 영어의 모든 영역을 하나로 통합해
+        배울 수 있도록 설계된 LCIC만의 통합 교육 프로그램입니다. EF SET 레벨 테스트 결과에 따라 본인에게
+        맞는 강의가 자동 배정됩니다.
+      </p>
+      <div class="meta">
+        <span class="meta-chip"><iconify-icon icon="solar:calendar-bold-duotone"></iconify-icon> 1회차 4주</span>
+        <span class="meta-chip"><iconify-icon icon="solar:users-group-rounded-bold-duotone"></iconify-icon> 외국인 강사 1:1 / 그룹</span>
+        <span class="meta-chip"><iconify-icon icon="solar:diploma-bold-duotone"></iconify-icon> CEFR A1 ~ C2 대응</span>
+      </div>
+      <div class="textbook-note">
+        <iconify-icon icon="solar:book-bookmark-bold-duotone" inline></iconify-icon> 교재비 별도
+      </div>
+    </div>
+  </section>
+
+
+  <!-- 필수 (택 1) -->
+  <div class="section-title fade-up">
+    <h2>필수 수강 과목</h2>
+    <span class="label">REQUIRED · 택 1</span>
+    <span class="count">3개</span>
+  </div>
+  <p class="section-desc fade-up">
+    아래 3개 과목 중 본인의 레벨과 목표에 맞춰 <b>1개를 선택하여 필수 수강</b>합니다.
+  </p>
+
+  <div class="course-grid">
+
+    <div class="course-card fade-up delay-1">
+      <div class="head">
+        <div class="ic"><iconify-icon icon="solar:chat-round-dots-bold-duotone"></iconify-icon></div>
+        <div class="titles">
+          <h3>English Communication Skills</h3>
+          <div class="subtitle">CORE · COMMUNICATION</div>
+        </div>
+      </div>
+      <p>영어를 통한 의사소통의 기본기를 전반적으로 다루며, 학생들의 영어에 대한 자신감 향상이 목표인 과목입니다.</p>
+      <div class="tag-row">
+        <span class="tag required">필수 택 1</span>
+        <span class="tag">Speaking</span>
+        <span class="tag">Confidence</span>
+      </div>
+    </div>
+
+    <div class="course-card fade-up delay-2">
+      <div class="head">
+        <div class="ic"><iconify-icon icon="solar:headphones-round-sound-bold-duotone"></iconify-icon></div>
+        <div class="titles">
+          <h3>Listening &amp; Speaking</h3>
+          <div class="subtitle">CORE · LISTENING</div>
+        </div>
+      </div>
+      <p>다양한 영어 듣기 활동을 통해 어휘·문법·비판적 사고를 구축하고, 본인의 의견을 말할 수 있는 능력을 발전시키는 데 중점을 둡니다.</p>
+      <div class="tag-row">
+        <span class="tag required">필수 택 1</span>
+        <span class="tag">Listening</span>
+        <span class="tag">Critical Thinking</span>
+      </div>
+    </div>
+
+    <div class="course-card fade-up delay-3">
+      <div class="head">
+        <div class="ic"><iconify-icon icon="solar:presentation-graph-bold-duotone"></iconify-icon></div>
+        <div class="titles">
+          <h3>Presentation Skills</h3>
+          <div class="subtitle">CORE · EFFECTIVE SPEAKING</div>
+        </div>
+      </div>
+      <p>면접·토론·프레젠테이션 등 다양하고 전문적인 환경에서 효과적으로 대응할 수 있는 의사소통 기술을 배울 수 있는 과목입니다.</p>
+      <div class="tag-row">
+        <span class="tag required">필수 택 1</span>
+        <span class="tag">Presentation</span>
+        <span class="tag">Interview</span>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- 기초 -->
+  <div class="section-title fade-up">
+    <h2>기초기 강화</h2>
+    <span class="label">FOUNDATION</span>
+    <span class="count">2개</span>
+  </div>
+  <p class="section-desc fade-up">
+    문법·발음 등 영어의 기본 토대를 다지는 과목들입니다.
+  </p>
+
+  <div class="course-grid">
+
+    <div class="course-card cat-foundation fade-up delay-1">
+      <div class="head">
+        <div class="ic"><iconify-icon icon="solar:microphone-bold-duotone"></iconify-icon></div>
+        <div class="titles">
+          <h3>Pronunciation Skills</h3>
+          <div class="subtitle">FOUNDATION · PHONETICS</div>
+        </div>
+      </div>
+      <p>개별 발음·단어 강세·연음·억양을 포함한 모든 발음 영역을 연습하여, 영어로 이해되는 자신감을 강화합니다.</p>
+      <div class="tag-row">
+        <span class="tag">Pronunciation</span>
+        <span class="tag">Intonation</span>
+      </div>
+    </div>
+
+    <div class="course-card cat-foundation fade-up delay-2">
+      <div class="head">
+        <div class="ic"><iconify-icon icon="solar:square-academic-cap-bold-duotone"></iconify-icon></div>
+        <div class="titles">
+          <h3>Grammar Builder</h3>
+          <div class="subtitle">FOUNDATION · GRAMMAR</div>
+        </div>
+      </div>
+      <p>다양한 실제적이고 의사소통적인 맥락을 통해 듣기·말하기·읽기·쓰기를 활용하여 영어 문법 지식을 개발하고 강화합니다.</p>
+      <div class="tag-row">
+        <span class="tag">Grammar</span>
+        <span class="tag">4 Skills</span>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- 시험 -->
+  <div class="section-title fade-up">
+    <h2>시험 영어</h2>
+    <span class="label">TEST PREP</span>
+    <span class="count">4개</span>
+  </div>
+  <p class="section-desc fade-up">
+    TOEIC·IELTS 등 공인 영어 시험 대비 과목들입니다.
+  </p>
+
+  <div class="course-grid">
+
+    <div class="course-card cat-test fade-up delay-1">
+      <div class="head">
+        <div class="ic"><iconify-icon icon="solar:book-bookmark-bold-duotone"></iconify-icon></div>
+        <div class="titles">
+          <h3>Exam Foundations</h3>
+          <div class="subtitle">TEST · BEGINNER</div>
+        </div>
+      </div>
+      <p>영어 공부 초심자가 TOEIC·IELTS 등의 시험을 준비할 수 있도록 기본적인 문제풀이 기술과 전략을 학습합니다.</p>
+      <div class="tag-row">
+        <span class="tag">Beginner</span>
+        <span class="tag">Strategy</span>
+      </div>
+    </div>
+
+    <div class="course-card cat-test fade-up delay-1">
+      <div class="head">
+        <div class="ic"><iconify-icon icon="solar:medal-ribbon-bold-duotone"></iconify-icon></div>
+        <div class="titles">
+          <h3>IELTS</h3>
+          <div class="subtitle">TEST · IELTS</div>
+        </div>
+      </div>
+      <p>IELTS 시험의 듣기·읽기·쓰기·말하기 4가지 영역을 이해하고, 예제들을 통해 시험에 관련된 기술·팁·기법을 학습합니다.</p>
+      <div class="tag-row">
+        <span class="tag">IELTS</span>
+        <span class="tag">4 Sections</span>
+      </div>
+    </div>
+
+    <div class="course-card cat-test fade-up delay-2">
+      <div class="head">
+        <div class="ic"><iconify-icon icon="solar:document-text-bold-duotone"></iconify-icon></div>
+        <div class="titles">
+          <h3>TOEIC Reading &amp; Listening</h3>
+          <div class="subtitle">TEST · TOEIC R&amp;L</div>
+        </div>
+      </div>
+      <p>TOEIC 어학능력시험의 고득점 및 자격증 취득을 목표로 <b>읽기와 듣기</b> 영역에 집중한 과목입니다.</p>
+      <div class="tag-row">
+        <span class="tag">TOEIC R&amp;L</span>
+        <span class="tag">High Score</span>
+      </div>
+    </div>
+
+    <div class="course-card cat-test fade-up delay-2">
+      <div class="head">
+        <div class="ic"><iconify-icon icon="solar:pen-new-square-bold-duotone"></iconify-icon></div>
+        <div class="titles">
+          <h3>TOEIC Speaking &amp; Writing</h3>
+          <div class="subtitle">TEST · TOEIC S&amp;W</div>
+        </div>
+      </div>
+      <p>TOEIC 어학능력시험의 고득점 및 자격증 취득을 목표로 <b>말하기와 쓰기</b> 영역에 집중한 과목입니다.</p>
+      <div class="tag-row">
+        <span class="tag">TOEIC S&amp;W</span>
+        <span class="tag">High Score</span>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- 실무 -->
+  <div class="section-title fade-up">
+    <h2>실무 · 직무 영어</h2>
+    <span class="label">CAREER &amp; HOSPITALITY</span>
+    <span class="count">2개</span>
+  </div>
+  <p class="section-desc fade-up">
+    실제 업무 환경과 취업 시장에서 활용 가능한 실무형 영어 과목들입니다.
+  </p>
+
+  <div class="course-grid">
+
+    <div class="course-card cat-career fade-up delay-1">
+      <div class="head">
+        <div class="ic"><iconify-icon icon="solar:cup-hot-bold-duotone"></iconify-icon></div>
+        <div class="titles">
+          <h3>Hospitality English</h3>
+          <div class="subtitle">CAREER · HOSPITALITY</div>
+        </div>
+      </div>
+      <p>실제 업무 상황과 비슷한 시뮬레이션을 통해 최고 수준의 서비스 역량을 키우는 교육 프로그램입니다.</p>
+      <div class="tag-row">
+        <span class="tag">Service</span>
+        <span class="tag">Simulation</span>
+      </div>
+    </div>
+
+    <div class="course-card cat-career fade-up delay-2">
+      <div class="head">
+        <div class="ic"><iconify-icon icon="solar:case-round-bold-duotone"></iconify-icon></div>
+        <div class="titles">
+          <h3>English for Careers</h3>
+          <div class="subtitle">CAREER · JOB SEARCH</div>
+        </div>
+      </div>
+      <p>취업 목표 달성을 위해 영어 능력을 향상시키는 동시에 입사 지원·면접·이력서 작성 등 취업 관련 내용을 학습합니다.</p>
+      <div class="tag-row">
+        <span class="tag">Resume</span>
+        <span class="tag">Interview</span>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- 문화 · 글로벌 -->
+  <div class="section-title fade-up">
+    <h2>문화 · 글로벌</h2>
+    <span class="label">CULTURE &amp; DISCUSSION</span>
+    <span class="count">3개</span>
+  </div>
+  <p class="section-desc fade-up">
+    필리핀 문화와 글로벌 이슈를 영어로 탐구하는 프로젝트형 과목들입니다.
+  </p>
+
+  <div class="course-grid">
+
+    <div class="course-card cat-culture fade-up delay-1">
+      <div class="head">
+        <div class="ic"><iconify-icon icon="solar:plain-bold-duotone"></iconify-icon></div>
+        <div class="titles">
+          <h3>Filipino Travel</h3>
+          <div class="subtitle">CULTURE · TRAVEL</div>
+        </div>
+      </div>
+      <p>다양한 영어 과제·게임·토론 등의 프로젝트 활동을 통해 독특한 필리핀 여행, 다양한 사람들, 풍부하고 다이내믹한 문화에 대해 이야기합니다.</p>
+      <div class="tag-row">
+        <span class="tag">Travel</span>
+        <span class="tag">Project</span>
+      </div>
+    </div>
+
+    <div class="course-card cat-culture fade-up delay-2">
+      <div class="head">
+        <div class="ic"><iconify-icon icon="solar:chef-hat-bold-duotone"></iconify-icon></div>
+        <div class="titles">
+          <h3>Filipino Food Culture</h3>
+          <div class="subtitle">CULTURE · FOOD</div>
+        </div>
+      </div>
+      <p>영어 과제·게임·토론 등의 프로젝트 활동을 통해 필리핀의 다양한 음식과 문화를 배우고, 개인의 생각과 아이디어를 표현합니다.</p>
+      <div class="tag-row">
+        <span class="tag">Food</span>
+        <span class="tag">Discussion</span>
+      </div>
+    </div>
+
+    <div class="course-card cat-culture fade-up delay-3">
+      <div class="head">
+        <div class="ic"><iconify-icon icon="solar:global-bold-duotone"></iconify-icon></div>
+        <div class="titles">
+          <h3>SDGs · Sustainable Development</h3>
+          <div class="subtitle">GLOBAL · DISCUSSION</div>
+        </div>
+      </div>
+      <p>토론 및 협력활동을 통해 글로벌 이슈에 대한 SDGs(지속가능한 목표개발) 목표·주제에 부합하는 해결법을 도출합니다.</p>
+      <div class="tag-row">
+        <span class="tag">SDGs</span>
+        <span class="tag">Global Issues</span>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- 제2외국어 -->
+  <div class="section-title fade-up">
+    <h2>제2외국어</h2>
+    <span class="label">FOREIGN LANGUAGES</span>
+    <span class="count">1개</span>
+  </div>
+  <p class="section-desc fade-up">
+    영어를 매개로 학습하는 제2외국어 선택 과목입니다.
+  </p>
+
+  <div class="course-grid">
+
+    <div class="course-card cat-foreign fade-up delay-1">
+      <div class="head">
+        <div class="ic"><iconify-icon icon="solar:planet-2-bold-duotone"></iconify-icon></div>
+        <div class="titles">
+          <h3>Foreign Languages</h3>
+          <div class="subtitle">MANDARIN · JAPANESE · FILIPINO</div>
+        </div>
+      </div>
+      <p>영어를 활용하여 본인이 관심있는 제2외국어(중국어·일본어·필리피노)의 기초 회화·문법·어휘 등을 공부할 수 있습니다.</p>
+      <div class="tag-row">
+        <span class="tag">中文</span>
+        <span class="tag">日本語</span>
+        <span class="tag">Filipino</span>
+        <span class="tag" style="color:#b91c1c; background: rgba(220, 38, 38, 0.06); border-color: rgba(220, 38, 38, 0.25);">한국어 수강 불가</span>
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="cta-block fade-up" style="margin-top: 80px;">
+    <h2>레벨 테스트로 나에게 맞는 강의 배정받기</h2>
+    <p>입학 전 EFSET 응시 → 점수 기반 자동 배정 → 1회차 4주 수업이 시작됩니다.</p>
+    <a class="btn-jumbo" href="procedure.html">
+      <iconify-icon icon="solar:list-check-bold-duotone"></iconify-icon>
+      입학 절차 안내로 이동
+    </a>
+  </div>
+
+  <p class="footnote fade-up" style="margin-top: 36px;">
+    회차별 시작일·강의 시간표는 추후 안내될 예정입니다.
+  </p>
+
+</main>
+
+</body>
+</html>
