@@ -24,6 +24,8 @@
 
 html {
   background: var(--bg);
+  /* Account for fixed nav-pill height so anchor jumps & scrollIntoView land below the nav */
+  scroll-padding-top: 100px;
 }
 
 html, body {
