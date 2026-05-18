@@ -1,0 +1,11 @@
+{
+  "name": "lcic-gallery-scripts",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "lcic-campus.com 갤러리/사진 업로드 스크립트",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "sharp": "^0.33.0"
+  }
+}
