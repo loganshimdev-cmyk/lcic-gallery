@@ -174,6 +174,57 @@
     .schedule-tab { padding: 9px 16px; font-size: 0.84rem; }
   }
 
+  /* === Subject color tints (harmonious pastels) === */
+  .schedule-table td.s-comm     { background: #eef2ff; color: #3730a3; }
+  .schedule-table td.s-skill    { background: #ecfdf5; color: #047857; }
+  .schedule-table td.s-speaking { background: #faf5ff; color: #7e22ce; }
+  .schedule-table td.s-exam     { background: #fff1f2; color: #be123c; }
+  .schedule-table td.s-culture  { background: #fffbeb; color: #b45309; }
+  .schedule-table td.s-1on1     { background: #f1f5f9; color: #475569; }
+  .schedule-table td[class^="s-"] .sub,
+  .schedule-table td[class*=" s-"] .sub {
+    color: inherit;
+    opacity: 0.72;
+    border-top-color: currentColor;
+    border-top-style: dashed;
+  }
+
+  /* === Color legend === */
+  .schedule-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    margin: 0 auto 22px;
+    padding: 0 4px;
+    max-width: 880px;
+  }
+  .schedule-legend .lg {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 0.74rem;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0.01em;
+  }
+  .schedule-legend .lg::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.55;
+  }
+  .schedule-legend .lg-comm     { background: #eef2ff; color: #3730a3; }
+  .schedule-legend .lg-skill    { background: #ecfdf5; color: #047857; }
+  .schedule-legend .lg-speaking { background: #faf5ff; color: #7e22ce; }
+  .schedule-legend .lg-exam     { background: #fff1f2; color: #be123c; }
+  .schedule-legend .lg-culture  { background: #fffbeb; color: #b45309; }
+  .schedule-legend .lg-1on1     { background: #f1f5f9; color: #475569; }
+
   .one-efl {
     margin: 0 auto;
     padding: 28px 32px;
@@ -443,6 +494,183 @@
         <iconify-icon icon="solar:book-bookmark-bold-duotone" inline></iconify-icon> 교재비 별도
       </div>
     </div>
+  </section>
+
+
+  <section class="schedule-section fade-up" id="sem2-schedule">
+    <div class="section-title">
+      <span class="label"><iconify-icon icon="solar:calendar-bold-duotone"></iconify-icon> SEM 2 SCHEDULE</span>
+      <h2>여름 회차 시간표 (7~8월)</h2>
+      <p>여름 시즌에는 학생 수가 많아 회차별로 시간표가 별도 편성됩니다. 아래에서 해당 회차의 주간 시간표를 확인하세요.</p>
+    </div>
+
+    <div class="schedule-legend">
+      <span class="lg lg-comm">Communication</span>
+      <span class="lg lg-skill">Skill / Career</span>
+      <span class="lg lg-speaking">Effective Speaking</span>
+      <span class="lg lg-exam">Exam Track</span>
+      <span class="lg lg-culture">Culture · TOEIC S&amp;W</span>
+      <span class="lg lg-1on1">1:1 / Buddy</span>
+    </div>
+
+    <div class="schedule-tabs" role="tablist">
+      <button class="schedule-tab active" data-target="sch-jul" role="tab">7월 · Module A · SC 7</button>
+      <button class="schedule-tab" data-target="sch-aug" role="tab">8월 · Module B · SC 8</button>
+    </div>
+
+    <!-- 7월 -->
+    <div class="schedule-panel active" id="sch-jul" role="tabpanel">
+      <div class="schedule-meta">
+        <span class="module-name">Module A · SC 7 Sem 2</span>
+        <span class="date-range">Jul 5 — Jul 30</span>
+      </div>
+      <div class="schedule-table-wrap">
+        <table class="schedule-table">
+          <thead>
+            <tr>
+              <th>Period</th>
+              <th>MON</th>
+              <th>TUE</th>
+              <th>WED</th>
+              <th>THU</th>
+              <th>FRI</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>1<span class="time">8:30–10:00</span></th>
+              <td class="s-comm">English Communication Skills</td>
+              <td class="s-comm">English Communication Skills</td>
+              <td class="s-comm">English Communication Skills</td>
+              <td class="s-comm">English Communication Skills</td>
+              <td class="s-skill">Pronunciation Skills / English for Careers<span class="sub">Filipino</span></td>
+            </tr>
+            <tr>
+              <th>2<span class="time">10:10–11:40</span></th>
+              <td class="s-skill">Pronunciation Skills / English for Careers<span class="sub">Filipino</span></td>
+              <td class="s-culture">Filipino Food Culture / TOEIC S&amp;W<span class="sub">Mandarin</span></td>
+              <td class="s-skill">Pronunciation Skills / English for Careers<span class="sub">Filipino</span></td>
+              <td class="s-skill">Pronunciation Skills / English for Careers<span class="sub">Filipino</span></td>
+              <td class="s-culture">Filipino Food Culture / TOEIC S&amp;W<span class="sub">Mandarin</span></td>
+            </tr>
+            <tr class="lunch">
+              <th>Lunch<span class="time">11:50–12:40</span></th>
+              <td colspan="5">Lunch Break</td>
+            </tr>
+            <tr>
+              <th>3<span class="time">12:50–14:20</span></th>
+              <td class="s-exam">IELTS or TOEIC R&amp;L (B1–C2) / Exam Foundations (A1–A2)<span class="sub">Japanese / Korean / SDGs for EFL</span></td>
+              <td class="s-speaking">Effective Speaking</td>
+              <td class="s-culture">Filipino Food Culture / TOEIC S&amp;W<span class="sub">Mandarin</span></td>
+              <td class="s-speaking">Effective Speaking</td>
+              <td class="s-exam">IELTS or TOEIC R&amp;L (B1–C2) / Exam Foundations (A1–A2)<span class="sub">Japanese / Korean / SDGs for EFL</span></td>
+            </tr>
+            <tr>
+              <th>4<span class="time">14:30–16:00</span></th>
+              <td class="s-culture">Filipino Food Culture / TOEIC S&amp;W<span class="sub">Mandarin</span></td>
+              <td class="s-exam">IELTS or TOEIC R&amp;L (B1–C2) / Exam Foundations (A1–A2)<span class="sub">Japanese / Korean / SDGs for EFL</span></td>
+              <td class="s-speaking">Effective Speaking</td>
+              <td class="s-exam">IELTS or TOEIC R&amp;L (B1–C2) / Exam Foundations (A1–A2)<span class="sub">Japanese / Korean / SDGs for EFL</span></td>
+              <td class="s-speaking">Effective Speaking</td>
+            </tr>
+            <tr class="evening">
+              <th>5<span class="time">16:10–17:00</span></th>
+              <td class="s-1on1">One-on-One / Student Buddy</td>
+              <td class="s-1on1">One-on-One / Student Buddy</td>
+              <td class="s-1on1">One-on-One / Student Buddy</td>
+              <td class="s-1on1">One-on-One / Student Buddy</td>
+              <td class="s-1on1">One-on-One / Student Buddy</td>
+            </tr>
+            <tr class="evening">
+              <th>6<span class="time">17:10–18:00</span></th>
+              <td class="s-1on1">One-on-One / Student Buddy</td>
+              <td class="s-1on1">One-on-One / Student Buddy</td>
+              <td class="s-1on1">One-on-One / Student Buddy</td>
+              <td class="s-1on1">One-on-One / Student Buddy</td>
+              <td class="s-1on1">One-on-One / Student Buddy</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 8월 -->
+    <div class="schedule-panel" id="sch-aug" role="tabpanel">
+      <div class="schedule-meta">
+        <span class="module-name">Module B · SC 8</span>
+        <span class="date-range">Aug 2 — Aug 27</span>
+      </div>
+      <div class="schedule-table-wrap">
+        <table class="schedule-table">
+          <thead>
+            <tr>
+              <th>Period</th>
+              <th>MON</th>
+              <th>TUE</th>
+              <th>WED</th>
+              <th>THU</th>
+              <th>FRI</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>1<span class="time">8:30–10:00</span></th>
+              <td class="s-comm">English Communication Skills</td>
+              <td class="s-comm">English Communication Skills</td>
+              <td class="s-comm">English Communication Skills</td>
+              <td class="s-comm">English Communication Skills</td>
+              <td class="s-skill">Academic Writing Skills / Hospitality English<span class="sub">SDGs for EFL</span></td>
+            </tr>
+            <tr>
+              <th>2<span class="time">10:10–11:40</span></th>
+              <td class="s-skill">Academic Writing Skills / Hospitality English<span class="sub">SDGs for EFL</span></td>
+              <td class="s-culture">Filipino Travel / TOEIC S&amp;W<span class="sub">Mandarin</span></td>
+              <td class="s-skill">Academic Writing Skills / Hospitality English<span class="sub">SDGs for EFL</span></td>
+              <td class="s-skill">Academic Writing Skills / Hospitality English<span class="sub">SDGs for EFL</span></td>
+              <td class="s-culture">Filipino Travel / TOEIC S&amp;W<span class="sub">Mandarin</span></td>
+            </tr>
+            <tr class="lunch">
+              <th>Lunch<span class="time">11:50–12:40</span></th>
+              <td colspan="5">Lunch Break</td>
+            </tr>
+            <tr>
+              <th>3<span class="time">12:50–14:20</span></th>
+              <td class="s-exam">IELTS or TOEIC R&amp;L (B1–C2) / Exam Foundations (A1–A2)<span class="sub">Korean / Japanese / Filipino</span></td>
+              <td class="s-speaking">Effective Speaking</td>
+              <td class="s-culture">Filipino Travel / TOEIC S&amp;W<span class="sub">Mandarin</span></td>
+              <td class="s-speaking">Effective Speaking</td>
+              <td class="s-exam">IELTS or TOEIC R&amp;L (B1–C2) / Exam Foundations (A1–A2)<span class="sub">Korean / Japanese / Filipino</span></td>
+            </tr>
+            <tr>
+              <th>4<span class="time">14:30–16:00</span></th>
+              <td class="s-culture">Filipino Travel / TOEIC S&amp;W<span class="sub">Mandarin</span></td>
+              <td class="s-exam">IELTS or TOEIC R&amp;L (B1–C2) / Exam Foundations (A1–A2)<span class="sub">Korean / Japanese / Filipino</span></td>
+              <td class="s-speaking">Effective Speaking</td>
+              <td class="s-exam">IELTS or TOEIC R&amp;L (B1–C2) / Exam Foundations (A1–A2)<span class="sub">Korean / Japanese / Filipino</span></td>
+              <td class="s-speaking">Effective Speaking</td>
+            </tr>
+            <tr class="evening">
+              <th>5<span class="time">16:10–17:00</span></th>
+              <td class="s-1on1">One-on-One / Student Buddy</td>
+              <td class="s-1on1">One-on-One / Student Buddy</td>
+              <td class="s-1on1">One-on-One / Student Buddy</td>
+              <td class="s-1on1">One-on-One / Student Buddy</td>
+              <td class="s-1on1">One-on-One / Student Buddy</td>
+            </tr>
+            <tr class="evening">
+              <th>6<span class="time">17:10–18:00</span></th>
+              <td class="s-1on1">One-on-One / Student Buddy</td>
+              <td class="s-1on1">One-on-One / Student Buddy</td>
+              <td class="s-1on1">One-on-One / Student Buddy</td>
+              <td class="s-1on1">One-on-One / Student Buddy</td>
+              <td class="s-1on1">One-on-One / Student Buddy</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <p class="schedule-note">강의 슬래시(/)는 레벨·반에 따라 분반되어 운영되는 과목입니다. 작은 글씨로 표시된 항목은 같은 시간대에 진행되는 선택 강의입니다.</p>
   </section>
 
 
@@ -774,173 +1002,6 @@
       입학 절차 안내로 이동
     </a>
   </div>
-
-  <section class="schedule-section fade-up" id="sem2-schedule">
-    <div class="section-title">
-      <span class="label"><iconify-icon icon="solar:calendar-bold-duotone"></iconify-icon> SEM 2 SCHEDULE</span>
-      <h2>여름 회차 시간표 (7~8월)</h2>
-      <p>여름 시즌에는 학생 수가 많아 회차별로 시간표가 별도 편성됩니다. 아래에서 해당 회차의 주간 시간표를 확인하세요.</p>
-    </div>
-
-    <div class="schedule-tabs" role="tablist">
-      <button class="schedule-tab active" data-target="sch-jul" role="tab">7월 · Module A · SC 7</button>
-      <button class="schedule-tab" data-target="sch-aug" role="tab">8월 · Module B · SC 8</button>
-    </div>
-
-    <!-- 7월 -->
-    <div class="schedule-panel active" id="sch-jul" role="tabpanel">
-      <div class="schedule-meta">
-        <span class="module-name">Module A · SC 7 Sem 2</span>
-        <span class="date-range">Jul 5 — Jul 30</span>
-      </div>
-      <div class="schedule-table-wrap">
-        <table class="schedule-table">
-          <thead>
-            <tr>
-              <th>Period</th>
-              <th>MON</th>
-              <th>TUE</th>
-              <th>WED</th>
-              <th>THU</th>
-              <th>FRI</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th>1<span class="time">8:30–10:00</span></th>
-              <td>English Communication Skills</td>
-              <td>English Communication Skills</td>
-              <td>English Communication Skills</td>
-              <td>English Communication Skills</td>
-              <td>Pronunciation Skills / English for Careers<span class="sub">Filipino</span></td>
-            </tr>
-            <tr>
-              <th>2<span class="time">10:10–11:40</span></th>
-              <td>Pronunciation Skills / English for Careers<span class="sub">Filipino</span></td>
-              <td>Filipino Food Culture / TOEIC S&amp;W<span class="sub">Mandarin</span></td>
-              <td>Pronunciation Skills / English for Careers<span class="sub">Filipino</span></td>
-              <td>Pronunciation Skills / English for Careers<span class="sub">Filipino</span></td>
-              <td>Filipino Food Culture / TOEIC S&amp;W<span class="sub">Mandarin</span></td>
-            </tr>
-            <tr class="lunch">
-              <th>Lunch<span class="time">11:50–12:40</span></th>
-              <td colspan="5">Lunch Break</td>
-            </tr>
-            <tr>
-              <th>3<span class="time">12:50–14:20</span></th>
-              <td>IELTS or TOEIC R&amp;L (B1–C2) / Exam Foundations (A1–A2)<span class="sub">Japanese / Korean / SDGs for EFL</span></td>
-              <td>Effective Speaking</td>
-              <td>Filipino Food Culture / TOEIC S&amp;W<span class="sub">Mandarin</span></td>
-              <td>Effective Speaking</td>
-              <td>IELTS or TOEIC R&amp;L (B1–C2) / Exam Foundations (A1–A2)<span class="sub">Japanese / Korean / SDGs for EFL</span></td>
-            </tr>
-            <tr>
-              <th>4<span class="time">14:30–16:00</span></th>
-              <td>Filipino Food Culture / TOEIC S&amp;W<span class="sub">Mandarin</span></td>
-              <td>IELTS or TOEIC R&amp;L (B1–C2) / Exam Foundations (A1–A2)<span class="sub">Japanese / Korean / SDGs for EFL</span></td>
-              <td>Effective Speaking</td>
-              <td>IELTS or TOEIC R&amp;L (B1–C2) / Exam Foundations (A1–A2)<span class="sub">Japanese / Korean / SDGs for EFL</span></td>
-              <td>Effective Speaking</td>
-            </tr>
-            <tr class="evening">
-              <th>5<span class="time">16:10–17:00</span></th>
-              <td>One-on-One / Student Buddy</td>
-              <td>One-on-One / Student Buddy</td>
-              <td>One-on-One / Student Buddy</td>
-              <td>One-on-One / Student Buddy</td>
-              <td>One-on-One / Student Buddy</td>
-            </tr>
-            <tr class="evening">
-              <th>6<span class="time">17:10–18:00</span></th>
-              <td>One-on-One / Student Buddy</td>
-              <td>One-on-One / Student Buddy</td>
-              <td>One-on-One / Student Buddy</td>
-              <td>One-on-One / Student Buddy</td>
-              <td>One-on-One / Student Buddy</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- 8월 -->
-    <div class="schedule-panel" id="sch-aug" role="tabpanel">
-      <div class="schedule-meta">
-        <span class="module-name">Module B · SC 8</span>
-        <span class="date-range">Aug 2 — Aug 27</span>
-      </div>
-      <div class="schedule-table-wrap">
-        <table class="schedule-table">
-          <thead>
-            <tr>
-              <th>Period</th>
-              <th>MON</th>
-              <th>TUE</th>
-              <th>WED</th>
-              <th>THU</th>
-              <th>FRI</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th>1<span class="time">8:30–10:00</span></th>
-              <td>English Communication Skills</td>
-              <td>English Communication Skills</td>
-              <td>English Communication Skills</td>
-              <td>English Communication Skills</td>
-              <td>Academic Writing Skills / Hospitality English<span class="sub">SDGs for EFL</span></td>
-            </tr>
-            <tr>
-              <th>2<span class="time">10:10–11:40</span></th>
-              <td>Academic Writing Skills / Hospitality English<span class="sub">SDGs for EFL</span></td>
-              <td>Filipino Travel / TOEIC S&amp;W<span class="sub">Mandarin</span></td>
-              <td>Academic Writing Skills / Hospitality English<span class="sub">SDGs for EFL</span></td>
-              <td>Academic Writing Skills / Hospitality English<span class="sub">SDGs for EFL</span></td>
-              <td>Filipino Travel / TOEIC S&amp;W<span class="sub">Mandarin</span></td>
-            </tr>
-            <tr class="lunch">
-              <th>Lunch<span class="time">11:50–12:40</span></th>
-              <td colspan="5">Lunch Break</td>
-            </tr>
-            <tr>
-              <th>3<span class="time">12:50–14:20</span></th>
-              <td>IELTS or TOEIC R&amp;L (B1–C2) / Exam Foundations (A1–A2)<span class="sub">Korean / Japanese / Filipino</span></td>
-              <td>Effective Speaking</td>
-              <td>Filipino Travel / TOEIC S&amp;W<span class="sub">Mandarin</span></td>
-              <td>Effective Speaking</td>
-              <td>IELTS or TOEIC R&amp;L (B1–C2) / Exam Foundations (A1–A2)<span class="sub">Korean / Japanese / Filipino</span></td>
-            </tr>
-            <tr>
-              <th>4<span class="time">14:30–16:00</span></th>
-              <td>Filipino Travel / TOEIC S&amp;W<span class="sub">Mandarin</span></td>
-              <td>IELTS or TOEIC R&amp;L (B1–C2) / Exam Foundations (A1–A2)<span class="sub">Korean / Japanese / Filipino</span></td>
-              <td>Effective Speaking</td>
-              <td>IELTS or TOEIC R&amp;L (B1–C2) / Exam Foundations (A1–A2)<span class="sub">Korean / Japanese / Filipino</span></td>
-              <td>Effective Speaking</td>
-            </tr>
-            <tr class="evening">
-              <th>5<span class="time">16:10–17:00</span></th>
-              <td>One-on-One / Student Buddy</td>
-              <td>One-on-One / Student Buddy</td>
-              <td>One-on-One / Student Buddy</td>
-              <td>One-on-One / Student Buddy</td>
-              <td>One-on-One / Student Buddy</td>
-            </tr>
-            <tr class="evening">
-              <th>6<span class="time">17:10–18:00</span></th>
-              <td>One-on-One / Student Buddy</td>
-              <td>One-on-One / Student Buddy</td>
-              <td>One-on-One / Student Buddy</td>
-              <td>One-on-One / Student Buddy</td>
-              <td>One-on-One / Student Buddy</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <p class="schedule-note">강의 슬래시(/)는 레벨·반에 따라 분반되어 운영되는 과목입니다. 작은 글씨로 표시된 항목은 같은 시간대에 진행되는 선택 강의입니다.</p>
-  </section>
 
   <p class="footnote fade-up" style="margin-top: 36px;">
     회차별 시작일·강의 시간표는 추후 변경될 수 있습니다.
