@@ -9,6 +9,171 @@
 <link rel="stylesheet" href="assets/shared.css?v=7">
 <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
 <style>
+  /* === SEM 2 SCHEDULE SECTION === */
+  .schedule-section {
+    margin: 80px auto 0;
+    max-width: 1100px;
+    padding: 0 4px;
+  }
+  .schedule-section .section-title {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .schedule-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    background: rgba(30, 58, 138, 0.06);
+    border: 1px solid rgba(30, 58, 138, 0.12);
+    border-radius: 999px;
+    padding: 5px;
+    margin: 0 auto 24px;
+    width: fit-content;
+  }
+  .schedule-tab {
+    padding: 10px 22px;
+    border: none;
+    background: transparent;
+    border-radius: 999px;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-dim, #475569);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+  .schedule-tab:hover {
+    color: var(--text, #0f172a);
+  }
+  .schedule-tab.active {
+    background: var(--accent-deep, #1e3a8a);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(30, 58, 138, 0.22);
+  }
+  .schedule-panel {
+    display: none;
+  }
+  .schedule-panel.active {
+    display: block;
+    animation: schedule-fade 0.25s ease;
+  }
+  @keyframes schedule-fade {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .schedule-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 14px;
+    padding: 0 6px;
+  }
+  .schedule-meta .module-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent-deep, #1e3a8a);
+    letter-spacing: -0.01em;
+  }
+  .schedule-meta .date-range {
+    font-size: 0.88rem;
+    color: var(--text-faint, #94a3b8);
+    font-variant-numeric: tabular-nums;
+  }
+  .schedule-table-wrap {
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 16px;
+    background: #fff;
+    overflow-x: auto;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 760px;
+    font-size: 0.84rem;
+  }
+  .schedule-table th,
+  .schedule-table td {
+    padding: 12px 10px;
+    text-align: center;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    border-right: 1px solid rgba(0,0,0,0.06);
+    vertical-align: middle;
+    line-height: 1.4;
+  }
+  .schedule-table thead th {
+    background: rgba(30, 58, 138, 0.05);
+    color: var(--accent-deep, #1e3a8a);
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    padding: 14px 10px;
+  }
+  .schedule-table tbody th {
+    background: rgba(0,0,0,0.025);
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--text, #0f172a);
+    white-space: nowrap;
+    min-width: 78px;
+  }
+  .schedule-table tbody th .time {
+    display: block;
+    font-weight: 500;
+    font-size: 0.7rem;
+    color: var(--text-faint, #94a3b8);
+    margin-top: 3px;
+    letter-spacing: 0;
+  }
+  .schedule-table td {
+    background: #fff;
+    color: var(--text, #0f172a);
+  }
+  .schedule-table td .sub {
+    display: block;
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px dashed rgba(0,0,0,0.08);
+    font-size: 0.74rem;
+    color: var(--text-faint, #94a3b8);
+    font-weight: 500;
+  }
+  .schedule-table tr.lunch td {
+    background: rgba(0,0,0,0.025);
+    color: var(--text-faint, #94a3b8);
+    font-style: italic;
+    font-size: 0.82rem;
+  }
+  .schedule-table tr.evening td {
+    background: rgba(30, 58, 138, 0.025);
+  }
+  .schedule-table tr:last-child th,
+  .schedule-table tr:last-child td {
+    border-bottom: none;
+  }
+  .schedule-table th:last-child,
+  .schedule-table td:last-child {
+    border-right: none;
+  }
+  .schedule-note {
+    margin-top: 14px;
+    font-size: 0.82rem;
+    color: var(--text-faint, #94a3b8);
+    text-align: center;
+    line-height: 1.6;
+  }
+  @media (max-width: 720px) {
+    .schedule-table { font-size: 0.78rem; }
+    .schedule-table th,
+    .schedule-table td { padding: 9px 6px; }
+    .schedule-table td .sub { font-size: 0.7rem; }
+    .schedule-tab { padding: 9px 16px; font-size: 0.84rem; }
+  }
+
   .one-efl {
     margin: 0 auto;
     padding: 28px 32px;
@@ -610,11 +775,188 @@
     </a>
   </div>
 
+  <section class="schedule-section fade-up" id="sem2-schedule">
+    <div class="section-title">
+      <span class="label"><iconify-icon icon="solar:calendar-bold-duotone"></iconify-icon> SEM 2 SCHEDULE</span>
+      <h2>여름 회차 시간표 (7~8월)</h2>
+      <p>여름 시즌에는 학생 수가 많아 회차별로 시간표가 별도 편성됩니다. 아래에서 해당 회차의 주간 시간표를 확인하세요.</p>
+    </div>
+
+    <div class="schedule-tabs" role="tablist">
+      <button class="schedule-tab active" data-target="sch-jul" role="tab">7월 · Module A · SC 7</button>
+      <button class="schedule-tab" data-target="sch-aug" role="tab">8월 · Module B · SC 8</button>
+    </div>
+
+    <!-- 7월 -->
+    <div class="schedule-panel active" id="sch-jul" role="tabpanel">
+      <div class="schedule-meta">
+        <span class="module-name">Module A · SC 7 Sem 2</span>
+        <span class="date-range">Jul 5 — Jul 30</span>
+      </div>
+      <div class="schedule-table-wrap">
+        <table class="schedule-table">
+          <thead>
+            <tr>
+              <th>Period</th>
+              <th>MON</th>
+              <th>TUE</th>
+              <th>WED</th>
+              <th>THU</th>
+              <th>FRI</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>1<span class="time">8:30–10:00</span></th>
+              <td>English Communication Skills</td>
+              <td>English Communication Skills</td>
+              <td>English Communication Skills</td>
+              <td>English Communication Skills</td>
+              <td>Pronunciation Skills / English for Careers<span class="sub">Filipino</span></td>
+            </tr>
+            <tr>
+              <th>2<span class="time">10:10–11:40</span></th>
+              <td>Pronunciation Skills / English for Careers<span class="sub">Filipino</span></td>
+              <td>Filipino Food Culture / TOEIC S&amp;W<span class="sub">Mandarin</span></td>
+              <td>Pronunciation Skills / English for Careers<span class="sub">Filipino</span></td>
+              <td>Pronunciation Skills / English for Careers<span class="sub">Filipino</span></td>
+              <td>Filipino Food Culture / TOEIC S&amp;W<span class="sub">Mandarin</span></td>
+            </tr>
+            <tr class="lunch">
+              <th>Lunch<span class="time">11:50–12:40</span></th>
+              <td colspan="5">Lunch Break</td>
+            </tr>
+            <tr>
+              <th>3<span class="time">12:50–14:20</span></th>
+              <td>IELTS or TOEIC R&amp;L (B1–C2) / Exam Foundations (A1–A2)<span class="sub">Japanese / Korean / SDGs for EFL</span></td>
+              <td>Effective Speaking</td>
+              <td>Filipino Food Culture / TOEIC S&amp;W<span class="sub">Mandarin</span></td>
+              <td>Effective Speaking</td>
+              <td>IELTS or TOEIC R&amp;L (B1–C2) / Exam Foundations (A1–A2)<span class="sub">Japanese / Korean / SDGs for EFL</span></td>
+            </tr>
+            <tr>
+              <th>4<span class="time">14:30–16:00</span></th>
+              <td>Filipino Food Culture / TOEIC S&amp;W<span class="sub">Mandarin</span></td>
+              <td>IELTS or TOEIC R&amp;L (B1–C2) / Exam Foundations (A1–A2)<span class="sub">Japanese / Korean / SDGs for EFL</span></td>
+              <td>Effective Speaking</td>
+              <td>IELTS or TOEIC R&amp;L (B1–C2) / Exam Foundations (A1–A2)<span class="sub">Japanese / Korean / SDGs for EFL</span></td>
+              <td>Effective Speaking</td>
+            </tr>
+            <tr class="evening">
+              <th>5<span class="time">16:10–17:00</span></th>
+              <td>One-on-One / Student Buddy</td>
+              <td>One-on-One / Student Buddy</td>
+              <td>One-on-One / Student Buddy</td>
+              <td>One-on-One / Student Buddy</td>
+              <td>One-on-One / Student Buddy</td>
+            </tr>
+            <tr class="evening">
+              <th>6<span class="time">17:10–18:00</span></th>
+              <td>One-on-One / Student Buddy</td>
+              <td>One-on-One / Student Buddy</td>
+              <td>One-on-One / Student Buddy</td>
+              <td>One-on-One / Student Buddy</td>
+              <td>One-on-One / Student Buddy</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 8월 -->
+    <div class="schedule-panel" id="sch-aug" role="tabpanel">
+      <div class="schedule-meta">
+        <span class="module-name">Module B · SC 8</span>
+        <span class="date-range">Aug 2 — Aug 27</span>
+      </div>
+      <div class="schedule-table-wrap">
+        <table class="schedule-table">
+          <thead>
+            <tr>
+              <th>Period</th>
+              <th>MON</th>
+              <th>TUE</th>
+              <th>WED</th>
+              <th>THU</th>
+              <th>FRI</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>1<span class="time">8:30–10:00</span></th>
+              <td>English Communication Skills</td>
+              <td>English Communication Skills</td>
+              <td>English Communication Skills</td>
+              <td>English Communication Skills</td>
+              <td>Academic Writing Skills / Hospitality English<span class="sub">SDGs for EFL</span></td>
+            </tr>
+            <tr>
+              <th>2<span class="time">10:10–11:40</span></th>
+              <td>Academic Writing Skills / Hospitality English<span class="sub">SDGs for EFL</span></td>
+              <td>Filipino Travel / TOEIC S&amp;W<span class="sub">Mandarin</span></td>
+              <td>Academic Writing Skills / Hospitality English<span class="sub">SDGs for EFL</span></td>
+              <td>Academic Writing Skills / Hospitality English<span class="sub">SDGs for EFL</span></td>
+              <td>Filipino Travel / TOEIC S&amp;W<span class="sub">Mandarin</span></td>
+            </tr>
+            <tr class="lunch">
+              <th>Lunch<span class="time">11:50–12:40</span></th>
+              <td colspan="5">Lunch Break</td>
+            </tr>
+            <tr>
+              <th>3<span class="time">12:50–14:20</span></th>
+              <td>IELTS or TOEIC R&amp;L (B1–C2) / Exam Foundations (A1–A2)<span class="sub">Korean / Japanese / Filipino</span></td>
+              <td>Effective Speaking</td>
+              <td>Filipino Travel / TOEIC S&amp;W<span class="sub">Mandarin</span></td>
+              <td>Effective Speaking</td>
+              <td>IELTS or TOEIC R&amp;L (B1–C2) / Exam Foundations (A1–A2)<span class="sub">Korean / Japanese / Filipino</span></td>
+            </tr>
+            <tr>
+              <th>4<span class="time">14:30–16:00</span></th>
+              <td>Filipino Travel / TOEIC S&amp;W<span class="sub">Mandarin</span></td>
+              <td>IELTS or TOEIC R&amp;L (B1–C2) / Exam Foundations (A1–A2)<span class="sub">Korean / Japanese / Filipino</span></td>
+              <td>Effective Speaking</td>
+              <td>IELTS or TOEIC R&amp;L (B1–C2) / Exam Foundations (A1–A2)<span class="sub">Korean / Japanese / Filipino</span></td>
+              <td>Effective Speaking</td>
+            </tr>
+            <tr class="evening">
+              <th>5<span class="time">16:10–17:00</span></th>
+              <td>One-on-One / Student Buddy</td>
+              <td>One-on-One / Student Buddy</td>
+              <td>One-on-One / Student Buddy</td>
+              <td>One-on-One / Student Buddy</td>
+              <td>One-on-One / Student Buddy</td>
+            </tr>
+            <tr class="evening">
+              <th>6<span class="time">17:10–18:00</span></th>
+              <td>One-on-One / Student Buddy</td>
+              <td>One-on-One / Student Buddy</td>
+              <td>One-on-One / Student Buddy</td>
+              <td>One-on-One / Student Buddy</td>
+              <td>One-on-One / Student Buddy</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <p class="schedule-note">강의 슬래시(/)는 레벨·반에 따라 분반되어 운영되는 과목입니다. 작은 글씨로 표시된 항목은 같은 시간대에 진행되는 선택 강의입니다.</p>
+  </section>
+
   <p class="footnote fade-up" style="margin-top: 36px;">
-    회차별 시작일·강의 시간표는 추후 안내될 예정입니다.
+    회차별 시작일·강의 시간표는 추후 변경될 수 있습니다.
   </p>
 
 </main>
+
+<script>
+  document.querySelectorAll('.schedule-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.target;
+      document.querySelectorAll('.schedule-tab').forEach(b => b.classList.toggle('active', b === btn));
+      document.querySelectorAll('.schedule-panel').forEach(p => p.classList.toggle('active', p.id === target));
+    });
+  });
+</script>
 
 </body>
 </html>
