@@ -75,6 +75,47 @@
   }
   .cat-nav.hidden { display: none; }
 
+  /* Back to top 플로팅 버튼 */
+  .back-to-top {
+    position: fixed;
+    right: 28px;
+    bottom: 28px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(233, 69, 96, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 50;
+  }
+  .back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  .back-to-top:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(233, 69, 96, 0.55);
+  }
+  @media (max-width: 640px) {
+    .back-to-top {
+      right: 16px;
+      bottom: 16px;
+      width: 44px;
+      height: 44px;
+    }
+  }
+
   .faq-item {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid var(--hairline);
@@ -168,6 +209,10 @@
   </div>
 
   <div id="cat-nav" class="cat-nav fade-up delay-3"></div>
+
+  <button id="back-to-top" class="back-to-top" type="button" aria-label="맨 위로 이동">
+    <iconify-icon icon="solar:alt-arrow-up-linear"></iconify-icon>
+  </button>
 
   <div id="list" class="fade-up delay-4">
     <div style="text-align:center; padding: 60px 20px; color: var(--text-faint);">
@@ -346,6 +391,26 @@ async function loadFaqs() {
 }
 
 loadFaqs();
+
+// Back to top 버튼 동작
+const backToTopBtn = document.getElementById("back-to-top");
+const TOP_THRESHOLD = 400;
+
+function updateBackToTop() {
+  if (window.scrollY > TOP_THRESHOLD) {
+    backToTopBtn.classList.add("visible");
+  } else {
+    backToTopBtn.classList.remove("visible");
+  }
+}
+
+window.addEventListener("scroll", updateBackToTop, { passive: true });
+
+backToTopBtn.addEventListener("click", () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+updateBackToTop();
 </script>
 </body>
 </html>
