@@ -34,8 +34,46 @@
     color: var(--accent);
     margin: 36px 0 14px;
     padding-left: 4px;
+    scroll-margin-top: 100px;
   }
   .faq-cat-title:first-of-type { margin-top: 0; }
+
+  /* 카테고리 빠른 이동 칩 */
+  .cat-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 28px;
+    padding: 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--hairline);
+    border-radius: 18px;
+  }
+  .cat-chip {
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--hairline);
+    color: var(--text-dim);
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    font-family: inherit;
+    white-space: nowrap;
+  }
+  .cat-chip:hover {
+    background: rgba(233, 69, 96, 0.15);
+    border-color: rgba(233, 69, 96, 0.4);
+    color: var(--text);
+    transform: translateY(-1px);
+  }
+  .cat-chip .count {
+    margin-left: 6px;
+    opacity: 0.6;
+    font-size: 0.75rem;
+  }
+  .cat-nav.hidden { display: none; }
 
   .faq-item {
     background: rgba(255, 255, 255, 0.03);
@@ -129,6 +167,8 @@
     <input type="text" id="search" class="input" placeholder="질문 또는 답변에서 검색…">
   </div>
 
+  <div id="cat-nav" class="cat-nav fade-up delay-3"></div>
+
   <div id="list" class="fade-up delay-4">
     <div style="text-align:center; padding: 60px 20px; color: var(--text-faint);">
       <iconify-icon icon="svg-spinners:ring-resize" inline style="font-size: 24px;"></iconify-icon>
@@ -141,7 +181,35 @@ import { supabase } from "./assets/supabase.js";
 
 const listEl = document.getElementById("list");
 const searchEl = document.getElementById("search");
+const catNavEl = document.getElementById("cat-nav");
 let allFaqs = [];
+
+function slugifyCat(cat) {
+  return "cat-" + (cat || "기타").replace(/[^\w가-힣]+/g, "-");
+}
+
+function renderCatNav(faqs) {
+  // 카테고리별 카운트 집계 (순서 유지)
+  const counts = new Map();
+  faqs.forEach((f) => {
+    const cat = f.category || "기타";
+    counts.set(cat, (counts.get(cat) || 0) + 1);
+  });
+
+  catNavEl.innerHTML = "";
+  catNavEl.classList.remove("hidden");
+  counts.forEach((count, cat) => {
+    const btn = document.createElement("button");
+    btn.className = "cat-chip";
+    btn.type = "button";
+    btn.innerHTML = `${cat}<span class="count">${count}</span>`;
+    btn.addEventListener("click", () => {
+      const target = document.getElementById(slugifyCat(cat));
+      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    catNavEl.appendChild(btn);
+  });
+}
 
 function emptyState(msg, icon = "solar:inbox-bold-duotone") {
   return `<div style="text-align:center; padding: 80px 20px; color: var(--text-faint);">
@@ -180,6 +248,7 @@ function renderGrouped(faqs) {
   groups.forEach((items, category) => {
     const title = document.createElement("div");
     title.className = "faq-cat-title";
+    title.id = slugifyCat(category);
     title.textContent = category;
     listEl.appendChild(title);
     items.forEach((f) => appendFaqItem(listEl, f));
@@ -227,7 +296,11 @@ function scoreFaq(f, q) {
 
 function applyFilter() {
   const q = searchEl.value.trim().toLowerCase();
-  if (!q) return renderGrouped(allFaqs);
+  if (!q) {
+    renderGrouped(allFaqs);
+    catNavEl.classList.remove("hidden");
+    return;
+  }
 
   const scored = allFaqs
     .map((faq) => ({ faq, score: scoreFaq(faq, q) }))
@@ -235,14 +308,17 @@ function applyFilter() {
     .sort((a, b) => b.score - a.score);
 
   renderRanked(scored);
+  catNavEl.classList.add("hidden"); // 검색 중엔 칩 메뉴 숨김
 }
 
 function render(faqs) {
   // 초기 로딩용 (검색 없는 상태)
   if (!faqs || faqs.length === 0) {
     listEl.innerHTML = emptyState("아직 등록된 FAQ가 없습니다.");
+    catNavEl.classList.add("hidden");
     return;
   }
+  renderCatNav(faqs);
   renderGrouped(faqs);
 }
 
