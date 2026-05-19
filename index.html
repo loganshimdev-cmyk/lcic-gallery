@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LCIC · Lapulapu-Cebu International College</title>
+<title data-i18n-en="LCIC · Lapulapu-Cebu International College">LCIC · Lapulapu-Cebu International College</title>
 <link rel="icon" type="image/png" href="assets/brand/lcic-logo.png">
 <script src="assets/background.js?v=8"></script>
-<link rel="stylesheet" href="assets/shared.css?v=8">
+<link rel="stylesheet" href="assets/shared.css?v=9">
+<script src="assets/i18n.js?v=1" defer></script>
 <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
 <style>
   .hero {
@@ -313,8 +314,8 @@
 </head>
 <body data-page="home">
 
-<a class="brand-mark" href="index.html" aria-label="LCIC 홈으로">
-  <img src="assets/brand/lcic-logo.png" alt="LCIC 로고">
+<a class="brand-mark" href="index.html" aria-label="LCIC 홈으로" data-i18n-en-attr="aria-label|Back to LCIC home">
+  <img src="assets/brand/lcic-logo.png" alt="LCIC logo">
   <span class="brand-name">
     <span>Lapulapu Cebu</span>
     <span>International</span>
@@ -323,30 +324,34 @@
 </a>
 
 <nav class="nav-pill">
-  <a href="index.html" class="active"><iconify-icon icon="solar:home-2-bold-duotone" inline></iconify-icon> 홈</a>
-  <a href="notice.html"><iconify-icon icon="solar:bell-bold" inline></iconify-icon> 공지사항</a>
-  <a href="procedure.html"><iconify-icon icon="solar:list-check-bold-duotone" inline></iconify-icon> 입학 절차</a>
-  <a href="curriculum.html"><iconify-icon icon="solar:notebook-bold-duotone" inline></iconify-icon> 커리큘럼</a>
-  <a href="life-guide.html"><iconify-icon icon="solar:book-bookmark-bold-duotone" inline></iconify-icon> 생활백서</a>
-  <a href="faq.html"><iconify-icon icon="solar:question-circle-bold-duotone" inline></iconify-icon> 궁금한 사항</a>
-  <a href="gallery.html"><iconify-icon icon="solar:gallery-bold-duotone" inline></iconify-icon> 갤러리</a>
+  <a href="index.html" class="active"><iconify-icon icon="solar:home-2-bold-duotone" inline></iconify-icon> <span data-i18n-en="Home">홈</span></a>
+  <a href="notice.html"><iconify-icon icon="solar:bell-bold" inline></iconify-icon> <span data-i18n-en="Notices">공지사항</span></a>
+  <a href="procedure.html"><iconify-icon icon="solar:list-check-bold-duotone" inline></iconify-icon> <span data-i18n-en="Admissions">입학 절차</span></a>
+  <a href="curriculum.html"><iconify-icon icon="solar:notebook-bold-duotone" inline></iconify-icon> <span data-i18n-en="Curriculum">커리큘럼</span></a>
+  <a href="life-guide.html"><iconify-icon icon="solar:book-bookmark-bold-duotone" inline></iconify-icon> <span data-i18n-en="Life Guide">생활백서</span></a>
+  <a href="faq.html"><iconify-icon icon="solar:question-circle-bold-duotone" inline></iconify-icon> <span data-i18n-en="FAQ">궁금한 사항</span></a>
+  <a href="gallery.html"><iconify-icon icon="solar:gallery-bold-duotone" inline></iconify-icon> <span data-i18n-en="Gallery">갤러리</span></a>
+  <div class="lang-toggle" data-lang-toggle role="group" aria-label="Language">
+    <button type="button" data-lang-to="ko">KO</button>
+    <button type="button" data-lang-to="en">EN</button>
+  </div>
 </nav>
 
 <main class="hero">
   <div class="fade-up" style="margin-bottom: 14px;">
-    <img src="assets/brand/lcic-logo.png" alt="LCIC 로고" class="hero-logo">
+    <img src="assets/brand/lcic-logo.png" alt="LCIC logo" class="hero-logo">
   </div>
 
   <div class="fade-up delay-1">
     <span class="eyebrow"><span class="dot"></span> LAPULAPU · CEBU INTERNATIONAL COLLEGE</span>
   </div>
 
-  <h1 class="fade-up delay-2">
+  <h1 class="fade-up delay-2" data-i18n-en="A bigger world, opened up in English<br><span class=&quot;accent&quot;>LCIC &mdash; an international campus in Cebu</span>">
     영어로 여는 더 큰 세상<br>
     <span class="accent">세부의 국제 캠퍼스, LCIC</span>
   </h1>
 
-  <p class="subhead fade-up delay-2">
+  <p class="subhead fade-up delay-2" data-i18n-en="Conversation, career English, and test prep &mdash; together, in 4-week sprints.<br>The ONE-EFL system is your launchpad to the global stage.">
     회화·실무·시험까지 한번에, 4주 단위로 빠르게.<br>
     ONE-EFL 시스템이 글로벌 무대로 나아가는 든든한 발판이 되어드립니다.
   </p>
@@ -354,34 +359,34 @@
   <div class="ctas fade-up delay-3">
     <a href="procedure.html" class="btn-primary">
       <iconify-icon icon="solar:list-check-bold-duotone" inline></iconify-icon>
-      입학 절차 안내
+      <span data-i18n-en="How to apply">입학 절차 안내</span>
     </a>
     <a href="curriculum.html" class="btn-ghost">
       <iconify-icon icon="solar:notebook-bold-duotone" inline></iconify-icon>
-      커리큘럼 보기
+      <span data-i18n-en="See the curriculum">커리큘럼 보기</span>
     </a>
     <a href="gallery.html" class="btn-ghost">
       <iconify-icon icon="solar:gallery-bold-duotone" inline></iconify-icon>
-      캠퍼스 갤러리
+      <span data-i18n-en="Campus gallery">캠퍼스 갤러리</span>
     </a>
   </div>
 
   <div class="stat-strip fade-up delay-4">
     <div class="stat">
       <div class="num">15+</div>
-      <div class="label">강의 과목</div>
+      <div class="label" data-i18n-en="Courses">강의 과목</div>
     </div>
     <div class="stat">
       <div class="num">A1–C2</div>
-      <div class="label">CEFR 대응</div>
+      <div class="label" data-i18n-en="CEFR aligned">CEFR 대응</div>
     </div>
     <div class="stat">
-      <div class="num">4주</div>
-      <div class="label">회차 단위</div>
+      <div class="num" data-i18n-en="4 wks">4주</div>
+      <div class="label" data-i18n-en="Per term">회차 단위</div>
     </div>
     <div class="stat">
       <div class="num">1:1</div>
-      <div class="label">Buddy 매칭</div>
+      <div class="label" data-i18n-en="Buddy pairing">Buddy 매칭</div>
     </div>
   </div>
 </main>
@@ -391,8 +396,8 @@
 
   <div class="section-title fade-up">
     <span class="label"><iconify-icon icon="solar:point-on-map-bold-duotone"></iconify-icon> ABOUT LCIC</span>
-    <h2>학교 위치 · 연락처</h2>
-    <p>필리핀 세부 라푸라푸 시티에 위치한 LCIC. 입학·생활 관련 문의는 아래 연락처를 이용해주세요.</p>
+    <h2 data-i18n-en="Location &amp; contact">학교 위치 · 연락처</h2>
+    <p data-i18n-en="LCIC is based in Lapu-Lapu City, Cebu, Philippines. For admissions or campus-life questions, use the contacts below.">필리핀 세부 라푸라푸 시티에 위치한 LCIC. 입학·생활 관련 문의는 아래 연락처를 이용해주세요.</p>
   </div>
 
   <div class="info-grid">
@@ -401,7 +406,7 @@
     <div class="info-block fade-up delay-1">
       <div class="head">
         <div class="ic"><iconify-icon icon="solar:map-point-bold-duotone"></iconify-icon></div>
-        <h3>학교 위치</h3>
+        <h3 data-i18n-en="Campus location">학교 위치</h3>
       </div>
       <div class="body">
         <p style="font-size: 0.96rem; line-height: 1.8;">
@@ -409,7 +414,7 @@
           Ticgahon 1 Road, Bankal,<br>
           Lapu-Lapu City, Cebu Philippines 6015
         </p>
-        <p style="margin-top: 14px; font-size: 0.85rem; color: var(--text-faint);">
+        <p style="margin-top: 14px; font-size: 0.85rem; color: var(--text-faint);" data-i18n-en="About 20&ndash;30 minutes by car from Mactan-Cebu International Airport (CEB).">
           Mactan-Cebu International Airport (CEB)에서 차량 약 20~30분 거리에 위치합니다.
         </p>
       </div>
@@ -419,22 +424,22 @@
     <div class="info-block fade-up delay-2">
       <div class="head">
         <div class="ic"><iconify-icon icon="solar:phone-calling-bold-duotone"></iconify-icon></div>
-        <h3>연락처</h3>
+        <h3 data-i18n-en="Contact">연락처</h3>
       </div>
       <div class="body">
         <div class="contact-row">
           <iconify-icon icon="solar:phone-bold-duotone"></iconify-icon>
-          <span class="label">학교 대표</span>
+          <span class="label" data-i18n-en="Main office">학교 대표</span>
           <span class="value"><a href="tel:+63322655920">+63 32 265 5920</a></span>
         </div>
         <div class="contact-row">
           <iconify-icon icon="solar:user-rounded-bold-duotone"></iconify-icon>
-          <span class="label">매니저</span>
+          <span class="label" data-i18n-en="Manager">매니저</span>
           <span class="value"><a href="tel:+639696075149">+63 969-607-5149</a></span>
         </div>
         <div class="contact-row">
           <iconify-icon icon="solar:chat-round-line-bold-duotone"></iconify-icon>
-          <span class="label">카카오톡</span>
+          <span class="label" data-i18n-en="KakaoTalk">카카오톡</span>
           <span class="value">kakao:byredo3</span>
         </div>
       </div>
@@ -445,38 +450,38 @@
 
   <div class="section-title fade-up">
     <span class="label"><iconify-icon icon="solar:compass-bold-duotone"></iconify-icon> QUICK ACCESS</span>
-    <h2>바로가기</h2>
-    <p>주요 안내 페이지로 한 번에 이동하세요.</p>
+    <h2 data-i18n-en="Quick links">바로가기</h2>
+    <p data-i18n-en="Jump straight to the section you need.">주요 안내 페이지로 한 번에 이동하세요.</p>
   </div>
 
   <div class="quick-grid">
 
     <a class="quick-card fade-up delay-1" href="procedure.html">
       <div class="ic"><iconify-icon icon="solar:list-check-bold-duotone"></iconify-icon></div>
-      <h4>입학 절차</h4>
-      <p>학생 등록부터 서류 업로드, 레벨 테스트(EF SET)까지 단계별 안내.</p>
-      <span class="arrow">자세히 보기 <iconify-icon icon="solar:alt-arrow-right-linear"></iconify-icon></span>
+      <h4 data-i18n-en="Admissions">입학 절차</h4>
+      <p data-i18n-en="A step-by-step walkthrough from student registration to document upload and the EF SET placement test.">학생 등록부터 서류 업로드, 레벨 테스트(EF SET)까지 단계별 안내.</p>
+      <span class="arrow" data-i18n-en="Read more <iconify-icon icon=&quot;solar:alt-arrow-right-linear&quot;></iconify-icon>">자세히 보기 <iconify-icon icon="solar:alt-arrow-right-linear"></iconify-icon></span>
     </a>
 
     <a class="quick-card fade-up delay-2" href="curriculum.html">
       <div class="ic"><iconify-icon icon="solar:notebook-bold-duotone"></iconify-icon></div>
-      <h4>ONE-EFL 커리큘럼</h4>
-      <p>회화·시험·실무·문화·제2외국어까지 15개 강의를 6그룹으로.</p>
-      <span class="arrow">강의 보기 <iconify-icon icon="solar:alt-arrow-right-linear"></iconify-icon></span>
+      <h4 data-i18n-en="ONE-EFL curriculum">ONE-EFL 커리큘럼</h4>
+      <p data-i18n-en="Fifteen courses across six tracks &mdash; conversation, test prep, career English, culture, and a second language.">회화·시험·실무·문화·제2외국어까지 15개 강의를 6그룹으로.</p>
+      <span class="arrow" data-i18n-en="See courses <iconify-icon icon=&quot;solar:alt-arrow-right-linear&quot;></iconify-icon>">강의 보기 <iconify-icon icon="solar:alt-arrow-right-linear"></iconify-icon></span>
     </a>
 
     <a class="quick-card fade-up delay-3" href="life-guide.html">
       <div class="ic"><iconify-icon icon="solar:book-bookmark-bold-duotone"></iconify-icon></div>
-      <h4>생활백서</h4>
-      <p>입국·학교 생활·통신 등 LCIC 캠퍼스 생활의 모든 것.</p>
-      <span class="arrow">가이드 보기 <iconify-icon icon="solar:alt-arrow-right-linear"></iconify-icon></span>
+      <h4 data-i18n-en="Life guide">생활백서</h4>
+      <p data-i18n-en="Everything about campus life at LCIC &mdash; arrival, daily routine, connectivity, and more.">입국·학교 생활·통신 등 LCIC 캠퍼스 생활의 모든 것.</p>
+      <span class="arrow" data-i18n-en="Open the guide <iconify-icon icon=&quot;solar:alt-arrow-right-linear&quot;></iconify-icon>">가이드 보기 <iconify-icon icon="solar:alt-arrow-right-linear"></iconify-icon></span>
     </a>
 
     <a class="quick-card fade-up delay-3" href="gallery.html">
       <div class="ic"><iconify-icon icon="solar:gallery-bold-duotone"></iconify-icon></div>
-      <h4>캠퍼스 갤러리</h4>
-      <p>LCIC 캠퍼스·기숙사·수업 현장 사진을 한 곳에서.</p>
-      <span class="arrow">갤러리 열기 <iconify-icon icon="solar:alt-arrow-right-linear"></iconify-icon></span>
+      <h4 data-i18n-en="Campus gallery">캠퍼스 갤러리</h4>
+      <p data-i18n-en="Photos of the LCIC campus, dorms, and classrooms &mdash; all in one place.">LCIC 캠퍼스·기숙사·수업 현장 사진을 한 곳에서.</p>
+      <span class="arrow" data-i18n-en="Open gallery <iconify-icon icon=&quot;solar:alt-arrow-right-linear&quot;></iconify-icon>">갤러리 열기 <iconify-icon icon="solar:alt-arrow-right-linear"></iconify-icon></span>
     </a>
 
   </div>

@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>입학 절차 · LCIC</title>
+<title data-i18n-en="Admissions · LCIC">입학 절차 · LCIC</title>
 <link rel="icon" type="image/png" href="assets/brand/lcic-logo.png">
 <script src="assets/background.js?v=8"></script>
-<link rel="stylesheet" href="assets/shared.css?v=8">
+<link rel="stylesheet" href="assets/shared.css?v=9">
+<script src="assets/i18n.js?v=1" defer></script>
 <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
 <style>
   .timeline {
@@ -925,8 +926,8 @@
 </head>
 <body data-page="procedure">
 
-<a class="brand-mark" href="index.html" aria-label="LCIC 홈으로">
-  <img src="assets/brand/lcic-logo.png" alt="LCIC 로고">
+<a class="brand-mark" href="index.html" aria-label="LCIC 홈으로" data-i18n-en-attr="aria-label|Back to LCIC home">
+  <img src="assets/brand/lcic-logo.png" alt="LCIC logo">
   <span class="brand-name">
     <span>Lapulapu Cebu</span>
     <span>International</span>
@@ -935,21 +936,25 @@
 </a>
 
 <nav class="nav-pill">
-  <a href="index.html"><iconify-icon icon="solar:home-2-bold-duotone" inline></iconify-icon> 홈</a>
-  <a href="notice.html"><iconify-icon icon="solar:bell-bold" inline></iconify-icon> 공지사항</a>
-  <a href="procedure.html" class="active"><iconify-icon icon="solar:list-check-bold-duotone" inline></iconify-icon> 입학 절차</a>
-  <a href="curriculum.html"><iconify-icon icon="solar:notebook-bold-duotone" inline></iconify-icon> 커리큘럼</a>
-  <a href="life-guide.html"><iconify-icon icon="solar:book-bookmark-bold-duotone" inline></iconify-icon> 생활백서</a>
-  <a href="faq.html"><iconify-icon icon="solar:question-circle-bold-duotone" inline></iconify-icon> 궁금한 사항</a>
-    <a href="gallery.html"><iconify-icon icon="solar:gallery-bold-duotone" inline></iconify-icon> 갤러리</a>
+  <a href="index.html"><iconify-icon icon="solar:home-2-bold-duotone" inline></iconify-icon> <span data-i18n-en="Home">홈</span></a>
+  <a href="notice.html"><iconify-icon icon="solar:bell-bold" inline></iconify-icon> <span data-i18n-en="Notices">공지사항</span></a>
+  <a href="procedure.html" class="active"><iconify-icon icon="solar:list-check-bold-duotone" inline></iconify-icon> <span data-i18n-en="Admissions">입학 절차</span></a>
+  <a href="curriculum.html"><iconify-icon icon="solar:notebook-bold-duotone" inline></iconify-icon> <span data-i18n-en="Curriculum">커리큘럼</span></a>
+  <a href="life-guide.html"><iconify-icon icon="solar:book-bookmark-bold-duotone" inline></iconify-icon> <span data-i18n-en="Life Guide">생활백서</span></a>
+  <a href="faq.html"><iconify-icon icon="solar:question-circle-bold-duotone" inline></iconify-icon> <span data-i18n-en="FAQ">궁금한 사항</span></a>
+    <a href="gallery.html"><iconify-icon icon="solar:gallery-bold-duotone" inline></iconify-icon> <span data-i18n-en="Gallery">갤러리</span></a>
+  <div class="lang-toggle" data-lang-toggle role="group" aria-label="Language">
+    <button type="button" data-lang-to="ko">KO</button>
+    <button type="button" data-lang-to="en">EN</button>
+  </div>
 </nav>
 
 <header style="padding: 160px 20px 80px; text-align: center;">
   <div class="fade-up">
     <span class="eyebrow"><span class="dot"></span> APPLICATION PROCEDURE</span>
   </div>
-  <h1 class="headline fade-up delay-1" style="margin-top: 28px;">입학 절차 안내</h1>
-  <p class="subhead fade-up delay-2" style="margin-top: 20px;">
+  <h1 class="headline fade-up delay-1" style="margin-top: 28px;" data-i18n-en="How to apply">입학 절차 안내</h1>
+  <p class="subhead fade-up delay-2" style="margin-top: 20px;" data-i18n-en="Five steps from deciding on LCIC to arriving on campus.<br>Everything happens through the student registration system.">
     LCIC 입학 결정부터 도착까지, 학생이 거쳐야 하는 5단계입니다.<br>
     각 단계는 학생 등록 시스템에서 진행됩니다.
   </p>
@@ -965,24 +970,24 @@
       <div class="step-card">
         <div class="step-head">
           <iconify-icon icon="solar:user-plus-bold-duotone"></iconify-icon>
-          <h3>학생 등록</h3>
-          <span class="step-actor">학생 진행</span>
+          <h3 data-i18n-en="Register as a student">학생 등록</h3>
+          <span class="step-actor" data-i18n-en="You do this">학생 진행</span>
         </div>
-        <p class="step-desc">
+        <p class="step-desc" data-i18n-en="Create an account in the student registration system and fill in the application form. This is the very first step.">
           학생 등록 시스템에서 계정을 만들고 신청서를 작성합니다. 가장 먼저 진행해야 하는 단계입니다.
         </p>
 
         <details class="manual-toggle">
           <summary>
             <iconify-icon icon="solar:book-2-bold-duotone"></iconify-icon>
-            <span>등록 메뉴얼 자세히 보기</span>
+            <span data-i18n-en="Open the detailed registration manual">등록 메뉴얼 자세히 보기</span>
             <span class="chevron"><iconify-icon icon="solar:alt-arrow-down-linear"></iconify-icon></span>
           </summary>
           <div class="manual-body">
 
             <div class="m-callout">
               <iconify-icon icon="solar:clock-circle-bold-duotone"></iconify-icon>
-              <span><b>약 5~10분 소요</b> · 준비물 — 여권 사본, 본인 주소, 비상 연락처 정보. 화면의 빨간색 글씨가 직접 입력해야 하는 항목입니다.</span>
+              <span data-i18n-en="<b>About 5&ndash;10 minutes</b> &middot; What you&rsquo;ll need: a copy of your passport, your home address, and emergency contact details. Anything in red on the form is something you fill in yourself."><b>약 5~10분 소요</b> · 준비물 — 여권 사본, 본인 주소, 비상 연락처 정보. 화면의 빨간색 글씨가 직접 입력해야 하는 항목입니다.</span>
             </div>
 
             <ol class="manual-steps" style="margin-top: 20px;">
@@ -990,13 +995,13 @@
               <li class="m-step">
                 <span class="m-num">1</span>
                 <div class="m-text">
-                  <h4>신청서 시작 — 이메일 입력</h4>
-                  <p>학생 등록 시스템(<a href="https://lcic-students-system.com/application/request/kr" target="_blank" rel="noopener" style="color:var(--accent); text-decoration:underline; text-underline-offset:2px;">lcic-students-system.com/application/request/kr</a>)에 접속하여 본인 이메일을 입력하고 <b>제출</b>을 누르면, 등록한 이메일로 신청 링크가 발송됩니다.</p>
-                  <figure class="m-figure"><img src="assets/manual/01-email-input.jpg" alt="신청서 이메일 입력 화면"></figure>
-                  <div class="m-caption">신청서 첫 화면 — 이메일 입력 후 제출</div>
+                  <h4 data-i18n-en="Start the application &mdash; enter your email">신청서 시작 — 이메일 입력</h4>
+                  <p data-i18n-en="Open the student registration system (<a href=&quot;https://lcic-students-system.com/application/request/kr&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; style=&quot;color:var(--accent); text-decoration:underline; text-underline-offset:2px;&quot;>lcic-students-system.com/application/request/kr</a>), enter your email address, and press <b>Submit</b>. An application link is sent to your inbox.">학생 등록 시스템(<a href="https://lcic-students-system.com/application/request/kr" target="_blank" rel="noopener" style="color:var(--accent); text-decoration:underline; text-underline-offset:2px;">lcic-students-system.com/application/request/kr</a>)에 접속하여 본인 이메일을 입력하고 <b>제출</b>을 누르면, 등록한 이메일로 신청 링크가 발송됩니다.</p>
+                  <figure class="m-figure"><img src="assets/manual/01-email-input.jpg" alt="Application email input screen"></figure>
+                  <div class="m-caption" data-i18n-en="The first screen &mdash; enter your email and submit">신청서 첫 화면 — 이메일 입력 후 제출</div>
                   <div class="m-callout m-callout-tip">
                     <iconify-icon icon="solar:inbox-archive-bold-duotone"></iconify-icon>
-                    <span><b>스팸함 확인</b> · 메일이 안 보이면 스팸함 또는 프로모션함도 확인해주세요.</span>
+                    <span data-i18n-en="<b>Check your spam folder</b> &middot; If the email doesn&rsquo;t arrive, also look in the spam or promotions folder."><b>스팸함 확인</b> · 메일이 안 보이면 스팸함 또는 프로모션함도 확인해주세요.</span>
                   </div>
                 </div>
               </li>
@@ -1004,23 +1009,23 @@
               <li class="m-step">
                 <span class="m-num">2</span>
                 <div class="m-text">
-                  <h4>메일에서 신청 링크 클릭</h4>
-                  <p>받은편지함에서 LCIC 발신 <b>「Continue Your Application」</b> 메일을 열고, 본문의 <b>Continue Application</b> 버튼을 클릭합니다.</p>
-                  <figure class="m-figure"><img src="assets/manual/02-continue-mail.jpg" alt="Continue Your Application 메일"></figure>
-                  <div class="m-caption">받은 메일에서 Continue Application 클릭</div>
+                  <h4 data-i18n-en="Click the application link in the email">메일에서 신청 링크 클릭</h4>
+                  <p data-i18n-en="Open the <b>&ldquo;Continue Your Application&rdquo;</b> email from LCIC and click the <b>Continue Application</b> button in the body.">받은편지함에서 LCIC 발신 <b>「Continue Your Application」</b> 메일을 열고, 본문의 <b>Continue Application</b> 버튼을 클릭합니다.</p>
+                  <figure class="m-figure"><img src="assets/manual/02-continue-mail.jpg" alt="Continue Your Application email"></figure>
+                  <div class="m-caption" data-i18n-en="Click Continue Application in the email">받은 메일에서 Continue Application 클릭</div>
                 </div>
               </li>
 
               <li class="m-step">
                 <span class="m-num">3</span>
                 <div class="m-text">
-                  <h4>Step 1 — 기본 정보 입력</h4>
-                  <p>이름과 여권 정보(여권 번호·발행일·유효기간)를 입력합니다. 빨간색 항목이 직접 입력해야 하는 부분입니다.</p>
-                  <figure class="m-figure"><img src="assets/manual/03-step1-basic.png" alt="Step 1 기본 정보"></figure>
-                  <div class="m-caption">Step 1 — 이름·여권 정보 입력</div>
+                  <h4 data-i18n-en="Step 1 &mdash; basic information">Step 1 — 기본 정보 입력</h4>
+                  <p data-i18n-en="Enter your name and passport details (passport number, issue date, expiration). The red fields are what you fill in yourself.">이름과 여권 정보(여권 번호·발행일·유효기간)를 입력합니다. 빨간색 항목이 직접 입력해야 하는 부분입니다.</p>
+                  <figure class="m-figure"><img src="assets/manual/03-step1-basic.png" alt="Step 1 basic information"></figure>
+                  <div class="m-caption" data-i18n-en="Step 1 &mdash; name and passport information">Step 1 — 이름·여권 정보 입력</div>
                   <div class="m-callout m-callout-warn">
                     <iconify-icon icon="solar:danger-triangle-bold-duotone"></iconify-icon>
-                    <span><b>주의</b> · 여권 영문명은 여권에 기재된 그대로 입력해야 합니다. 오타가 있으면 비자 발급에 문제가 발생할 수 있습니다.</span>
+                    <span data-i18n-en="<b>Heads up</b> &middot; Enter your romanized name <i>exactly</i> as it appears on your passport. Any typo can cause issues with the visa."><b>주의</b> · 여권 영문명은 여권에 기재된 그대로 입력해야 합니다. 오타가 있으면 비자 발급에 문제가 발생할 수 있습니다.</span>
                   </div>
                 </div>
               </li>
@@ -1028,13 +1033,13 @@
               <li class="m-step">
                 <span class="m-num">4</span>
                 <div class="m-text">
-                  <h4>Step 2 — 개인 정보 입력</h4>
-                  <p>성별·생년월일·주소·비상 연락처를 입력합니다.</p>
-                  <figure class="m-figure"><img src="assets/manual/04-step2-personal.png" alt="Step 2 개인 정보 화면"></figure>
-                  <div class="m-caption">Step 2 — 개인 정보 + 비상 연락처</div>
+                  <h4 data-i18n-en="Step 2 &mdash; personal information">Step 2 — 개인 정보 입력</h4>
+                  <p data-i18n-en="Enter your sex, date of birth, address, and emergency contact.">성별·생년월일·주소·비상 연락처를 입력합니다.</p>
+                  <figure class="m-figure"><img src="assets/manual/04-step2-personal.png" alt="Step 2 personal information screen"></figure>
+                  <div class="m-caption" data-i18n-en="Step 2 &mdash; personal info + emergency contact">Step 2 — 개인 정보 + 비상 연락처</div>
                   <div class="m-callout m-callout-tip">
                     <iconify-icon icon="solar:phone-rounded-bold-duotone"></iconify-icon>
-                    <span><b>비상 연락처</b> · 한국에서 연락 가능한 가족·보호자 정보를 입력하세요. 긴급 상황 시 학교가 연락하는 채널입니다.</span>
+                    <span data-i18n-en="<b>Emergency contact</b> &middot; Use someone reachable in your home country &mdash; a family member or guardian. This is who the school calls if there&rsquo;s an emergency."><b>비상 연락처</b> · 한국에서 연락 가능한 가족·보호자 정보를 입력하세요. 긴급 상황 시 학교가 연락하는 채널입니다.</span>
                   </div>
                 </div>
               </li>
@@ -1042,20 +1047,20 @@
               <li class="m-step">
                 <span class="m-num">5</span>
                 <div class="m-text">
-                  <h4>Step 3 — 추가 정보 및 약관 동의</h4>
-                  <p>본인의 <b>대학 · 학부 · 학과 · 유학 시작일 · 유학 기간 · 코스</b>를 선택합니다.</p>
+                  <h4 data-i18n-en="Step 3 &mdash; extra info &amp; terms of service">Step 3 — 추가 정보 및 약관 동의</h4>
+                  <p data-i18n-en="Choose your <b>university, college, department, study start date, study length, and course</b>.">본인의 <b>대학 · 학부 · 학과 · 유학 시작일 · 유학 기간 · 코스</b>를 선택합니다.</p>
                   <figure class="m-figure m-figure-annot">
-                    <img src="assets/manual/05-step3-terms.png" alt="Step 3 추가 정보 및 약관">
-                    <span class="m-annot-box" style="top: 51%; left: 51%;">예시일 뿐이에요. 본인 일정에 맞춰 정확히 입력해주세요</span>
+                    <img src="assets/manual/05-step3-terms.png" alt="Step 3 extra info and terms">
+                    <span class="m-annot-box" style="top: 51%; left: 51%;" data-i18n-en="This is just an example &mdash; fill in the dates that match your own schedule">예시일 뿐이에요. 본인 일정에 맞춰 정확히 입력해주세요</span>
                   </figure>
-                  <div class="m-caption">Step 3 — 추가 정보 입력 + 약관 동의</div>
+                  <div class="m-caption" data-i18n-en="Step 3 &mdash; extra info + terms of service">Step 3 — 추가 정보 입력 + 약관 동의</div>
 
                   <div class="m-callout m-callout-warn">
                     <iconify-icon icon="solar:calendar-bold-duotone"></iconify-icon>
-                    <span><b>유학시작일</b> · 본인의 실제 입국·입실 일정에 맞춰 <b>정확하게</b> 입력해주세요. 시작일이 잘못 입력되면 반 배정, 비자, 픽업 등 이후 절차에 문제가 생길 수 있습니다.</span>
+                    <span data-i18n-en="<b>Study start date</b> &middot; Enter the date that <b>exactly</b> matches your real arrival/check-in plans. A wrong start date can cause problems with class placement, visa, and pickup."><b>유학시작일</b> · 본인의 실제 입국·입실 일정에 맞춰 <b>정확하게</b> 입력해주세요. 시작일이 잘못 입력되면 반 배정, 비자, 픽업 등 이후 절차에 문제가 생길 수 있습니다.</span>
                   </div>
 
-                  <div class="m-flow">
+                  <div class="m-flow" data-i18n-en="<b>How the consent flow works</b><br><span class=&quot;m-flow-no&quot;>1</span> Click [Terms of Service] &rarr; read &nbsp;<span class=&quot;m-flow-no&quot;>2</span> Tick the agree box &nbsp;<span class=&quot;m-flow-no&quot;>3</span> [Agree and Continue] &nbsp;<span class=&quot;m-flow-no&quot;>4</span> Check the box at the bottom &nbsp;<span class=&quot;m-flow-no&quot;>5</span> [Submit Application] &rarr; final submit">
                     <b>약관 동의 절차</b><br>
                     <span class="m-flow-no">1</span> [이용 약관] 클릭 → 내용 확인 &nbsp;
                     <span class="m-flow-no">2</span> 동의 체크 &nbsp;
@@ -1065,7 +1070,7 @@
                   </div>
                   <div class="m-callout m-callout-warn">
                     <iconify-icon icon="solar:eye-bold-duotone"></iconify-icon>
-                    <span><b>주의</b> · 제출 후 학교 관리자 승인 절차가 진행됩니다. 제출 전 우측 패널로 입력 내용을 다시 한번 확인하세요.</span>
+                    <span data-i18n-en="<b>Heads up</b> &middot; After you submit, the application goes to LCIC staff for approval. Before submitting, review everything once more using the panel on the right."><b>주의</b> · 제출 후 학교 관리자 승인 절차가 진행됩니다. 제출 전 우측 패널로 입력 내용을 다시 한번 확인하세요.</span>
                   </div>
                 </div>
               </li>
@@ -1073,29 +1078,29 @@
               <li class="m-step">
                 <span class="m-num">6</span>
                 <div class="m-text">
-                  <h4>학생 계정 정보 수신</h4>
-                  <p>제출 완료 후, 등록한 이메일로 <b>「Your Student Account Credentials」</b> 메일이 자동 발송됩니다. 임시 비밀번호는 첫 로그인 후 반드시 변경하세요.</p>
-                  <figure class="m-figure"><img src="assets/manual/06-credentials.jpg" alt="학생 계정 발급 메일"></figure>
-                  <div class="m-caption">계정 발급 메일 — 임시 비밀번호 + 로그인 링크 포함</div>
+                  <h4 data-i18n-en="Receive your student account">학생 계정 정보 수신</h4>
+                  <p data-i18n-en="After you submit, you&rsquo;ll automatically get a <b>&ldquo;Your Student Account Credentials&rdquo;</b> email. Change the temporary password the first time you log in.">제출 완료 후, 등록한 이메일로 <b>「Your Student Account Credentials」</b> 메일이 자동 발송됩니다. 임시 비밀번호는 첫 로그인 후 반드시 변경하세요.</p>
+                  <figure class="m-figure"><img src="assets/manual/06-credentials.jpg" alt="Student account credentials email"></figure>
+                  <div class="m-caption" data-i18n-en="Account credentials email &mdash; includes the temporary password and login link">계정 발급 메일 — 임시 비밀번호 + 로그인 링크 포함</div>
                 </div>
               </li>
 
               <li class="m-step">
                 <span class="m-num">7</span>
                 <div class="m-text">
-                  <h4>학생 포털 로그인</h4>
-                  <p><a href="https://lcic-students-system.com/login" target="_blank" rel="noopener" style="color:var(--accent); text-decoration:underline; text-underline-offset:2px;">lcic-students-system.com/login</a>에 접속하여, 이메일(또는 학번)과 메일에서 받은 임시 비밀번호로 로그인합니다. 비밀번호 분실 시 <b>Recover Password</b>로 재설정할 수 있습니다.</p>
-                  <figure class="m-figure"><img src="assets/manual/07-login-dashboard.png" alt="로그인 및 대시보드"></figure>
-                  <div class="m-caption">로그인 후 학생 대시보드</div>
+                  <h4 data-i18n-en="Log in to the student portal">학생 포털 로그인</h4>
+                  <p data-i18n-en="Open <a href=&quot;https://lcic-students-system.com/login&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; style=&quot;color:var(--accent); text-decoration:underline; text-underline-offset:2px;&quot;>lcic-students-system.com/login</a> and sign in with your email (or student number) and the temporary password from the email. If you lose the password, reset it with <b>Recover Password</b>."><a href="https://lcic-students-system.com/login" target="_blank" rel="noopener" style="color:var(--accent); text-decoration:underline; text-underline-offset:2px;">lcic-students-system.com/login</a>에 접속하여, 이메일(또는 학번)과 메일에서 받은 임시 비밀번호로 로그인합니다. 비밀번호 분실 시 <b>Recover Password</b>로 재설정할 수 있습니다.</p>
+                  <figure class="m-figure"><img src="assets/manual/07-login-dashboard.png" alt="Login and dashboard"></figure>
+                  <div class="m-caption" data-i18n-en="Student dashboard after logging in">로그인 후 학생 대시보드</div>
                   <div class="m-callout m-callout-ok">
                     <iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon>
-                    <span><b>등록 완료</b> · 로그인 후 대시보드(Home · Student Buddy · Travel Waiver · Student Profile · Student Guideline)에 접근 가능합니다.</span>
+                    <span data-i18n-en="<b>You&rsquo;re registered</b> &middot; Once logged in, you can access the dashboard (Home, Student Buddy, Travel Waiver, Student Profile, Student Guideline)."><b>등록 완료</b> · 로그인 후 대시보드(Home · Student Buddy · Travel Waiver · Student Profile · Student Guideline)에 접근 가능합니다.</span>
                   </div>
                 </div>
               </li>
 
             </ol>
-            <div class="m-note">
+            <div class="m-note" data-i18n-en="* The names, emails, passport numbers, and addresses in the screenshots are examples, not real data.<br>* Screen designs may shift as the system is updated. For follow-up questions, see the <a href=&quot;faq.html&quot; style=&quot;color:var(--text-dim); text-decoration:underline; text-underline-offset:2px;&quot;>FAQ</a> page.">
               ※ 스크린샷의 이름·이메일·여권번호·주소 등은 작성 예시이며 실제 데이터가 아닙니다.<br>
               ※ 화면 디자인은 시스템 업데이트로 일부 달라질 수 있습니다. 추가 문의는 <a href="faq.html" style="color:var(--text-dim); text-decoration:underline; text-underline-offset:2px;">궁금한 사항</a> 페이지를 참고해주세요.
             </div>
@@ -1110,39 +1115,39 @@
       <div class="step-card">
         <div class="step-head">
           <iconify-icon icon="solar:upload-square-bold-duotone"></iconify-icon>
-          <h3>서류 업로드</h3>
-          <span class="step-actor">학생 진행</span>
+          <h3 data-i18n-en="Upload your documents">서류 업로드</h3>
+          <span class="step-actor" data-i18n-en="You do this">학생 진행</span>
         </div>
-        <p class="step-desc">
+        <p class="step-desc" data-i18n-en="Once you&rsquo;re registered, upload the five required documents through the student portal.">
           학생 등록을 완료한 뒤, 입학에 필요한 서류 5종을 학생 포털에 업로드합니다.
         </p>
         <div class="sub-list">
           <div class="item">
             <iconify-icon icon="solar:document-text-bold"></iconify-icon>
-            <span>레벨 테스트 자료</span>
+            <span data-i18n-en="Placement test result">레벨 테스트 자료</span>
           </div>
           <div class="item">
             <iconify-icon icon="solar:passport-bold"></iconify-icon>
-            <span>여권 사본</span>
+            <span data-i18n-en="Passport copy">여권 사본</span>
           </div>
           <div class="item">
             <iconify-icon icon="solar:plain-bold"></iconify-icon>
-            <span>왕복 항공권</span>
+            <span data-i18n-en="Round-trip ticket">왕복 항공권</span>
           </div>
           <div class="item">
             <iconify-icon icon="solar:user-id-bold"></iconify-icon>
-            <span>본인 사진</span>
+            <span data-i18n-en="ID photo">본인 사진</span>
           </div>
           <div class="item">
             <iconify-icon icon="solar:shield-check-bold"></iconify-icon>
-            <span>보험 증명서</span>
+            <span data-i18n-en="Insurance certificate">보험 증명서</span>
           </div>
         </div>
 
         <details class="manual-toggle">
           <summary>
             <iconify-icon icon="solar:book-2-bold-duotone"></iconify-icon>
-            <span>서류 준비 매뉴얼 자세히 보기</span>
+            <span data-i18n-en="Open the detailed document manual">서류 준비 매뉴얼 자세히 보기</span>
             <span class="chevron"><iconify-icon icon="solar:alt-arrow-down-linear"></iconify-icon></span>
           </summary>
           <div class="manual-body">
@@ -1151,11 +1156,11 @@
               <div class="m-tabs" role="tablist">
                 <button class="m-tab active" data-target="tab-upload" type="button">
                   <iconify-icon icon="solar:cloud-upload-bold-duotone"></iconify-icon>
-                  서류 업로드
+                  <span data-i18n-en="Document upload">서류 업로드</span>
                 </button>
                 <button class="m-tab" data-target="tab-efset" type="button">
                   <iconify-icon icon="solar:document-bold-duotone"></iconify-icon>
-                  레벨 테스트 (EF SET)
+                  <span data-i18n-en="Placement test (EF SET)">레벨 테스트 (EF SET)</span>
                 </button>
               </div>
 
@@ -1163,7 +1168,7 @@
               <div class="m-tabpanel" data-panel="tab-efset">
                 <div class="m-callout">
                   <iconify-icon icon="solar:checklist-minimalistic-bold-duotone"></iconify-icon>
-                  <span><b>레벨 테스트</b>는 무료 온라인 시험 <b>EF SET</b>으로 진행합니다. 시험 결과(Certificate)를 다운로드한 뒤, <b>서류 업로드</b> 탭의 <b>레벨 테스트 자료</b> 단계에 업로드해주세요.</span>
+                  <span data-i18n-en="<b>Placement testing</b> is done through the free online <b>EF SET</b> exam. Download your result certificate, then upload it under <b>Placement test result</b> in the <b>Document upload</b> tab."><b>레벨 테스트</b>는 무료 온라인 시험 <b>EF SET</b>으로 진행합니다. 시험 결과(Certificate)를 다운로드한 뒤, <b>서류 업로드</b> 탭의 <b>레벨 테스트 자료</b> 단계에 업로드해주세요.</span>
                 </div>
 
                 <ol class="manual-steps" style="margin-top: 20px;">
@@ -1171,31 +1176,31 @@
                   <li class="m-step">
                     <span class="m-num">1</span>
                     <div class="m-text">
-                      <h4>EFSET 사이트 접속 → 90분 테스트 선택</h4>
-                      <p>아래 링크를 통해 EFSET 홈페이지에 접속합니다.<br>
+                      <h4 data-i18n-en="Go to EFSET &rarr; pick the 90-minute test">EFSET 사이트 접속 → 90분 테스트 선택</h4>
+                      <p data-i18n-en="Open the EFSET homepage:<br><a href=&quot;https://www.efset.org&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; style=&quot;color:var(--accent); text-decoration:underline; text-underline-offset:2px;&quot;>https://www.efset.org</a>">아래 링크를 통해 EFSET 홈페이지에 접속합니다.<br>
                       <a href="https://www.efset.org" target="_blank" rel="noopener" style="color:var(--accent); text-decoration:underline; text-underline-offset:2px;">https://www.efset.org</a></p>
-                      <p>상단 메뉴에서 <b>Our Tests</b> → <b>4 skills (90 min)</b>을 선택합니다.</p>
-                      <figure class="m-figure"><img src="assets/manual/efset/efset-00-homepage.png" alt="EF SET 홈페이지 - Our Tests 메뉴에서 4 skills (90 min) 선택"></figure>
-                      <p style="margin-top:14px;">"Our full English test · 90 MIN EF SET" 안내가 보이면 <b>Start the test</b> 버튼을 누릅니다.</p>
-                      <figure class="m-figure"><img src="assets/manual/efset/efset-01-start.png" alt="90 MIN EF SET 시작 화면"></figure>
+                      <p data-i18n-en="In the top menu, choose <b>Our Tests</b> &rarr; <b>4 skills (90 min)</b>.">상단 메뉴에서 <b>Our Tests</b> → <b>4 skills (90 min)</b>을 선택합니다.</p>
+                      <figure class="m-figure"><img src="assets/manual/efset/efset-00-homepage.png" alt="EF SET homepage — Our Tests menu, choose 4 skills (90 min)"></figure>
+                      <p style="margin-top:14px;" data-i18n-en="When you see &lsquo;Our full English test &middot; 90 MIN EF SET&rsquo;, press <b>Start the test</b>.">"Our full English test · 90 MIN EF SET" 안내가 보이면 <b>Start the test</b> 버튼을 누릅니다.</p>
+                      <figure class="m-figure"><img src="assets/manual/efset/efset-01-start.png" alt="90 MIN EF SET start screen"></figure>
                       <div class="m-callout m-callout-warn">
                         <iconify-icon icon="solar:calendar-bold-duotone"></iconify-icon>
-                        <span><b>주의</b> · EF SET은 <b>90일에 1회</b>만 응시할 수 있습니다. 이전에 응시한 적이 있다면 아래와 같이 "Come back soon" 안내가 표시됩니다.</span>
+                        <span data-i18n-en="<b>Heads up</b> &middot; You can only take EF SET <b>once every 90 days</b>. If you&rsquo;ve taken it before, you&rsquo;ll see a &lsquo;Come back soon&rsquo; message like the one below."><b>주의</b> · EF SET은 <b>90일에 1회</b>만 응시할 수 있습니다. 이전에 응시한 적이 있다면 아래와 같이 "Come back soon" 안내가 표시됩니다.</span>
                       </div>
-                      <figure class="m-figure" style="max-width: 420px; margin-left: 0;"><img src="assets/manual/efset/efset-06-cooldown.png" alt="90일 재응시 제한 안내"></figure>
-                      <div class="m-caption" style="text-align:left;">EF SET 응시 후 90일 이내 재접속 시 표시되는 화면</div>
+                      <figure class="m-figure" style="max-width: 420px; margin-left: 0;"><img src="assets/manual/efset/efset-06-cooldown.png" alt="90-day retake restriction"></figure>
+                      <div class="m-caption" style="text-align:left;" data-i18n-en="What you see if you return to EF SET within 90 days of a previous attempt">EF SET 응시 후 90일 이내 재접속 시 표시되는 화면</div>
                     </div>
                   </li>
 
                   <li class="m-step">
                     <span class="m-num">2</span>
                     <div class="m-text">
-                      <h4>시험 안내 확인</h4>
-                      <p>총 4영역 <b>Reading 20분 · Listening 20분 · Writing 35분 · Speaking 15분</b>, 약 90분 소요됩니다. 안내문을 확인한 뒤 <b>Next</b>를 누릅니다.</p>
-                      <figure class="m-figure"><img src="assets/manual/efset/efset-02-welcome.png" alt="EF SET 시험 안내 (Welcome)"></figure>
+                      <h4 data-i18n-en="Read the test instructions">시험 안내 확인</h4>
+                      <p data-i18n-en="The test has four sections &mdash; <b>Reading 20 min &middot; Listening 20 min &middot; Writing 35 min &middot; Speaking 15 min</b> &mdash; about 90 minutes total. Read the instructions and press <b>Next</b>.">총 4영역 <b>Reading 20분 · Listening 20분 · Writing 35분 · Speaking 15분</b>, 약 90분 소요됩니다. 안내문을 확인한 뒤 <b>Next</b>를 누릅니다.</p>
+                      <figure class="m-figure"><img src="assets/manual/efset/efset-02-welcome.png" alt="EF SET test welcome screen"></figure>
                       <div class="m-callout m-callout-warn">
                         <iconify-icon icon="solar:clock-square-bold-duotone"></iconify-icon>
-                        <span><b>핵심 주의사항</b> · 시작 후 타이머는 멈출 수 없고 단 1회만 응시 가능합니다. 인터넷이 끊기면 시험이 저장되지 않으니 안정적인 환경에서 응시하세요.</span>
+                        <span data-i18n-en="<b>Important</b> &middot; Once you begin, the timer cannot be paused and you only get one attempt. If your connection drops, the test won&rsquo;t save &mdash; take it on a stable network."><b>핵심 주의사항</b> · 시작 후 타이머는 멈출 수 없고 단 1회만 응시 가능합니다. 인터넷이 끊기면 시험이 저장되지 않으니 안정적인 환경에서 응시하세요.</span>
                       </div>
                     </div>
                   </li>
@@ -1203,12 +1208,12 @@
                   <li class="m-step">
                     <span class="m-num">3</span>
                     <div class="m-text">
-                      <h4>계정 만들기 (Configure your account)</h4>
-                      <p><b>First name · Last name</b>(EF SET certificate에 표시됨), <b>Email address</b>(결과 수신 주소, 한번 입력하면 변경 불가)를 입력합니다. <i>Phone</i>은 선택입니다. Privacy Policy 동의 후 <b>Proceed</b>.</p>
-                      <figure class="m-figure"><img src="assets/manual/efset/efset-03-account.png" alt="Configure your account 입력"></figure>
+                      <h4 data-i18n-en="Configure your account">계정 만들기 (Configure your account)</h4>
+                      <p data-i18n-en="Enter your <b>First name and Last name</b> (these appear on the EF SET certificate) and your <b>email address</b> (where the result is sent &mdash; cannot be changed later). <i>Phone</i> is optional. Accept the Privacy Policy, then click <b>Proceed</b>."><b>First name · Last name</b>(EF SET certificate에 표시됨), <b>Email address</b>(결과 수신 주소, 한번 입력하면 변경 불가)를 입력합니다. <i>Phone</i>은 선택입니다. Privacy Policy 동의 후 <b>Proceed</b>.</p>
+                      <figure class="m-figure"><img src="assets/manual/efset/efset-03-account.png" alt="Configure your account form"></figure>
                       <div class="m-callout m-callout-tip">
                         <iconify-icon icon="solar:user-id-bold-duotone"></iconify-icon>
-                        <span><b>이름은 여권과 동일하게</b> 입력하세요. Certificate에 그대로 인쇄되며 LCIC에서도 동일 표기를 사용합니다.</span>
+                        <span data-i18n-en="<b>Use your passport name</b>. It&rsquo;s printed on the certificate as-is, and LCIC uses the same spelling."><b>이름은 여권과 동일하게</b> 입력하세요. Certificate에 그대로 인쇄되며 LCIC에서도 동일 표기를 사용합니다.</span>
                       </div>
                     </div>
                   </li>
@@ -1216,11 +1221,11 @@
                   <li class="m-step">
                     <span class="m-num">4</span>
                     <div class="m-text">
-                      <h4>시험 응시 — 준비물 확인</h4>
-                      <p>4영역 시험을 차분히 끝까지 응시합니다.</p>
+                      <h4 data-i18n-en="Take the test &mdash; what you&rsquo;ll need">시험 응시 — 준비물 확인</h4>
+                      <p data-i18n-en="Work through all four sections at your own pace, all the way to the end.">4영역 시험을 차분히 끝까지 응시합니다.</p>
                       <div class="m-callout m-callout-tip">
                         <iconify-icon icon="solar:headphones-round-sound-bold-duotone"></iconify-icon>
-                        <span><b>준비물</b> · 헤드셋 또는 이어폰(Listening용), 마이크(Speaking용). 조용한 공간에서 응시하세요.</span>
+                        <span data-i18n-en="<b>What you&rsquo;ll need</b> &middot; A headset or earphones (for Listening) and a microphone (for Speaking). Take the test somewhere quiet."><b>준비물</b> · 헤드셋 또는 이어폰(Listening용), 마이크(Speaking용). 조용한 공간에서 응시하세요.</span>
                       </div>
                     </div>
                   </li>
@@ -1228,26 +1233,26 @@
                   <li class="m-step">
                     <span class="m-num">5</span>
                     <div class="m-text">
-                      <h4>점수 확인 (Your score explained)</h4>
-                      <p>시험 종료 후 <b>EF SET 점수와 CEFR 등급(A1~C2)</b>이 표시됩니다. Reading·Listening 영역별 점수와 등급 해석도 함께 보입니다.</p>
-                      <figure class="m-figure"><img src="assets/manual/efset/efset-04-score.png" alt="EF SET 점수 결과"></figure>
+                      <h4 data-i18n-en="Your score explained">점수 확인 (Your score explained)</h4>
+                      <p data-i18n-en="When you finish, your <b>EF SET score and CEFR level (A1&ndash;C2)</b> appear, along with per-section breakdowns for Reading and Listening and a short interpretation of each level.">시험 종료 후 <b>EF SET 점수와 CEFR 등급(A1~C2)</b>이 표시됩니다. Reading·Listening 영역별 점수와 등급 해석도 함께 보입니다.</p>
+                      <figure class="m-figure"><img src="assets/manual/efset/efset-04-score.png" alt="EF SET score result"></figure>
                     </div>
                   </li>
 
                   <li class="m-step">
                     <span class="m-num">6</span>
                     <div class="m-text">
-                      <h4>Certificate 다운로드</h4>
-                      <p>Certificate를 <b>다운로드(PDF)</b> 받거나 <b>화면 캡처</b>로 저장합니다. 이 파일은 옆 <b>서류 업로드</b> 탭의 <b>레벨 테스트 자료</b> 단계에서 업로드합니다.</p>
+                      <h4 data-i18n-en="Download your certificate">Certificate 다운로드</h4>
+                      <p data-i18n-en="Save your certificate as a <b>PDF</b> or take a <b>screenshot</b>. You&rsquo;ll upload this file under <b>Placement test result</b> in the <b>Document upload</b> tab.">Certificate를 <b>다운로드(PDF)</b> 받거나 <b>화면 캡처</b>로 저장합니다. 이 파일은 옆 <b>서류 업로드</b> 탭의 <b>레벨 테스트 자료</b> 단계에서 업로드합니다.</p>
                       <figure class="m-figure"><img src="assets/manual/efset/efset-05-certificate.png" alt="EF SET Certificate"></figure>
                       <div class="m-callout m-callout-ok">
                         <iconify-icon icon="solar:cloud-check-bold-duotone"></iconify-icon>
-                        <span><b>다음 단계</b> · 아래 버튼을 누르면 <b>서류 업로드</b> 탭으로 바로 이동합니다.</span>
+                        <span data-i18n-en="<b>Next step</b> &middot; The button below jumps straight to the <b>Document upload</b> tab."><b>다음 단계</b> · 아래 버튼을 누르면 <b>서류 업로드</b> 탭으로 바로 이동합니다.</span>
                       </div>
                       <div style="text-align: center; margin-top: 18px;">
                         <button type="button" class="m-tab-jump" data-jump-to="tab-upload">
                           <iconify-icon icon="solar:cloud-upload-bold-duotone"></iconify-icon>
-                          서류 업로드 탭으로 이동
+                          <span data-i18n-en="Go to the Document upload tab">서류 업로드 탭으로 이동</span>
                           <iconify-icon icon="solar:alt-arrow-right-linear"></iconify-icon>
                         </button>
                       </div>
@@ -1261,25 +1266,25 @@
               <div class="m-tabpanel active" data-panel="tab-upload">
                 <div class="m-callout" style="border-left: 3px solid var(--accent);">
                   <iconify-icon icon="solar:cloud-upload-bold-duotone" style="color:var(--accent);"></iconify-icon>
-                  <span><b>Upload Tasks에 서류 업로드하기</b> — EFSET Certificate와 함께 <b>여권 사본 · 왕복 항공권 · 본인 사진 · 보험 증명서</b>를 <b>Student Profile</b>에서 업로드합니다.</span>
+                  <span data-i18n-en="<b>Uploading documents in Upload Tasks</b> &mdash; from your <b>Student Profile</b>, upload your EFSET certificate together with your <b>passport copy, round-trip ticket, ID photo, and insurance certificate</b>."><b>Upload Tasks에 서류 업로드하기</b> — EFSET Certificate와 함께 <b>여권 사본 · 왕복 항공권 · 본인 사진 · 보험 증명서</b>를 <b>Student Profile</b>에서 업로드합니다.</span>
                 </div>
 
                 <div class="m-wizard" id="wiz-upload">
                   <div class="m-wnav">
-                    <button type="button"><span class="m-wn-num">STEP 1</span>마이페이지 진입</button>
-                    <button type="button"><span class="m-wn-num">STEP 2</span>여권 사본</button>
-                    <button type="button"><span class="m-wn-num">STEP 3</span>왕복 항공권</button>
-                    <button type="button"><span class="m-wn-num">STEP 4</span>레벨 테스트</button>
-                    <button type="button"><span class="m-wn-num">STEP 5</span>사진·보험</button>
+                    <button type="button"><span class="m-wn-num">STEP 1</span><span data-i18n-en="Open My Page">마이페이지 진입</span></button>
+                    <button type="button"><span class="m-wn-num">STEP 2</span><span data-i18n-en="Passport">여권 사본</span></button>
+                    <button type="button"><span class="m-wn-num">STEP 3</span><span data-i18n-en="Flight tickets">왕복 항공권</span></button>
+                    <button type="button"><span class="m-wn-num">STEP 4</span><span data-i18n-en="Placement test">레벨 테스트</span></button>
+                    <button type="button"><span class="m-wn-num">STEP 5</span><span data-i18n-en="Photo &amp; insurance">사진·보험</span></button>
                   </div>
 
                   <div class="m-wstep">
                     <div class="m-step">
                       <span class="m-num">1</span>
                       <div class="m-text">
-                        <h4>마이페이지 접속 → Student Profile</h4>
-                        <p>학생 마이페이지에 로그인한 뒤 좌측 메뉴에서 <b>Student Profile</b>을 클릭합니다.</p>
-                        <figure class="m-figure"><img src="assets/manual/upload/01-mypage-profile.png" alt="LCIC 마이페이지 - 좌측 메뉴에서 Student Profile 선택"></figure>
+                        <h4 data-i18n-en="Open My Page &rarr; Student Profile">마이페이지 접속 → Student Profile</h4>
+                        <p data-i18n-en="Log in to your student My Page and click <b>Student Profile</b> in the left menu.">학생 마이페이지에 로그인한 뒤 좌측 메뉴에서 <b>Student Profile</b>을 클릭합니다.</p>
+                        <figure class="m-figure"><img src="assets/manual/upload/01-mypage-profile.png" alt="LCIC My Page — Student Profile in the left menu"></figure>
                       </div>
                     </div>
                   </div>
@@ -1288,16 +1293,16 @@
                     <div class="m-step">
                       <span class="m-num">2</span>
                       <div class="m-text">
-                        <h4>Submission 탭 → 여권 사본 업로드 (Passport Information)</h4>
-                        <p>상단 <b>Submission</b> 탭으로 이동 후 <b>Passport Information</b> 영역에 여권 인적사항 면을 업로드하고 아래 정보를 입력합니다.</p>
+                        <h4 data-i18n-en="Submission tab &rarr; upload your passport (Passport Information)">Submission 탭 → 여권 사본 업로드 (Passport Information)</h4>
+                        <p data-i18n-en="Go to the <b>Submission</b> tab at the top. Under <b>Passport Information</b>, upload a photo of your passport bio page and enter the details below.">상단 <b>Submission</b> 탭으로 이동 후 <b>Passport Information</b> 영역에 여권 인적사항 면을 업로드하고 아래 정보를 입력합니다.</p>
                         <ul style="margin: 6px 0 14px 22px; line-height: 1.7;">
-                          <li>여권 사진 면 이미지 (Click to upload · 최대 20MB)</li>
+                          <li data-i18n-en="Bio page image (Click to upload &middot; up to 20MB)">여권 사진 면 이미지 (Click to upload · 최대 20MB)</li>
                           <li>Passport Number · Date of Issue · Expiration Date</li>
                         </ul>
-                        <figure class="m-figure"><img src="assets/manual/upload/02-passport.png" alt="Submission - Passport Information 업로드 화면"></figure>
+                        <figure class="m-figure"><img src="assets/manual/upload/02-passport.png" alt="Submission — Passport Information upload screen"></figure>
                         <div class="m-callout m-callout-tip">
                           <iconify-icon icon="solar:passport-bold-duotone"></iconify-icon>
-                          <span><b>주의</b> · 여권 유효기간이 <b>출국일 기준 6개월 이상</b> 남아있어야 합니다. 인적사항 면 전체가 잘리지 않도록 정면에서 촬영해주세요.</span>
+                          <span data-i18n-en="<b>Heads up</b> &middot; Your passport must be valid for at least <b>6 months from your departure date</b>. Photograph the bio page head-on so nothing is cut off."><b>주의</b> · 여권 유효기간이 <b>출국일 기준 6개월 이상</b> 남아있어야 합니다. 인적사항 면 전체가 잘리지 않도록 정면에서 촬영해주세요.</span>
                         </div>
                       </div>
                     </div>
@@ -1307,16 +1312,16 @@
                     <div class="m-step">
                       <span class="m-num">3</span>
                       <div class="m-text">
-                        <h4>왕복 항공권 업로드 (E-ticket)</h4>
-                        <p><b>E-ticket</b>(출국편)과 <b>E-ticket — Return Flight</b>(귀국편) 각각 PDF/스크린샷을 업로드하고 항공편 정보를 입력합니다.</p>
+                        <h4 data-i18n-en="Upload your round-trip e-tickets">왕복 항공권 업로드 (E-ticket)</h4>
+                        <p data-i18n-en="Upload your outbound <b>E-ticket</b> and your return <b>E-ticket &mdash; Return Flight</b> as PDFs or screenshots, then enter the flight details."><b>E-ticket</b>(출국편)과 <b>E-ticket — Return Flight</b>(귀국편) 각각 PDF/스크린샷을 업로드하고 항공편 정보를 입력합니다.</p>
                         <ul style="margin: 6px 0 14px 22px; line-height: 1.7;">
                           <li>Flight Number</li>
                           <li>Departure Date / Arrival Date</li>
                         </ul>
-                        <figure class="m-figure"><img src="assets/manual/upload/03-eticket.png" alt="Submission - E-ticket 출국편/귀국편 업로드"></figure>
+                        <figure class="m-figure"><img src="assets/manual/upload/03-eticket.png" alt="Submission — outbound and return e-tickets"></figure>
                         <div class="m-callout m-callout-tip">
                           <iconify-icon icon="solar:plane-bold-duotone"></iconify-icon>
-                          <span><b>팁</b> · 공항 픽업 안내에 활용되므로 항공편이 변경되면 반드시 다시 업로드해주세요.</span>
+                          <span data-i18n-en="<b>Tip</b> &middot; We use this to arrange airport pickup &mdash; if your flight changes, upload the new ticket right away."><b>팁</b> · 공항 픽업 안내에 활용되므로 항공편이 변경되면 반드시 다시 업로드해주세요.</span>
                         </div>
                       </div>
                     </div>
@@ -1326,12 +1331,12 @@
                     <div class="m-step">
                       <span class="m-num">4</span>
                       <div class="m-text">
-                        <h4>레벨테스트 자료 업로드 (Entrance Exam)</h4>
-                        <p><b>Entrance Exam</b> 영역에서 <b>Attach File</b>을 클릭하여 EF SET Certificate(PDF/이미지)를 첨부하고, <b>Pre-study test results</b>에서 본인 점수에 해당하는 레벨을 선택합니다.</p>
-                        <figure class="m-figure"><img src="assets/manual/upload/04-entrance-exam.png" alt="Submission - Entrance Exam / Pre-study test results"></figure>
+                        <h4 data-i18n-en="Upload your placement test (Entrance Exam)">레벨테스트 자료 업로드 (Entrance Exam)</h4>
+                        <p data-i18n-en="Under <b>Entrance Exam</b>, click <b>Attach File</b> to attach your EF SET certificate (PDF or image), then choose your level under <b>Pre-study test results</b>."><b>Entrance Exam</b> 영역에서 <b>Attach File</b>을 클릭하여 EF SET Certificate(PDF/이미지)를 첨부하고, <b>Pre-study test results</b>에서 본인 점수에 해당하는 레벨을 선택합니다.</p>
+                        <figure class="m-figure"><img src="assets/manual/upload/04-entrance-exam.png" alt="Submission — Entrance Exam / Pre-study test results"></figure>
                         <div class="m-callout m-callout-tip">
                           <iconify-icon icon="solar:document-text-bold-duotone"></iconify-icon>
-                          <span><b>참고</b> · EF SET을 응시하지 않았다면, 보유하신 <b>TOEIC · TOEFL iBT · IELTS</b> 공인 영어 성적표를 대신 업로드하실 수 있습니다. 이 경우 <a href="https://www.efset.org/ko/english-score/" target="_blank" rel="noopener" style="color:var(--accent); text-decoration:underline; text-underline-offset:2px;">EF SET ↔ 다른 시험 환산표</a>를 참고해 본인 점수에 해당하는 <b>Pre-study test results</b> 레벨을 직접 선택해주세요.</span>
+                          <span data-i18n-en="<b>Note</b> &middot; If you haven&rsquo;t taken EF SET, you can upload an existing <b>TOEIC, TOEFL iBT, or IELTS</b> score report instead. In that case, use the <a href=&quot;https://www.efset.org/ko/english-score/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; style=&quot;color:var(--accent); text-decoration:underline; text-underline-offset:2px;&quot;>EF SET conversion table</a> to pick the matching <b>Pre-study test results</b> level yourself."><b>참고</b> · EF SET을 응시하지 않았다면, 보유하신 <b>TOEIC · TOEFL iBT · IELTS</b> 공인 영어 성적표를 대신 업로드하실 수 있습니다. 이 경우 <a href="https://www.efset.org/ko/english-score/" target="_blank" rel="noopener" style="color:var(--accent); text-decoration:underline; text-underline-offset:2px;">EF SET ↔ 다른 시험 환산표</a>를 참고해 본인 점수에 해당하는 <b>Pre-study test results</b> 레벨을 직접 선택해주세요.</span>
                         </div>
                       </div>
                     </div>
@@ -1341,16 +1346,16 @@
                     <div class="m-step">
                       <span class="m-num">5</span>
                       <div class="m-text">
-                        <h4>본인 사진 + 보험 증명서 업로드 (ID Photo · Insurance Certificate)</h4>
-                        <p><b>ID Photo</b> 영역에 학생증 발급용 <b>2 x 2 inch 정면 사진</b>을 업로드합니다. 같은 화면 하단의 <b>Insurance Certificate</b>에는 해외여행자 보험 증명서를 첨부합니다.</p>
-                        <figure class="m-figure"><img src="assets/manual/upload/05-id-photo.png" alt="Submission - ID Photo 및 Insurance Certificate"></figure>
+                        <h4 data-i18n-en="Upload your ID photo + insurance certificate">본인 사진 + 보험 증명서 업로드 (ID Photo · Insurance Certificate)</h4>
+                        <p data-i18n-en="Under <b>ID Photo</b>, upload a <b>2 &times; 2 inch front-facing photo</b> for your student ID. At the bottom of the same screen, attach your travel insurance certificate under <b>Insurance Certificate</b>."><b>ID Photo</b> 영역에 학생증 발급용 <b>2 x 2 inch 정면 사진</b>을 업로드합니다. 같은 화면 하단의 <b>Insurance Certificate</b>에는 해외여행자 보험 증명서를 첨부합니다.</p>
+                        <figure class="m-figure"><img src="assets/manual/upload/05-id-photo.png" alt="Submission — ID Photo and Insurance Certificate"></figure>
                         <div class="m-callout m-callout-warn">
                           <iconify-icon icon="solar:user-id-bold-duotone"></iconify-icon>
-                          <span><b>사진 조건 (중요)</b> · <b>안경 착용 사진은 SSP 신청 시 문제가 됩니다.</b> 반드시 안경을 벗고, 정면을 바라본 얼굴 윤곽이 선명한 최근 6개월 이내 사진으로 준비해주세요.</span>
+                          <span data-i18n-en="<b>Photo requirements (important)</b> &middot; <b>Photos with glasses cause issues when applying for the SSP.</b> Remove your glasses for the photo, face the camera directly, and use a clear photo from within the last 6 months."><b>사진 조건 (중요)</b> · <b>안경 착용 사진은 SSP 신청 시 문제가 됩니다.</b> 반드시 안경을 벗고, 정면을 바라본 얼굴 윤곽이 선명한 최근 6개월 이내 사진으로 준비해주세요.</span>
                         </div>
                         <div class="m-callout m-callout-ok" style="margin-top: 14px;">
                           <iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon>
-                          <span><b>업로드 완료 후</b> · 우측 상단 <b>Save</b> 버튼을 눌러 저장합니다. LCIC 담당자가 확인한 뒤 다음 절차(레벨 배정 → 수강신청)가 진행됩니다.</span>
+                          <span data-i18n-en="<b>When you&rsquo;re done uploading</b> &middot; Press the <b>Save</b> button in the top-right to save. After an LCIC staff member reviews everything, the next steps (placement &rarr; course registration) begin."><b>업로드 완료 후</b> · 우측 상단 <b>Save</b> 버튼을 눌러 저장합니다. LCIC 담당자가 확인한 뒤 다음 절차(레벨 배정 → 수강신청)가 진행됩니다.</span>
                         </div>
                       </div>
                     </div>
@@ -1358,18 +1363,18 @@
 
                   <div class="m-wfoot">
                     <button type="button" data-wprev>
-                      <iconify-icon icon="solar:alt-arrow-left-linear"></iconify-icon> 이전
+                      <iconify-icon icon="solar:alt-arrow-left-linear"></iconify-icon> <span data-i18n-en="Previous">이전</span>
                     </button>
                     <span class="m-wpos">1 / 5</span>
                     <button type="button" data-wnext>
-                      다음 <iconify-icon icon="solar:alt-arrow-right-linear"></iconify-icon>
+                      <span data-i18n-en="Next">다음</span> <iconify-icon icon="solar:alt-arrow-right-linear"></iconify-icon>
                     </button>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="m-note" style="margin-top: 20px;">
+            <div class="m-note" style="margin-top: 20px;" data-i18n-en="* The link to My Page is sent in the <b>confirmation email after you finish registering</b>.<br>* If EF SET shows &lsquo;<b>Come back soon &mdash; You can only take the EF SET once every 90 days.</b>&rsquo;, you can retake the test once 90 days have passed.<br>* All documents should be PDF or image files (JPG/PNG), up to 20MB per file.">
               ※ 마이페이지 접속 링크는 <b>학생 등록 완료 후 안내 메일</b>에 포함되어 발송됩니다.<br>
               ※ EF SET 사이트에서 "<b>Come back soon — You can only take the EF SET once every 90 days.</b>" 안내가 뜨면 90일 경과 후 재응시 가능합니다.<br>
               ※ 모든 서류는 PDF 또는 이미지(JPG/PNG) 형식 · 파일당 최대 20MB.
@@ -1385,10 +1390,10 @@
       <div class="step-card">
         <div class="step-head">
           <iconify-icon icon="solar:medal-ribbon-bold-duotone"></iconify-icon>
-          <h3>레벨 배정 완료</h3>
-          <span class="step-actor">LCIC 처리</span>
+          <h3 data-i18n-en="Placement complete">레벨 배정 완료</h3>
+          <span class="step-actor" data-i18n-en="Handled by LCIC">LCIC 처리</span>
         </div>
-        <p class="step-desc">
+        <p class="step-desc" data-i18n-en="The LCIC language team reviews your placement test materials and assigns you to the right class level.">
           LCIC 어학팀이 제출하신 레벨 테스트 자료를 검토하여 적합한 클래스 레벨을 배정해드립니다.
         </p>
       </div>
@@ -1400,10 +1405,10 @@
       <div class="step-card">
         <div class="step-head">
           <iconify-icon icon="solar:notebook-bookmark-bold-duotone"></iconify-icon>
-          <h3>수강 신청</h3>
-          <span class="step-actor">학생 진행</span>
+          <h3 data-i18n-en="Register for courses">수강 신청</h3>
+          <span class="step-actor" data-i18n-en="You do this">학생 진행</span>
         </div>
-        <p class="step-desc">
+        <p class="step-desc" data-i18n-en="Pick the courses that match your assigned level. Beyond the core classes, there are electives too &mdash; follow the prompts in the student registration system to enroll.">
           배정받은 레벨에 맞춰 수강 과목을 선택합니다.
           정규 수업 외에도 선택 과목이 마련되어 있으니 학생 등록 시스템에서 안내에 따라 신청해주세요.
         </p>
@@ -1416,10 +1421,10 @@
       <div class="step-card">
         <div class="step-head">
           <iconify-icon icon="solar:users-group-rounded-bold-duotone"></iconify-icon>
-          <h3>버디 신청</h3>
-          <span class="step-actor">도착 1주 전</span>
+          <h3 data-i18n-en="Sign up for a buddy">버디 신청</h3>
+          <span class="step-actor" data-i18n-en="1 week before arrival">도착 1주 전</span>
         </div>
-        <p class="step-desc">
+        <p class="step-desc" data-i18n-en="Sign up for a buddy at least a week before departure. A current LCIC student or local student is matched with you to help you settle in once you arrive.">
           출국 1주일 전까지 버디(buddy)를 신청해주세요.
           현지 적응을 도와줄 LCIC 재학생 또는 현지 학생이 매칭되어, 도착 후 학교생활 정착을 지원합니다.
         </p>
@@ -1427,7 +1432,7 @@
         <details class="manual-toggle">
           <summary>
             <iconify-icon icon="solar:users-group-two-rounded-bold-duotone"></iconify-icon>
-            <span>버디 신청 매뉴얼 자세히 보기</span>
+            <span data-i18n-en="Open the detailed buddy manual">버디 신청 매뉴얼 자세히 보기</span>
             <span class="chevron"><iconify-icon icon="solar:alt-arrow-down-linear"></iconify-icon></span>
           </summary>
           <div class="manual-body">
@@ -1437,33 +1442,33 @@
               <li class="m-step">
                 <span class="m-num">1</span>
                 <div class="m-text">
-                  <h4>학생 시스템 로그인 → Student Buddy 메뉴 진입</h4>
-                  <p>학생 등록 시 본인이 등록한 계정으로 학생 시스템에 로그인한 뒤, 좌측 사이드바에서 <b>Student Buddy</b> 메뉴를 클릭합니다.</p>
-                  <figure class="m-figure"><img src="assets/manual/buddy/01-menu.png" alt="Student Buddy - 사이드바 메뉴 진입 및 주간 일정 화면"></figure>
+                  <h4 data-i18n-en="Log in to the student system &rarr; open Student Buddy">학생 시스템 로그인 → Student Buddy 메뉴 진입</h4>
+                  <p data-i18n-en="Sign in to the student system using the account you set up during registration, then click <b>Student Buddy</b> in the left sidebar.">학생 등록 시 본인이 등록한 계정으로 학생 시스템에 로그인한 뒤, 좌측 사이드바에서 <b>Student Buddy</b> 메뉴를 클릭합니다.</p>
+                  <figure class="m-figure"><img src="assets/manual/buddy/01-menu.png" alt="Student Buddy — sidebar entry and weekly schedule"></figure>
                 </div>
               </li>
 
               <li class="m-step">
                 <span class="m-num">2</span>
                 <div class="m-text">
-                  <h4>원하는 주차(week) 선택</h4>
-                  <p>상단 날짜 헤더(예: <b>May 18th to May 29th</b>) 좌우의 <b>«</b> · <b>»</b> 버튼으로 원하는 주차로 이동합니다.</p>
+                  <h4 data-i18n-en="Pick the week you want">원하는 주차(week) 선택</h4>
+                  <p data-i18n-en="Use the <b>&laquo;</b> and <b>&raquo;</b> buttons beside the date header at the top (e.g., <b>May 18th to May 29th</b>) to move between weeks.">상단 날짜 헤더(예: <b>May 18th to May 29th</b>) 좌우의 <b>«</b> · <b>»</b> 버튼으로 원하는 주차로 이동합니다.</p>
                 </div>
               </li>
 
               <li class="m-step">
                 <span class="m-num">3</span>
                 <div class="m-text">
-                  <h4>시간대 슬롯 선택</h4>
-                  <p>요일별 카드에 표시된 시간대 중 원하는 슬롯을 클릭해 선택합니다.</p>
+                  <h4 data-i18n-en="Pick a time slot">시간대 슬롯 선택</h4>
+                  <p data-i18n-en="Click one of the time slots on the day cards to select it.">요일별 카드에 표시된 시간대 중 원하는 슬롯을 클릭해 선택합니다.</p>
                 </div>
               </li>
 
               <li class="m-step">
                 <span class="m-num">4</span>
                 <div class="m-text">
-                  <h4>Find 버튼으로 신청</h4>
-                  <p>시간대를 선택한 뒤 하단의 <b>Find</b> 버튼을 눌러 신청을 진행합니다.</p>
+                  <h4 data-i18n-en="Submit with the Find button">Find 버튼으로 신청</h4>
+                  <p data-i18n-en="Once you&rsquo;ve picked a slot, press the <b>Find</b> button at the bottom to submit.">시간대를 선택한 뒤 하단의 <b>Find</b> 버튼을 눌러 신청을 진행합니다.</p>
                 </div>
               </li>
 
@@ -1480,10 +1485,10 @@
   <section id="prep" class="prep-section fade-up delay-4" style="margin-top: 80px; scroll-margin-top: 100px;">
     <div style="text-align: center; margin-bottom: 36px;">
       <span class="eyebrow"><span class="dot"></span> PRE-DEPARTURE CHECKLIST</span>
-      <h2 style="margin-top: 18px; font-size: clamp(1.5rem, 3vw, 1.95rem); font-weight: 700; letter-spacing: -0.02em; color: var(--text);">
+      <h2 style="margin-top: 18px; font-size: clamp(1.5rem, 3vw, 1.95rem); font-weight: 700; letter-spacing: -0.02em; color: var(--text);" data-i18n-en="Before you fly">
         출국 전 체크리스트
       </h2>
-      <p style="margin-top: 12px; color: var(--text-dim); font-size: 0.94rem; line-height: 1.7; max-width: 560px; margin-left: auto; margin-right: auto;">
+      <p style="margin-top: 12px; color: var(--text-dim); font-size: 0.94rem; line-height: 1.7; max-width: 560px; margin-left: auto; margin-right: auto;" data-i18n-en="Once admissions is wrapped up, get these 11 items ready before you fly.<br>3 essential documents + 8 things to pack.">
         모든 입학 절차를 완료한 뒤, 출국 전 아래 11종 항목을 준비해주세요.<br>
         필수 서류 3종 + 가져갈 물품 8종.
       </p>
@@ -1496,8 +1501,8 @@
         <div class="prep-head">
           <div class="prep-ic"><iconify-icon icon="solar:document-text-bold-duotone"></iconify-icon></div>
           <div>
-            <h3>필수 서류</h3>
-            <span class="prep-sub">DOCUMENTS · 3종</span>
+            <h3 data-i18n-en="Essential documents">필수 서류</h3>
+            <span class="prep-sub" data-i18n-en="DOCUMENTS · 3 items">DOCUMENTS · 3종</span>
           </div>
         </div>
 
@@ -1505,22 +1510,22 @@
           <li>
             <iconify-icon icon="solar:passport-bold-duotone"></iconify-icon>
             <div>
-              <b>여권 (Passport)</b>
-              <span>만료일이 출국일 기준 <b>6개월 이상</b> 남아있어야 합니다.</span>
+              <b data-i18n-en="Passport">여권 (Passport)</b>
+              <span data-i18n-en="Must be valid for at least <b>6 months from your departure date</b>.">만료일이 출국일 기준 <b>6개월 이상</b> 남아있어야 합니다.</span>
             </div>
           </li>
           <li>
             <iconify-icon icon="solar:document-bold-duotone"></iconify-icon>
             <div>
-              <b>여권 사본</b>
-              <span>인적사항 면 사진 (분실·재발급 대비).</span>
+              <b data-i18n-en="Passport copy">여권 사본</b>
+              <span data-i18n-en="A photo of the bio page &mdash; useful if your passport is lost or needs to be reissued.">인적사항 면 사진 (분실·재발급 대비).</span>
             </div>
           </li>
           <li>
             <iconify-icon icon="solar:plain-bold-duotone"></iconify-icon>
             <div>
-              <b>왕복 항공권 E-ticket</b>
-              <span>한국에서 출국할 때 사용. PDF 또는 출력본 형태로 준비합니다.</span>
+              <b data-i18n-en="Round-trip e-ticket">왕복 항공권 E-ticket</b>
+              <span data-i18n-en="Needed at departure from Korea. Keep a PDF or printout handy.">한국에서 출국할 때 사용. PDF 또는 출력본 형태로 준비합니다.</span>
             </div>
           </li>
         </ol>
@@ -1531,8 +1536,8 @@
         <div class="prep-head">
           <div class="prep-ic"><iconify-icon icon="solar:bag-3-bold-duotone"></iconify-icon></div>
           <div>
-            <h3>가져갈 물품</h3>
-            <span class="prep-sub">ITEMS · 8종</span>
+            <h3 data-i18n-en="What to pack">가져갈 물품</h3>
+            <span class="prep-sub" data-i18n-en="ITEMS · 8 things">ITEMS · 8종</span>
           </div>
         </div>
 
@@ -1540,57 +1545,57 @@
           <li>
             <iconify-icon icon="solar:dollar-minimalistic-bold-duotone"></iconify-icon>
             <div>
-              <b>USD 현금</b>
-              <span>ARC·VISA 등 학교 비용 결제 + 도착 직후 환전용.</span>
+              <b data-i18n-en="USD in cash">USD 현금</b>
+              <span data-i18n-en="For school fees (ARC, VISA, etc.) and exchanging at arrival.">ARC·VISA 등 학교 비용 결제 + 도착 직후 환전용.</span>
             </div>
           </li>
           <li>
             <iconify-icon icon="solar:card-bold-duotone"></iconify-icon>
             <div>
-              <b>신용카드 (VISA / MASTER)</b>
-              <span>해외 결제 가능 카드 1매 이상.</span>
+              <b data-i18n-en="Credit card (VISA / Mastercard)">신용카드 (VISA / MASTER)</b>
+              <span data-i18n-en="At least one card that works for international payments.">해외 결제 가능 카드 1매 이상.</span>
             </div>
           </li>
           <li>
             <iconify-icon icon="solar:laptop-bold-duotone"></iconify-icon>
             <div>
-              <b>노트북</b>
-              <span><b>Microsoft Teams</b> 수업 진행 및 과제 제출용.</span>
+              <b data-i18n-en="Laptop">노트북</b>
+              <span data-i18n-en="For <b>Microsoft Teams</b> classes and assignments."><b>Microsoft Teams</b> 수업 진행 및 과제 제출용.</span>
             </div>
           </li>
           <li>
             <iconify-icon icon="solar:headphones-round-sound-bold-duotone"></iconify-icon>
             <div>
-              <b>헤드셋 / 이어폰 + 마이크</b>
-              <span>Listening·EF SET·1:1 수업용. 마이크 내장 모델 권장.</span>
+              <b data-i18n-en="Headset / earphones with mic">헤드셋 / 이어폰 + 마이크</b>
+              <span data-i18n-en="For Listening, EF SET, and 1:1 classes. A model with a built-in mic works best.">Listening·EF SET·1:1 수업용. 마이크 내장 모델 권장.</span>
             </div>
           </li>
           <li>
             <iconify-icon icon="solar:bottle-bold-duotone"></iconify-icon>
             <div>
-              <b>상비약 / 평소 복용약</b>
-              <span>감기·지사·소화제 등. 만성질환 약은 처방전과 함께.</span>
+              <b data-i18n-en="Personal medication">상비약 / 평소 복용약</b>
+              <span data-i18n-en="Common items like cold medicine, anti-diarrheals, and antacids. For chronic conditions, bring the prescription too.">감기·지사·소화제 등. 만성질환 약은 처방전과 함께.</span>
             </div>
           </li>
           <li>
             <iconify-icon icon="solar:plug-circle-bold-duotone"></iconify-icon>
             <div>
-              <b>220V 어댑터 / 멀티탭</b>
-              <span>필리핀 콘센트는 한국과 동일한 220V (Type A/B/C 혼용).</span>
+              <b data-i18n-en="220V adapter / power strip">220V 어댑터 / 멀티탭</b>
+              <span data-i18n-en="The Philippines uses 220V like Korea, with a mix of Type A/B/C outlets.">필리핀 콘센트는 한국과 동일한 220V (Type A/B/C 혼용).</span>
             </div>
           </li>
           <li>
             <iconify-icon icon="solar:qr-code-bold-duotone"></iconify-icon>
             <div>
-              <b>e-Travel QR 코드</b>
-              <span>출국 72시간 이내 발급. 스크린샷 + 출력본 모두 준비.</span>
+              <b data-i18n-en="e-Travel QR code">e-Travel QR 코드</b>
+              <span data-i18n-en="Issued within 72 hours of departure. Bring a screenshot and a printout.">출국 72시간 이내 발급. 스크린샷 + 출력본 모두 준비.</span>
             </div>
           </li>
           <li>
             <iconify-icon icon="solar:shield-check-bold-duotone"></iconify-icon>
             <div>
-              <b>해외여행자 보험 증서</b>
-              <span>Insurance Certificate. Upload Tasks에도 업로드 필요.</span>
+              <b data-i18n-en="Travel insurance certificate">해외여행자 보험 증서</b>
+              <span data-i18n-en="The Insurance Certificate &mdash; also needed in Upload Tasks.">Insurance Certificate. Upload Tasks에도 업로드 필요.</span>
             </div>
           </li>
         </ol>
@@ -1600,30 +1605,30 @@
 
     <div class="prep-note">
       <iconify-icon icon="solar:info-circle-bold-duotone"></iconify-icon>
-      <span>위 목록은 LCIC 일반 준비물 기준 정리본입니다. 회차·계절에 따라 추가 항목이 있을 수 있으니 학교 안내를 함께 확인해주세요.</span>
+      <span data-i18n-en="The list above covers the standard LCIC essentials. Some terms or seasons may call for extra items &mdash; check the school&rsquo;s guidance alongside this list.">위 목록은 LCIC 일반 준비물 기준 정리본입니다. 회차·계절에 따라 추가 항목이 있을 수 있으니 학교 안내를 함께 확인해주세요.</span>
     </div>
   </section>
 
 
   <!-- CTA -->
   <div class="cta-block fade-up delay-4" style="margin-top: 72px;">
-    <h2>지금 등록을 시작하세요</h2>
-    <p>모든 단계는 LCIC 학생 등록 시스템에서 진행됩니다.</p>
+    <h2 data-i18n-en="Start your application now">지금 등록을 시작하세요</h2>
+    <p data-i18n-en="Every step runs through the LCIC student registration system.">모든 단계는 LCIC 학생 등록 시스템에서 진행됩니다.</p>
     <a class="btn-jumbo" href="https://lcic-students-system.com/application/request/kr" target="_blank" rel="noopener noreferrer">
       <iconify-icon icon="solar:square-top-down-bold-duotone"></iconify-icon>
-      학생 등록 사이트로 이동
+      <span data-i18n-en="Open the student registration site">학생 등록 사이트로 이동</span>
       <iconify-icon icon="solar:arrow-right-up-linear"></iconify-icon>
     </a>
   </div>
 
-  <p class="footnote fade-up delay-4">
+  <p class="footnote fade-up delay-4" data-i18n-en="For questions about the application, contact the school directly.">
     절차 관련 문의는 학교로 직접 연락주세요.
   </p>
 </main>
 
 <!-- Image lightbox -->
-<div class="img-lightbox" id="img-lightbox" role="dialog" aria-label="이미지 확대 보기">
-  <button class="lb-close" id="lb-close" aria-label="닫기">
+<div class="img-lightbox" id="img-lightbox" role="dialog" aria-label="이미지 확대 보기" data-i18n-en-attr="aria-label|Zoomed image view">
+  <button class="lb-close" id="lb-close" aria-label="닫기" data-i18n-en-attr="aria-label|Close">
     <iconify-icon icon="solar:close-circle-linear"></iconify-icon>
   </button>
   <figure class="lb-figure" id="lb-figure">

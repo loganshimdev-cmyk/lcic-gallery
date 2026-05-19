@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>궁금한 사항 · LCIC</title>
+<title data-i18n-en="FAQ · LCIC">궁금한 사항 · LCIC</title>
 <link rel="icon" type="image/png" href="assets/brand/lcic-logo.png">
 <script src="assets/background.js?v=8"></script>
-<link rel="stylesheet" href="assets/shared.css?v=8">
+<link rel="stylesheet" href="assets/shared.css?v=9">
+<script src="assets/i18n.js?v=1" defer></script>
 <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
 <style>
   .search-wrap {
@@ -134,8 +135,8 @@
 </head>
 <body>
 
-<a class="brand-mark" href="index.html" aria-label="LCIC 홈으로">
-  <img src="assets/brand/lcic-logo.png" alt="LCIC 로고">
+<a class="brand-mark" href="index.html" aria-label="LCIC 홈으로" data-i18n-en-attr="aria-label|Back to LCIC home">
+  <img src="assets/brand/lcic-logo.png" alt="LCIC logo">
   <span class="brand-name">
     <span>Lapulapu Cebu</span>
     <span>International</span>
@@ -144,27 +145,31 @@
 </a>
 
 <nav class="nav-pill">
-  <a href="index.html"><iconify-icon icon="solar:home-2-bold-duotone" inline></iconify-icon> 홈</a>
-  <a href="notice.html"><iconify-icon icon="solar:bell-bold" inline></iconify-icon> 공지사항</a>
-  <a href="procedure.html"><iconify-icon icon="solar:list-check-bold-duotone" inline></iconify-icon> 입학 절차</a>
-  <a href="curriculum.html"><iconify-icon icon="solar:notebook-bold-duotone" inline></iconify-icon> 커리큘럼</a>
-  <a href="life-guide.html"><iconify-icon icon="solar:book-bookmark-bold-duotone" inline></iconify-icon> 생활백서</a>
-  <a href="faq.html" class="active"><iconify-icon icon="solar:question-circle-bold-duotone" inline></iconify-icon> 궁금한 사항</a>
-    <a href="gallery.html"><iconify-icon icon="solar:gallery-bold-duotone" inline></iconify-icon> 갤러리</a>
+  <a href="index.html"><iconify-icon icon="solar:home-2-bold-duotone" inline></iconify-icon> <span data-i18n-en="Home">홈</span></a>
+  <a href="notice.html"><iconify-icon icon="solar:bell-bold" inline></iconify-icon> <span data-i18n-en="Notices">공지사항</span></a>
+  <a href="procedure.html"><iconify-icon icon="solar:list-check-bold-duotone" inline></iconify-icon> <span data-i18n-en="Admissions">입학 절차</span></a>
+  <a href="curriculum.html"><iconify-icon icon="solar:notebook-bold-duotone" inline></iconify-icon> <span data-i18n-en="Curriculum">커리큘럼</span></a>
+  <a href="life-guide.html"><iconify-icon icon="solar:book-bookmark-bold-duotone" inline></iconify-icon> <span data-i18n-en="Life Guide">생활백서</span></a>
+  <a href="faq.html" class="active"><iconify-icon icon="solar:question-circle-bold-duotone" inline></iconify-icon> <span data-i18n-en="FAQ">궁금한 사항</span></a>
+    <a href="gallery.html"><iconify-icon icon="solar:gallery-bold-duotone" inline></iconify-icon> <span data-i18n-en="Gallery">갤러리</span></a>
+  <div class="lang-toggle" data-lang-toggle role="group" aria-label="Language">
+    <button type="button" data-lang-to="ko">KO</button>
+    <button type="button" data-lang-to="en">EN</button>
+  </div>
 </nav>
 
 <header style="padding: 140px 20px 60px; text-align: center;">
   <div class="fade-up">
     <span class="eyebrow"><span class="dot"></span> FREQUENTLY ASKED</span>
   </div>
-  <h1 class="headline fade-up delay-1" style="margin-top: 24px;">궁금한 사항</h1>
-  <p class="subhead fade-up delay-2">자주 묻는 질문과 답변을 카테고리별로 정리했습니다.</p>
+  <h1 class="headline fade-up delay-1" style="margin-top: 24px;" data-i18n-en="FAQ">궁금한 사항</h1>
+  <p class="subhead fade-up delay-2" data-i18n-en="Frequently asked questions, grouped by topic.">자주 묻는 질문과 답변을 카테고리별로 정리했습니다.</p>
 </header>
 
 <main class="container-narrow" style="padding-bottom: 120px;">
   <div class="search-wrap fade-up delay-3">
     <iconify-icon icon="solar:magnifer-linear"></iconify-icon>
-    <input type="text" id="search" class="input" placeholder="질문 또는 답변에서 검색…">
+    <input type="text" id="search" class="input" placeholder="질문 또는 답변에서 검색…" data-i18n-en-attr="placeholder|Search questions or answers…">
   </div>
 
   <div id="cat-nav" class="cat-nav fade-up delay-3"></div>
@@ -184,15 +189,18 @@ const searchEl = document.getElementById("search");
 const catNavEl = document.getElementById("cat-nav");
 let allFaqs = [];
 
+const t = (ko, en) => (window.lcicLang && window.lcicLang.current === "en") ? en : ko;
+const fallbackCat = () => t("기타", "Other");
+
 function slugifyCat(cat) {
-  return "cat-" + (cat || "기타").replace(/[^\w가-힣]+/g, "-");
+  return "cat-" + (cat || fallbackCat()).replace(/[^\w가-힣]+/g, "-");
 }
 
 function renderCatNav(faqs) {
   // 카테고리별 카운트 집계 (순서 유지)
   const counts = new Map();
   faqs.forEach((f) => {
-    const cat = f.category || "기타";
+    const cat = f.category || fallbackCat();
     counts.set(cat, (counts.get(cat) || 0) + 1);
   });
 
@@ -239,7 +247,7 @@ function renderGrouped(faqs) {
   // 검색이 없을 때: 카테고리별로 묶어서 렌더
   const groups = new Map();
   faqs.forEach((f) => {
-    const cat = f.category || "기타";
+    const cat = f.category || fallbackCat();
     if (!groups.has(cat)) groups.set(cat, []);
     groups.get(cat).push(f);
   });
@@ -258,7 +266,7 @@ function renderGrouped(faqs) {
 function renderRanked(scored) {
   // 검색 결과: 점수 기반 정렬, 카테고리 그룹 없이 단일 리스트
   if (!scored || scored.length === 0) {
-    listEl.innerHTML = emptyState("검색 결과가 없습니다.", "solar:magnifer-linear");
+    listEl.innerHTML = emptyState(t("검색 결과가 없습니다.", "No matching questions."), "solar:magnifer-linear");
     return;
   }
   listEl.innerHTML = "";
@@ -314,7 +322,7 @@ function applyFilter() {
 function render(faqs) {
   // 초기 로딩용 (검색 없는 상태)
   if (!faqs || faqs.length === 0) {
-    listEl.innerHTML = emptyState("아직 등록된 FAQ가 없습니다.");
+    listEl.innerHTML = emptyState(t("아직 등록된 FAQ가 없습니다.", "No FAQs have been posted yet."));
     catNavEl.classList.add("hidden");
     return;
   }
@@ -323,6 +331,10 @@ function render(faqs) {
 }
 
 searchEl.addEventListener("input", applyFilter);
+
+document.addEventListener("lcic:langchange", () => {
+  if (allFaqs.length) applyFilter();
+});
 
 async function loadFaqs() {
   const { data, error } = await supabase
@@ -333,11 +345,11 @@ async function loadFaqs() {
     .order("created_at", { ascending: true });
 
   if (error) {
-    listEl.innerHTML = emptyState(`불러오기 실패: ${error.message}`, "solar:danger-triangle-bold-duotone");
+    listEl.innerHTML = emptyState(t(`불러오기 실패: ${error.message}`, `Failed to load: ${error.message}`), "solar:danger-triangle-bold-duotone");
     return;
   }
   if (!data || data.length === 0) {
-    listEl.innerHTML = emptyState("아직 등록된 FAQ가 없습니다.");
+    listEl.innerHTML = emptyState(t("아직 등록된 FAQ가 없습니다.", "No FAQs have been posted yet."));
     return;
   }
 
