@@ -83,11 +83,23 @@ function closeModal() {
 }
 
 const t = (ko, en) => (window.lcicLang && window.lcicLang.current === "en") ? en : ko;
+const isEn = () => window.lcicLang && window.lcicLang.current === "en";
+
+// In EN mode, prefer `<base>_en` and silently fall back to Korean when empty,
+// so admins can fill English row-by-row without breaking the page.
+function pickField(row, base) {
+  if (!row) return "";
+  if (isEn()) {
+    const en = row[base + "_en"];
+    if (en !== undefined && en !== null && String(en).trim() !== "") return en;
+  }
+  return row[base] ?? "";
+}
 
 function openModal(notice) {
-  modalTitle.textContent = notice.title;
+  modalTitle.textContent = pickField(notice, "title");
   modalMeta.textContent = formatDate(notice.created_at);
-  modalBody.textContent = notice.body;
+  modalBody.textContent = pickField(notice, "body");
   modalPin.innerHTML = notice.pinned
     ? `<span class="pin-badge"><iconify-icon icon="solar:pin-bold" inline></iconify-icon> ${t("고정 공지", "Pinned notice")}</span>`
     : "";
@@ -148,8 +160,8 @@ function renderNotices() {
       <p style="color: var(--text-dim); font-size: 0.9rem; line-height: 1.6;
                 display:-webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"></p>
     `;
-    inner.querySelector("h3").textContent = n.title;
-    inner.querySelector("p").textContent = n.body;
+    inner.querySelector("h3").textContent = pickField(n, "title");
+    inner.querySelector("p").textContent = pickField(n, "body");
     card.appendChild(inner);
     card.onclick = () => openModal(n);
     listEl.appendChild(card);

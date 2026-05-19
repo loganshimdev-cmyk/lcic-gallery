@@ -131,6 +131,17 @@
     margin-top: 0;
     padding-top: 18px;
   }
+  .faq-untranslated-note {
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: var(--accent-tint);
+    border: 1px solid var(--accent-soft);
+    color: var(--accent-deep);
+    font-size: 0.78rem;
+    line-height: 1.5;
+    white-space: normal;
+  }
 </style>
 </head>
 <body>
@@ -190,29 +201,62 @@ const catNavEl = document.getElementById("cat-nav");
 let allFaqs = [];
 
 const t = (ko, en) => (window.lcicLang && window.lcicLang.current === "en") ? en : ko;
+const isEn = () => window.lcicLang && window.lcicLang.current === "en";
 const fallbackCat = () => t("기타", "Other");
 
-function slugifyCat(cat) {
-  return "cat-" + (cat || fallbackCat()).replace(/[^\w가-힣]+/g, "-");
+// In EN mode, prefer `<base>_en` and fall back silently to Korean when the
+// English column is empty. That way the user can fill translations into the DB
+// row-by-row without breaking anything.
+function pickField(row, base) {
+  if (!row) return "";
+  if (isEn()) {
+    const en = row[base + "_en"];
+    if (en !== undefined && en !== null && String(en).trim() !== "") return en;
+  }
+  return row[base] ?? "";
+}
+const pickCategory = (f) => pickField(f, "category") || fallbackCat();
+const pickQuestion = (f) => pickField(f, "question");
+const pickAnswer   = (f) => pickField(f, "answer");
+
+// Anchor IDs stay tied to the Korean source so jump-to-category links keep
+// working when the user switches languages.
+function slugifyCatKey(koCat) {
+  return "cat-" + (koCat || "etc").replace(/[^\w가-힣]+/g, "-");
+}
+
+// For a group of FAQs that share the same Korean category, pick the first
+// non-empty `category_en` to use as the EN label. Missing → fall back to KO.
+function groupCategoryLabel(items) {
+  if (isEn()) {
+    for (const f of items) {
+      const v = f.category_en;
+      if (v !== undefined && v !== null && String(v).trim() !== "") return v;
+    }
+  }
+  return items[0]?.category || fallbackCat();
 }
 
 function renderCatNav(faqs) {
-  // 카테고리별 카운트 집계 (순서 유지)
-  const counts = new Map();
+  // Group by the Korean category key so the chip menu stays stable across languages.
+  const groups = new Map();
   faqs.forEach((f) => {
-    const cat = f.category || fallbackCat();
-    counts.set(cat, (counts.get(cat) || 0) + 1);
+    const key = f.category || "";
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(f);
   });
 
   catNavEl.innerHTML = "";
   catNavEl.classList.remove("hidden");
-  counts.forEach((count, cat) => {
+  groups.forEach((items, koCat) => {
+    const label = groupCategoryLabel(items);
     const btn = document.createElement("button");
     btn.className = "cat-chip";
     btn.type = "button";
-    btn.innerHTML = `${cat}<span class="count">${count}</span>`;
+    btn.innerHTML = `<span class="cat-chip-label"></span><span class="count">${items.length}</span>`;
+    btn.querySelector(".cat-chip-label").textContent = label;
     btn.addEventListener("click", () => {
-      const target = document.getElementById(slugifyCat(cat));
+      const target = document.getElementById(slugifyCatKey(koCat));
       if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
     });
     catNavEl.appendChild(btn);
@@ -226,6 +270,11 @@ function emptyState(msg, icon = "solar:inbox-bold-duotone") {
   </div>`;
 }
 
+function hasEnglish(row, base) {
+  const v = row?.[base + "_en"];
+  return v !== undefined && v !== null && String(v).trim() !== "";
+}
+
 function appendFaqItem(parent, f) {
   const details = document.createElement("details");
   details.className = "faq-item";
@@ -234,37 +283,46 @@ function appendFaqItem(parent, f) {
     <span></span>
     <span class="icon-wrap"><iconify-icon icon="solar:add-circle-linear" style="font-size: 18px; color: var(--text-dim);"></iconify-icon></span>
   `;
-  summary.querySelector("span").textContent = f.question;
+  summary.querySelector("span").textContent = pickQuestion(f);
   const answer = document.createElement("div");
   answer.className = "answer";
-  answer.textContent = f.answer;
+  answer.textContent = pickAnswer(f);
+
+  // In EN mode, if either the question or the answer is still falling back to
+  // Korean, show a small inline note. The KO content is still readable below.
+  if (isEn() && (!hasEnglish(f, "question") || !hasEnglish(f, "answer"))) {
+    const note = document.createElement("div");
+    note.className = "faq-untranslated-note";
+    note.textContent = "English translation coming soon — showing the Korean version for now.";
+    answer.insertBefore(note, answer.firstChild);
+  }
+
   details.appendChild(summary);
   details.appendChild(answer);
   parent.appendChild(details);
 }
 
 function renderGrouped(faqs) {
-  // 검색이 없을 때: 카테고리별로 묶어서 렌더
+  // No search active: group by the Korean category key (display label is localized).
   const groups = new Map();
   faqs.forEach((f) => {
-    const cat = f.category || fallbackCat();
-    if (!groups.has(cat)) groups.set(cat, []);
-    groups.get(cat).push(f);
+    const key = f.category || "";
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(f);
   });
 
   listEl.innerHTML = "";
-  groups.forEach((items, category) => {
+  groups.forEach((items, koCat) => {
     const title = document.createElement("div");
     title.className = "faq-cat-title";
-    title.id = slugifyCat(category);
-    title.textContent = category;
+    title.id = slugifyCatKey(koCat);
+    title.textContent = groupCategoryLabel(items);
     listEl.appendChild(title);
     items.forEach((f) => appendFaqItem(listEl, f));
   });
 }
 
 function renderRanked(scored) {
-  // 검색 결과: 점수 기반 정렬, 카테고리 그룹 없이 단일 리스트
   if (!scored || scored.length === 0) {
     listEl.innerHTML = emptyState(t("검색 결과가 없습니다.", "No matching questions."), "solar:magnifer-linear");
     return;
@@ -274,31 +332,24 @@ function renderRanked(scored) {
 }
 
 function scoreFaq(f, q) {
-  // 높은 점수일수록 위로. 0이면 매치 안 됨.
   const ql = q;
-  const question = (f.question || "").toLowerCase();
-  const answer = (f.answer || "").toLowerCase();
-  const category = (f.category || "").toLowerCase();
+  // Search across the currently-visible language so users can type English
+  // queries against the English content.
+  const question = (pickQuestion(f) || "").toLowerCase();
+  const answer   = (pickAnswer(f)   || "").toLowerCase();
+  const category = (pickCategory(f) || "").toLowerCase();
 
   let score = 0;
-
-  // 제목 매치 (가장 강함)
   if (question.includes(ql)) {
     score += 100;
-    if (question.startsWith(ql)) score += 20; // 제목 앞쪽일수록 가점
+    if (question.startsWith(ql)) score += 20;
   }
-
-  // 카테고리 매치
   if (category.includes(ql)) score += 30;
-
-  // 본문 매치 (가장 약함, 빈도 가점)
   if (answer.includes(ql)) {
     score += 10;
-    // 본문 등장 횟수만큼 약하게 가점 (최대 +10)
     const matches = answer.split(ql).length - 1;
     score += Math.min(matches, 10);
   }
-
   return score;
 }
 
@@ -316,11 +367,10 @@ function applyFilter() {
     .sort((a, b) => b.score - a.score);
 
   renderRanked(scored);
-  catNavEl.classList.add("hidden"); // 검색 중엔 칩 메뉴 숨김
+  catNavEl.classList.add("hidden");
 }
 
 function render(faqs) {
-  // 초기 로딩용 (검색 없는 상태)
   if (!faqs || faqs.length === 0) {
     listEl.innerHTML = emptyState(t("아직 등록된 FAQ가 없습니다.", "No FAQs have been posted yet."));
     catNavEl.classList.add("hidden");
@@ -333,7 +383,10 @@ function render(faqs) {
 searchEl.addEventListener("input", applyFilter);
 
 document.addEventListener("lcic:langchange", () => {
-  if (allFaqs.length) applyFilter();
+  if (!allFaqs.length) return;
+  // Re-render the chip menu too if it's currently visible (no active search).
+  if (!searchEl.value.trim()) renderCatNav(allFaqs);
+  applyFilter();
 });
 
 async function loadFaqs() {
