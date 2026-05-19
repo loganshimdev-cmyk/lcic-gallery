@@ -231,6 +231,8 @@ body::before {
   background: var(--accent);
   box-shadow: var(--shadow-accent);
 }
+/* Temporarily hidden until notices are published. Remove this rule to bring it back. */
+.nav-pill a[href="notice.html"] { display: none; }
 
 /* Language toggle inside the nav pill */
 .lang-toggle {
