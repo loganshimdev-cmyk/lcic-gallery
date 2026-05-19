@@ -150,12 +150,25 @@ function emptyState(msg, icon = "solar:inbox-bold-duotone") {
   </div>`;
 }
 
-function render(faqs) {
-  if (!faqs || faqs.length === 0) {
-    listEl.innerHTML = emptyState("검색 결과가 없습니다.", "solar:magnifer-linear");
-    return;
-  }
+function appendFaqItem(parent, f) {
+  const details = document.createElement("details");
+  details.className = "faq-item";
+  const summary = document.createElement("summary");
+  summary.innerHTML = `
+    <span></span>
+    <span class="icon-wrap"><iconify-icon icon="solar:add-circle-linear" style="font-size: 18px; color: var(--text-dim);"></iconify-icon></span>
+  `;
+  summary.querySelector("span").textContent = f.question;
+  const answer = document.createElement("div");
+  answer.className = "answer";
+  answer.textContent = f.answer;
+  details.appendChild(summary);
+  details.appendChild(answer);
+  parent.appendChild(details);
+}
 
+function renderGrouped(faqs) {
+  // 검색이 없을 때: 카테고리별로 묶어서 렌더
   const groups = new Map();
   faqs.forEach((f) => {
     const cat = f.category || "기타";
@@ -169,36 +182,68 @@ function render(faqs) {
     title.className = "faq-cat-title";
     title.textContent = category;
     listEl.appendChild(title);
-
-    items.forEach((f) => {
-      const details = document.createElement("details");
-      details.className = "faq-item";
-      const summary = document.createElement("summary");
-      summary.innerHTML = `
-        <span></span>
-        <span class="icon-wrap"><iconify-icon icon="solar:add-circle-linear" style="font-size: 18px; color: var(--text-dim);"></iconify-icon></span>
-      `;
-      summary.querySelector("span").textContent = f.question;
-      const answer = document.createElement("div");
-      answer.className = "answer";
-      answer.textContent = f.answer;
-      details.appendChild(summary);
-      details.appendChild(answer);
-      listEl.appendChild(details);
-    });
+    items.forEach((f) => appendFaqItem(listEl, f));
   });
+}
+
+function renderRanked(scored) {
+  // 검색 결과: 점수 기반 정렬, 카테고리 그룹 없이 단일 리스트
+  if (!scored || scored.length === 0) {
+    listEl.innerHTML = emptyState("검색 결과가 없습니다.", "solar:magnifer-linear");
+    return;
+  }
+  listEl.innerHTML = "";
+  scored.forEach(({ faq }) => appendFaqItem(listEl, faq));
+}
+
+function scoreFaq(f, q) {
+  // 높은 점수일수록 위로. 0이면 매치 안 됨.
+  const ql = q;
+  const question = (f.question || "").toLowerCase();
+  const answer = (f.answer || "").toLowerCase();
+  const category = (f.category || "").toLowerCase();
+
+  let score = 0;
+
+  // 제목 매치 (가장 강함)
+  if (question.includes(ql)) {
+    score += 100;
+    if (question.startsWith(ql)) score += 20; // 제목 앞쪽일수록 가점
+  }
+
+  // 카테고리 매치
+  if (category.includes(ql)) score += 30;
+
+  // 본문 매치 (가장 약함, 빈도 가점)
+  if (answer.includes(ql)) {
+    score += 10;
+    // 본문 등장 횟수만큼 약하게 가점 (최대 +10)
+    const matches = answer.split(ql).length - 1;
+    score += Math.min(matches, 10);
+  }
+
+  return score;
 }
 
 function applyFilter() {
   const q = searchEl.value.trim().toLowerCase();
-  if (!q) return render(allFaqs);
-  const filtered = allFaqs.filter(
-    (f) =>
-      f.question.toLowerCase().includes(q) ||
-      f.answer.toLowerCase().includes(q) ||
-      (f.category || "").toLowerCase().includes(q)
-  );
-  render(filtered);
+  if (!q) return renderGrouped(allFaqs);
+
+  const scored = allFaqs
+    .map((faq) => ({ faq, score: scoreFaq(faq, q) }))
+    .filter((x) => x.score > 0)
+    .sort((a, b) => b.score - a.score);
+
+  renderRanked(scored);
+}
+
+function render(faqs) {
+  // 초기 로딩용 (검색 없는 상태)
+  if (!faqs || faqs.length === 0) {
+    listEl.innerHTML = emptyState("아직 등록된 FAQ가 없습니다.");
+    return;
+  }
+  renderGrouped(faqs);
 }
 
 searchEl.addEventListener("input", applyFilter);
