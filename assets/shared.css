@@ -232,6 +232,40 @@ body::before {
   box-shadow: var(--shadow-accent);
 }
 
+/* Language toggle inside the nav pill */
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 6px;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.05);
+  border: 1px solid var(--hairline);
+  gap: 0;
+}
+.lang-toggle button {
+  background: transparent;
+  border: none;
+  color: var(--text-faint);
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: inherit;
+  line-height: 1;
+}
+.lang-toggle button:hover {
+  color: var(--text);
+}
+.lang-toggle button.active {
+  color: #fff;
+  background: var(--accent);
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.35);
+}
+
 /* Premium button */
 .btn-primary {
   display: inline-flex;

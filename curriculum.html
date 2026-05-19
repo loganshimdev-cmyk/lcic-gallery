@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>커리큘럼 · LCIC</title>
+<title data-i18n-en="Curriculum · LCIC">커리큘럼 · LCIC</title>
 <link rel="icon" type="image/png" href="assets/brand/lcic-logo.png">
 <script src="assets/background.js?v=8"></script>
-<link rel="stylesheet" href="assets/shared.css?v=8">
+<link rel="stylesheet" href="assets/shared.css?v=9">
+<script src="assets/i18n.js?v=1" defer></script>
 <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
 <style>
   /* === SEM 2 SCHEDULE SECTION === */
@@ -450,8 +451,8 @@
 </head>
 <body data-page="curriculum">
 
-<a class="brand-mark" href="index.html" aria-label="LCIC 홈으로">
-  <img src="assets/brand/lcic-logo.png" alt="LCIC 로고">
+<a class="brand-mark" href="index.html" aria-label="LCIC 홈으로" data-i18n-en-attr="aria-label|Back to LCIC home">
+  <img src="assets/brand/lcic-logo.png" alt="LCIC logo">
   <span class="brand-name">
     <span>Lapulapu Cebu</span>
     <span>International</span>
@@ -460,21 +461,25 @@
 </a>
 
 <nav class="nav-pill">
-  <a href="index.html"><iconify-icon icon="solar:home-2-bold-duotone" inline></iconify-icon> 홈</a>
-  <a href="notice.html"><iconify-icon icon="solar:bell-bold" inline></iconify-icon> 공지사항</a>
-  <a href="procedure.html"><iconify-icon icon="solar:list-check-bold-duotone" inline></iconify-icon> 입학 절차</a>
-  <a href="curriculum.html" class="active"><iconify-icon icon="solar:notebook-bold-duotone" inline></iconify-icon> 커리큘럼</a>
-  <a href="life-guide.html"><iconify-icon icon="solar:book-bookmark-bold-duotone" inline></iconify-icon> 생활백서</a>
-  <a href="faq.html"><iconify-icon icon="solar:question-circle-bold-duotone" inline></iconify-icon> 궁금한 사항</a>
-  <a href="gallery.html"><iconify-icon icon="solar:gallery-bold-duotone" inline></iconify-icon> 갤러리</a>
+  <a href="index.html"><iconify-icon icon="solar:home-2-bold-duotone" inline></iconify-icon> <span data-i18n-en="Home">홈</span></a>
+  <a href="notice.html"><iconify-icon icon="solar:bell-bold" inline></iconify-icon> <span data-i18n-en="Notices">공지사항</span></a>
+  <a href="procedure.html"><iconify-icon icon="solar:list-check-bold-duotone" inline></iconify-icon> <span data-i18n-en="Admissions">입학 절차</span></a>
+  <a href="curriculum.html" class="active"><iconify-icon icon="solar:notebook-bold-duotone" inline></iconify-icon> <span data-i18n-en="Curriculum">커리큘럼</span></a>
+  <a href="life-guide.html"><iconify-icon icon="solar:book-bookmark-bold-duotone" inline></iconify-icon> <span data-i18n-en="Life Guide">생활백서</span></a>
+  <a href="faq.html"><iconify-icon icon="solar:question-circle-bold-duotone" inline></iconify-icon> <span data-i18n-en="FAQ">궁금한 사항</span></a>
+  <a href="gallery.html"><iconify-icon icon="solar:gallery-bold-duotone" inline></iconify-icon> <span data-i18n-en="Gallery">갤러리</span></a>
+  <div class="lang-toggle" data-lang-toggle role="group" aria-label="Language">
+    <button type="button" data-lang-to="ko">KO</button>
+    <button type="button" data-lang-to="en">EN</button>
+  </div>
 </nav>
 
 <header style="padding: 160px 20px 60px; text-align: center;">
   <div class="fade-up">
     <span class="eyebrow"><span class="dot"></span> CURRICULUM</span>
   </div>
-  <h1 class="headline fade-up delay-1" style="margin-top: 28px;">ONE-EFL 커리큘럼</h1>
-  <p class="subhead fade-up delay-2" style="margin-top: 20px;">
+  <h1 class="headline fade-up delay-1" style="margin-top: 28px;" data-i18n-en="The ONE-EFL curriculum">ONE-EFL 커리큘럼</h1>
+  <p class="subhead fade-up delay-2" style="margin-top: 20px;" data-i18n-en="ONE-EFL is LCIC&rsquo;s in-house integrated English program.<br>Conversation, grammar, test prep, career English, culture, and a second language &mdash; all in the same term.">
     LCIC가 자체 개발한 통합 영어 교육 시스템 ONE-EFL.<br>
     회화·문법·시험·실무·문화·제2외국어까지 한 학기에 함께 수강할 수 있습니다.
   </p>
@@ -485,18 +490,18 @@
   <section class="fade-up delay-3">
     <div class="one-efl">
       <span class="badge"><iconify-icon icon="solar:cup-star-bold-duotone"></iconify-icon> LCIC SIGNATURE PROGRAM</span>
-      <h2>다양한 관점에서 영어를 접하고 배울 수 있도록</h2>
-      <p>
+      <h2 data-i18n-en="English from every angle, learned in one place">다양한 관점에서 영어를 접하고 배울 수 있도록</h2>
+      <p data-i18n-en="ONE-EFL is LCIC&rsquo;s own integrated program, designed so that students can study every area of English &mdash; conversation, grammar, pronunciation, test prep, career English, culture, and a second language &mdash; as a single coherent path.">
         ONE-EFL은 학생들이 회화·문법·발음·시험·실무·문화·제2외국어 등 영어의 모든 영역을 하나로 통합해
         배울 수 있도록 설계된 LCIC만의 통합 교육 프로그램입니다.
       </p>
       <div class="meta">
-        <span class="meta-chip"><iconify-icon icon="solar:calendar-bold-duotone"></iconify-icon> 1회차 4주</span>
-        <span class="meta-chip"><iconify-icon icon="solar:users-group-rounded-bold-duotone"></iconify-icon> 외국인 강사 1:1 / 그룹</span>
-        <span class="meta-chip"><iconify-icon icon="solar:diploma-bold-duotone"></iconify-icon> CEFR A1 ~ C2 대응</span>
+        <span class="meta-chip"><iconify-icon icon="solar:calendar-bold-duotone"></iconify-icon> <span data-i18n-en="4-week term">1회차 4주</span></span>
+        <span class="meta-chip"><iconify-icon icon="solar:users-group-rounded-bold-duotone"></iconify-icon> <span data-i18n-en="Native-speaker teachers, 1:1 or small group">외국인 강사 1:1 / 그룹</span></span>
+        <span class="meta-chip"><iconify-icon icon="solar:diploma-bold-duotone"></iconify-icon> <span data-i18n-en="CEFR A1 to C2">CEFR A1 ~ C2 대응</span></span>
       </div>
       <div class="textbook-note">
-        <iconify-icon icon="solar:book-bookmark-bold-duotone" inline></iconify-icon> 교재비 별도
+        <iconify-icon icon="solar:book-bookmark-bold-duotone" inline></iconify-icon> <span data-i18n-en="Textbook fees billed separately">교재비 별도</span>
       </div>
     </div>
   </section>
@@ -505,8 +510,8 @@
   <section class="schedule-section fade-up" id="sem2-schedule">
     <div class="section-title">
       <span class="label"><iconify-icon icon="solar:calendar-bold-duotone"></iconify-icon> SEM 2 SCHEDULE</span>
-      <h2>여름 회차 시간표 (7~8월)</h2>
-      <p>여름 시즌에는 학생 수가 많아 회차별로 시간표가 별도 편성됩니다. 아래에서 해당 회차의 주간 시간표를 확인하세요.</p>
+      <h2 data-i18n-en="Summer schedule (July&ndash;August)">여름 회차 시간표 (7~8월)</h2>
+      <p data-i18n-en="Enrollment is higher during the summer, so each term has its own schedule. Find the weekly timetable for your term below.">여름 시즌에는 학생 수가 많아 회차별로 시간표가 별도 편성됩니다. 아래에서 해당 회차의 주간 시간표를 확인하세요.</p>
     </div>
 
     <div class="schedule-legend">
@@ -519,14 +524,14 @@
     </div>
 
     <div class="schedule-tabs" role="tablist">
-      <button class="schedule-tab active" data-target="sch-jul" role="tab">7월</button>
-      <button class="schedule-tab" data-target="sch-aug" role="tab">8월</button>
+      <button class="schedule-tab active" data-target="sch-jul" role="tab" data-i18n-en="July">7월</button>
+      <button class="schedule-tab" data-target="sch-aug" role="tab" data-i18n-en="August">8월</button>
     </div>
 
     <!-- 7월 -->
     <div class="schedule-panel active" id="sch-jul" role="tabpanel">
       <div class="schedule-meta">
-        <span class="module-name">7월 시간표</span>
+        <span class="module-name" data-i18n-en="July schedule">7월 시간표</span>
         <span class="date-range">Jul 6 — Jul 31</span>
       </div>
       <div class="schedule-table-wrap">
@@ -602,7 +607,7 @@
     <!-- 8월 -->
     <div class="schedule-panel" id="sch-aug" role="tabpanel">
       <div class="schedule-meta">
-        <span class="module-name">8월 시간표</span>
+        <span class="module-name" data-i18n-en="August schedule">8월 시간표</span>
         <span class="date-range">Aug 3 — Aug 28</span>
       </div>
       <div class="schedule-table-wrap">
@@ -675,17 +680,17 @@
       </div>
     </div>
 
-    <p class="schedule-note">강의 슬래시(/)는 레벨·반에 따라 분반되어 운영되는 과목입니다. 작은 글씨로 표시된 항목은 같은 시간대에 진행되는 선택 강의입니다.</p>
+    <p class="schedule-note" data-i18n-en="Courses with a slash (/) split into different classes by level. Smaller text indicates an elective offered in the same slot.">강의 슬래시(/)는 레벨·반에 따라 분반되어 운영되는 과목입니다. 작은 글씨로 표시된 항목은 같은 시간대에 진행되는 선택 강의입니다.</p>
   </section>
 
 
   <!-- 필수 -->
   <div class="section-title fade-up">
-    <h2>필수 수강 과목</h2>
+    <h2 data-i18n-en="Required courses">필수 수강 과목</h2>
     <span class="label">REQUIRED</span>
-    <span class="count">2개</span>
+    <span class="count" data-i18n-en="2 courses">2개</span>
   </div>
-  <p class="section-desc fade-up">
+  <p class="section-desc fade-up" data-i18n-en="Every student takes the <b>two courses below</b> &mdash; the twin pillars of English communication.">
     아래 2개 과목은 모든 학생이 <b>반드시 수강</b>하는 영어 의사소통의 두 축입니다.
   </p>
 
@@ -699,9 +704,9 @@
           <div class="subtitle">CORE · COMMUNICATION</div>
         </div>
       </div>
-      <p>영어를 통한 의사소통의 기본기를 전반적으로 다루며, 학생들의 영어에 대한 자신감 향상이 목표인 과목입니다.</p>
+      <p data-i18n-en="Covers the fundamentals of communicating in English, with the goal of building day-to-day confidence using the language.">영어를 통한 의사소통의 기본기를 전반적으로 다루며, 학생들의 영어에 대한 자신감 향상이 목표인 과목입니다.</p>
       <div class="tag-row">
-        <span class="tag required">필수</span>
+        <span class="tag required" data-i18n-en="Required">필수</span>
         <span class="tag">Speaking</span>
         <span class="tag">Confidence</span>
       </div>
@@ -715,9 +720,9 @@
           <div class="subtitle">CORE · CONVERSATION</div>
         </div>
       </div>
-      <p>실생활부터 학문·직무 환경까지 다양한 주제를 토론·디스커션 형식으로 다룹니다. 자신의 의견을 논리적으로 구성하고 근거를 들어 설명하며, 상대방의 말에 자연스럽게 반응하는 실전 회화 능력을 종합적으로 훈련합니다.</p>
+      <p data-i18n-en="Tackles a wide range of topics &mdash; from everyday life to academic and professional settings &mdash; through discussion and debate. Builds the ability to structure your opinions logically, back them up with evidence, and respond naturally to what others say.">실생활부터 학문·직무 환경까지 다양한 주제를 토론·디스커션 형식으로 다룹니다. 자신의 의견을 논리적으로 구성하고 근거를 들어 설명하며, 상대방의 말에 자연스럽게 반응하는 실전 회화 능력을 종합적으로 훈련합니다.</p>
       <div class="tag-row">
-        <span class="tag required">필수</span>
+        <span class="tag required" data-i18n-en="Required">필수</span>
         <span class="tag">Discussion</span>
         <span class="tag">Conversation</span>
       </div>
@@ -728,11 +733,11 @@
 
   <!-- 기초 -->
   <div class="section-title fade-up">
-    <h2>기초기 강화</h2>
+    <h2 data-i18n-en="Foundations">기초기 강화</h2>
     <span class="label">FOUNDATION</span>
-    <span class="count">2개</span>
+    <span class="count" data-i18n-en="2 courses">2개</span>
   </div>
-  <p class="section-desc fade-up">
+  <p class="section-desc fade-up" data-i18n-en="Courses that strengthen the underlying building blocks &mdash; grammar and pronunciation.">
     문법·발음 등 영어의 기본 토대를 다지는 과목들입니다.
   </p>
 
@@ -746,7 +751,7 @@
           <div class="subtitle">FOUNDATION · PHONETICS</div>
         </div>
       </div>
-      <p>개별 발음·단어 강세·연음·억양을 포함한 모든 발음 영역을 연습하여, 영어로 이해되는 자신감을 강화합니다.</p>
+      <p data-i18n-en="Practice across every layer of pronunciation &mdash; individual sounds, word stress, linking, and intonation &mdash; so you can be confidently understood in English.">개별 발음·단어 강세·연음·억양을 포함한 모든 발음 영역을 연습하여, 영어로 이해되는 자신감을 강화합니다.</p>
       <div class="tag-row">
         <span class="tag">Pronunciation</span>
         <span class="tag">Intonation</span>
@@ -761,7 +766,7 @@
           <div class="subtitle">FOUNDATION · GRAMMAR</div>
         </div>
       </div>
-      <p>다양한 실제적이고 의사소통적인 맥락을 통해 듣기·말하기·읽기·쓰기를 활용하여 영어 문법 지식을 개발하고 강화합니다.</p>
+      <p data-i18n-en="Builds and reinforces grammar knowledge through realistic communicative contexts that draw on listening, speaking, reading, and writing.">다양한 실제적이고 의사소통적인 맥락을 통해 듣기·말하기·읽기·쓰기를 활용하여 영어 문법 지식을 개발하고 강화합니다.</p>
       <div class="tag-row">
         <span class="tag">Grammar</span>
         <span class="tag">4 Skills</span>
@@ -773,11 +778,11 @@
 
   <!-- 회화 · 작문 심화 -->
   <div class="section-title fade-up">
-    <h2>회화 · 작문 심화</h2>
+    <h2 data-i18n-en="Advanced speaking &amp; writing">회화 · 작문 심화</h2>
     <span class="label">SKILL · ADVANCED</span>
-    <span class="count">3개</span>
+    <span class="count" data-i18n-en="3 courses">3개</span>
   </div>
-  <p class="section-desc fade-up">
+  <p class="section-desc fade-up" data-i18n-en="Elective courses that push your listening, speaking, and writing skills to the next level.">
     듣기·말하기·쓰기 능력을 한 단계 끌어올리는 선택 심화 과목입니다.
   </p>
 
@@ -791,7 +796,7 @@
           <div class="subtitle">SKILL · LISTENING</div>
         </div>
       </div>
-      <p>다양한 영어 듣기 활동을 통해 어휘·문법·비판적 사고를 구축하고, 본인의 의견을 말할 수 있는 능력을 발전시키는 데 중점을 둡니다.</p>
+      <p data-i18n-en="Builds vocabulary, grammar, and critical thinking through varied listening activities, then channels those into expressing your own opinions clearly.">다양한 영어 듣기 활동을 통해 어휘·문법·비판적 사고를 구축하고, 본인의 의견을 말할 수 있는 능력을 발전시키는 데 중점을 둡니다.</p>
       <div class="tag-row">
         <span class="tag">Listening</span>
         <span class="tag">Critical Thinking</span>
@@ -806,7 +811,7 @@
           <div class="subtitle">SKILL · PRESENTATION</div>
         </div>
       </div>
-      <p>면접·토론·프레젠테이션 등 다양하고 전문적인 환경에서 효과적으로 대응할 수 있는 의사소통 기술을 배울 수 있는 과목입니다.</p>
+      <p data-i18n-en="Develops the communication skills you need in professional settings &mdash; interviews, discussions, and presentations.">면접·토론·프레젠테이션 등 다양하고 전문적인 환경에서 효과적으로 대응할 수 있는 의사소통 기술을 배울 수 있는 과목입니다.</p>
       <div class="tag-row">
         <span class="tag">Presentation</span>
         <span class="tag">Interview</span>
@@ -821,7 +826,7 @@
           <div class="subtitle">SKILL · WRITING</div>
         </div>
       </div>
-      <p>학술 에세이·리포트·이메일 등 영문 글쓰기의 다양한 형식을 익히는 과목입니다. 글의 구조를 설계하고 주장과 근거를 효과적으로 연결하는 방법을 배워, 논리적이고 정확한 학술·전문 영어 작문 능력을 단계적으로 기릅니다.</p>
+      <p data-i18n-en="Covers a range of English writing formats &mdash; academic essays, reports, and emails. Learn how to structure a piece, connect claims to evidence, and build up to clear, logical academic and professional writing.">학술 에세이·리포트·이메일 등 영문 글쓰기의 다양한 형식을 익히는 과목입니다. 글의 구조를 설계하고 주장과 근거를 효과적으로 연결하는 방법을 배워, 논리적이고 정확한 학술·전문 영어 작문 능력을 단계적으로 기릅니다.</p>
       <div class="tag-row">
         <span class="tag">Writing</span>
         <span class="tag">Academic</span>
@@ -833,11 +838,11 @@
 
   <!-- 시험 -->
   <div class="section-title fade-up">
-    <h2>시험 영어</h2>
+    <h2 data-i18n-en="Test prep">시험 영어</h2>
     <span class="label">TEST PREP</span>
-    <span class="count">4개</span>
+    <span class="count" data-i18n-en="4 courses">4개</span>
   </div>
-  <p class="section-desc fade-up">
+  <p class="section-desc fade-up" data-i18n-en="Courses geared toward standardized English exams like TOEIC and IELTS. <b>Eligibility depends on your CEFR level.</b>">
     TOEIC·IELTS 등 공인 영어 시험 대비 과목들입니다. <b>본인 레벨(CEFR)에 따라 수강 가능 과목이 다릅니다.</b>
   </p>
 
@@ -851,9 +856,9 @@
           <div class="subtitle">TEST · BEGINNER</div>
         </div>
       </div>
-      <p>영어 공부 초심자가 TOEIC·IELTS 등의 시험을 준비할 수 있도록 기본적인 문제풀이 기술과 전략을 학습합니다.</p>
+      <p data-i18n-en="Teaches the basic question-handling skills and strategies that beginners need to start preparing for TOEIC, IELTS, and similar tests.">영어 공부 초심자가 TOEIC·IELTS 등의 시험을 준비할 수 있도록 기본적인 문제풀이 기술과 전략을 학습합니다.</p>
       <div class="tag-row">
-        <span class="tag level">A1~A2 전용</span>
+        <span class="tag level" data-i18n-en="A1&ndash;A2 only">A1~A2 전용</span>
         <span class="tag">Beginner</span>
         <span class="tag">Strategy</span>
       </div>
@@ -867,9 +872,9 @@
           <div class="subtitle">TEST · IELTS</div>
         </div>
       </div>
-      <p>IELTS 시험의 듣기·읽기·쓰기·말하기 4가지 영역을 이해하고, 예제들을 통해 시험에 관련된 기술·팁·기법을 학습합니다.</p>
+      <p data-i18n-en="Works through all four IELTS sections &mdash; listening, reading, writing, and speaking &mdash; using sample questions to teach the techniques and tips that matter on test day.">IELTS 시험의 듣기·읽기·쓰기·말하기 4가지 영역을 이해하고, 예제들을 통해 시험에 관련된 기술·팁·기법을 학습합니다.</p>
       <div class="tag-row">
-        <span class="tag level">B1~C2 전용</span>
+        <span class="tag level" data-i18n-en="B1&ndash;C2 only">B1~C2 전용</span>
         <span class="tag">IELTS</span>
         <span class="tag">4 Sections</span>
       </div>
@@ -883,9 +888,9 @@
           <div class="subtitle">TEST · TOEIC R&amp;L</div>
         </div>
       </div>
-      <p>TOEIC 어학능력시험의 고득점 및 자격증 취득을 목표로 <b>읽기와 듣기</b> 영역에 집중한 과목입니다.</p>
+      <p data-i18n-en="Focused on the <b>Reading and Listening</b> sections of the TOEIC, aimed at high scores and certification.">TOEIC 어학능력시험의 고득점 및 자격증 취득을 목표로 <b>읽기와 듣기</b> 영역에 집중한 과목입니다.</p>
       <div class="tag-row">
-        <span class="tag level">B1~C2 전용</span>
+        <span class="tag level" data-i18n-en="B1&ndash;C2 only">B1~C2 전용</span>
         <span class="tag">TOEIC R&amp;L</span>
         <span class="tag">High Score</span>
       </div>
@@ -899,9 +904,9 @@
           <div class="subtitle">TEST · TOEIC S&amp;W</div>
         </div>
       </div>
-      <p>TOEIC 어학능력시험의 고득점 및 자격증 취득을 목표로 <b>말하기와 쓰기</b> 영역에 집중한 과목입니다.</p>
+      <p data-i18n-en="Focused on the <b>Speaking and Writing</b> sections of the TOEIC, aimed at high scores and certification.">TOEIC 어학능력시험의 고득점 및 자격증 취득을 목표로 <b>말하기와 쓰기</b> 영역에 집중한 과목입니다.</p>
       <div class="tag-row">
-        <span class="tag level">전 레벨</span>
+        <span class="tag level" data-i18n-en="All levels">전 레벨</span>
         <span class="tag">TOEIC S&amp;W</span>
         <span class="tag">High Score</span>
       </div>
@@ -912,11 +917,11 @@
 
   <!-- 실무 -->
   <div class="section-title fade-up">
-    <h2>실무 · 직무 영어</h2>
+    <h2 data-i18n-en="Career &amp; workplace English">실무 · 직무 영어</h2>
     <span class="label">CAREER &amp; HOSPITALITY</span>
-    <span class="count">2개</span>
+    <span class="count" data-i18n-en="2 courses">2개</span>
   </div>
-  <p class="section-desc fade-up">
+  <p class="section-desc fade-up" data-i18n-en="Practical English you can use in real work settings and on the job market.">
     실제 업무 환경과 취업 시장에서 활용 가능한 실무형 영어 과목들입니다.
   </p>
 
@@ -930,7 +935,7 @@
           <div class="subtitle">CAREER · HOSPITALITY</div>
         </div>
       </div>
-      <p>실제 업무 상황과 비슷한 시뮬레이션을 통해 최고 수준의 서비스 역량을 키우는 교육 프로그램입니다.</p>
+      <p data-i18n-en="Builds top-tier service skills through simulations that mirror real workplace situations.">실제 업무 상황과 비슷한 시뮬레이션을 통해 최고 수준의 서비스 역량을 키우는 교육 프로그램입니다.</p>
       <div class="tag-row">
         <span class="tag">Service</span>
         <span class="tag">Simulation</span>
@@ -945,7 +950,7 @@
           <div class="subtitle">CAREER · JOB SEARCH</div>
         </div>
       </div>
-      <p>취업 목표 달성을 위해 영어 능력을 향상시키는 동시에 입사 지원·면접·이력서 작성 등 취업 관련 내용을 학습합니다.</p>
+      <p data-i18n-en="Sharpens your English while walking through the job-hunt itself &mdash; applications, interviews, and r&eacute;sum&eacute; writing.">취업 목표 달성을 위해 영어 능력을 향상시키는 동시에 입사 지원·면접·이력서 작성 등 취업 관련 내용을 학습합니다.</p>
       <div class="tag-row">
         <span class="tag">Resume</span>
         <span class="tag">Interview</span>
@@ -957,11 +962,11 @@
 
   <!-- 문화 · 글로벌 -->
   <div class="section-title fade-up">
-    <h2>문화 · 글로벌</h2>
+    <h2 data-i18n-en="Culture &amp; global topics">문화 · 글로벌</h2>
     <span class="label">CULTURE &amp; DISCUSSION</span>
-    <span class="count">3개</span>
+    <span class="count" data-i18n-en="3 courses">3개</span>
   </div>
-  <p class="section-desc fade-up">
+  <p class="section-desc fade-up" data-i18n-en="Project-based courses that explore Filipino culture and global issues in English.">
     필리핀 문화와 글로벌 이슈를 영어로 탐구하는 프로젝트형 과목들입니다.
   </p>
 
@@ -975,7 +980,7 @@
           <div class="subtitle">CULTURE · TRAVEL</div>
         </div>
       </div>
-      <p>다양한 영어 과제·게임·토론 등의 프로젝트 활동을 통해 독특한 필리핀 여행, 다양한 사람들, 풍부하고 다이내믹한 문화에 대해 이야기합니다.</p>
+      <p data-i18n-en="Talk about the places, people, and dynamic culture of the Philippines through English-language tasks, games, and discussions.">다양한 영어 과제·게임·토론 등의 프로젝트 활동을 통해 독특한 필리핀 여행, 다양한 사람들, 풍부하고 다이내믹한 문화에 대해 이야기합니다.</p>
       <div class="tag-row">
         <span class="tag">Travel</span>
         <span class="tag">Project</span>
@@ -990,7 +995,7 @@
           <div class="subtitle">CULTURE · FOOD</div>
         </div>
       </div>
-      <p>영어 과제·게임·토론 등의 프로젝트 활동을 통해 필리핀의 다양한 음식과 문화를 배우고, 개인의 생각과 아이디어를 표현합니다.</p>
+      <p data-i18n-en="Explore Filipino food and food culture through project-based tasks, games, and discussions &mdash; and share your own perspective.">영어 과제·게임·토론 등의 프로젝트 활동을 통해 필리핀의 다양한 음식과 문화를 배우고, 개인의 생각과 아이디어를 표현합니다.</p>
       <div class="tag-row">
         <span class="tag">Food</span>
         <span class="tag">Discussion</span>
@@ -1005,7 +1010,7 @@
           <div class="subtitle">GLOBAL · DISCUSSION</div>
         </div>
       </div>
-      <p>토론 및 협력활동을 통해 글로벌 이슈에 대한 SDGs(지속가능한 목표개발) 목표·주제에 부합하는 해결법을 도출합니다.</p>
+      <p data-i18n-en="Work through discussion and collaboration to propose solutions to global issues that align with the UN Sustainable Development Goals.">토론 및 협력활동을 통해 글로벌 이슈에 대한 SDGs(지속가능한 목표개발) 목표·주제에 부합하는 해결법을 도출합니다.</p>
       <div class="tag-row">
         <span class="tag">SDGs</span>
         <span class="tag">Global Issues</span>
@@ -1017,11 +1022,11 @@
 
   <!-- 제2외국어 -->
   <div class="section-title fade-up">
-    <h2>제2외국어</h2>
+    <h2 data-i18n-en="Second language">제2외국어</h2>
     <span class="label">FOREIGN LANGUAGES</span>
-    <span class="count">1개</span>
+    <span class="count" data-i18n-en="1 course">1개</span>
   </div>
-  <p class="section-desc fade-up">
+  <p class="section-desc fade-up" data-i18n-en="An elective second-language course taught through English.">
     영어를 매개로 학습하는 제2외국어 선택 과목입니다.
   </p>
 
@@ -1035,12 +1040,12 @@
           <div class="subtitle">MANDARIN · JAPANESE · FILIPINO</div>
         </div>
       </div>
-      <p>영어를 활용하여 본인이 관심있는 제2외국어(중국어·일본어·필리피노)의 기초 회화·문법·어휘 등을 공부할 수 있습니다.</p>
+      <p data-i18n-en="Study the basics &mdash; conversation, grammar, and vocabulary &mdash; of a second language of your choice (Mandarin, Japanese, or Filipino), using English as the medium of instruction.">영어를 활용하여 본인이 관심있는 제2외국어(중국어·일본어·필리피노)의 기초 회화·문법·어휘 등을 공부할 수 있습니다.</p>
       <div class="tag-row">
         <span class="tag">中文</span>
         <span class="tag">日本語</span>
         <span class="tag">Filipino</span>
-        <span class="tag" style="color:#b91c1c; background: rgba(220, 38, 38, 0.06); border-color: rgba(220, 38, 38, 0.25);">한국어 수강 불가</span>
+        <span class="tag" style="color:#b91c1c; background: rgba(220, 38, 38, 0.06); border-color: rgba(220, 38, 38, 0.25);" data-i18n-en="Korean not offered">한국어 수강 불가</span>
       </div>
     </div>
 
@@ -1048,15 +1053,15 @@
 
 
   <div class="cta-block fade-up" style="margin-top: 80px;">
-    <h2>LCIC에서 영어 학습 시작하기</h2>
-    <p>ONE-EFL 통합 시스템으로 4주 단위의 빠른 성장을 경험하세요.</p>
+    <h2 data-i18n-en="Start learning English at LCIC">LCIC에서 영어 학습 시작하기</h2>
+    <p data-i18n-en="Experience how fast you can grow with the ONE-EFL system &mdash; in 4-week sprints.">ONE-EFL 통합 시스템으로 4주 단위의 빠른 성장을 경험하세요.</p>
     <a class="btn-jumbo" href="procedure.html">
       <iconify-icon icon="solar:list-check-bold-duotone"></iconify-icon>
-      입학 절차 안내로 이동
+      <span data-i18n-en="Go to the admissions walkthrough">입학 절차 안내로 이동</span>
     </a>
   </div>
 
-  <p class="footnote fade-up" style="margin-top: 36px;">
+  <p class="footnote fade-up" style="margin-top: 36px;" data-i18n-en="The summer (July&ndash;August) schedule is in the <a href=&quot;#sem2-schedule&quot; style=&quot;color:var(--accent); text-decoration:underline; text-underline-offset:2px;&quot;>section above</a>. Schedules for other seasons (fall, winter, etc.) are announced separately before each term.">
     여름 회차(7~8월) 시간표는 <a href="#sem2-schedule" style="color:var(--accent); text-decoration:underline; text-underline-offset:2px;">위 섹션</a>에서 확인할 수 있습니다. 가을·겨울 등 다른 시즌의 시간표는 학기 시작 전 별도로 안내됩니다.
   </p>
 
