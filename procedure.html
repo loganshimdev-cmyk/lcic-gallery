@@ -277,6 +277,58 @@
     color: #fff;
   }
 
+  /* External-link variant of manual-toggle: opens a PDF in a new tab. */
+  .manual-link {
+    margin-top: 18px;
+    border-top: 1px solid var(--hairline);
+    padding-top: 18px;
+    display: block;
+  }
+  .manual-link > a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--accent-tint), rgba(30, 58, 138, 0.05));
+    border: 1.5px solid var(--accent-soft);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--accent-deep);
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.08);
+  }
+  .manual-link > a:hover {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.18), rgba(30, 58, 138, 0.10));
+    border-color: var(--accent);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.18);
+  }
+  .manual-link > a:active { transform: translateY(0); }
+  .manual-link > a > iconify-icon:first-child {
+    color: var(--accent);
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .manual-link .chevron {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.7);
+    color: var(--accent);
+    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.15);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .manual-link > a:hover .chevron {
+    background: var(--accent);
+    color: #fff;
+  }
+
   .manual-body {
     padding: 22px 4px 4px;
     animation: manualReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1414,6 +1466,14 @@
           배정받은 레벨에 맞춰 수강 과목을 선택합니다.
           정규 수업 외에도 선택 과목이 마련되어 있으니 학생 등록 시스템에서 안내에 따라 신청해주세요.
         </p>
+
+        <div class="manual-link">
+          <a href="assets/manual/MyCamu-User-Guide-Korean.pdf" target="_blank" rel="noopener">
+            <iconify-icon icon="solar:document-text-bold-duotone"></iconify-icon>
+            <span data-i18n-en="Open the MyCamu course registration guide (PDF)" data-i18n-zh="開啟 MyCamu 選課操作說明(PDF)" data-i18n-ja="MyCamu 履修登録ガイドを開く(PDF)">MyCamu 수강신청 매뉴얼 열기 (PDF)</span>
+            <span class="chevron"><iconify-icon icon="solar:arrow-right-up-linear"></iconify-icon></span>
+          </a>
+        </div>
       </div>
     </div>
 
