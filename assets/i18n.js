@@ -1,15 +1,15 @@
-// LCIC inline i18n — toggles between Korean (source), English, and Traditional
-// Chinese. Translatable elements carry data-i18n-<lang> attributes whose value
-// replaces innerHTML when that language is active. The original Korean
-// innerHTML is cached lazily into data-i18n-ko on first apply so it can be
-// restored. Attribute swaps use data-i18n-<lang>-attr with the format
-// "attrName|value||attrName2|value2".
+// LCIC inline i18n — toggles between Korean (source), English, Traditional
+// Chinese, and Japanese. Translatable elements carry data-i18n-<lang>
+// attributes whose value replaces innerHTML when that language is active. The
+// original Korean innerHTML is cached lazily into data-i18n-ko on first apply
+// so it can be restored. Attribute swaps use data-i18n-<lang>-attr with the
+// format "attrName|value||attrName2|value2".
 (function () {
   const STORAGE_KEY = "lcic-lang";
-  const SUPPORTED = ["ko", "en", "zh"];
+  const SUPPORTED = ["ko", "en", "zh", "ja"];
   const DEFAULT_LANG = "ko";
   // <html lang="..."> uses BCP-47 codes; Traditional Chinese (Taiwan).
-  const HTML_LANG = { ko: "ko", en: "en", zh: "zh-TW" };
+  const HTML_LANG = { ko: "ko", en: "en", zh: "zh-TW", ja: "ja" };
 
   function readInitialLang() {
     const url = new URLSearchParams(location.search).get("lang");
@@ -26,11 +26,13 @@
   function datasetKey(lang) {
     if (lang === "en") return "i18nEn";
     if (lang === "zh") return "i18nZh";
+    if (lang === "ja") return "i18nJa";
     return "i18nKo";
   }
   function datasetAttrKey(lang) {
     if (lang === "en") return "i18nEnAttr";
     if (lang === "zh") return "i18nZhAttr";
+    if (lang === "ja") return "i18nJaAttr";
     return "i18nKoAttr";
   }
 
@@ -38,7 +40,7 @@
     const scope = root || document;
     // Translatable innerHTML: elements opt in by carrying any data-i18n-<lang>
     // attribute. We treat the source-language (KO) value as the fallback.
-    const selector = "[data-i18n-en], [data-i18n-zh]";
+    const selector = "[data-i18n-en], [data-i18n-zh], [data-i18n-ja]";
     scope.querySelectorAll(selector).forEach((el) => {
       if (el.dataset.i18nKo === undefined) {
         el.dataset.i18nKo = el.innerHTML;
@@ -50,12 +52,10 @@
     });
 
     // Translatable attributes
-    const attrSelector = "[data-i18n-en-attr], [data-i18n-zh-attr]";
+    const attrSelector = "[data-i18n-en-attr], [data-i18n-zh-attr], [data-i18n-ja-attr]";
     scope.querySelectorAll(attrSelector).forEach((el) => {
       // Pick any non-Korean spec to know which attributes to capture.
-      const specEn = el.dataset.i18nEnAttr;
-      const specZh = el.dataset.i18nZhAttr;
-      const refSpec = specEn || specZh;
+      const refSpec = el.dataset.i18nEnAttr || el.dataset.i18nZhAttr || el.dataset.i18nJaAttr;
       if (!refSpec) return;
 
       if (el.dataset.i18nKoAttr === undefined) {
@@ -81,7 +81,7 @@
   }
 
   function paintTitle() {
-    const titleEl = document.querySelector("title[data-i18n-en], title[data-i18n-zh]");
+    const titleEl = document.querySelector("title[data-i18n-en], title[data-i18n-zh], title[data-i18n-ja]");
     if (!titleEl) return;
     if (titleEl.dataset.i18nKo === undefined) titleEl.dataset.i18nKo = titleEl.textContent;
     const key = datasetKey(currentLang);
@@ -126,15 +126,21 @@
       return currentLang;
     },
     set: setLang,
-    // Pick a localized string. Pass a map { ko, en, zh } or just (ko, en).
-    t: function (ko, en, zh) {
+    // Pick a localized string. Pass a map { ko, en, zh, ja } or positional
+    // (ko, en, zh, ja). Missing translations fall back through ja -> zh -> en
+    // -> ko so a partially translated map still renders something readable.
+    t: function (ko, en, zh, ja) {
+      let map;
       if (typeof ko === "object" && ko !== null) {
-        const map = ko;
-        return map[currentLang] || map.en || map.ko || "";
+        map = ko;
+      } else {
+        map = { ko: ko, en: en, zh: zh, ja: ja };
       }
-      if (currentLang === "zh") return (zh !== undefined && zh !== "") ? zh : (en || ko);
-      if (currentLang === "en") return en || ko;
-      return ko;
+      const pick = (k) => (map[k] !== undefined && map[k] !== "") ? map[k] : null;
+      if (currentLang === "ja") return pick("ja") || pick("zh") || pick("en") || pick("ko") || "";
+      if (currentLang === "zh") return pick("zh") || pick("en") || pick("ko") || "";
+      if (currentLang === "en") return pick("en") || pick("ko") || "";
+      return pick("ko") || "";
     },
     apply: applyTo,
   };
