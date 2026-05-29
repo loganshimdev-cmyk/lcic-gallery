@@ -1,0 +1,4 @@
+# Local-only helpers that contain plaintext rosters — never commit.
+# Re-generate the encrypted blob locally and paste it into summer-2026.html.
+scripts/encrypt-summer-2026.cjs
+scripts/verify-summer-2026.cjs

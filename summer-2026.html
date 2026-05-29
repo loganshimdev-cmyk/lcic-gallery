@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>2026 Summer Program · LCIC</title>
+<link rel="icon" type="image/png" href="assets/brand/lcic-logo.png">
+<script src="assets/background.js?v=8"></script>
+<link rel="stylesheet" href="assets/shared.css?v=13">
+<script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+<style>
+  .gate-wrap {
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 120px 20px 60px;
+  }
+  .gate-card { max-width: 420px; width: 100%; }
+  .gate-card .bezel-inner { padding: 36px 32px; }
+  .gate-icon {
+    width: 64px; height: 64px; border-radius: 999px;
+    background: var(--accent-soft); color: var(--accent-deep);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; margin: 0 auto 20px;
+  }
+  .gate-title {
+    text-align: center; font-size: 1.35rem; font-weight: 600;
+    letter-spacing: -0.01em; margin-bottom: 8px;
+  }
+  .gate-sub {
+    text-align: center; color: var(--text-dim);
+    font-size: 0.92rem; line-height: 1.55; margin-bottom: 24px;
+  }
+  .gate-form { display: flex; flex-direction: column; gap: 12px; }
+  .gate-input {
+    width: 100%; padding: 14px 16px;
+    border: 1px solid var(--hairline-strong);
+    border-radius: 14px;
+    background: var(--bg-elev);
+    font-family: inherit; font-size: 1rem;
+    color: var(--text);
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .gate-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-soft);
+  }
+  .gate-btn {
+    width: 100%; padding: 14px 16px;
+    border: none; border-radius: 14px;
+    background: var(--accent); color: white;
+    font-family: inherit; font-size: 1rem; font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.05s;
+    box-shadow: var(--shadow-accent);
+  }
+  .gate-btn:hover { background: var(--accent-hover); }
+  .gate-btn:active { transform: translateY(1px); }
+  .gate-btn[disabled] { opacity: 0.55; cursor: not-allowed; transform: none; }
+  .gate-err {
+    color: #dc2626; font-size: 0.86rem;
+    text-align: center; min-height: 20px;
+  }
+
+  .search-bar {
+    position: sticky; top: 90px; z-index: 5;
+    background: var(--bg-elev);
+    border: 1px solid var(--hairline);
+    border-radius: 18px;
+    padding: 4px 8px 4px 16px;
+    display: flex; align-items: center; gap: 10px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 32px;
+  }
+  .search-bar iconify-icon { color: var(--text-faint); font-size: 20px; flex: 0 0 auto; }
+  .search-bar input {
+    flex: 1; min-width: 0;
+    border: none; outline: none;
+    background: transparent;
+    font-family: inherit; font-size: 1rem;
+    padding: 12px 0;
+    color: var(--text);
+  }
+  .search-bar input::placeholder { color: var(--text-faint); }
+  .clear-btn {
+    border: none; background: transparent;
+    color: var(--text-faint); cursor: pointer;
+    padding: 6px; border-radius: 999px;
+    display: none; align-items: center; justify-content: center;
+  }
+  .clear-btn.visible { display: flex; }
+  .clear-btn:hover { color: var(--text); background: var(--surface); }
+
+  .month-section { margin-bottom: 56px; }
+  .month-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 18px; padding: 0 4px;
+  }
+  .month-title {
+    font-size: 1.6rem; font-weight: 600; letter-spacing: -0.01em;
+    display: flex; align-items: baseline; gap: 12px;
+  }
+  .month-title .num {
+    font-size: 2rem; font-weight: 700;
+    color: var(--accent); letter-spacing: -0.02em;
+  }
+  .month-count {
+    color: var(--text-faint); font-size: 0.85rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .roster-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+  }
+  .student-card {
+    background: var(--bg-elev);
+    border: 1px solid var(--hairline);
+    border-radius: 16px;
+    padding: 16px 18px;
+    transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+  }
+  .student-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+  .student-name {
+    font-size: 1.05rem; font-weight: 600;
+    letter-spacing: -0.005em;
+    margin-bottom: 4px;
+  }
+  .student-dept {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.45;
+  }
+  .student-note {
+    margin-top: 6px;
+    font-size: 0.75rem;
+    color: var(--text-faint);
+    font-style: italic;
+  }
+
+  mark.hl {
+    background: var(--accent-soft);
+    color: var(--accent-deep);
+    border-radius: 4px;
+    padding: 0 2px;
+  }
+
+  .empty-state {
+    text-align: center; padding: 60px 20px;
+    color: var(--text-faint);
+  }
+  .empty-state iconify-icon { font-size: 40px; opacity: 0.5; }
+  .empty-state div { margin-top: 12px; font-size: 0.95rem; }
+
+  .footer-meta {
+    text-align: center;
+    color: var(--text-faint);
+    font-size: 0.78rem;
+    padding: 40px 20px 80px;
+    letter-spacing: 0.02em;
+  }
+  .footer-meta button {
+    background: none; border: none;
+    color: var(--text-faint); cursor: pointer;
+    font: inherit; padding: 4px 8px;
+    border-radius: 8px;
+  }
+  .footer-meta button:hover { color: var(--text); background: var(--surface); }
+</style>
+</head>
+<body>
+
+<a class="brand-mark" href="index.html" aria-label="LCIC 홈으로">
+  <img src="assets/brand/lcic-logo.png" alt="LCIC logo">
+  <span class="brand-name">
+    <span>Lapulapu Cebu</span>
+    <span>International</span>
+    <span>College</span>
+  </span>
+</a>
+
+<nav class="nav-pill">
+  <a href="index.html"><iconify-icon icon="solar:home-2-bold-duotone" inline></iconify-icon> <span>홈</span></a>
+  <a href="notice.html"><iconify-icon icon="solar:bell-bold" inline></iconify-icon> <span>공지사항</span></a>
+  <a href="procedure.html"><iconify-icon icon="solar:list-check-bold-duotone" inline></iconify-icon> <span>입학 절차</span></a>
+  <a href="curriculum.html"><iconify-icon icon="solar:notebook-bold-duotone" inline></iconify-icon> <span>커리큘럼</span></a>
+  <a href="life-guide.html"><iconify-icon icon="solar:book-bookmark-bold-duotone" inline></iconify-icon> <span>생활백서</span></a>
+  <a href="faq.html"><iconify-icon icon="solar:question-circle-bold-duotone" inline></iconify-icon> <span>궁금한 사항</span></a>
+  <a href="gallery.html"><iconify-icon icon="solar:gallery-bold-duotone" inline></iconify-icon> <span>갤러리</span></a>
+</nav>
+
+<!-- 비밀번호 게이트 -->
+<section id="gate" class="gate-wrap">
+  <div class="bezel gate-card fade-up">
+    <div class="bezel-inner">
+      <div class="gate-icon">
+        <iconify-icon icon="solar:lock-keyhole-bold-duotone"></iconify-icon>
+      </div>
+      <div class="gate-title">2026 Summer Program</div>
+      <div class="gate-sub">7·8월 배정 명단입니다.<br>전달받으신 비밀번호를 입력해 주세요.</div>
+      <form id="gate-form" class="gate-form" autocomplete="off">
+        <input
+          id="gate-pw"
+          class="gate-input"
+          type="password"
+          inputmode="numeric"
+          placeholder="비밀번호"
+          autocomplete="off"
+          autofocus
+          required
+        >
+        <button id="gate-btn" class="gate-btn" type="submit">
+          <span id="gate-btn-label">확인</span>
+        </button>
+        <div id="gate-err" class="gate-err" role="alert"></div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- 명단 본문 (복호화 성공 후 표시) -->
+<main id="roster" class="container-narrow" style="padding: 130px 20px 0; display: none;">
+  <header class="fade-up" style="text-align: center; margin-bottom: 36px;">
+    <span class="eyebrow"><span class="dot"></span> SUMMER 2026</span>
+    <h1 class="headline" style="margin-top: 18px;">학생 배정 명단</h1>
+    <p class="subhead">7월 · 8월 입교 학생 명단입니다.</p>
+  </header>
+
+  <div class="search-bar fade-up delay-1">
+    <iconify-icon icon="solar:magnifer-linear"></iconify-icon>
+    <input id="search" type="search" placeholder="이름 또는 학과 검색" autocomplete="off">
+    <button id="search-clear" class="clear-btn" type="button" aria-label="검색어 지우기">
+      <iconify-icon icon="solar:close-circle-bold" style="font-size: 18px;"></iconify-icon>
+    </button>
+  </div>
+
+  <section id="july-section" class="month-section fade-up delay-2">
+    <div class="month-head">
+      <div class="month-title"><span class="num">7</span><span>월 입교</span></div>
+      <div class="month-count" id="july-count"></div>
+    </div>
+    <div id="july-grid" class="roster-grid"></div>
+    <div id="july-empty" class="empty-state" style="display:none;">
+      <iconify-icon icon="solar:inbox-bold-duotone"></iconify-icon>
+      <div>검색 결과가 없습니다.</div>
+    </div>
+  </section>
+
+  <section id="august-section" class="month-section fade-up delay-3">
+    <div class="month-head">
+      <div class="month-title"><span class="num">8</span><span>월 입교</span></div>
+      <div class="month-count" id="august-count"></div>
+    </div>
+    <div id="august-grid" class="roster-grid"></div>
+    <div id="august-empty" class="empty-state" style="display:none;">
+      <iconify-icon icon="solar:inbox-bold-duotone"></iconify-icon>
+      <div>검색 결과가 없습니다.</div>
+    </div>
+  </section>
+
+  <div class="footer-meta">
+    Lapulapu Cebu International College · 2026 Summer Program
+    <br>
+    <button id="logout" type="button">
+      <iconify-icon icon="solar:logout-2-linear" inline></iconify-icon> 잠그기
+    </button>
+  </div>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  // 7/8월 명단을 비밀번호로 AES-GCM 암호화한 base64 블롭.
+  // 레이아웃: salt(16) || iv(12) || authTag(16) || ciphertext
+  // 재생성: node scripts/encrypt-summer-2026.cjs <password>
+  const BLOB = "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";
+
+  const SS_KEY = "lcic.summer2026.pw";
+  const PBKDF2_ITER = 100000;
+
+  const gate = document.getElementById("gate");
+  const roster = document.getElementById("roster");
+  const form = document.getElementById("gate-form");
+  const pwInput = document.getElementById("gate-pw");
+  const btn = document.getElementById("gate-btn");
+  const btnLabel = document.getElementById("gate-btn-label");
+  const err = document.getElementById("gate-err");
+  const searchInput = document.getElementById("search");
+  const searchClear = document.getElementById("search-clear");
+  const julyGrid = document.getElementById("july-grid");
+  const augustGrid = document.getElementById("august-grid");
+  const julyCount = document.getElementById("july-count");
+  const augustCount = document.getElementById("august-count");
+  const julyEmpty = document.getElementById("july-empty");
+  const augustEmpty = document.getElementById("august-empty");
+  const logoutBtn = document.getElementById("logout");
+
+  let data = null;
+
+  function b64ToBytes(b64) {
+    const bin = atob(b64);
+    const arr = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    return arr;
+  }
+
+  async function decrypt(password) {
+    const raw = b64ToBytes(BLOB);
+    const salt = raw.slice(0, 16);
+    const iv = raw.slice(16, 28);
+    const tag = raw.slice(28, 44);
+    const ct = raw.slice(44);
+
+    // SubtleCrypto AES-GCM expects ciphertext with auth tag appended
+    const ctWithTag = new Uint8Array(ct.length + tag.length);
+    ctWithTag.set(ct);
+    ctWithTag.set(tag, ct.length);
+
+    const pwKey = await crypto.subtle.importKey(
+      "raw",
+      new TextEncoder().encode(password),
+      "PBKDF2",
+      false,
+      ["deriveKey"]
+    );
+    const key = await crypto.subtle.deriveKey(
+      { name: "PBKDF2", salt, iterations: PBKDF2_ITER, hash: "SHA-256" },
+      pwKey,
+      { name: "AES-GCM", length: 256 },
+      false,
+      ["decrypt"]
+    );
+    const plain = await crypto.subtle.decrypt(
+      { name: "AES-GCM", iv },
+      key,
+      ctWithTag
+    );
+    return JSON.parse(new TextDecoder().decode(plain));
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, (c) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+    }[c]));
+  }
+
+  function highlight(text, query) {
+    const safe = escapeHtml(text);
+    if (!query) return safe;
+    const q = query.trim();
+    if (!q) return safe;
+    const pattern = q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return safe.replace(new RegExp(pattern, "gi"), (m) => `<mark class="hl">${m}</mark>`);
+  }
+
+  function renderGrid(grid, students, query) {
+    grid.innerHTML = "";
+    const frag = document.createDocumentFragment();
+    students.forEach((s) => {
+      const card = document.createElement("div");
+      card.className = "student-card";
+      const name = document.createElement("div");
+      name.className = "student-name";
+      name.innerHTML = highlight(s.name, query);
+      const dept = document.createElement("div");
+      dept.className = "student-dept";
+      dept.innerHTML = highlight(s.dept, query);
+      card.appendChild(name);
+      card.appendChild(dept);
+      if (s.note) {
+        const note = document.createElement("div");
+        note.className = "student-note";
+        note.textContent = s.note;
+        card.appendChild(note);
+      }
+      frag.appendChild(card);
+    });
+    grid.appendChild(frag);
+  }
+
+  function render(query) {
+    if (!data) return;
+    const q = (query || "").trim().toLowerCase();
+    const filter = (rows) => {
+      if (!q) return rows;
+      return rows.filter((r) =>
+        r.name.toLowerCase().includes(q) ||
+        r.dept.toLowerCase().includes(q) ||
+        (r.note || "").toLowerCase().includes(q)
+      );
+    };
+    const j = filter(data.july);
+    const a = filter(data.august);
+
+    renderGrid(julyGrid, j, q);
+    renderGrid(augustGrid, a, q);
+
+    julyEmpty.style.display = j.length === 0 ? "block" : "none";
+    augustEmpty.style.display = a.length === 0 ? "block" : "none";
+    julyGrid.style.display = j.length === 0 ? "none" : "grid";
+    augustGrid.style.display = a.length === 0 ? "none" : "grid";
+
+    if (q) {
+      julyCount.textContent = `${j.length} / ${data.july.length}명`;
+      augustCount.textContent = `${a.length} / ${data.august.length}명`;
+    } else {
+      julyCount.textContent = `${data.july.length}명`;
+      augustCount.textContent = `${data.august.length}명`;
+    }
+    searchClear.classList.toggle("visible", q.length > 0);
+  }
+
+  function showRoster() {
+    gate.style.display = "none";
+    roster.style.display = "block";
+    render("");
+    setTimeout(() => searchInput.focus({ preventScroll: true }), 50);
+  }
+
+  async function tryUnlock(password, fromStorage) {
+    err.textContent = "";
+    btn.disabled = true;
+    btnLabel.textContent = "확인 중...";
+    try {
+      data = await decrypt(password);
+      try { sessionStorage.setItem(SS_KEY, password); } catch (_) {}
+      showRoster();
+    } catch (e) {
+      if (fromStorage) {
+        try { sessionStorage.removeItem(SS_KEY); } catch (_) {}
+      } else {
+        err.textContent = "비밀번호가 올바르지 않습니다.";
+        pwInput.value = "";
+        pwInput.focus();
+      }
+    } finally {
+      btn.disabled = false;
+      btnLabel.textContent = "확인";
+    }
+  }
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const pw = pwInput.value;
+    if (!pw) return;
+    tryUnlock(pw, false);
+  });
+
+  searchInput.addEventListener("input", (e) => render(e.target.value));
+  searchClear.addEventListener("click", () => {
+    searchInput.value = "";
+    render("");
+    searchInput.focus();
+  });
+
+  logoutBtn.addEventListener("click", () => {
+    try { sessionStorage.removeItem(SS_KEY); } catch (_) {}
+    data = null;
+    roster.style.display = "none";
+    gate.style.display = "flex";
+    pwInput.value = "";
+    err.textContent = "";
+    setTimeout(() => pwInput.focus(), 50);
+  });
+
+  // Auto-unlock if sessionStorage already has a valid password
+  try {
+    const saved = sessionStorage.getItem(SS_KEY);
+    if (saved) tryUnlock(saved, true);
+  } catch (_) {}
+})();
+</script>
+</body>
+</html>
