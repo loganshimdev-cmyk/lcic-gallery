@@ -65,6 +65,48 @@
     text-align: center; min-height: 20px;
   }
 
+  .summary-row {
+    display: flex; gap: 12px;
+    margin-bottom: 24px;
+  }
+  .summary-card {
+    flex: 1;
+    background: var(--bg-elev);
+    border: 1px solid var(--hairline);
+    border-radius: 18px;
+    padding: 18px 22px;
+    display: flex; align-items: center; justify-content: space-between;
+    box-shadow: var(--shadow-sm);
+  }
+  .summary-card.total {
+    background: var(--accent-soft);
+    border-color: transparent;
+  }
+  .summary-label {
+    font-size: 0.92rem; font-weight: 600;
+    color: var(--text-dim);
+    display: flex; align-items: baseline; gap: 6px;
+  }
+  .summary-card.total .summary-label { color: var(--accent-deep); }
+  .summary-value {
+    font-size: 1.9rem; font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+  .summary-card.total .summary-value { color: var(--accent-deep); }
+  .summary-value .unit {
+    font-size: 0.9rem; font-weight: 600;
+    color: var(--text-faint);
+    margin-left: 2px;
+  }
+  .summary-card.total .summary-value .unit { color: var(--accent-deep); opacity: 0.7; }
+  @media (max-width: 520px) {
+    .summary-row { flex-wrap: wrap; }
+    .summary-card { padding: 14px 18px; }
+    .summary-value { font-size: 1.6rem; }
+  }
+
   .search-bar {
     position: sticky; top: 90px; z-index: 5;
     background: var(--bg-elev);
@@ -233,6 +275,21 @@
     <h1 class="headline" style="margin-top: 18px;">학생 배정 명단</h1>
     <p class="subhead">7월 · 8월 입교 학생 명단입니다.</p>
   </header>
+
+  <div class="summary-row fade-up delay-1">
+    <div class="summary-card">
+      <span class="summary-label"><span class="num" style="color:var(--accent);font-weight:700;">7</span>월 입교</span>
+      <span class="summary-value" id="sum-july">–<span class="unit">명</span></span>
+    </div>
+    <div class="summary-card">
+      <span class="summary-label"><span class="num" style="color:var(--accent);font-weight:700;">8</span>월 입교</span>
+      <span class="summary-value" id="sum-august">–<span class="unit">명</span></span>
+    </div>
+    <div class="summary-card total">
+      <span class="summary-label">전체</span>
+      <span class="summary-value" id="sum-total">–<span class="unit">명</span></span>
+    </div>
+  </div>
 
   <div class="search-bar fade-up delay-1">
     <iconify-icon icon="solar:magnifer-linear"></iconify-icon>
@@ -422,6 +479,12 @@
   function showRoster() {
     gate.style.display = "none";
     roster.style.display = "block";
+    if (data) {
+      const total = data.july.length + data.august.length;
+      document.getElementById("sum-july").innerHTML = data.july.length + '<span class="unit">명</span>';
+      document.getElementById("sum-august").innerHTML = data.august.length + '<span class="unit">명</span>';
+      document.getElementById("sum-total").innerHTML = total + '<span class="unit">명</span>';
+    }
     render("");
     setTimeout(() => searchInput.focus({ preventScroll: true }), 50);
   }
