@@ -142,6 +142,13 @@
     position: sticky; left: 0; background: var(--bg-elev);
   }
   table.pivot thead th.uni { background: var(--surface); }
+  table.pivot td.uni a.uni-link {
+    color: var(--accent); cursor: pointer; text-decoration: none;
+    border-bottom: 1px solid transparent;
+  }
+  table.pivot td.uni a.uni-link:hover {
+    color: var(--accent-deep); border-bottom-color: currentColor;
+  }
   table.pivot td.m { color: var(--text-dim); }
   table.pivot td.sub { font-weight: 600; color: var(--text); background: var(--surface-2, var(--surface)); }
   table.pivot td.male { color: #2563eb; }
@@ -193,7 +200,7 @@
   .clear-btn:hover { color: var(--text); background: var(--surface); }
 
   /* ── 대학 섹션 ── */
-  .uni-section { margin-bottom: 40px; }
+  .uni-section { margin-bottom: 40px; scroll-margin-top: 150px; }
   .uni-head {
     display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
     margin-bottom: 16px; padding: 0 4px;
@@ -545,12 +552,12 @@
     const rows = computeTallies();
     let hasPending = false;
     let html = "";
-    rows.forEach((r) => {
+    rows.forEach((r, i) => {
       const jPendMark = r.jPend ? `<sup>*</sup>` : "";
       const aPendMark = r.aPend ? `<sup>*</sup>` : "";
       if (r.jPend || r.aPend) hasPending = true;
       html += "<tr>";
-      html += `<td class="uni">${escapeHtml(r.name)}</td>`;
+      html += `<td class="uni"><a class="uni-link" data-uni="${i}" href="#uni-${i}">${escapeHtml(r.name)}</a></td>`;
       html += cell(r.jTotal ? (r.j.M || (r.jPend ? "–" : 0)) : "–", r.jTotal ? "male" : "dash");
       html += cell(r.jTotal ? (r.j.F || (r.jPend ? "–" : 0)) : "–", r.jTotal ? "female" : "dash");
       html += cell(r.jTotal ? (r.jTotal + jPendMark) : "–", r.jTotal ? "sub" : "dash");
@@ -629,7 +636,7 @@
     let html = "";
     let anyVisible = false;
 
-    data.universities.forEach((u) => {
+    data.universities.forEach((u, uIdx) => {
       // 이 대학에서 보일 그룹 구성
       const groupsHtml = [];
       let uM = 0, uF = 0, uPend = 0, uShown = 0;
@@ -676,7 +683,7 @@
         (uPend ? `<span class="chip count">미정 ${uPend}</span>` : "");
 
       html +=
-        `<section class="uni-section"><div class="uni-head">` +
+        `<section class="uni-section" id="uni-${uIdx}"><div class="uni-head">` +
         `<span class="uni-title">${highlight(u.name, q)}</span>` +
         `<span class="uni-chips">${chips}</span></div>` +
         groupsHtml.join("") + `</section>`;
@@ -723,6 +730,21 @@
     const pw = pwInput.value;
     if (!pw) return;
     tryUnlock(pw, false);
+  });
+
+  // 피벗표 학교명 클릭 → 해당 대학 섹션으로 스크롤
+  pivotBody.addEventListener("click", (e) => {
+    const link = e.target.closest("a.uni-link");
+    if (!link) return;
+    e.preventDefault();
+    const idx = link.getAttribute("data-uni");
+    // 검색 중이면 먼저 해제해 대상 섹션이 보이도록
+    if (searchInput.value.trim()) {
+      searchInput.value = "";
+      render("");
+    }
+    const target = document.getElementById("uni-" + idx);
+    if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
   searchInput.addEventListener("input", (e) => render(e.target.value));
