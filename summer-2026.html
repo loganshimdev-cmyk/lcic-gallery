@@ -121,33 +121,15 @@
     border-top: 2px solid var(--accent); border-bottom: none;
   }
   table.pivot tr.total-row td.uni { background: var(--accent-soft); }
+  table.pivot tbody tr.nav-row { cursor: pointer; }
+  table.pivot tbody tr.nav-active td { background: var(--accent-soft); }
+  table.pivot tbody tr.nav-active td.uni {
+    color: var(--accent-deep); font-weight: 700;
+    box-shadow: inset 3px 0 0 var(--accent);
+  }
   .col-div { border-left: 1px solid var(--hairline-strong); }
-  .pivot-note { font-size: 0.76rem; color: var(--text-faint); padding: 9px 4px 0; line-height: 1.5; }
-
-  /* ── 탭 바 ── */
-  .tabbar {
-    position: sticky; top: 86px; z-index: 6;
-    display: flex; flex-wrap: wrap; gap: 4px;
-    background: var(--bg-elev); border: 1px solid var(--hairline);
-    border-radius: 16px; padding: 6px; margin-bottom: 18px;
-    box-shadow: var(--shadow-sm);
-  }
-  .tab {
-    flex: 0 0 auto; border: none; background: transparent;
-    font-family: inherit; font-size: 0.9rem; font-weight: 600;
-    color: var(--text-dim); cursor: pointer;
-    padding: 9px 15px; border-radius: 11px; white-space: nowrap;
-    display: flex; align-items: center; gap: 6px;
-    transition: background 0.12s, color 0.12s;
-  }
-  .tab:hover { background: var(--surface); color: var(--text); }
-  .tab.active { background: var(--accent); color: #fff; box-shadow: var(--shadow-accent); }
-  .tab .tcount {
-    font-size: 0.72rem; font-weight: 700; font-variant-numeric: tabular-nums;
-    background: var(--surface); color: var(--text-faint);
-    border-radius: 999px; padding: 1px 7px;
-  }
-  .tab.active .tcount { background: rgba(255,255,255,0.25); color: #fff; }
+  #table-pane { scroll-margin-top: 84px; }
+  .pivot-note { font-size: 0.76rem; color: var(--text-faint); padding: 9px 4px 18px; line-height: 1.5; }
 
   /* ── 검색 ── */
   .search-bar {
@@ -290,12 +272,10 @@
   <header class="fade-up" style="text-align: center; margin-bottom: 28px;">
     <span class="eyebrow"><span class="dot"></span> SUMMER 2026</span>
     <h1 class="headline" style="margin-top: 16px;">대학별 학생 배정 명단</h1>
-    <p class="subhead">탭을 눌러 대학별 명단을 엑셀처럼 확인하세요.</p>
+    <p class="subhead">표에서 대학을 누르면 아래에 해당 명단이 펼쳐집니다.</p>
   </header>
 
-  <div id="tabbar" class="tabbar fade-up delay-1"></div>
-
-  <!-- 요약 탭 -->
+  <!-- 요약 + 네비게이션 표 -->
   <section id="summary-pane">
     <div class="summary-row fade-up delay-1">
       <div class="summary-card">
@@ -328,8 +308,8 @@
     <div class="pivot-note" id="pivot-note"></div>
   </section>
 
-  <!-- 표 탭 -->
-  <section id="table-pane" style="display:none;">
+  <!-- 선택한 대학 명단 -->
+  <section id="table-pane">
     <div class="search-bar fade-up">
       <iconify-icon icon="solar:magnifer-linear"></iconify-icon>
       <input id="search" type="search" placeholder="이름 · 학과 · 연락처 · 이메일 검색" autocomplete="off">
@@ -371,7 +351,7 @@
   const $ = (id) => document.getElementById(id);
   const gate = $("gate"), roster = $("roster"), form = $("gate-form");
   const pwInput = $("gate-pw"), btn = $("gate-btn"), btnLabel = $("gate-btn-label"), err = $("gate-err");
-  const tabbar = $("tabbar"), summaryPane = $("summary-pane"), tablePane = $("table-pane");
+  const tablePane = $("table-pane");
   const searchInput = $("search"), searchClear = $("search-clear");
   const gridHead = $("grid-head"), gridBody = $("grid-body"), gridEmpty = $("grid-empty");
   const tableTitle = $("table-title"), tableSub = $("table-sub"), pendingHost = $("pending-banner-host");
@@ -584,8 +564,8 @@
     rows.forEach((r, i) => {
       const jp = r.jPend ? "<sup>*</sup>" : "", ap = r.aPend ? "<sup>*</sup>" : "";
       if (r.jPend || r.aPend) hasPending = true;
-      html += "<tr>";
-      html += `<td class="uni"><a class="uni-link" data-uni="${i}" href="#">${escapeHtml(r.name)}</a></td>`;
+      html += `<tr data-nav="${i}" class="nav-row${activeTab === i ? " nav-active" : ""}">`;
+      html += `<td class="uni">${escapeHtml(r.name)}</td>`;
       html += cell(r.jTotal ? (r.j.M || (r.jPend ? "–" : 0)) : "–", r.jTotal ? "male" : "dash");
       html += cell(r.jTotal ? (r.j.F || (r.jPend ? "–" : 0)) : "–", r.jTotal ? "female" : "dash");
       html += cell(r.jTotal ? (r.jTotal + jp) : "–", r.jTotal ? "sub" : "dash");
@@ -599,7 +579,7 @@
       a.jM += r.j.M; a.jF += r.j.F; a.aM += r.a.M; a.aF += r.a.F; a.jPend += r.jPend; a.aPend += r.aPend; return a;
     }, { jM: 0, jF: 0, aM: 0, aF: 0, jPend: 0, aPend: 0 });
     const jTot = sum.jM + sum.jF + sum.jPend, aTot = sum.aM + sum.aF + sum.aPend;
-    html += `<tr class="total-row"><td class="uni">전체</td>`;
+    html += `<tr class="total-row nav-row${activeTab === "all" ? " nav-active" : ""}" data-nav="all"><td class="uni">전체</td>`;
     html += cell(sum.jM, "") + cell(sum.jF, "") + cell(jTot + (sum.jPend ? "<sup>*</sup>" : ""), "");
     html += cell(sum.aM, "col-div") + cell(sum.aF, "") + cell(aTot + (sum.aPend ? "<sup>*</sup>" : ""), "");
     html += cell(jTot + aTot, "col-div") + "</tr>";
@@ -607,47 +587,28 @@
 
     const totalPending = sum.jPend + sum.aPend;
     pivotNote.innerHTML = hasPending
-      ? `<sup>*</sup> 백석대 8월 ${totalPending}명은 명단 미정(성별 미반영) — 인원수에는 포함. 학교명을 누르면 해당 대학 표로 이동합니다.`
-      : "학교명을 누르면 해당 대학 표로 이동합니다.";
+      ? `<sup>*</sup> 백석대 8월 ${totalPending}명은 명단 미정(성별 미반영) — 인원수에는 포함. 표에서 행(대학)을 누르면 아래에 해당 명단이 펼쳐집니다.`
+      : "표에서 행(대학)을 누르면 아래에 해당 명단이 펼쳐집니다.";
 
     $("sum-july").innerHTML = jTot + '<span class="unit">명</span><span class="gsplit">남 ' + sum.jM + ' · 여 ' + sum.jF + '</span>';
     $("sum-august").innerHTML = aTot + '<span class="unit">명</span><span class="gsplit">남 ' + sum.aM + ' · 여 ' + sum.aF + (sum.aPend ? ' · 미정 ' + sum.aPend : '') + '</span>';
     $("sum-total").innerHTML = (jTot + aTot) + '<span class="unit">명</span><span class="gsplit">' + data.universities.length + '개 대학</span>';
   }
 
-  // ── 탭 ──
-  function uniCount(ui) {
-    let n = 0;
-    data.universities[ui].groups.forEach((g) => { n += g.pending ? g.pending : g.students.length; });
-    return n;
-  }
-  function buildTabs() {
-    let html = `<button class="tab" data-tab="summary"><iconify-icon icon="solar:chart-2-bold-duotone"></iconify-icon> 요약</button>`;
-    html += `<button class="tab" data-tab="all"><iconify-icon icon="solar:list-bold-duotone"></iconify-icon> 전체 <span class="tcount">${records.length}</span></button>`;
-    data.universities.forEach((u, ui) => {
-      html += `<button class="tab" data-tab="${ui}">${escapeHtml(u.short || u.name)} <span class="tcount">${uniCount(ui)}</span></button>`;
-    });
-    tabbar.innerHTML = html;
-  }
-  function setActiveTab(tab) {
+  // ── 선택(네비게이션) ──
+  function setActiveTab(tab, scroll) {
     activeTab = tab;
     sortKey = null; sortDir = 1; query = ""; searchInput.value = "";
-    Array.from(tabbar.children).forEach((b) => {
-      b.classList.toggle("active", b.getAttribute("data-tab") === String(tab));
-    });
-    const isSummary = tab === "summary";
-    summaryPane.style.display = isSummary ? "block" : "none";
-    tablePane.style.display = isSummary ? "none" : "block";
-    if (isSummary) renderPivot(); else renderTable();
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    renderPivot();   // 활성 행 강조 갱신
+    renderTable();
+    if (scroll) tablePane.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   function showRoster() {
     gate.style.display = "none";
     roster.style.display = "block";
     flatten();
-    buildTabs();
-    setActiveTab("summary");
+    setActiveTab("all", false);
   }
 
   async function tryUnlock(password, fromStorage) {
@@ -666,17 +627,11 @@
     e.preventDefault(); const pw = pwInput.value; if (!pw) return; tryUnlock(pw, false);
   });
 
-  tabbar.addEventListener("click", (e) => {
-    const t = e.target.closest(".tab"); if (!t) return;
-    const tab = t.getAttribute("data-tab");
-    setActiveTab(tab === "summary" || tab === "all" ? tab : parseInt(tab, 10));
-  });
-
-  // 피벗 학교명 → 해당 대학 탭으로
+  // 피벗 행 클릭 → 해당 대학 명단 펼치기
   pivotBody.addEventListener("click", (e) => {
-    const link = e.target.closest("a.uni-link"); if (!link) return;
-    e.preventDefault();
-    setActiveTab(parseInt(link.getAttribute("data-uni"), 10));
+    const tr = e.target.closest("tr[data-nav]"); if (!tr) return;
+    const nav = tr.getAttribute("data-nav");
+    setActiveTab(nav === "all" ? "all" : parseInt(nav, 10), true);
   });
 
   // 표 헤더 클릭 → 정렬
