@@ -160,8 +160,9 @@
   .table-sub { font-size: 0.82rem; color: var(--text-faint); font-variant-numeric: tabular-nums; }
   .table-sub .gm { color: #2563eb; } .table-sub .gf { color: #db2777; }
 
-  /* 표가 가로로 안 잘리도록 본문 폭을 넓힘 */
+  /* 상세 명단 표만 넓게, 요약/피벗은 좁게(한눈에) */
   #roster.container-narrow { max-width: min(1560px, 98vw); }
+  #summary-pane { max-width: 900px; margin-left: auto; margin-right: auto; }
   .grid-wrap {
     background: var(--bg-elev); border: 1px solid var(--hairline);
     border-radius: 16px; box-shadow: var(--shadow-sm); overflow: auto;
