@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>EF-SET Report Card · LCIC</title>
+<link rel="icon" type="image/png" href="assets/brand/lcic-logo.png">
+<script src="assets/background.js?v=8"></script>
+<link rel="stylesheet" href="assets/shared.css?v=13">
+<script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+<style>
+  /* ── 진입 게이트 ── */
+  .gate-wrap {
+    min-height: 100dvh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 120px 20px 60px;
+  }
+  .gate-card { max-width: 420px; width: 100%; }
+  .gate-card .bezel-inner { padding: 36px 32px; }
+  .gate-icon {
+    width: 64px; height: 64px; border-radius: 999px;
+    background: var(--accent-soft); color: var(--accent-deep);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; margin: 0 auto 20px;
+  }
+  .gate-title {
+    text-align: center; font-size: 1.35rem; font-weight: 600;
+    letter-spacing: -0.01em; margin-bottom: 8px;
+  }
+  .gate-sub {
+    text-align: center; color: var(--text-dim);
+    font-size: 0.92rem; line-height: 1.55; margin-bottom: 24px;
+  }
+  .gate-form { display: flex; flex-direction: column; gap: 12px; }
+  .gate-input {
+    width: 100%; padding: 14px 16px;
+    border: 1px solid var(--hairline-strong);
+    border-radius: 14px; background: var(--bg-elev);
+    font-family: inherit; font-size: 1rem; color: var(--text);
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .gate-input:focus {
+    outline: none; border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-soft);
+  }
+  .gate-btn {
+    width: 100%; padding: 14px 16px;
+    border: none; border-radius: 14px;
+    background: var(--accent); color: white;
+    font-family: inherit; font-size: 1rem; font-weight: 600;
+    cursor: pointer; transition: background 0.15s, transform 0.05s;
+    box-shadow: var(--shadow-accent);
+  }
+  .gate-btn:hover { background: var(--accent-hover); }
+  .gate-btn:active { transform: translateY(1px); }
+  .gate-btn[disabled] { opacity: 0.55; cursor: not-allowed; transform: none; }
+  .gate-err { color: #dc2626; font-size: 0.86rem; text-align: center; min-height: 20px; }
+
+  /* ── 요약 카드 ── */
+  .summary-row { display: flex; gap: 12px; margin-bottom: 22px; flex-wrap: wrap; }
+  .summary-card { flex: 1; min-width: 150px; }
+  .summary-card .bezel-inner { padding: 18px 20px; text-align: center; }
+  .summary-num { font-size: 1.9rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+  .summary-num .unit { font-size: 0.95rem; font-weight: 500; color: var(--text-dim); margin-left: 3px; }
+  .summary-label { font-size: 0.82rem; color: var(--text-dim); margin-top: 4px; }
+  .gsplit { display: block; font-size: 0.78rem; color: var(--text-faint); font-weight: 500; margin-top: 2px; }
+
+  /* ── 도구 줄 (검색) ── */
+  .toolbar { display: flex; gap: 10px; margin-bottom: 14px; align-items: center; flex-wrap: wrap; }
+  .search-box { position: relative; flex: 1; min-width: 200px; }
+  .search-box iconify-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-faint); font-size: 18px; }
+  .search-input {
+    width: 100%; padding: 11px 14px 11px 40px;
+    border: 1px solid var(--hairline-strong); border-radius: 12px;
+    background: var(--bg-elev); font-family: inherit; font-size: 0.95rem; color: var(--text);
+  }
+  .search-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+
+  /* ── 목록 표 ── */
+  .list-wrap { overflow-x: auto; border-radius: 18px; }
+  table.list { width: 100%; border-collapse: collapse; font-size: 0.92rem; background: var(--bg-elev); }
+  table.list th, table.list td { padding: 13px 14px; text-align: center; border-bottom: 1px solid var(--hairline); white-space: nowrap; }
+  table.list th { background: var(--surface); font-weight: 600; color: var(--text-dim); font-size: 0.82rem; cursor: pointer; user-select: none; position: sticky; top: 0; }
+  table.list th .arrow { font-size: 0.7em; opacity: 0.5; }
+  table.list td.name { text-align: left; font-weight: 600; }
+  table.list td.name .eng { display: block; font-size: 0.76rem; color: var(--text-faint); font-weight: 500; }
+  table.list tbody tr { cursor: pointer; transition: background 0.12s; }
+  table.list tbody tr:hover { background: var(--accent-tint); }
+  .lvl-pill { display: inline-flex; align-items: center; justify-content: center; min-width: 30px; padding: 2px 7px; border-radius: 7px; font-weight: 700; font-size: 0.8rem; }
+  .grow-up { color: #16a34a; font-weight: 700; }
+  .grow-flat { color: var(--text-faint); font-weight: 600; }
+  .arrow-to { color: var(--text-faint); margin: 0 5px; font-size: 0.85em; }
+
+  /* CEFR 색상 (A1·A2 따뜻 / B1·B2 파랑 / C1·C2 초록) */
+  .cefr-A1 { background:#fee2e2; color:#b91c1c; }
+  .cefr-A2 { background:#ffedd5; color:#c2410c; }
+  .cefr-B1 { background:#dbeafe; color:#1d4ed8; }
+  .cefr-B2 { background:#cfe0fd; color:#1e40af; }
+  .cefr-C1 { background:#dcfce7; color:#15803d; }
+  .cefr-C2 { background:#bbf7d0; color:#166534; }
+  .cefr-x  { background:var(--surface); color:var(--text-faint); }
+
+  /* ── 상세 카드 모달 ── */
+  .detail-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(15,23,42,0.45); backdrop-filter: blur(3px);
+    display: none; align-items: flex-start; justify-content: center;
+    padding: 40px 16px; overflow-y: auto;
+  }
+  .detail-overlay.open { display: flex; }
+  .report {
+    background: #fff; width: 100%; max-width: 760px;
+    border-radius: 20px; box-shadow: var(--shadow-lg); overflow: hidden;
+  }
+  .report-head {
+    background: linear-gradient(135deg, var(--accent-deep), var(--accent));
+    color: #fff; padding: 26px 32px; position: relative;
+  }
+  .report-head .brand { display: flex; align-items: center; gap: 9px; font-size: 0.82rem; font-weight: 600; letter-spacing: 0.03em; opacity: 0.92; text-transform: uppercase; }
+  .report-head .brand img { height: 22px; width: auto; filter: brightness(0) invert(1); }
+  .report-head h2 { font-size: 1.55rem; font-weight: 700; margin: 12px 0 2px; letter-spacing: -0.01em; }
+  .report-head .eng { font-size: 0.92rem; opacity: 0.85; font-weight: 500; }
+  .report-head .meta { margin-top: 10px; font-size: 0.82rem; opacity: 0.82; display: flex; gap: 16px; flex-wrap: wrap; }
+  .report-close {
+    position: absolute; top: 18px; right: 18px;
+    width: 34px; height: 34px; border-radius: 999px; border: none;
+    background: rgba(255,255,255,0.18); color: #fff; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+  }
+  .report-close:hover { background: rgba(255,255,255,0.3); }
+
+  .report-body { padding: 26px 32px 30px; }
+
+  /* 종합 밴드 */
+  .overall {
+    display: flex; align-items: center; gap: 18px;
+    background: var(--surface); border-radius: 16px; padding: 18px 22px; margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .overall .ov-block { text-align: center; }
+  .overall .ov-cap { font-size: 0.74rem; color: var(--text-dim); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 5px; }
+  .overall .ov-score { font-size: 2.1rem; font-weight: 800; line-height: 1; letter-spacing: -0.02em; }
+  .overall .ov-lvl { display: inline-block; margin-top: 6px; padding: 3px 10px; border-radius: 8px; font-weight: 700; font-size: 0.86rem; }
+  .overall .ov-arrow { font-size: 1.6rem; color: var(--text-faint); }
+  .overall .ov-grow { margin-left: auto; text-align: right; }
+  .overall .ov-grow .big { font-size: 1.7rem; font-weight: 800; color: #16a34a; line-height: 1; }
+  .overall .ov-grow .cap { font-size: 0.76rem; color: var(--text-dim); margin-top: 4px; }
+
+  /* 영역별 막대 */
+  .skill { margin-bottom: 18px; }
+  .skill-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; }
+  .skill-name { font-weight: 700; font-size: 0.98rem; display: flex; align-items: center; gap: 7px; }
+  .skill-name iconify-icon { color: var(--accent); font-size: 17px; }
+  .skill-delta { font-size: 0.86rem; }
+  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .bar-tag { width: 46px; font-size: 0.74rem; color: var(--text-dim); font-weight: 600; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 22px; background: var(--surface); border-radius: 7px; overflow: hidden; position: relative; }
+  .bar-fill { height: 100%; border-radius: 7px; display: flex; align-items: center; transition: width 0.5s cubic-bezier(0.16,1,0.3,1); }
+  .bar-fill.entry { background: linear-gradient(90deg,#cbd5e1,#94a3b8); }
+  .bar-fill.exit  { background: linear-gradient(90deg,var(--accent),var(--accent-hover)); }
+  .bar-val { font-size: 0.78rem; font-weight: 700; color: #fff; padding: 0 9px; white-space: nowrap; }
+  .bar-val.dark { color: var(--text); }
+  .skill-lvls { font-size: 0.76rem; color: var(--text-faint); margin-left: 56px; }
+
+  .report-foot { padding: 14px 32px 22px; border-top: 1px solid var(--hairline); font-size: 0.76rem; color: var(--text-faint); line-height: 1.6; }
+  .report-actions { display: flex; gap: 10px; padding: 0 32px 26px; }
+  .btn-print {
+    flex: 1; padding: 12px; border: none; border-radius: 12px;
+    background: var(--accent); color: #fff; font-family: inherit; font-weight: 600; font-size: 0.95rem;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px;
+  }
+  .btn-print:hover { background: var(--accent-hover); }
+  .btn-ghost {
+    padding: 12px 18px; border: 1px solid var(--hairline-strong); border-radius: 12px;
+    background: var(--bg-elev); color: var(--text-dim); font-family: inherit; font-weight: 600; font-size: 0.95rem; cursor: pointer;
+  }
+  .btn-ghost:hover { background: var(--surface); }
+
+  /* ── 인쇄: 열린 성적표만 A4로 ── */
+  @media print {
+    /* 다른 건 레이아웃에서 완전히 제거(자리 차지 X) → 빈 페이지 방지 */
+    #entry-gate, #board, #site-bg, .bg-canvas, canvas { display: none !important; }
+    .detail-overlay {
+      position: static !important; display: block !important; padding: 0 !important;
+      overflow: visible !important; background: #fff !important; backdrop-filter: none !important;
+    }
+    .report { box-shadow: none !important; max-width: 100% !important; border-radius: 0 !important; }
+    .report-head { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .bar-fill, .lvl-pill, .ov-lvl, [class^="cefr-"] { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .report-close, .report-actions { display: none !important; }
+    /* 한 장(A4)에 들어가도록 여백 압축 */
+    .report-head { padding: 18px 26px !important; }
+    .report-head h2 { font-size: 1.35rem !important; margin: 8px 0 2px !important; }
+    .report-body { padding: 18px 26px 14px !important; }
+    .overall { padding: 12px 18px !important; margin-bottom: 16px !important; }
+    .overall .ov-score { font-size: 1.7rem !important; }
+    .skill { margin-bottom: 11px !important; }
+    .bar-track { height: 19px !important; }
+    .bar-row { margin-bottom: 4px !important; }
+    .report-foot { padding: 10px 26px 0 !important; }
+    @page { size: A4 portrait; margin: 12mm; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 진입 게이트 -->
+<section id="entry-gate" class="gate-wrap">
+  <div class="bezel gate-card fade-up">
+    <div class="bezel-inner">
+      <div class="gate-icon"><iconify-icon icon="solar:document-text-bold-duotone"></iconify-icon></div>
+      <div class="gate-title">EF-SET Report Cards</div>
+      <div class="gate-sub">입학·수료 영어 성적표입니다.<br>전달받으신 비밀번호를 입력해 주세요.</div>
+      <form id="entry-form" class="gate-form" autocomplete="off">
+        <input id="entry-pw" class="gate-input" type="password"
+          placeholder="비밀번호" autocomplete="off" autofocus required>
+        <button id="entry-btn" class="gate-btn" type="submit"><span id="entry-btn-label">확인</span></button>
+        <div id="entry-err" class="gate-err" role="alert"></div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- 목록 본문 -->
+<main id="board" class="container-narrow" style="padding: 120px 12px 80px; display: none;">
+  <header class="fade-up" style="text-align: center; margin-bottom: 28px;">
+    <span class="eyebrow"><iconify-icon icon="solar:graph-up-bold-duotone"></iconify-icon> EF-SET · 입학 → 수료 성장</span>
+    <h1 style="font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; margin: 14px 0 6px;">English Report Cards</h1>
+    <p style="color: var(--text-dim); font-size: 0.95rem;" id="program-line"></p>
+  </header>
+
+  <div class="summary-row fade-up delay-1">
+    <div class="bezel summary-card"><div class="bezel-inner">
+      <div class="summary-num" id="sum-count">0<span class="unit">명</span></div>
+      <div class="summary-label">학생 수</div>
+    </div></div>
+    <div class="bezel summary-card"><div class="bezel-inner">
+      <div class="summary-num" id="sum-grow">+0<span class="unit">점</span></div>
+      <div class="summary-label">평균 종합 성장</div>
+    </div></div>
+    <div class="bezel summary-card"><div class="bezel-inner">
+      <div class="summary-num" id="sum-up">0<span class="unit">명</span></div>
+      <div class="summary-label">CEFR 레벨 상승</div>
+    </div></div>
+  </div>
+
+  <div class="toolbar fade-up delay-2">
+    <div class="search-box">
+      <iconify-icon icon="solar:magnifer-linear"></iconify-icon>
+      <input id="search" class="search-input" type="text" placeholder="이름 검색…" autocomplete="off">
+    </div>
+  </div>
+
+  <div class="bezel fade-up delay-2"><div class="bezel-inner" style="padding: 6px;">
+    <div class="list-wrap">
+      <table class="list">
+        <thead>
+          <tr>
+            <th data-sort="name" style="text-align:left">학생 <span class="arrow"></span></th>
+            <th data-sort="cohort">반 <span class="arrow"></span></th>
+            <th data-sort="entry">입학 <span class="arrow"></span></th>
+            <th data-sort="exit">수료 <span class="arrow"></span></th>
+            <th data-sort="grow">성장 <span class="arrow"></span></th>
+            <th data-sort="lvl">레벨 변화 <span class="arrow"></span></th>
+          </tr>
+        </thead>
+        <tbody id="list-body"></tbody>
+      </table>
+    </div>
+  </div></div>
+  <p style="text-align:center; color: var(--text-faint); font-size: 0.82rem; margin-top: 14px;">
+    행을 누르면 학생 상세 성적표가 열립니다. 성적표에서 <b>인쇄/PDF</b>로 저장해 전달하세요.
+  </p>
+</main>
+
+<!-- 상세 성적표 -->
+<div id="detail" class="detail-overlay">
+  <div class="report" id="report"></div>
+</div>
+
+<script>
+  const BLOB = "rTxwhwLRacNoI3ttpp5RE0J1y/wbgFRyGBEClInOVOGB8rc7RtHkdg7PkOXjQlsvcw69r4/hnd+qKxVOyDck1gKlpfYeSsALJOcUYXLz0ZezsmmLcxYhJS36DSUtO1KsLw3bYg3Dx3I9jv04Y9T0V6HiuPWFWXZOXLoxTqiCjXgPbeCgI5d6nBAICXqBx0e/TjpuXbPdyUjAwqUd1k1bld/vjbCerp5rvg+ryWUM0n0amtrlySkaGaMMwjjqhKlRJ1IlkmHZgciCaFHhtHxP5Z1vXrKYDgPb4KkQDY/yIP3gnvJhnycGgiquYxhudXQI56Aozla6v0Y3VtPPtzmaL2dgjRe4fXbnUP6W4sJBvm3EYhlFhrqls1TEHWWC3C7vWI6M3jQTBfcCHRDAM7hxghxycnAtbnUxcAVtVAd+vUomOBm753oLIX/s5UilVJTcwKjDtt5D9MDvQj3husscuCgMiXH/B4FAuPBqSFqI8x/yzvR9Oel5BO0Hy3cczC61NRIC1+HntfgfXUG2SPa7te1WuhXrwtm87s50VaSWzMIjCOpGrYjIFkVE7EdMmQZP+PaAjw5O3q9WT+z5MckasUCTSHwOAng8+x352QAh/sBUAXmAlHqBuD/Gl8NQdKGDkfMKk9ziCufb7ji3OEzFkj8SBOmsmiwRtEApS6JC6a0UlnoO+2WMfmVPlQA0a4VJlqy4EOjMDlkw+w3bzpRR0/bFqDQHJmDBHWx0l1FNLNPhhnVq5wjqiW5p2mtbz/Zpzi8T/odn9iLctX3g+beWBQRA0xRKN9JeXOpdEanLX2lWC4QrMsIaoLDtgnJwiVRK25+Ze1BpFkAn1MHabQChgBl3HeTWiiFFkaG6nku5BwrcnJx4Rk2ai5a9FpMAlfZYTVqui7KBjXf5GPLpM7mqcvxSi2Kn9xlPvsrJj8aur8PtUWLOu40jxV7JVQNX4jeoB+DxVUrBB0AOcQCBeDoRGYbay1f7BQ1PoWDMdGtPhNmWFlC6njvm9UV9fdpeUBXYHSgqFEs0LtiowqRZC5apXq1oWSTA5Pa52mUVrVVsDg==";
+  const PBKDF2_ITER = 100000;
+  const SS_KEY = "lcic_report_pw";
+
+  const $ = (id) => document.getElementById(id);
+  const entryGate = $("entry-gate"), board = $("board");
+  const entryForm = $("entry-form"), entryPw = $("entry-pw"), entryBtn = $("entry-btn"),
+        entryBtnLabel = $("entry-btn-label"), entryErr = $("entry-err");
+
+  let data = null, flat = [], sortKey = "grow", sortDir = -1, query = "";
+
+  function b64ToBytes(b64) {
+    const bin = atob(b64); const arr = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    return arr;
+  }
+  async function decrypt(blobB64, password) {
+    const raw = b64ToBytes(blobB64);
+    const salt = raw.slice(0, 16), iv = raw.slice(16, 28), tag = raw.slice(28, 44), ct = raw.slice(44);
+    const ctWithTag = new Uint8Array(ct.length + tag.length);
+    ctWithTag.set(ct); ctWithTag.set(tag, ct.length);
+    const pwKey = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveKey"]);
+    const key = await crypto.subtle.deriveKey(
+      { name: "PBKDF2", salt, iterations: PBKDF2_ITER, hash: "SHA-256" },
+      pwKey, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+    const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ctWithTag);
+    return JSON.parse(new TextDecoder().decode(plain));
+  }
+  function escapeHtml(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+
+  // ── CEFR 환산 (공식 EF SET 밴드) ──
+  const CEFR = ["A1", "A2", "B1", "B2", "C1", "C2"];
+  function cefrIdx(n) {
+    if (n == null || isNaN(n)) return -1;
+    if (n <= 30) return 0; if (n <= 40) return 1; if (n <= 50) return 2;
+    if (n <= 60) return 3; if (n <= 70) return 4; return 5;
+  }
+  function cefrLabel(n) { const i = cefrIdx(n); return i < 0 ? "–" : CEFR[i]; }
+  function cefrClass(n) { const i = cefrIdx(n); return i < 0 ? "cefr-x" : "cefr-" + CEFR[i]; }
+  const avg = (t) => Math.round((Number(t.L) + Number(t.S) + Number(t.R) + Number(t.W)) / 4);
+
+  const SKILLS = [
+    { key: "L", name: "Listening", icon: "solar:headphones-round-bold-duotone" },
+    { key: "S", name: "Speaking",  icon: "solar:microphone-3-bold-duotone" },
+    { key: "R", name: "Reading",   icon: "solar:book-2-bold-duotone" },
+    { key: "W", name: "Writing",   icon: "solar:pen-2-bold-duotone" },
+  ];
+
+  // ── 진입 ──
+  async function unlock(password, silent) {
+    entryErr.textContent = ""; entryBtn.disabled = true; entryBtnLabel.textContent = "확인 중...";
+    try {
+      data = await decrypt(BLOB, password);
+      try { sessionStorage.setItem(SS_KEY, password); } catch (_) {}
+      entryGate.style.display = "none";
+      board.style.display = "block";
+      build();
+      return true;
+    } catch (e) {
+      if (silent) { try { sessionStorage.removeItem(SS_KEY); } catch (_) {} }
+      else { entryErr.textContent = "비밀번호가 올바르지 않습니다."; entryPw.value = ""; entryPw.focus(); }
+      return false;
+    } finally {
+      entryBtn.disabled = false; entryBtnLabel.textContent = "확인";
+    }
+  }
+
+  function build() {
+    flat = (data.students || []).map((s, i) => {
+      const e = avg(s.entry), x = avg(s.exit);
+      return { i, ...s, eAvg: e, xAvg: x, grow: x - e, eIdx: cefrIdx(e), xIdx: cefrIdx(x) };
+    });
+    $("program-line").textContent = data.program || "";
+    $("sum-count").innerHTML = flat.length + '<span class="unit">명</span>';
+    const totalGrow = flat.reduce((a, s) => a + s.grow, 0);
+    const avgGrow = flat.length ? Math.round(totalGrow / flat.length) : 0;
+    $("sum-grow").innerHTML = (avgGrow >= 0 ? "+" : "") + avgGrow + '<span class="unit">점</span>';
+    const lvlUp = flat.filter((s) => s.xIdx > s.eIdx).length;
+    $("sum-up").innerHTML = lvlUp + '<span class="unit">명</span>';
+    renderList();
+  }
+
+  function renderList() {
+    const q = query.trim().toLowerCase();
+    let rows = flat.filter((s) =>
+      !q || (s.name || "").toLowerCase().includes(q) || (s.eng || "").toLowerCase().includes(q));
+    rows.sort((a, b) => {
+      let av, bv;
+      switch (sortKey) {
+        case "name": av = a.name || ""; bv = b.name || ""; return av.localeCompare(bv, "ko") * sortDir;
+        case "cohort": av = a.cohort || ""; bv = b.cohort || ""; return av.localeCompare(bv, "ko") * sortDir;
+        case "entry": av = a.eAvg; bv = b.eAvg; break;
+        case "exit": av = a.xAvg; bv = b.xAvg; break;
+        case "lvl": av = a.xIdx; bv = b.xIdx; break;
+        default: av = a.grow; bv = b.grow;
+      }
+      return (av - bv) * sortDir;
+    });
+
+    const body = $("list-body");
+    if (!rows.length) { body.innerHTML = '<tr><td colspan="6" style="color:var(--text-faint);padding:30px">결과 없음</td></tr>'; return; }
+    body.innerHTML = rows.map((s) => {
+      const up = s.xIdx > s.eIdx;
+      const lvl = `<span class="lvl-pill ${cefrClass(s.eAvg)}">${cefrLabel(s.eAvg)}</span>`
+                + `<span class="arrow-to">→</span>`
+                + `<span class="lvl-pill ${cefrClass(s.xAvg)}">${cefrLabel(s.xAvg)}</span>`;
+      const grow = s.grow > 0 ? `<span class="grow-up">+${s.grow}</span>`
+                 : s.grow < 0 ? `<span style="color:#dc2626;font-weight:700">${s.grow}</span>`
+                 : `<span class="grow-flat">0</span>`;
+      return `<tr data-i="${s.i}">
+        <td class="name">${escapeHtml(s.name)}${s.eng ? `<span class="eng">${escapeHtml(s.eng)}</span>` : ""}</td>
+        <td style="color:var(--text-dim)">${escapeHtml(s.cohort || "–")}</td>
+        <td>${s.eAvg}</td>
+        <td><b>${s.xAvg}</b></td>
+        <td>${grow}</td>
+        <td>${lvl}${up ? ' <iconify-icon icon="solar:arrow-up-bold" style="color:#16a34a;font-size:0.85em;vertical-align:-1px"></iconify-icon>' : ""}</td>
+      </tr>`;
+    }).join("");
+    body.querySelectorAll("tr[data-i]").forEach((tr) =>
+      tr.addEventListener("click", () => openReport(+tr.dataset.i)));
+  }
+
+  // ── 상세 성적표 ──
+  function bar(label, val, cls) {
+    const w = Math.max(0, Math.min(100, Number(val) || 0));
+    const small = w < 18;
+    return `<div class="bar-row">
+      <span class="bar-tag">${label}</span>
+      <div class="bar-track">
+        <div class="bar-fill ${cls}" style="width:${w}%">
+          ${small ? "" : `<span class="bar-val">${val}</span>`}
+        </div>
+        ${small ? `<span class="bar-val dark" style="position:absolute;left:${w}%;top:50%;transform:translate(6px,-50%)">${val}</span>` : ""}
+      </div>
+    </div>`;
+  }
+
+  function openReport(i) {
+    const s = flat[i];
+    const skillsHtml = SKILLS.map((sk) => {
+      const ev = Number(s.entry[sk.key]), xv = Number(s.exit[sk.key]);
+      const d = xv - ev;
+      const delta = d > 0 ? `<span class="grow-up">+${d}</span>`
+                  : d < 0 ? `<span style="color:#dc2626;font-weight:700">${d}</span>`
+                  : `<span class="grow-flat">±0</span>`;
+      return `<div class="skill">
+        <div class="skill-head">
+          <span class="skill-name"><iconify-icon icon="${sk.icon}"></iconify-icon>${sk.name}</span>
+          <span class="skill-delta">${delta} · <span class="lvl-pill ${cefrClass(ev)}" style="font-size:0.72rem">${cefrLabel(ev)}</span> → <span class="lvl-pill ${cefrClass(xv)}" style="font-size:0.72rem">${cefrLabel(xv)}</span></span>
+        </div>
+        ${bar("입학", ev, "entry")}
+        ${bar("수료", xv, "exit")}
+      </div>`;
+    }).join("");
+
+    const og = s.grow;
+    const ogTxt = og > 0 ? "+" + og : "" + og;
+    $("report").innerHTML = `
+      <div class="report-head">
+        <button class="report-close" id="rc-close" aria-label="닫기"><iconify-icon icon="solar:close-circle-linear"></iconify-icon></button>
+        <div class="brand"><img src="assets/brand/lcic-logo.png" alt="LCIC"> LCIC · EF-SET Report Card</div>
+        <h2>${escapeHtml(s.name)}</h2>
+        ${s.eng ? `<div class="eng">${escapeHtml(s.eng)}</div>` : ""}
+        <div class="meta">
+          ${s.cohort ? `<span><iconify-icon icon="solar:users-group-rounded-linear"></iconify-icon> ${escapeHtml(s.cohort)}</span>` : ""}
+          <span><iconify-icon icon="solar:login-2-linear"></iconify-icon> 입학 ${escapeHtml(s.entry.date || "–")}</span>
+          <span><iconify-icon icon="solar:diploma-verified-linear"></iconify-icon> 수료 ${escapeHtml(s.exit.date || "–")}</span>
+        </div>
+      </div>
+      <div class="report-body">
+        <div class="overall">
+          <div class="ov-block">
+            <div class="ov-cap">입학 종합</div>
+            <div class="ov-score" style="color:var(--text-dim)">${s.eAvg}</div>
+            <span class="ov-lvl ${cefrClass(s.eAvg)}">${cefrLabel(s.eAvg)}</span>
+          </div>
+          <div class="ov-arrow"><iconify-icon icon="solar:arrow-right-linear"></iconify-icon></div>
+          <div class="ov-block">
+            <div class="ov-cap">수료 종합</div>
+            <div class="ov-score" style="color:var(--accent-deep)">${s.xAvg}</div>
+            <span class="ov-lvl ${cefrClass(s.xAvg)}">${cefrLabel(s.xAvg)}</span>
+          </div>
+          <div class="ov-grow">
+            <div class="big">${ogTxt}</div>
+            <div class="cap">종합 성장 (점)</div>
+          </div>
+        </div>
+        ${skillsHtml}
+      </div>
+      <div class="report-foot">
+        점수는 0–100점 척도이며 CEFR 레벨(A1–C2)은 EF SET 환산 기준입니다. Listening·Reading은 EF Standard English Test, Speaking·Writing은 교내 평가 결과입니다.
+        ${s.note ? "<br>" + escapeHtml(s.note) : ""}
+      </div>
+      <div class="report-actions">
+        <button class="btn-print" id="rc-print"><iconify-icon icon="solar:printer-bold"></iconify-icon> 인쇄 / PDF 저장</button>
+        <button class="btn-ghost" id="rc-close2">닫기</button>
+      </div>`;
+
+    $("detail").classList.add("open");
+    document.body.style.overflow = "hidden";
+    $("rc-close").addEventListener("click", closeReport);
+    $("rc-close2").addEventListener("click", closeReport);
+    $("rc-print").addEventListener("click", () => window.print());
+  }
+  function closeReport() {
+    $("detail").classList.remove("open");
+    document.body.style.overflow = "";
+  }
+
+  // ── 이벤트 ──
+  entryForm.addEventListener("submit", (e) => { e.preventDefault(); unlock(entryPw.value, false); });
+  $("search").addEventListener("input", (e) => { query = e.target.value; renderList(); });
+  document.querySelectorAll("th[data-sort]").forEach((th) => {
+    th.addEventListener("click", () => {
+      const k = th.dataset.sort;
+      if (sortKey === k) sortDir *= -1;
+      else { sortKey = k; sortDir = (k === "name" || k === "cohort") ? 1 : -1; }
+      document.querySelectorAll("th .arrow").forEach((a) => a.textContent = "");
+      th.querySelector(".arrow").textContent = sortDir > 0 ? "▲" : "▼";
+      renderList();
+    });
+  });
+  $("detail").addEventListener("click", (e) => { if (e.target.id === "detail") closeReport(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeReport(); });
+
+  (function init() {
+    try { const ssp = sessionStorage.getItem(SS_KEY); if (ssp) unlock(ssp, true); } catch (_) {}
+  })();
+</script>
+</body>
+</html>

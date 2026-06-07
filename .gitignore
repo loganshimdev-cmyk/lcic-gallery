@@ -5,6 +5,8 @@ scripts/verify-summer-2026.cjs
 scripts/roster-data.json
 scripts/raw-roster.txt
 scripts/merge-registration.cjs
+scripts/encrypt-reports.cjs
+scripts/report-data.json
 scripts/_auto_report.json
 scripts/_*.json
 .gstack/
