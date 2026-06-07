@@ -1,205 +1,141 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow, noarchive">
-<title>EF-SET Report Card · LCIC</title>
+<title>Student Progress Report · LCIC</title>
 <link rel="icon" type="image/png" href="assets/brand/lcic-logo.png">
 <script src="assets/background.js?v=8"></script>
 <link rel="stylesheet" href="assets/shared.css?v=13">
 <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
 <style>
   /* ── 진입 게이트 ── */
-  .gate-wrap {
-    min-height: 100dvh;
-    display: flex; align-items: center; justify-content: center;
-    padding: 120px 20px 60px;
-  }
+  .gate-wrap { min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: 120px 20px 60px; }
   .gate-card { max-width: 420px; width: 100%; }
   .gate-card .bezel-inner { padding: 36px 32px; }
-  .gate-icon {
-    width: 64px; height: 64px; border-radius: 999px;
-    background: var(--accent-soft); color: var(--accent-deep);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 28px; margin: 0 auto 20px;
-  }
-  .gate-title {
-    text-align: center; font-size: 1.35rem; font-weight: 600;
-    letter-spacing: -0.01em; margin-bottom: 8px;
-  }
-  .gate-sub {
-    text-align: center; color: var(--text-dim);
-    font-size: 0.92rem; line-height: 1.55; margin-bottom: 24px;
-  }
+  .gate-icon { width: 64px; height: 64px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-deep); display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 20px; }
+  .gate-title { text-align: center; font-size: 1.35rem; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 8px; }
+  .gate-sub { text-align: center; color: var(--text-dim); font-size: 0.92rem; line-height: 1.55; margin-bottom: 24px; }
   .gate-form { display: flex; flex-direction: column; gap: 12px; }
-  .gate-input {
-    width: 100%; padding: 14px 16px;
-    border: 1px solid var(--hairline-strong);
-    border-radius: 14px; background: var(--bg-elev);
-    font-family: inherit; font-size: 1rem; color: var(--text);
-    transition: border-color 0.15s, box-shadow 0.15s;
-  }
-  .gate-input:focus {
-    outline: none; border-color: var(--accent);
-    box-shadow: 0 0 0 4px var(--accent-soft);
-  }
-  .gate-btn {
-    width: 100%; padding: 14px 16px;
-    border: none; border-radius: 14px;
-    background: var(--accent); color: white;
-    font-family: inherit; font-size: 1rem; font-weight: 600;
-    cursor: pointer; transition: background 0.15s, transform 0.05s;
-    box-shadow: var(--shadow-accent);
-  }
+  .gate-input { width: 100%; padding: 14px 16px; border: 1px solid var(--hairline-strong); border-radius: 14px; background: var(--bg-elev); font-family: inherit; font-size: 1rem; color: var(--text); transition: border-color 0.15s, box-shadow 0.15s; }
+  .gate-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+  .gate-btn { width: 100%; padding: 14px 16px; border: none; border-radius: 14px; background: var(--accent); color: white; font-family: inherit; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.15s, transform 0.05s; box-shadow: var(--shadow-accent); }
   .gate-btn:hover { background: var(--accent-hover); }
   .gate-btn:active { transform: translateY(1px); }
   .gate-btn[disabled] { opacity: 0.55; cursor: not-allowed; transform: none; }
   .gate-err { color: #dc2626; font-size: 0.86rem; text-align: center; min-height: 20px; }
 
-  /* ── 요약 카드 ── */
+  /* ── 관리자 목록 ── */
   .summary-row { display: flex; gap: 12px; margin-bottom: 22px; flex-wrap: wrap; }
   .summary-card { flex: 1; min-width: 150px; }
   .summary-card .bezel-inner { padding: 18px 20px; text-align: center; }
   .summary-num { font-size: 1.9rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
   .summary-num .unit { font-size: 0.95rem; font-weight: 500; color: var(--text-dim); margin-left: 3px; }
   .summary-label { font-size: 0.82rem; color: var(--text-dim); margin-top: 4px; }
-  .gsplit { display: block; font-size: 0.78rem; color: var(--text-faint); font-weight: 500; margin-top: 2px; }
-
-  /* ── 도구 줄 (검색) ── */
   .toolbar { display: flex; gap: 10px; margin-bottom: 14px; align-items: center; flex-wrap: wrap; }
   .search-box { position: relative; flex: 1; min-width: 200px; }
   .search-box iconify-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-faint); font-size: 18px; }
-  .search-input {
-    width: 100%; padding: 11px 14px 11px 40px;
-    border: 1px solid var(--hairline-strong); border-radius: 12px;
-    background: var(--bg-elev); font-family: inherit; font-size: 0.95rem; color: var(--text);
-  }
+  .search-input { width: 100%; padding: 11px 14px 11px 40px; border: 1px solid var(--hairline-strong); border-radius: 12px; background: var(--bg-elev); font-family: inherit; font-size: 0.95rem; color: var(--text); }
   .search-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
-
-  /* ── 목록 표 ── */
   .list-wrap { overflow-x: auto; border-radius: 18px; }
   table.list { width: 100%; border-collapse: collapse; font-size: 0.92rem; background: var(--bg-elev); }
   table.list th, table.list td { padding: 13px 14px; text-align: center; border-bottom: 1px solid var(--hairline); white-space: nowrap; }
-  table.list th { background: var(--surface); font-weight: 600; color: var(--text-dim); font-size: 0.82rem; cursor: pointer; user-select: none; position: sticky; top: 0; }
+  table.list th { background: var(--surface); font-weight: 600; color: var(--text-dim); font-size: 0.82rem; cursor: pointer; user-select: none; }
   table.list th .arrow { font-size: 0.7em; opacity: 0.5; }
   table.list td.name { text-align: left; font-weight: 600; }
-  table.list td.name .eng { display: block; font-size: 0.76rem; color: var(--text-faint); font-weight: 500; }
+  table.list td.name .sub { display: block; font-size: 0.76rem; color: var(--text-faint); font-weight: 500; }
   table.list tbody tr { cursor: pointer; transition: background 0.12s; }
   table.list tbody tr:hover { background: var(--accent-tint); }
-  .lvl-pill { display: inline-flex; align-items: center; justify-content: center; min-width: 30px; padding: 2px 7px; border-radius: 7px; font-weight: 700; font-size: 0.8rem; }
   .grow-up { color: #16a34a; font-weight: 700; }
+  .grow-down { color: #dc2626; font-weight: 700; }
   .grow-flat { color: var(--text-faint); font-weight: 600; }
-  .arrow-to { color: var(--text-faint); margin: 0 5px; font-size: 0.85em; }
-
-  /* CEFR 색상 (A1·A2 따뜻 / B1·B2 파랑 / C1·C2 초록) */
-  .cefr-A1 { background:#fee2e2; color:#b91c1c; }
-  .cefr-A2 { background:#ffedd5; color:#c2410c; }
-  .cefr-B1 { background:#dbeafe; color:#1d4ed8; }
-  .cefr-B2 { background:#cfe0fd; color:#1e40af; }
-  .cefr-C1 { background:#dcfce7; color:#15803d; }
-  .cefr-C2 { background:#bbf7d0; color:#166534; }
+  .arrow-to { color: var(--text-faint); margin: 0 4px; font-size: 0.85em; }
+  .lvl-pill { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; padding: 2px 6px; border-radius: 6px; font-weight: 700; font-size: 0.76rem; }
+  .cefr-A1 { background:#fee2e2; color:#b91c1c; } .cefr-A2 { background:#ffedd5; color:#c2410c; }
+  .cefr-B1 { background:#dbeafe; color:#1d4ed8; } .cefr-B2 { background:#cfe0fd; color:#1e40af; }
+  .cefr-C1 { background:#dcfce7; color:#15803d; } .cefr-C2 { background:#bbf7d0; color:#166534; }
   .cefr-x  { background:var(--surface); color:var(--text-faint); }
 
-  /* ── 상세 카드 모달 ── */
-  .detail-overlay {
-    position: fixed; inset: 0; z-index: 200;
-    background: rgba(15,23,42,0.45); backdrop-filter: blur(3px);
-    display: none; align-items: flex-start; justify-content: center;
-    padding: 40px 16px; overflow-y: auto;
-  }
-  .detail-overlay.open { display: flex; }
-  .report {
-    background: #fff; width: 100%; max-width: 760px;
-    border-radius: 20px; box-shadow: var(--shadow-lg); overflow: hidden;
-  }
-  .report-head {
-    background: linear-gradient(135deg, var(--accent-deep), var(--accent));
-    color: #fff; padding: 26px 32px; position: relative;
-  }
-  .report-head .brand { display: flex; align-items: center; gap: 9px; font-size: 0.82rem; font-weight: 600; letter-spacing: 0.03em; opacity: 0.92; text-transform: uppercase; }
-  .report-head .brand img { height: 22px; width: auto; filter: brightness(0) invert(1); }
-  .report-head h2 { font-size: 1.55rem; font-weight: 700; margin: 12px 0 2px; letter-spacing: -0.01em; }
-  .report-head .eng { font-size: 0.92rem; opacity: 0.85; font-weight: 500; }
-  .report-head .meta { margin-top: 10px; font-size: 0.82rem; opacity: 0.82; display: flex; gap: 16px; flex-wrap: wrap; }
-  .report-close {
-    position: absolute; top: 18px; right: 18px;
-    width: 34px; height: 34px; border-radius: 999px; border: none;
-    background: rgba(255,255,255,0.18); color: #fff; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; font-size: 18px;
-  }
-  .report-close:hover { background: rgba(255,255,255,0.3); }
+  /* ── 성적표 문서(Student Progress Report) ── */
+  .detail-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(15,23,42,0.5); backdrop-filter: blur(3px); display: none; justify-content: center; padding: 28px 16px 60px; overflow-y: auto; }
+  .detail-overlay.open { display: block; }
+  .detail-inner { max-width: 900px; margin: 0 auto; }
+  .spr-toolbar { display: flex; gap: 10px; justify-content: flex-end; margin-bottom: 12px; }
+  .spr-toolbar button { padding: 10px 18px; border-radius: 10px; font-family: inherit; font-weight: 600; font-size: 0.9rem; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 7px; }
+  .tb-print { background: #ea580c; color: #fff; }
+  .tb-print:hover { background: #c2410c; }
+  .tb-close { background: rgba(255,255,255,0.9); color: #334155; }
+  .tb-close:hover { background: #fff; }
 
-  .report-body { padding: 26px 32px 30px; }
+  .spr { background: #fff; border-radius: 14px; box-shadow: var(--shadow-lg); padding: 40px 44px 44px; color: #1f2937; }
+  .spr-head { display: flex; align-items: center; gap: 22px; }
+  .spr-logo { height: 58px; width: auto; flex-shrink: 0; }
+  .spr-eyebrow { font-size: 0.72rem; letter-spacing: 0.14em; color: #64748b; font-weight: 600; text-transform: uppercase; }
+  .spr-title { font-size: 1.9rem; font-weight: 800; color: #0f172a; letter-spacing: -0.01em; margin-top: 2px; line-height: 1.1; }
+  .spr-rule { height: 4px; background: linear-gradient(90deg, #f59e0b, #f0b429); border-radius: 3px; margin: 16px 0 24px; }
 
-  /* 종합 밴드 */
-  .overall {
-    display: flex; align-items: center; gap: 18px;
-    background: var(--surface); border-radius: 16px; padding: 18px 22px; margin-bottom: 24px;
-    flex-wrap: wrap;
-  }
-  .overall .ov-block { text-align: center; }
-  .overall .ov-cap { font-size: 0.74rem; color: var(--text-dim); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 5px; }
-  .overall .ov-score { font-size: 2.1rem; font-weight: 800; line-height: 1; letter-spacing: -0.02em; }
-  .overall .ov-lvl { display: inline-block; margin-top: 6px; padding: 3px 10px; border-radius: 8px; font-weight: 700; font-size: 0.86rem; }
-  .overall .ov-arrow { font-size: 1.6rem; color: var(--text-faint); }
-  .overall .ov-grow { margin-left: auto; text-align: right; }
-  .overall .ov-grow .big { font-size: 1.7rem; font-weight: 800; color: #16a34a; line-height: 1; }
-  .overall .ov-grow .cap { font-size: 0.76rem; color: var(--text-dim); margin-top: 4px; }
+  .info-tbl { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.9rem; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; }
+  .info-tbl td { padding: 12px 16px; border-bottom: 1px solid #eef2f7; border-right: 1px solid #eef2f7; vertical-align: middle; }
+  .info-tbl tr:last-child td { border-bottom: none; }
+  .info-tbl td.lbl { background: #f6f8fb; color: #1e3a8a; font-weight: 700; white-space: nowrap; width: 1%; }
+  .info-tbl td.val { color: #1f2937; }
+  .gender .on { color: #0f172a; font-weight: 800; }
+  .gender .off { color: #cbd5e1; font-weight: 600; }
 
-  /* 영역별 막대 */
-  .skill { margin-bottom: 18px; }
-  .skill-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; }
-  .skill-name { font-weight: 700; font-size: 0.98rem; display: flex; align-items: center; gap: 7px; }
-  .skill-name iconify-icon { color: var(--accent); font-size: 17px; }
-  .skill-delta { font-size: 0.86rem; }
-  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
-  .bar-tag { width: 46px; font-size: 0.74rem; color: var(--text-dim); font-weight: 600; flex-shrink: 0; }
-  .bar-track { flex: 1; height: 22px; background: var(--surface); border-radius: 7px; overflow: hidden; position: relative; }
-  .bar-fill { height: 100%; border-radius: 7px; display: flex; align-items: center; transition: width 0.5s cubic-bezier(0.16,1,0.3,1); }
-  .bar-fill.entry { background: linear-gradient(90deg,#cbd5e1,#94a3b8); }
-  .bar-fill.exit  { background: linear-gradient(90deg,var(--accent),var(--accent-hover)); }
-  .bar-val { font-size: 0.78rem; font-weight: 700; color: #fff; padding: 0 9px; white-space: nowrap; }
-  .bar-val.dark { color: var(--text); }
-  .skill-lvls { font-size: 0.76rem; color: var(--text-faint); margin-left: 56px; }
+  .sect-head { display: flex; align-items: center; gap: 16px; margin: 30px 0 16px; color: #ea580c; font-weight: 800; font-size: 0.95rem; letter-spacing: 0.16em; text-transform: uppercase; }
+  .sect-head::before, .sect-head::after { content: ""; flex: 1; height: 2px; background: #fbcfa3; border-radius: 2px; }
 
-  .report-foot { padding: 14px 32px 22px; border-top: 1px solid var(--hairline); font-size: 0.76rem; color: var(--text-faint); line-height: 1.6; }
-  .report-actions { display: flex; gap: 10px; padding: 0 32px 26px; }
-  .btn-print {
-    flex: 1; padding: 12px; border: none; border-radius: 12px;
-    background: var(--accent); color: #fff; font-family: inherit; font-weight: 600; font-size: 0.95rem;
-    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px;
-  }
-  .btn-print:hover { background: var(--accent-hover); }
-  .btn-ghost {
-    padding: 12px 18px; border: 1px solid var(--hairline-strong); border-radius: 12px;
-    background: var(--bg-elev); color: var(--text-dim); font-family: inherit; font-weight: 600; font-size: 0.95rem; cursor: pointer;
-  }
-  .btn-ghost:hover { background: var(--surface); }
+  .score-tbl { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.92rem; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; text-align: center; }
+  .score-tbl th, .score-tbl td { padding: 11px 10px; border-bottom: 1px solid #eef2f7; border-right: 1px solid #eef2f7; }
+  .score-tbl thead th { background: #f1f5f9; color: #334155; font-weight: 700; font-size: 0.86rem; }
+  .score-tbl tbody th { background: #f6f8fb; color: #0f172a; font-weight: 700; text-align: left; white-space: nowrap; }
+  .score-tbl tr:last-child td, .score-tbl tr:last-child th { border-bottom: none; }
+  .score-tbl th:last-child, .score-tbl td:last-child { border-right: none; }
+  .score-tbl .tot { font-weight: 800; }
+  .score-tbl tr.change th, .score-tbl tr.change td { background: #fffbeb; font-weight: 700; }
+  .score-tbl tr.change td.pos { color: #c2410c; }
+  .score-tbl tr.change td.neg { color: #dc2626; }
 
-  /* ── 인쇄: 열린 성적표만 A4로 ── */
+  .cefr-legend { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px; font-size: 0.82rem; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; }
+  .cefr-legend td { padding: 9px 12px; border-right: 1px solid #eef2f7; }
+  .cefr-legend td:last-child { border-right: none; }
+  .cefr-legend td.band { background: #f6f8fb; font-weight: 800; color: #0f172a; white-space: nowrap; width: 1%; }
+  .cefr-legend td.desc { color: #475569; }
+
+  .charts { display: flex; gap: 18px; margin-top: 20px; flex-wrap: wrap; }
+  .chart-box { flex: 1; min-width: 280px; display: flex; flex-direction: column; align-items: center; }
+  .chart-box svg { width: 100%; height: auto; }
+  .chart-legend { display: flex; gap: 18px; justify-content: center; font-size: 0.8rem; color: #475569; margin-top: 4px; }
+  .chart-legend .lg { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+  .lg.en { background: #2563eb; } .lg.fi { background: #ea580c; }
+
+  .comment-box { border: 1px solid #f3e3c0; background: #fffdf5; border-radius: 12px; padding: 18px 20px; min-height: 70px; font-size: 0.92rem; color: #475569; line-height: 1.6; }
+  .comment-box.empty { color: #b7a98c; font-style: italic; }
+  .spr-foot { margin-top: 22px; padding-top: 14px; border-top: 1px solid #eef2f7; font-size: 0.74rem; color: #94a3b8; line-height: 1.6; }
+
+  /* ── 인쇄: A4 ── */
   @media print {
-    /* 다른 건 레이아웃에서 완전히 제거(자리 차지 X) → 빈 페이지 방지 */
-    #entry-gate, #board, #site-bg, .bg-canvas, canvas { display: none !important; }
-    .detail-overlay {
-      position: static !important; display: block !important; padding: 0 !important;
-      overflow: visible !important; background: #fff !important; backdrop-filter: none !important;
-    }
-    .report { box-shadow: none !important; max-width: 100% !important; border-radius: 0 !important; }
-    .report-head { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .bar-fill, .lvl-pill, .ov-lvl, [class^="cefr-"] { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .report-close, .report-actions { display: none !important; }
-    /* 한 장(A4)에 들어가도록 여백 압축 */
-    .report-head { padding: 18px 26px !important; }
-    .report-head h2 { font-size: 1.35rem !important; margin: 8px 0 2px !important; }
-    .report-body { padding: 18px 26px 14px !important; }
-    .overall { padding: 12px 18px !important; margin-bottom: 16px !important; }
-    .overall .ov-score { font-size: 1.7rem !important; }
-    .skill { margin-bottom: 11px !important; }
-    .bar-track { height: 19px !important; }
-    .bar-row { margin-bottom: 4px !important; }
-    .report-foot { padding: 10px 26px 0 !important; }
-    @page { size: A4 portrait; margin: 12mm; }
+    #entry-gate, #board, #site-bg, .bg-canvas, canvas, .spr-toolbar { display: none !important; }
+    .detail-overlay { position: static !important; display: block !important; padding: 0 !important; overflow: visible !important; background: #fff !important; backdrop-filter: none !important; }
+    .detail-inner { max-width: 100% !important; }
+    .spr { box-shadow: none !important; border-radius: 0 !important; padding: 2mm 3mm !important; }
+    .spr-logo { height: 46px !important; }
+    .spr-title { font-size: 1.4rem !important; }
+    .spr-rule { margin: 9px 0 12px !important; }
+    .sect-head { margin: 13px 0 7px !important; font-size: 0.82rem !important; }
+    .info-tbl, .score-tbl { font-size: 0.82rem !important; }
+    .info-tbl td, .score-tbl th, .score-tbl td { padding: 7px 12px !important; }
+    .cefr-legend { margin-top: 7px !important; font-size: 0.74rem !important; }
+    .cefr-legend td { padding: 6px 10px !important; }
+    .charts { margin-top: 9px !important; gap: 10px !important; }
+    .chart-box svg { height: 188px !important; }
+    .chart-legend { margin-top: 0 !important; font-size: 0.72rem !important; }
+    .comment-box { min-height: 40px !important; padding: 12px 14px !important; }
+    .spr-foot { margin-top: 12px !important; padding-top: 9px !important; font-size: 0.66rem !important; }
+    .info-tbl, .score-tbl, .cefr-legend, .spr, .charts, .chart-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .info-tbl td.lbl, .score-tbl thead th, .score-tbl tbody th, .score-tbl tr.change th, .score-tbl tr.change td, .cefr-legend td.band, .spr-rule, .comment-box, [class^="cefr-"] { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    @page { size: A4 portrait; margin: 10mm; }
   }
 </style>
 </head>
@@ -210,11 +146,10 @@
   <div class="bezel gate-card fade-up">
     <div class="bezel-inner">
       <div class="gate-icon"><iconify-icon icon="solar:document-text-bold-duotone"></iconify-icon></div>
-      <div class="gate-title">EF-SET Report Cards</div>
-      <div class="gate-sub">입학·수료 영어 성적표입니다.<br>전달받으신 비밀번호를 입력해 주세요.</div>
+      <div class="gate-title">Student Progress Reports</div>
+      <div class="gate-sub">EF-SET 입학·수료 성적표입니다.<br>전달받으신 비밀번호를 입력해 주세요.</div>
       <form id="entry-form" class="gate-form" autocomplete="off">
-        <input id="entry-pw" class="gate-input" type="password"
-          placeholder="비밀번호" autocomplete="off" autofocus required>
+        <input id="entry-pw" class="gate-input" type="password" placeholder="비밀번호" autocomplete="off" autofocus required>
         <button id="entry-btn" class="gate-btn" type="submit"><span id="entry-btn-label">확인</span></button>
         <div id="entry-err" class="gate-err" role="alert"></div>
       </form>
@@ -222,67 +157,56 @@
   </div>
 </section>
 
-<!-- 목록 본문 -->
-<main id="board" class="container-narrow" style="padding: 120px 12px 80px; display: none;">
-  <header class="fade-up" style="text-align: center; margin-bottom: 28px;">
-    <span class="eyebrow"><iconify-icon icon="solar:graph-up-bold-duotone"></iconify-icon> EF-SET · 입학 → 수료 성장</span>
-    <h1 style="font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; margin: 14px 0 6px;">English Report Cards</h1>
+<!-- 관리자 목록 -->
+<main id="board" class="container-narrow" style="padding: 110px 12px 80px; display: none;">
+  <header class="fade-up" style="text-align: center; margin-bottom: 26px;">
+    <span class="eyebrow"><iconify-icon icon="solar:graph-up-bold-duotone"></iconify-icon> EF-SET · Entrance → Final</span>
+    <h1 style="font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; margin: 14px 0 6px;">Student Progress Reports</h1>
     <p style="color: var(--text-dim); font-size: 0.95rem;" id="program-line"></p>
   </header>
-
   <div class="summary-row fade-up delay-1">
-    <div class="bezel summary-card"><div class="bezel-inner">
-      <div class="summary-num" id="sum-count">0<span class="unit">명</span></div>
-      <div class="summary-label">학생 수</div>
-    </div></div>
-    <div class="bezel summary-card"><div class="bezel-inner">
-      <div class="summary-num" id="sum-grow">+0<span class="unit">점</span></div>
-      <div class="summary-label">평균 종합 성장</div>
-    </div></div>
-    <div class="bezel summary-card"><div class="bezel-inner">
-      <div class="summary-num" id="sum-up">0<span class="unit">명</span></div>
-      <div class="summary-label">CEFR 레벨 상승</div>
-    </div></div>
+    <div class="bezel summary-card"><div class="bezel-inner"><div class="summary-num" id="sum-count">0<span class="unit">명</span></div><div class="summary-label">학생 수</div></div></div>
+    <div class="bezel summary-card"><div class="bezel-inner"><div class="summary-num" id="sum-grow">+0</div><div class="summary-label">평균 총점 성장 (/400)</div></div></div>
+    <div class="bezel summary-card"><div class="bezel-inner"><div class="summary-num" id="sum-up">0<span class="unit">명</span></div><div class="summary-label">CEFR 레벨 상승</div></div></div>
   </div>
-
   <div class="toolbar fade-up delay-2">
-    <div class="search-box">
-      <iconify-icon icon="solar:magnifer-linear"></iconify-icon>
-      <input id="search" class="search-input" type="text" placeholder="이름 검색…" autocomplete="off">
-    </div>
+    <div class="search-box"><iconify-icon icon="solar:magnifer-linear"></iconify-icon><input id="search" class="search-input" type="text" placeholder="이름 검색…" autocomplete="off"></div>
   </div>
-
   <div class="bezel fade-up delay-2"><div class="bezel-inner" style="padding: 6px;">
     <div class="list-wrap">
       <table class="list">
-        <thead>
-          <tr>
-            <th data-sort="name" style="text-align:left">학생 <span class="arrow"></span></th>
-            <th data-sort="cohort">반 <span class="arrow"></span></th>
-            <th data-sort="entry">입학 <span class="arrow"></span></th>
-            <th data-sort="exit">수료 <span class="arrow"></span></th>
-            <th data-sort="grow">성장 <span class="arrow"></span></th>
-            <th data-sort="lvl">레벨 변화 <span class="arrow"></span></th>
-          </tr>
-        </thead>
+        <thead><tr>
+          <th data-sort="name" style="text-align:left">Name <span class="arrow"></span></th>
+          <th data-sort="nat">Nationality <span class="arrow"></span></th>
+          <th data-sort="entrance">Entrance <span class="arrow"></span></th>
+          <th data-sort="final">Final <span class="arrow"></span></th>
+          <th data-sort="grow">Change <span class="arrow"></span></th>
+          <th data-sort="lvl">CEFR <span class="arrow"></span></th>
+        </tr></thead>
         <tbody id="list-body"></tbody>
       </table>
     </div>
   </div></div>
-  <p style="text-align:center; color: var(--text-faint); font-size: 0.82rem; margin-top: 14px;">
-    행을 누르면 학생 상세 성적표가 열립니다. 성적표에서 <b>인쇄/PDF</b>로 저장해 전달하세요.
-  </p>
+  <p style="text-align:center; color: var(--text-faint); font-size: 0.82rem; margin-top: 14px;">행을 누르면 학생 성적표가 열립니다. 성적표에서 <b>Print / PDF</b>로 저장해 전달하세요.</p>
 </main>
 
-<!-- 상세 성적표 -->
+<!-- 성적표 문서 -->
 <div id="detail" class="detail-overlay">
-  <div class="report" id="report"></div>
+  <div class="detail-inner">
+    <div class="spr-toolbar">
+      <button class="tb-print" id="rc-print"><iconify-icon icon="solar:printer-bold"></iconify-icon> Print / PDF</button>
+      <button class="tb-close" id="rc-close"><iconify-icon icon="solar:close-circle-linear"></iconify-icon> Close</button>
+    </div>
+    <div class="spr" id="report"></div>
+  </div>
 </div>
 
 <script>
-  const BLOB = "rTxwhwLRacNoI3ttpp5RE0J1y/wbgFRyGBEClInOVOGB8rc7RtHkdg7PkOXjQlsvcw69r4/hnd+qKxVOyDck1gKlpfYeSsALJOcUYXLz0ZezsmmLcxYhJS36DSUtO1KsLw3bYg3Dx3I9jv04Y9T0V6HiuPWFWXZOXLoxTqiCjXgPbeCgI5d6nBAICXqBx0e/TjpuXbPdyUjAwqUd1k1bld/vjbCerp5rvg+ryWUM0n0amtrlySkaGaMMwjjqhKlRJ1IlkmHZgciCaFHhtHxP5Z1vXrKYDgPb4KkQDY/yIP3gnvJhnycGgiquYxhudXQI56Aozla6v0Y3VtPPtzmaL2dgjRe4fXbnUP6W4sJBvm3EYhlFhrqls1TEHWWC3C7vWI6M3jQTBfcCHRDAM7hxghxycnAtbnUxcAVtVAd+vUomOBm753oLIX/s5UilVJTcwKjDtt5D9MDvQj3husscuCgMiXH/B4FAuPBqSFqI8x/yzvR9Oel5BO0Hy3cczC61NRIC1+HntfgfXUG2SPa7te1WuhXrwtm87s50VaSWzMIjCOpGrYjIFkVE7EdMmQZP+PaAjw5O3q9WT+z5MckasUCTSHwOAng8+x352QAh/sBUAXmAlHqBuD/Gl8NQdKGDkfMKk9ziCufb7ji3OEzFkj8SBOmsmiwRtEApS6JC6a0UlnoO+2WMfmVPlQA0a4VJlqy4EOjMDlkw+w3bzpRR0/bFqDQHJmDBHWx0l1FNLNPhhnVq5wjqiW5p2mtbz/Zpzi8T/odn9iLctX3g+beWBQRA0xRKN9JeXOpdEanLX2lWC4QrMsIaoLDtgnJwiVRK25+Ze1BpFkAn1MHabQChgBl3HeTWiiFFkaG6nku5BwrcnJx4Rk2ai5a9FpMAlfZYTVqui7KBjXf5GPLpM7mqcvxSi2Kn9xlPvsrJj8aur8PtUWLOu40jxV7JVQNX4jeoB+DxVUrBB0AOcQCBeDoRGYbay1f7BQ1PoWDMdGtPhNmWFlC6njvm9UV9fdpeUBXYHSgqFEs0LtiowqRZC5apXq1oWSTA5Pa52mUVrVVsDg==";
+  const BLOB = "+QO5HK0d8+r19t+ldF1nTr2jqmBGrPUHuZVYOwio4+ZrlvKTos3iBCISn56Hlx0u/lbXtNrmYbQUV6HH3mhgXyhFGYOb0kHJI0jVAi2NpTLpQd3MGE2hIRlu336E8qeaV2CuyRUlGdXiDABTExgIZYE2GQI9B5oAr68eLA7/5RNdc11bKtrxhwpzTIbqMg7MwrqOKJYvBEv1iLhlWl+UntxZ/NnwjISnl7Sdq9hkMo050o2n69KuQM4X6t/EwhMoQM1zqxYYiC5E4HlFRbRk6n5cxyvZ1vUJGBplShq5jgHDJasvRayA6iiIJuA7V5Snoc/WPhDw1NY5DrB19gkHD78HGEbSmGeEDeAvBlWOGka1zQrPp5HEj5Cmr+582N1uFYr+n3teuWVozZ2ufHq21kKGZM2LKrJ3IFu5Sc8+WEfHant1E7kVYxP1LmnbsmcZDsmOH2fI0SP71uWOjHpdMlB/qYKu29HkxXa+TLhnlBz6iJ1I5C4S/ShebsSknbu+KevG8DVMIAPgOgaqQ1TLi1Oa0PEfBSHeetJon56niV9i8tLz5JCNjQwjaqavnow5r0Sr+PZreQglgrE4uJkO9PlRwrWelIP/PCPEijC/yLZ5Av46tIG+ISJoQmdeqbH5wK6KTOPtISF/0fat7OByCmOXb3wKZqfPa5alfGOLK5Yz9N9RvxgzIVlJ4QBy5K29kZP13NrSnwlhXxVS6717V4d0Oe2W2X9KcM+8VSOjTRJz0Gl/P+OOKbDO+EshhlOKMqHGzik6fzkn5Ab6HBFjkwwd4C0cA0weARX9Ch42oUhs71P6e1QYs1oWVoabhIvyFF7eqeNbdxQUlnX7LxcbkHkn+3l7C+HDpjKN7mVTwRzm9i3/Ii3s9W2fyuhUdV5jjkicBFnOKY+AP9xu6XIs7jOqTSf+oar+wXQZOqbhBIYwZGDsYw2BlqlFdp5yXElKu8oWbBbbEhzDXKW1sz7wE8e8x52kHnfn2pXJCEKK6lhQIYSKn1VtpYT7LcJGIbLwvNSnYPNu+rTdYlAsQ8FLaXXshTi569RdcMjAHasTIo0d1YPNKGJsePxvAi1xkl+2XPXH1MuArIBrdM7yUkWOd2nN/7E0DnE5SSKETgTThsp0XBC4Rm4EOXmZzfcjIwZ6jn23KwL+XTXpor68+GWtHJiVWNllMM1+BbBOt1bojSEcqJ+mZ+2F87mvCcZcdV7eHxM2DakdiQ8GErPtMf84fQaUgY6PaIdttkAJqRcz5pxXw+5dZG+YJMT26wkAsKk0tIE5Nu6jPNrX2LrGqCsRLQ/ixUXAVbC2jqXqIlv0exC4Ftxk0Xyw28UMFYnIootVd7OCJIjMMT9IC7FcvriTtiYr9Rzfr3TY5Fz1geJXOFmamLKo8eklCuFvmw==";
   const PBKDF2_ITER = 100000;
-  const SS_KEY = "lcic_report_pw";
+  const SS_KEY = "lcic_spr_pw";
+  const SCHOOL = "Lapulapu Cebu International College — CELS";
+  const EN = "#2563eb", FI = "#ea580c";
 
   const $ = (id) => document.getElementById(id);
   const entryGate = $("entry-gate"), board = $("board");
@@ -291,45 +215,36 @@
 
   let data = null, flat = [], sortKey = "grow", sortDir = -1, query = "";
 
-  function b64ToBytes(b64) {
-    const bin = atob(b64); const arr = new Uint8Array(bin.length);
-    for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
-    return arr;
-  }
+  function b64ToBytes(b64) { const bin = atob(b64); const arr = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i); return arr; }
   async function decrypt(blobB64, password) {
     const raw = b64ToBytes(blobB64);
     const salt = raw.slice(0, 16), iv = raw.slice(16, 28), tag = raw.slice(28, 44), ct = raw.slice(44);
-    const ctWithTag = new Uint8Array(ct.length + tag.length);
-    ctWithTag.set(ct); ctWithTag.set(tag, ct.length);
+    const ctWithTag = new Uint8Array(ct.length + tag.length); ctWithTag.set(ct); ctWithTag.set(tag, ct.length);
     const pwKey = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveKey"]);
-    const key = await crypto.subtle.deriveKey(
-      { name: "PBKDF2", salt, iterations: PBKDF2_ITER, hash: "SHA-256" },
-      pwKey, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+    const key = await crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: PBKDF2_ITER, hash: "SHA-256" }, pwKey, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
     const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ctWithTag);
     return JSON.parse(new TextDecoder().decode(plain));
   }
-  function escapeHtml(s) {
-    return String(s == null ? "" : s).replace(/[&<>"']/g, (c) =>
-      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
 
-  // ── CEFR 환산 (공식 EF SET 밴드) ──
+  // CEFR (EF SET bands, on 0-100 average)
   const CEFR = ["A1", "A2", "B1", "B2", "C1", "C2"];
-  function cefrIdx(n) {
-    if (n == null || isNaN(n)) return -1;
-    if (n <= 30) return 0; if (n <= 40) return 1; if (n <= 50) return 2;
-    if (n <= 60) return 3; if (n <= 70) return 4; return 5;
-  }
+  function cefrIdx(n) { if (n == null || isNaN(n)) return -1; if (n <= 30) return 0; if (n <= 40) return 1; if (n <= 50) return 2; if (n <= 60) return 3; if (n <= 70) return 4; return 5; }
   function cefrLabel(n) { const i = cefrIdx(n); return i < 0 ? "–" : CEFR[i]; }
   function cefrClass(n) { const i = cefrIdx(n); return i < 0 ? "cefr-x" : "cefr-" + CEFR[i]; }
-  const avg = (t) => Math.round((Number(t.L) + Number(t.S) + Number(t.R) + Number(t.W)) / 4);
 
-  const SKILLS = [
-    { key: "L", name: "Listening", icon: "solar:headphones-round-bold-duotone" },
-    { key: "S", name: "Speaking",  icon: "solar:microphone-3-bold-duotone" },
-    { key: "R", name: "Reading",   icon: "solar:book-2-bold-duotone" },
-    { key: "W", name: "Writing",   icon: "solar:pen-2-bold-duotone" },
-  ];
+  const SK = ["RC", "WR", "LC", "SP"];
+  const SKFULL = { RC: "Reading", WR: "Writing", LC: "Listening", SP: "Speaking" };
+  const SKHEAD = { RC: "RC (Reading)", WR: "WR (Writing)", LC: "LC (Listening)", SP: "SP (Speaking)" };
+  const sum = (t) => SK.reduce((a, k) => a + (Number(t && t[k]) || 0), 0);
+  const avg = (t) => Math.round(sum(t) / 4);
+
+  const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  function fmtDate(iso) {
+    if (!iso) return "—";
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso); if (!m) return esc(iso);
+    return `${MON[+m[2] - 1]} ${+m[3]}, ${m[1]}`;
+  }
 
   // ── 진입 ──
   async function unlock(password, silent) {
@@ -337,160 +252,180 @@
     try {
       data = await decrypt(BLOB, password);
       try { sessionStorage.setItem(SS_KEY, password); } catch (_) {}
-      entryGate.style.display = "none";
-      board.style.display = "block";
-      build();
+      entryGate.style.display = "none"; board.style.display = "block"; build();
       return true;
     } catch (e) {
       if (silent) { try { sessionStorage.removeItem(SS_KEY); } catch (_) {} }
       else { entryErr.textContent = "비밀번호가 올바르지 않습니다."; entryPw.value = ""; entryPw.focus(); }
       return false;
-    } finally {
-      entryBtn.disabled = false; entryBtnLabel.textContent = "확인";
-    }
+    } finally { entryBtn.disabled = false; entryBtnLabel.textContent = "확인"; }
   }
 
   function build() {
     flat = (data.students || []).map((s, i) => {
-      const e = avg(s.entry), x = avg(s.exit);
-      return { i, ...s, eAvg: e, xAvg: x, grow: x - e, eIdx: cefrIdx(e), xIdx: cefrIdx(x) };
+      const e = sum(s.entrance), x = sum(s.final);
+      return { i, ...s, eTot: e, xTot: x, grow: x - e, eIdx: cefrIdx(avg(s.entrance)), xIdx: cefrIdx(avg(s.final)) };
     });
-    $("program-line").textContent = data.program || "";
+    $("program-line").textContent = data.school || SCHOOL;
     $("sum-count").innerHTML = flat.length + '<span class="unit">명</span>';
-    const totalGrow = flat.reduce((a, s) => a + s.grow, 0);
-    const avgGrow = flat.length ? Math.round(totalGrow / flat.length) : 0;
-    $("sum-grow").innerHTML = (avgGrow >= 0 ? "+" : "") + avgGrow + '<span class="unit">점</span>';
-    const lvlUp = flat.filter((s) => s.xIdx > s.eIdx).length;
-    $("sum-up").innerHTML = lvlUp + '<span class="unit">명</span>';
+    const avgGrow = flat.length ? Math.round(flat.reduce((a, s) => a + s.grow, 0) / flat.length) : 0;
+    $("sum-grow").innerHTML = (avgGrow >= 0 ? "+" : "") + avgGrow;
+    $("sum-up").innerHTML = flat.filter((s) => s.xIdx > s.eIdx).length + '<span class="unit">명</span>';
     renderList();
   }
 
+  function growSpan(d, plus) { return d > 0 ? `<span class="grow-up">+${d}</span>` : d < 0 ? `<span class="grow-down">${d}</span>` : `<span class="grow-flat">${plus ? "±0" : "0"}</span>`; }
+
   function renderList() {
     const q = query.trim().toLowerCase();
-    let rows = flat.filter((s) =>
-      !q || (s.name || "").toLowerCase().includes(q) || (s.eng || "").toLowerCase().includes(q));
+    let rows = flat.filter((s) => !q || (s.name || "").toLowerCase().includes(q) || (s.sub || "").toLowerCase().includes(q) || (s.nationality || "").toLowerCase().includes(q));
     rows.sort((a, b) => {
       let av, bv;
       switch (sortKey) {
-        case "name": av = a.name || ""; bv = b.name || ""; return av.localeCompare(bv, "ko") * sortDir;
-        case "cohort": av = a.cohort || ""; bv = b.cohort || ""; return av.localeCompare(bv, "ko") * sortDir;
-        case "entry": av = a.eAvg; bv = b.eAvg; break;
-        case "exit": av = a.xAvg; bv = b.xAvg; break;
+        case "name": return (a.name || "").localeCompare(b.name || "") * sortDir;
+        case "nat": return (a.nationality || "").localeCompare(b.nationality || "") * sortDir;
+        case "entrance": av = a.eTot; bv = b.eTot; break;
+        case "final": av = a.xTot; bv = b.xTot; break;
         case "lvl": av = a.xIdx; bv = b.xIdx; break;
         default: av = a.grow; bv = b.grow;
       }
       return (av - bv) * sortDir;
     });
-
     const body = $("list-body");
     if (!rows.length) { body.innerHTML = '<tr><td colspan="6" style="color:var(--text-faint);padding:30px">결과 없음</td></tr>'; return; }
     body.innerHTML = rows.map((s) => {
       const up = s.xIdx > s.eIdx;
-      const lvl = `<span class="lvl-pill ${cefrClass(s.eAvg)}">${cefrLabel(s.eAvg)}</span>`
-                + `<span class="arrow-to">→</span>`
-                + `<span class="lvl-pill ${cefrClass(s.xAvg)}">${cefrLabel(s.xAvg)}</span>`;
-      const grow = s.grow > 0 ? `<span class="grow-up">+${s.grow}</span>`
-                 : s.grow < 0 ? `<span style="color:#dc2626;font-weight:700">${s.grow}</span>`
-                 : `<span class="grow-flat">0</span>`;
+      const lvl = `<span class="lvl-pill ${cefrClass(avg(s.entrance))}">${cefrLabel(avg(s.entrance))}</span><span class="arrow-to">→</span><span class="lvl-pill ${cefrClass(avg(s.final))}">${cefrLabel(avg(s.final))}</span>`;
       return `<tr data-i="${s.i}">
-        <td class="name">${escapeHtml(s.name)}${s.eng ? `<span class="eng">${escapeHtml(s.eng)}</span>` : ""}</td>
-        <td style="color:var(--text-dim)">${escapeHtml(s.cohort || "–")}</td>
-        <td>${s.eAvg}</td>
-        <td><b>${s.xAvg}</b></td>
-        <td>${grow}</td>
+        <td class="name">${esc(s.name)}${s.sub ? `<span class="sub">${esc(s.sub)}</span>` : ""}</td>
+        <td style="color:var(--text-dim)">${esc(s.nationality || "–")}</td>
+        <td>${s.eTot}<span style="color:var(--text-faint)">/400</span></td>
+        <td><b>${s.xTot}</b><span style="color:var(--text-faint)">/400</span></td>
+        <td>${growSpan(s.grow)}</td>
         <td>${lvl}${up ? ' <iconify-icon icon="solar:arrow-up-bold" style="color:#16a34a;font-size:0.85em;vertical-align:-1px"></iconify-icon>' : ""}</td>
       </tr>`;
     }).join("");
-    body.querySelectorAll("tr[data-i]").forEach((tr) =>
-      tr.addEventListener("click", () => openReport(+tr.dataset.i)));
+    body.querySelectorAll("tr[data-i]").forEach((tr) => tr.addEventListener("click", () => openReport(+tr.dataset.i)));
   }
 
-  // ── 상세 성적표 ──
-  function bar(label, val, cls) {
-    const w = Math.max(0, Math.min(100, Number(val) || 0));
-    const small = w < 18;
-    return `<div class="bar-row">
-      <span class="bar-tag">${label}</span>
-      <div class="bar-track">
-        <div class="bar-fill ${cls}" style="width:${w}%">
-          ${small ? "" : `<span class="bar-val">${val}</span>`}
-        </div>
-        ${small ? `<span class="bar-val dark" style="position:absolute;left:${w}%;top:50%;transform:translate(6px,-50%)">${val}</span>` : ""}
-      </div>
-    </div>`;
+  // ── 레이더 차트 (SVG) ──
+  function radarSVG(en, fi) {
+    const cx = 200, cy = 152, R = 110;
+    const axes = [{ k: "RC", dx: 0, dy: -1 }, { k: "WR", dx: 1, dy: 0 }, { k: "LC", dx: 0, dy: 1 }, { k: "SP", dx: -1, dy: 0 }];
+    const pt = (a, v) => [cx + a.dx * R * v / 100, cy + a.dy * R * v / 100];
+    const polyPts = (t) => axes.map((a) => pt(a, Number(t[a.k]) || 0).map((n) => n.toFixed(1)).join(",")).join(" ");
+    let rings = "";
+    [25, 50, 75, 100].forEach((lvl) => { rings += `<polygon points="${axes.map((a) => pt(a, lvl).map((n) => n.toFixed(1)).join(",")).join(" ")}" fill="none" stroke="#e2e8f0" stroke-width="1"/>`; });
+    const aLines = axes.map((a) => { const [x, y] = pt(a, 100); return `<line x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="#e2e8f0" stroke-width="1"/>`; }).join("");
+    const ringLabels = [25, 50, 75, 100].map((lvl) => `<text x="${cx + 4}" y="${(cy - R * lvl / 100 + 3).toFixed(1)}" font-size="8" fill="#cbd5e1">${lvl}</text>`).join("");
+    const labels = `
+      <text x="${cx}" y="${cy - R - 12}" text-anchor="middle" font-size="13" font-weight="700" fill="#475569">Reading</text>
+      <text x="${cx + R + 10}" y="${cy + 4}" text-anchor="start" font-size="13" font-weight="700" fill="#475569">Writing</text>
+      <text x="${cx}" y="${cy + R + 22}" text-anchor="middle" font-size="13" font-weight="700" fill="#475569">Listening</text>
+      <text x="${cx - R - 10}" y="${cy + 4}" text-anchor="end" font-size="13" font-weight="700" fill="#475569">Speaking</text>`;
+    return `<svg viewBox="0 0 400 320" role="img" aria-label="EF-SET radar chart">
+      ${rings}${aLines}${ringLabels}
+      <polygon points="${polyPts(en)}" fill="${EN}22" stroke="${EN}" stroke-width="2"/>
+      <polygon points="${polyPts(fi)}" fill="${FI}22" stroke="${FI}" stroke-width="2"/>
+      ${labels}
+    </svg>`;
+  }
+
+  // ── 그룹 막대 차트 (SVG) ──
+  function barSVG(en, fi) {
+    const x0 = 44, xR = 432, yTop = 26, yBot = 250;
+    const yFor = (v) => yBot - (v / 100) * (yBot - yTop);
+    const gw = (xR - x0) / 4, bw = 22, gap = 6, pad = (gw - (2 * bw + gap)) / 2;
+    let grid = "", bars = "", xlabels = "";
+    [0, 25, 50, 75, 100].forEach((v) => {
+      const y = yFor(v);
+      grid += `<line x1="${x0}" y1="${y.toFixed(1)}" x2="${xR}" y2="${y.toFixed(1)}" stroke="#eef2f7" stroke-width="1"/>`;
+      grid += `<text x="${x0 - 8}" y="${(y + 4).toFixed(1)}" text-anchor="end" font-size="11" fill="#94a3b8">${v}</text>`;
+    });
+    SK.forEach((k, i) => {
+      const gx = x0 + i * gw + pad;
+      const ev = Number(en[k]) || 0, xv = Number(fi[k]) || 0;
+      const eh = (ev / 100) * (yBot - yTop), xh = (xv / 100) * (yBot - yTop);
+      bars += `<rect x="${gx.toFixed(1)}" y="${(yBot - eh).toFixed(1)}" width="${bw}" height="${eh.toFixed(1)}" fill="${EN}" rx="2"/>`;
+      bars += `<rect x="${(gx + bw + gap).toFixed(1)}" y="${(yBot - xh).toFixed(1)}" width="${bw}" height="${xh.toFixed(1)}" fill="${FI}" rx="2"/>`;
+      xlabels += `<text x="${(gx + bw + gap / 2).toFixed(1)}" y="${yBot + 20}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#475569">${SKFULL[k]}</text>`;
+    });
+    return `<svg viewBox="0 0 460 290" role="img" aria-label="EF-SET bar chart">
+      ${grid}<line x1="${x0}" y1="${yTop}" x2="${x0}" y2="${yBot}" stroke="#cbd5e1" stroke-width="1"/>
+      <line x1="${x0}" y1="${yBot}" x2="${xR}" y2="${yBot}" stroke="#cbd5e1" stroke-width="1"/>
+      ${bars}${xlabels}
+    </svg>`;
   }
 
   function openReport(i) {
     const s = flat[i];
-    const skillsHtml = SKILLS.map((sk) => {
-      const ev = Number(s.entry[sk.key]), xv = Number(s.exit[sk.key]);
-      const d = xv - ev;
-      const delta = d > 0 ? `<span class="grow-up">+${d}</span>`
-                  : d < 0 ? `<span style="color:#dc2626;font-weight:700">${d}</span>`
-                  : `<span class="grow-flat">±0</span>`;
-      return `<div class="skill">
-        <div class="skill-head">
-          <span class="skill-name"><iconify-icon icon="${sk.icon}"></iconify-icon>${sk.name}</span>
-          <span class="skill-delta">${delta} · <span class="lvl-pill ${cefrClass(ev)}" style="font-size:0.72rem">${cefrLabel(ev)}</span> → <span class="lvl-pill ${cefrClass(xv)}" style="font-size:0.72rem">${cefrLabel(xv)}</span></span>
-        </div>
-        ${bar("입학", ev, "entry")}
-        ${bar("수료", xv, "exit")}
-      </div>`;
-    }).join("");
+    const en = s.entrance || {}, fi = s.final || {};
+    const eAvg = avg(en), xAvg = avg(fi);
+    const scoreCells = (t) => SK.map((k) => `<td>${Number(t[k]) || 0}</td>`).join("");
+    const changeCells = SK.map((k) => { const d = (Number(fi[k]) || 0) - (Number(en[k]) || 0); return `<td class="${d >= 0 ? "pos" : "neg"}">${d > 0 ? "+" + d : d}</td>`; }).join("");
+    const dTot = s.xTot - s.eTot;
 
-    const og = s.grow;
-    const ogTxt = og > 0 ? "+" + og : "" + og;
+    const genderCell = `<span class="${s.gender === "M" ? "on" : "off"}">M</span> · <span class="${s.gender === "F" ? "on" : "off"}">F</span>`;
+
     $("report").innerHTML = `
-      <div class="report-head">
-        <button class="report-close" id="rc-close" aria-label="닫기"><iconify-icon icon="solar:close-circle-linear"></iconify-icon></button>
-        <div class="brand"><img src="assets/brand/lcic-logo.png" alt="LCIC"> LCIC · EF-SET Report Card</div>
-        <h2>${escapeHtml(s.name)}</h2>
-        ${s.eng ? `<div class="eng">${escapeHtml(s.eng)}</div>` : ""}
-        <div class="meta">
-          ${s.cohort ? `<span><iconify-icon icon="solar:users-group-rounded-linear"></iconify-icon> ${escapeHtml(s.cohort)}</span>` : ""}
-          <span><iconify-icon icon="solar:login-2-linear"></iconify-icon> 입학 ${escapeHtml(s.entry.date || "–")}</span>
-          <span><iconify-icon icon="solar:diploma-verified-linear"></iconify-icon> 수료 ${escapeHtml(s.exit.date || "–")}</span>
+      <div class="spr-head">
+        <img class="spr-logo" src="assets/brand/lcic-logo.jpg" alt="Lapulapu Cebu International College">
+        <div>
+          <div class="spr-eyebrow">${esc(data.school || SCHOOL)}</div>
+          <div class="spr-title">Student Progress Report</div>
         </div>
       </div>
-      <div class="report-body">
-        <div class="overall">
-          <div class="ov-block">
-            <div class="ov-cap">입학 종합</div>
-            <div class="ov-score" style="color:var(--text-dim)">${s.eAvg}</div>
-            <span class="ov-lvl ${cefrClass(s.eAvg)}">${cefrLabel(s.eAvg)}</span>
-          </div>
-          <div class="ov-arrow"><iconify-icon icon="solar:arrow-right-linear"></iconify-icon></div>
-          <div class="ov-block">
-            <div class="ov-cap">수료 종합</div>
-            <div class="ov-score" style="color:var(--accent-deep)">${s.xAvg}</div>
-            <span class="ov-lvl ${cefrClass(s.xAvg)}">${cefrLabel(s.xAvg)}</span>
-          </div>
-          <div class="ov-grow">
-            <div class="big">${ogTxt}</div>
-            <div class="cap">종합 성장 (점)</div>
-          </div>
-        </div>
-        ${skillsHtml}
+      <div class="spr-rule"></div>
+
+      <table class="info-tbl"><tbody>
+        <tr>
+          <td class="lbl">Name</td><td class="val">${esc(s.name)}${s.sub ? ` <span style="color:#94a3b8">(${esc(s.sub)})</span>` : ""}</td>
+          <td class="lbl">Gender</td><td class="val gender">${genderCell}</td>
+          <td class="lbl">Nationality</td><td class="val">${esc(s.nationality || "—")}</td>
+        </tr>
+        <tr>
+          <td class="lbl">DOB</td><td class="val">${fmtDate(s.dob)}</td>
+          <td class="lbl">Group</td><td class="val" colspan="3">${esc(s.group || "—")}</td>
+        </tr>
+        <tr>
+          <td class="lbl">Start Date</td><td class="val">${fmtDate(s.startDate)}</td>
+          <td class="lbl">End Date</td><td class="val">${fmtDate(s.endDate)}</td>
+          <td class="lbl">Period of Stay</td><td class="val">${esc(s.period || "—")}</td>
+        </tr>
+      </tbody></table>
+
+      <div class="sect-head">EF-SET Assessment Result</div>
+      <table class="score-tbl">
+        <thead><tr><th></th>${SK.map((k) => `<th>${SKHEAD[k]}</th>`).join("")}<th>Total /400</th><th>CEFR</th></tr></thead>
+        <tbody>
+          <tr><th>Entrance</th>${scoreCells(en)}<td class="tot">${s.eTot}</td><td><span class="lvl-pill ${cefrClass(eAvg)}">${cefrLabel(eAvg)}</span></td></tr>
+          <tr><th>Final Test</th>${scoreCells(fi)}<td class="tot">${s.xTot}</td><td><span class="lvl-pill ${cefrClass(xAvg)}">${cefrLabel(xAvg)}</span></td></tr>
+          <tr class="change"><th>Change</th>${changeCells}<td class="tot ${dTot >= 0 ? "pos" : "neg"}">${dTot > 0 ? "+" + dTot : dTot}</td><td></td></tr>
+        </tbody>
+      </table>
+      <table class="cefr-legend"><tbody><tr>
+        <td class="band">A1–A2</td><td class="desc">Basic — minimal / severe errors</td>
+        <td class="band">B1–B2</td><td class="desc">Intermediate to High Intermediate</td>
+        <td class="band">C1–C2</td><td class="desc">Advanced — very good / native-like</td>
+      </tr></tbody></table>
+
+      <div class="charts">
+        <div class="chart-box">${radarSVG(en, fi)}<div class="chart-legend"><span><span class="lg en"></span>Entrance</span><span><span class="lg fi"></span>Final</span></div></div>
+        <div class="chart-box">${barSVG(en, fi)}<div class="chart-legend"><span><span class="lg en"></span>Entrance</span><span><span class="lg fi"></span>Final</span></div></div>
       </div>
-      <div class="report-foot">
-        점수는 0–100점 척도이며 CEFR 레벨(A1–C2)은 EF SET 환산 기준입니다. Listening·Reading은 EF Standard English Test, Speaking·Writing은 교내 평가 결과입니다.
-        ${s.note ? "<br>" + escapeHtml(s.note) : ""}
-      </div>
-      <div class="report-actions">
-        <button class="btn-print" id="rc-print"><iconify-icon icon="solar:printer-bold"></iconify-icon> 인쇄 / PDF 저장</button>
-        <button class="btn-ghost" id="rc-close2">닫기</button>
-      </div>`;
+
+      <div class="sect-head">Teacher's Comment</div>
+      <div class="comment-box ${s.comment ? "" : "empty"}">${s.comment ? esc(s.comment).replace(/\n/g, "<br>") : "— No comment yet —"}</div>
+
+      <div class="spr-foot">EF SET = EF Standard English Test. RC·LC are EF Standard English Test sections; WR·SP are LCIC in-house assessments. CEFR is derived from the average of the four section scores (0–100 scale). Issued by ${esc(data.school || SCHOOL)}.</div>`;
 
     $("detail").classList.add("open");
     document.body.style.overflow = "hidden";
-    $("rc-close").addEventListener("click", closeReport);
-    $("rc-close2").addEventListener("click", closeReport);
-    $("rc-print").addEventListener("click", () => window.print());
+    $("detail").scrollTop = 0;
+    $("rc-close").onclick = closeReport;
+    $("rc-print").onclick = () => window.print();
   }
-  function closeReport() {
-    $("detail").classList.remove("open");
-    document.body.style.overflow = "";
-  }
+  function closeReport() { $("detail").classList.remove("open"); document.body.style.overflow = ""; }
 
   // ── 이벤트 ──
   entryForm.addEventListener("submit", (e) => { e.preventDefault(); unlock(entryPw.value, false); });
@@ -498,19 +433,16 @@
   document.querySelectorAll("th[data-sort]").forEach((th) => {
     th.addEventListener("click", () => {
       const k = th.dataset.sort;
-      if (sortKey === k) sortDir *= -1;
-      else { sortKey = k; sortDir = (k === "name" || k === "cohort") ? 1 : -1; }
+      if (sortKey === k) sortDir *= -1; else { sortKey = k; sortDir = (k === "name" || k === "nat") ? 1 : -1; }
       document.querySelectorAll("th .arrow").forEach((a) => a.textContent = "");
       th.querySelector(".arrow").textContent = sortDir > 0 ? "▲" : "▼";
       renderList();
     });
   });
-  $("detail").addEventListener("click", (e) => { if (e.target.id === "detail") closeReport(); });
+  $("detail").addEventListener("click", (e) => { if (e.target.id === "detail" || e.target.classList.contains("detail-inner")) closeReport(); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeReport(); });
 
-  (function init() {
-    try { const ssp = sessionStorage.getItem(SS_KEY); if (ssp) unlock(ssp, true); } catch (_) {}
-  })();
+  (function init() { try { const ssp = sessionStorage.getItem(SS_KEY); if (ssp) unlock(ssp, true); } catch (_) {} })();
 </script>
 </body>
 </html>
