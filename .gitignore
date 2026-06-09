@@ -12,6 +12,7 @@ scripts/_*.json
 .gstack/
 scripts/sheet-to-report.cjs
 scripts/make-agency-page.cjs
+scripts/agencies.json
 scripts/_*.html
 _*.html
 _*.png
