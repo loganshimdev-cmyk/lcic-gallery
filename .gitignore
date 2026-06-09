@@ -10,3 +10,4 @@ scripts/report-data.json
 scripts/_auto_report.json
 scripts/_*.json
 .gstack/
+scripts/sheet-to-report.cjs
