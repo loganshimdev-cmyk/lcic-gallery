@@ -11,3 +11,7 @@ scripts/_auto_report.json
 scripts/_*.json
 .gstack/
 scripts/sheet-to-report.cjs
+scripts/make-agency-page.cjs
+scripts/_*.html
+_*.html
+_*.png
