@@ -110,14 +110,23 @@
   .chart-legend .lg { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
   .lg.en { background: #2563eb; } .lg.fi { background: #ea580c; }
 
-  .certify { position: relative; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px 28px; display: flex; justify-content: space-between; align-items: flex-end; gap: 30px; overflow: hidden; }
-  .cert-seal { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 132px; height: 132px; opacity: 0.07; pointer-events: none; }
-  .cert-text { position: relative; font-size: 0.84rem; color: #475569; line-height: 1.65; max-width: 56%; }
-  .cert-issued { margin-top: 16px; font-weight: 700; color: #334155; letter-spacing: 0.01em; }
-  .cert-sign { position: relative; text-align: center; flex-shrink: 0; }
-  .sign-line { width: 212px; height: 40px; border-bottom: 1.5px solid #64748b; }
-  .sign-name { font-weight: 800; color: #0f172a; margin-top: 8px; font-size: 0.92rem; }
-  .sign-school { font-size: 0.76rem; color: #64748b; margin-top: 2px; }
+  /* ── TOR-style 인증·서명 (실제 LCIC TOR 양식) ── */
+  .tor-divider { border: none; border-top: 1.6px dashed #94a3b8; margin: 30px 0 9px; }
+  .tor-closed { text-align: center; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 22px; }
+  .tor-remarks { font-size: 0.88rem; color: #1f2937; margin-bottom: 28px; }
+  .tor-remarks b { color: #0f172a; }
+  .sign-grid { display: flex; justify-content: space-between; gap: 36px; margin-bottom: 26px; }
+  .sign-grid.center { justify-content: center; }
+  .sign-cell { display: inline-block; }
+  .sign-role { font-size: 0.86rem; color: #334155; margin-bottom: 44px; }
+  .sign-name-tor { font-weight: 800; color: #0f172a; font-size: 0.95rem; letter-spacing: 0.03em; text-align: center; min-width: 220px; }
+  .sign-title { font-size: 0.78rem; color: #64748b; margin-top: 3px; text-align: center; }
+  .tor-foot2 { position: relative; display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-top: 30px; min-height: 110px; }
+  .tor-tag { font-style: italic; font-weight: 700; color: #334155; font-size: 0.88rem; align-self: flex-end; }
+  .tor-seal-area { position: relative; text-align: center; flex-shrink: 0; min-width: 200px; padding: 8px 0; }
+  .tor-seal { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); width: 124px; height: 124px; opacity: 0.10; pointer-events: none; }
+  .tor-date { position: relative; font-size: 0.8rem; font-weight: 700; color: #334155; }
+  .tor-novalid { position: relative; font-size: 0.82rem; font-weight: 800; color: #0f172a; margin-top: 10px; }
   .spr-foot { margin-top: 22px; padding-top: 14px; border-top: 1px solid #eef2f7; font-size: 0.74rem; color: #94a3b8; line-height: 1.6; }
 
   /* ── 인쇄: A4 ── */
@@ -137,8 +146,9 @@
     .charts { margin-top: 9px !important; gap: 10px !important; }
     .chart-box svg { height: 188px !important; }
     .chart-legend { margin-top: 0 !important; font-size: 0.72rem !important; }
-    .certify { padding: 14px 20px !important; }
-    .sign-line { height: 32px !important; }
+    .sign-role { margin-bottom: 32px !important; }
+    .sign-grid { margin-bottom: 18px !important; }
+    .tor-foot2 { min-height: 88px !important; margin-top: 20px !important; }
     .spr-foot { margin-top: 12px !important; padding-top: 9px !important; font-size: 0.66rem !important; }
     .info-tbl, .score-tbl, .cefr-legend, .spr, .charts, .chart-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .info-tbl td.lbl, .score-tbl thead th, .score-tbl tbody th, .score-tbl tr.change th, .score-tbl tr.change td, .cefr-legend td.band, .spr-rule, [class^="cefr-"] { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -421,17 +431,36 @@
         <div class="chart-box">${barSVG(en, fi)}<div class="chart-legend"><span><span class="lg en"></span>Entrance</span><span><span class="lg fi"></span>Final</span></div></div>
       </div>
 
-      <div class="sect-head">Certification</div>
-      <div class="certify">
-        <img class="cert-seal" src="assets/brand/lcic-logo.png" alt="">
-        <div class="cert-text">
-          This report certifies the EF-SET assessment results recorded above, achieved during the student's English program at ${esc(data.school || SCHOOL)}.
-          <div class="cert-issued">Issued&nbsp;&nbsp;${fmtDate(s.issued || s.endDate)}</div>
+      <hr class="tor-divider">
+      <div class="tor-closed">(TRANSCRIPT CLOSED. ANY ENTRY BELOW THIS LINE IS NULL AND VOID.)</div>
+      <div class="tor-remarks"><b>Remarks:</b> ${esc(s.remarks || "University Credits")}</div>
+
+      <div class="sign-grid">
+        <div class="sign-cell">
+          <div class="sign-role">Prepared by:</div>
+          <div class="sign-name-tor">ELDER E. MORTEGA</div>
+          <div class="sign-title">Registrar Assistant</div>
         </div>
-        <div class="cert-sign">
-          <div class="sign-line"></div>
-          <div class="sign-name">Academic Director</div>
-          <div class="sign-school">Lapulapu Cebu International College — CELS</div>
+        <div class="sign-cell">
+          <div class="sign-role">Checked by:</div>
+          <div class="sign-name-tor">EDU C. LAPEZ, LPT</div>
+          <div class="sign-title">Student Credit Evaluator</div>
+        </div>
+      </div>
+      <div class="sign-grid center">
+        <div class="sign-cell">
+          <div class="sign-role">Approved by:</div>
+          <div class="sign-name-tor">SHARON S. MONSALE, PH.D.</div>
+          <div class="sign-title">College Registrar</div>
+        </div>
+      </div>
+
+      <div class="tor-foot2">
+        <div class="tor-tag">&ldquo;Bridging Communities through Education Excellence&rdquo;</div>
+        <div class="tor-seal-area">
+          <img class="tor-seal" src="assets/brand/lcic-logo.png" alt="">
+          <div class="tor-date">DATE:&nbsp;${fmtDate(s.issued || s.endDate)}</div>
+          <div class="tor-novalid">NOT VALID WITHOUT SCHOOL SEAL</div>
         </div>
       </div>
 
