@@ -263,6 +263,27 @@
   const sum = (t) => SK.reduce((a, k) => a + (Number(t && t[k]) || 0), 0);
   const avg = (t) => Math.round(sum(t) / 4);
 
+  // 점수 기반 자동 코멘트(간략, 격식 영어). 시트에 코멘트를 직접 적으면 그게 우선(override).
+  // 동사로 시작해 성별 무관. 최종 점수가 없으면 빈 코멘트.
+  function autoComment(en, fi) {
+    const e = sum(en), x = sum(fi);
+    if (!x) return "";
+    const g = x - e;
+    const eL = cefrLabel(avg(en)), xL = cefrLabel(avg(fi));
+    const up = cefrIdx(avg(fi)) - cefrIdx(avg(en));
+    const d = SK.map((k) => ({ k, d: (Number(fi[k]) || 0) - (Number(en[k]) || 0), f: Number(fi[k]) || 0 }));
+    const byImp = d.slice().sort((a, b) => b.d - a.d);
+    const byTop = d.slice().sort((a, b) => b.f - a.f);
+    const impK = byImp[0].k;
+    const topK = byTop[0].k === impK && byTop[1] ? byTop[1].k : byTop[0].k; // 최향상과 겹치면 차순위
+    const imp = SKFULL[impK], top = SKFULL[topK];
+    if (up >= 1 && g >= 30) return `Achieved excellent progress, advancing from ${eL} to ${xL} (+${g} overall), with the strongest gains in ${imp} and clear strength in ${top}.`;
+    if (g >= 25) return `Made strong, well-rounded progress (+${g} overall), led by improvement in ${imp} and a solid command of ${top}.`;
+    if (g >= 10) return `Showed steady improvement across all four skills (+${g} overall), most notably in ${imp}.`;
+    if (g >= 1) return `Made modest, consistent gains (+${g} overall), with reliable performance in ${top}.`;
+    return `Maintained a stable level across the four skills, performing most consistently in ${top}.`;
+  }
+
   const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   function fmtDate(iso) {
     if (!iso) return "—";
@@ -434,7 +455,7 @@
 
       <div class="comment-box">
         <div class="comment-head">Comment</div>
-        <div class="comment-body">${esc(s.comment || "")}</div>
+        <div class="comment-body">${esc(s.comment || autoComment(en, fi))}</div>
       </div>
 
       <hr class="tor-divider">
