@@ -70,6 +70,20 @@
   .bg-mail { color: var(--accent-hover); font-weight: 700; text-decoration: none; }
   .bg-mail:hover { text-decoration: underline; }
 
+  /* Screenshots from the actual system */
+  .bg-shot { margin: 18px 0 2px; text-align: center; }
+  .bg-shot img { width: 100%; max-width: 430px; border: 1px solid var(--hairline); border-radius: 12px; box-shadow: var(--shadow-md); }
+  .bg-shot.wide img { max-width: 560px; }
+  .bg-shot .cap { font-size: 0.78rem; color: var(--text-faint); margin-top: 8px; }
+  .bg-inline-shot { vertical-align: middle; height: 26px; border-radius: 5px; border: 1px solid var(--hairline); margin: 0 3px; }
+  /* Instagram follow */
+  .bg-ig { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+  .bg-ig img { width: 148px; border-radius: 16px; box-shadow: var(--shadow-md); }
+  .bg-ig .ig-t { font-weight: 800; color: var(--text); font-size: 1.06rem; display: flex; align-items: center; gap: 8px; }
+  .bg-ig .ig-t iconify-icon { color: #d6249f; font-size: 24px; }
+  .bg-ig .ig-h { color: var(--accent-deep); font-weight: 800; margin-top: 4px; }
+  .bg-ig .ig-d { color: var(--text-dim); font-size: 0.9rem; margin-top: 6px; line-height: 1.55; }
+
   @media (max-width: 720px) {
     .bg-facts { grid-template-columns: 1fr 1fr; }
     .bg-grid { grid-template-columns: 1fr; }
@@ -164,9 +178,16 @@
       <li><b data-i18n-en="Double-check before booking">예약 전 다시 확인</b><span class="sub" data-i18n-en="Make sure it doesn't clash with another schedule. Don't book if you're unsure.">다른 일정과 겹치지 않는지 확인. 확실하지 않으면 예약하지 마세요.</span></li>
       <li><b data-i18n-en="Click &ldquo;Find&rdquo;">&ldquo;Find&rdquo; 클릭</b><span class="sub" data-i18n-en="If a local buddy is matched, you're booked.">현지 버디가 매칭되면 예약 완료입니다.</span></li>
     </ol>
+    <div class="bg-shot wide">
+      <img src="assets/buddy/booking-screen.png" alt="Student Buddy booking screen">
+      <div class="cap" data-i18n-en="Actual booking screen: tick &ldquo;One to one only&rdquo;, toggle a slot, pick an activity, then press Find.">실제 예약 화면: &ldquo;One to one only&rdquo; 체크 → 시간 토글 켜기 → 활동 선택 → Find.</div>
+    </div>
     <div class="bg-callout info" style="margin-top:16px;">
       <div class="ttl"><iconify-icon icon="solar:info-circle-bold-duotone"></iconify-icon> <span data-i18n-en="&ldquo;No match found&rdquo;?">&ldquo;No match found&rdquo;가 뜨면?</span></div>
       <span data-i18n-en="It means no local buddy is available for that slot &mdash; not an error. Just pick another date or time.">그 시간에 가능한 현지 버디가 없다는 뜻입니다 (오류 아님). 다른 날짜·시간을 고르면 됩니다.</span>
+      <div class="bg-shot" style="margin-top:12px;">
+        <img src="assets/buddy/no-match.png" alt="No match found message" style="max-width:380px;">
+      </div>
     </div>
   </section>
 
@@ -189,6 +210,10 @@
       <div class="bg-tile"><div class="t" data-i18n-en="Review Class">Review Class</div><div class="d" data-i18n-en="Explain your struggle first; the buddy helps you understand the class.">내 어려움을 먼저 설명하면 수업 이해를 도와줌.</div></div>
       <div class="bg-tile"><div class="t" data-i18n-en="Fun Activity (Fri)">Fun Activity (금)</div><div class="d" data-i18n-en="Games, competitions, campus tour &mdash; Fridays only, 50 min.">게임·대회·캠퍼스 투어 &mdash; 금요일 전용 50분.</div></div>
     </div>
+    <div class="bg-shot">
+      <img src="assets/buddy/calendar.png" alt="Monthly event calendar">
+      <div class="cap" data-i18n-en="Event Guide calendar &mdash; Fun Activity runs every Friday; check it for event dates & venues.">Event Guide 캘린더 &mdash; Fun Activity는 매주 금요일. 행사 날짜·장소도 여기서 확인.</div>
+    </div>
   </section>
 
   <!-- Pairing & where to meet -->
@@ -198,6 +223,7 @@
       <div class="bg-tile"><div class="t"><iconify-icon icon="solar:user-plus-bold-duotone"></iconify-icon> 1 : 1</div><div class="d" data-i18n-en="1 local buddy + you.">현지 버디 1명 + 나.</div></div>
       <div class="bg-tile"><div class="t"><iconify-icon icon="solar:users-group-two-rounded-bold-duotone"></iconify-icon> 1 : 2</div><div class="d" data-i18n-en="1 local buddy + you + one more international student matched by the system.">현지 버디 1명 + 나 + 시스템이 랜덤 배정한 다른 국제 학생 1명.</div></div>
     </div>
+    <p style="color:var(--text-dim); font-size:0.88rem; margin:14px 0 0; display:flex; align-items:center; gap:6px; flex-wrap:wrap;"><span data-i18n-en="Set this with the checkbox at the top of the booking screen:">예약 화면 상단의 이 체크박스로 설정합니다:</span> <img class="bg-inline-shot" src="assets/buddy/one-to-one.png" alt="One to one only checkbox"></p>
     <div class="bg-callout info">
       <div class="ttl"><iconify-icon icon="solar:map-point-wave-bold-duotone"></iconify-icon> <span data-i18n-en="Where to meet">만남 장소</span></div>
       <span data-i18n-en="<b>Weekday sessions:</b> CELS 3rd floor &mdash; check your assignment on the <b>Buddy Tracker</b> sheet posted on the glass wall. <b>Friday Fun Activity & events</b> (e.g. awarding ceremony): <b>2nd floor, SALC, Language Building</b>. Always check the Event Guide calendar for the exact place & time."><b>평일 세션:</b> CELS 3층 &mdash; 유리벽에 붙은 <b>Buddy Tracker</b> 시트에서 본인 배정을 확인하세요. <b>금요일 Fun Activity·행사</b>(예: 시상식): <b>2층 SALC, Language Building</b>. 정확한 장소·시간은 Event Guide 캘린더에서 확인.</span>
@@ -211,12 +237,20 @@
       <li><b data-i18n-en="Go to Student Buddy">Student Buddy로 이동</b><span class="sub" data-i18n-en="Find the booked session and click &ldquo;Show Details&rdquo;.">예약한 세션을 찾아 &ldquo;Show Details&rdquo; 클릭.</span></li>
       <li><b data-i18n-en="Enter a reason & Cancel Class">사유 입력 후 Cancel Class</b><span class="sub" data-i18n-en="Type your reason, then click &ldquo;Cancel Class&rdquo;. The button turns red when canceled.">취소 사유를 적고 &ldquo;Cancel Class&rdquo; 클릭. 취소되면 버튼이 빨간색으로 변합니다.</span></li>
     </ol>
+    <div class="bg-shot wide">
+      <img src="assets/buddy/session-list.png" alt="Booked sessions with Show Details">
+      <div class="cap" data-i18n-en="Booked = blue &ldquo;Show Details&rdquo;; once canceled it turns red. Click it to cancel.">예약됨 = 파란 &ldquo;Show Details&rdquo;, 취소되면 빨간색. 이 버튼으로 취소합니다.</div>
+    </div>
     <div class="bg-callout warn">
       <div class="ttl"><iconify-icon icon="solar:danger-triangle-bold-duotone"></iconify-icon> <span data-i18n-en="Cancellation penalty &mdash; important!">취소 벌점 &mdash; 꼭 확인!</span></div>
       <div class="bg-pen">
         <div class="row"><span class="badge b1" data-i18n-en="1st">1회</span><span class="txt" data-i18n-en="No penalty.">벌점 없음.</span></div>
         <div class="row"><span class="badge b2" data-i18n-en="2nd">2회차</span><span class="txt" data-i18n-en="<b>Cannot book for 1 week.</b>"><b>1주일간 예약 불가.</b></span></div>
         <div class="row"><span class="badge b3" data-i18n-en="3rd">3회차</span><span class="txt" data-i18n-en="<b>Cannot book for 1 month.</b>"><b>1개월간 예약 불가.</b></span></div>
+      </div>
+      <div class="bg-shot" style="margin-top:14px;">
+        <img src="assets/buddy/cancel-penalty.png" alt="Cancel penalty dialog" style="max-width:400px;">
+        <div class="cap" data-i18n-en="The penalty notice shown in the cancellation dialog.">취소창에 표시되는 벌점 안내.</div>
       </div>
       <div style="margin-top:11px;" data-i18n-en="⚠️ Never go to a session you canceled (even by mistake). If you canceled by accident, report it.">⚠️ 취소한 세션엔 (실수로 취소했더라도) 가지 마세요. 실수로 취소했다면 신고하세요.</div>
     </div>
@@ -251,6 +285,19 @@
       <span class="chip"><b>D</b>ynamic</span>
       <span class="chip"><b>D</b>iligent</span>
       <span class="chip"><b>Y</b>ou</span>
+    </div>
+  </section>
+
+  <!-- Follow / Event News -->
+  <section class="bg-card fade-up">
+    <h2><iconify-icon icon="mdi:instagram" style="color:#d6249f"></iconify-icon> <span data-i18n-en="Follow & Event News">팔로우 & 행사 소식</span></h2>
+    <div class="bg-ig">
+      <img src="assets/buddy/instagram-qr.jpg" alt="Instagram QR code @LCIC_BUDDYSYSTEM">
+      <div>
+        <div class="ig-t"><iconify-icon icon="mdi:instagram"></iconify-icon> <span data-i18n-en="Follow on Instagram">인스타그램 팔로우</span></div>
+        <div class="ig-h">@LCIC_BUDDYSYSTEM</div>
+        <div class="ig-d" data-i18n-en="Scan the QR code to follow Buddy System news, events, and photos.">QR을 스캔해 버디시스템 소식·행사·사진을 받아보세요.</div>
+      </div>
     </div>
   </section>
 
