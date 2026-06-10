@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title data-i18n-en="Student Buddy · Quick Guide · LCIC">버디 세션 한눈 가이드 · LCIC</title>
+<link rel="icon" type="image/png" href="assets/brand/lcic-logo.png">
+<script src="assets/background.js?v=8"></script>
+<link rel="stylesheet" href="assets/shared.css?v=13">
+<script src="assets/i18n.js?v=4" defer></script>
+<script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+<style>
+  .bg-wrap { max-width: 860px; margin: 0 auto; padding: 0 20px 110px; }
+
+  /* Quick facts strip */
+  .bg-facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 4px 0 38px; }
+  .bg-fact { background: var(--bg-elev); border: 1px solid var(--hairline); border-radius: 16px; padding: 16px 15px; box-shadow: var(--shadow-sm); }
+  .bg-fact .ic { width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent-hover); margin-bottom: 10px; }
+  .bg-fact .ic iconify-icon { font-size: 21px; }
+  .bg-fact .lab { font-size: 0.72rem; font-weight: 800; color: var(--text-faint); text-transform: uppercase; letter-spacing: .05em; }
+  .bg-fact .val { font-size: 0.92rem; font-weight: 700; color: var(--text); margin-top: 3px; line-height: 1.45; }
+
+  /* Section card */
+  .bg-card { background: var(--bg-elev); border: 1px solid var(--hairline); border-radius: 20px; padding: 26px 28px; box-shadow: var(--shadow-sm); margin-bottom: 20px; }
+  .bg-card > h2 { display: flex; align-items: center; gap: 11px; font-size: 1.22rem; font-weight: 800; color: var(--text); margin: 0 0 18px; }
+  .bg-card > h2 .num { flex-shrink: 0; width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; background: linear-gradient(135deg, var(--accent), var(--accent-deep)); color: #fff; font-size: 0.92rem; font-weight: 800; }
+
+  /* Steps */
+  .bg-steps { list-style: none; margin: 0; padding: 0; counter-reset: s; }
+  .bg-steps > li { position: relative; padding: 0 0 16px 42px; counter-increment: s; }
+  .bg-steps > li::before { content: counter(s); position: absolute; left: 0; top: 0; width: 27px; height: 27px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-deep); font-weight: 800; font-size: 0.84rem; display: grid; place-items: center; }
+  .bg-steps > li::after { content: ""; position: absolute; left: 13px; top: 30px; bottom: 2px; width: 2px; background: var(--hairline); }
+  .bg-steps > li:last-child { padding-bottom: 0; }
+  .bg-steps > li:last-child::after { display: none; }
+  .bg-steps b { color: var(--text); }
+  .bg-steps .sub { display: block; color: var(--text-dim); font-size: 0.9rem; margin-top: 3px; line-height: 1.55; }
+
+  /* Two-column tiles */
+  .bg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .bg-tile { border: 1px solid var(--hairline); border-radius: 14px; padding: 16px 18px; background: var(--surface); }
+  .bg-tile .t { font-weight: 800; color: var(--text); font-size: 0.98rem; margin-bottom: 5px; display: flex; align-items: center; gap: 7px; }
+  .bg-tile .t iconify-icon { color: var(--accent-hover); font-size: 18px; }
+  .bg-tile .d { color: var(--text-dim); font-size: 0.88rem; line-height: 1.55; }
+  .bg-tile .time { font-variant-numeric: tabular-nums; font-weight: 800; color: var(--accent-deep); }
+
+  /* Callout (warning / info) */
+  .bg-callout { border-radius: 14px; padding: 16px 18px; margin-top: 4px; font-size: 0.92rem; line-height: 1.6; }
+  .bg-callout.warn { background: #fff7ed; border: 1px solid #fdba74; color: #9a3412; }
+  .bg-callout.warn b { color: #c2410c; }
+  .bg-callout.info { background: var(--accent-tint); border: 1px solid rgba(59,130,246,.25); color: #1e3a8a; }
+  .bg-callout .ttl { display: flex; align-items: center; gap: 8px; font-weight: 800; margin-bottom: 7px; }
+  .bg-callout .ttl iconify-icon { font-size: 19px; }
+
+  /* Penalty rows */
+  .bg-pen { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+  .bg-pen .row { display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid #fed7aa; border-radius: 11px; padding: 11px 14px; }
+  .bg-pen .badge { flex-shrink: 0; font-weight: 800; font-size: 0.8rem; padding: 4px 11px; border-radius: 999px; }
+  .bg-pen .b1 { background: #dcfce7; color: #15803d; }
+  .bg-pen .b2 { background: #fef9c3; color: #a16207; }
+  .bg-pen .b3 { background: #fee2e2; color: #b91c1c; }
+  .bg-pen .txt { color: #7c2d12; font-size: 0.92rem; }
+  .bg-pen .txt b { color: #9a3412; }
+
+  /* Good buddy chips */
+  .bg-good { display: flex; flex-wrap: wrap; gap: 8px; }
+  .bg-good .chip { background: var(--surface); border: 1px solid var(--hairline); border-radius: 999px; padding: 7px 14px; font-size: 0.86rem; color: var(--text-dim); }
+  .bg-good .chip b { color: var(--accent-deep); }
+
+  .bg-mail { color: var(--accent-hover); font-weight: 700; text-decoration: none; }
+  .bg-mail:hover { text-decoration: underline; }
+
+  @media (max-width: 720px) {
+    .bg-facts { grid-template-columns: 1fr 1fr; }
+    .bg-grid { grid-template-columns: 1fr; }
+    .bg-card { padding: 22px 18px; }
+  }
+
+  /* Print: clean A4 handout */
+  @media print {
+    .brand-mark, .nav-pill, #site-bg, .bg-canvas, canvas { display: none !important; }
+    body { background: #fff !important; }
+    header { padding: 10px 0 14px !important; }
+    .bg-card, .bg-fact { box-shadow: none !important; break-inside: avoid; }
+    .bg-callout, .bg-tile, .bg-pen .row { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    @page { size: A4; margin: 12mm; }
+  }
+</style>
+</head>
+<body data-page="buddy-guide">
+
+<a class="brand-mark" href="index.html" aria-label="LCIC 홈으로" data-i18n-en-attr="aria-label|Back to LCIC home">
+  <img src="assets/brand/lcic-logo.png" alt="LCIC logo">
+  <span class="brand-name">
+    <span>Lapulapu Cebu</span>
+    <span>International</span>
+    <span>College</span>
+  </span>
+</a>
+
+<nav class="nav-pill">
+  <a href="index.html"><iconify-icon icon="solar:home-2-bold-duotone" inline></iconify-icon> <span data-i18n-en="Home">홈</span></a>
+  <a href="curriculum.html"><iconify-icon icon="solar:notebook-bold-duotone" inline></iconify-icon> <span data-i18n-en="Curriculum">커리큘럼</span></a>
+  <a href="buddy-guide.html" class="active"><iconify-icon icon="solar:users-group-rounded-bold-duotone" inline></iconify-icon> <span data-i18n-en="Buddy Guide">버디 가이드</span></a>
+  <a href="faq.html"><iconify-icon icon="solar:question-circle-bold-duotone" inline></iconify-icon> <span data-i18n-en="FAQ">궁금한 사항</span></a>
+  <div class="lang-toggle" data-lang-toggle role="group" aria-label="Language">
+    <button type="button" data-lang-to="ko">KO</button>
+    <button type="button" data-lang-to="en">EN</button>
+  </div>
+</nav>
+
+<header style="padding: 150px 20px 38px; text-align: center;">
+  <div class="fade-up">
+    <span class="eyebrow"><span class="dot"></span> STUDENT BUDDY SYSTEM</span>
+  </div>
+  <h1 class="headline fade-up delay-1" style="margin-top: 24px;" data-i18n-en="Student Buddy &mdash; Quick Guide">버디 세션 한눈 가이드</h1>
+  <p class="subhead fade-up delay-2" style="margin-top: 16px;" data-i18n-en="Booking, cancellation, penalties and where to meet &mdash;<br>the parts students ask about most, all on one page.">
+    예약부터 취소·벌점·만남 장소까지 —<br>가장 많이 헷갈리는 것만 한 페이지에 모았습니다.
+  </p>
+</header>
+
+<main class="bg-wrap">
+
+  <!-- Quick facts -->
+  <div class="bg-facts fade-up">
+    <div class="bg-fact">
+      <div class="ic"><iconify-icon icon="solar:clock-circle-bold-duotone"></iconify-icon></div>
+      <div class="lab" data-i18n-en="Weekday">평일</div>
+      <div class="val">16:10&ndash;17:00<br>17:10&ndash;18:00</div>
+    </div>
+    <div class="bg-fact">
+      <div class="ic"><iconify-icon icon="solar:confetti-minimalistic-bold-duotone"></iconify-icon></div>
+      <div class="lab" data-i18n-en="Friday">금요일</div>
+      <div class="val" data-i18n-en="Fun Activity<br>(50 min)">Fun Activity<br>(50분)</div>
+    </div>
+    <div class="bg-fact">
+      <div class="ic"><iconify-icon icon="solar:map-point-bold-duotone"></iconify-icon></div>
+      <div class="lab" data-i18n-en="Where">장소</div>
+      <div class="val" data-i18n-en="CELS 3F (weekday)<br>2F SALC (Fri/event)">CELS 3층 (평일)<br>2층 SALC (금/행사)</div>
+    </div>
+    <div class="bg-fact">
+      <div class="ic"><iconify-icon icon="solar:bookmark-bold-duotone"></iconify-icon></div>
+      <div class="lab" data-i18n-en="Note">참고</div>
+      <div class="val" data-i18n-en="It's an elective &mdash; attendance counts">선택과목 &mdash; 출석에 반영</div>
+    </div>
+  </div>
+
+  <!-- What is it -->
+  <section class="bg-card fade-up">
+    <h2><iconify-icon icon="solar:users-group-rounded-bold-duotone" style="color:var(--accent-hover)"></iconify-icon> <span data-i18n-en="What is a Buddy Session?">버디 세션이란?</span></h2>
+    <p style="color:var(--text-dim); line-height:1.7; margin:0;" data-i18n-en="A buddy session pairs you (international student) with a local LCIC student to practice English, make friends, and learn about local culture &mdash; 50 minutes per session. You book the sessions yourself in the Student System.">
+      버디 세션은 <b>나(국제 학생)</b>와 <b>현지 LCIC 학생</b>을 짝지어 영어를 연습하고, 친구를 사귀고, 현지 문화를 배우는 활동입니다 &mdash; 한 세션 50분. 예약은 <b>Student System에서 직접</b> 합니다.
+    </p>
+  </section>
+
+  <!-- How to book -->
+  <section class="bg-card fade-up">
+    <h2><span class="num">1</span> <span data-i18n-en="How to Book">예약하는 법</span></h2>
+    <ol class="bg-steps">
+      <li><b data-i18n-en="Check your login credentials">로그인 정보 확인</b><span class="sub" data-i18n-en="Find your Student System ID & password in your LCIC email.">LCIC 이메일에서 Student System 아이디·비밀번호를 확인하세요.</span></li>
+      <li><b data-i18n-en="Open &ldquo;Student Buddy&rdquo;">&ldquo;Student Buddy&rdquo; 열기</b><span class="sub" data-i18n-en="Log in to the Student System and click &ldquo;Student Buddy&rdquo; in the left menu.">Student System에 로그인 후 좌측 메뉴에서 &ldquo;Student Buddy&rdquo;를 클릭.</span></li>
+      <li><b data-i18n-en="Choose 1:1 or 1:2">1:1 / 1:2 선택</b><span class="sub" data-i18n-en="Tick &ldquo;One to one only&rdquo; at the top if you want a 1:1 session only.">1:1만 원하면 상단의 &ldquo;One to one only&rdquo;를 체크하세요.</span></li>
+      <li><b data-i18n-en="Turn on a slot & pick an activity">시간 켜고 활동 선택</b><span class="sub" data-i18n-en="Toggle ON the date/time you want, then choose an activity (Communications / Homework / Review Class).">원하는 날짜·시간 토글을 켜고 활동을 고르세요 (Communications / Homework / Review Class).</span></li>
+      <li><b data-i18n-en="Double-check before booking">예약 전 다시 확인</b><span class="sub" data-i18n-en="Make sure it doesn't clash with another schedule. Don't book if you're unsure.">다른 일정과 겹치지 않는지 확인. 확실하지 않으면 예약하지 마세요.</span></li>
+      <li><b data-i18n-en="Click &ldquo;Find&rdquo;">&ldquo;Find&rdquo; 클릭</b><span class="sub" data-i18n-en="If a local buddy is matched, you're booked.">현지 버디가 매칭되면 예약 완료입니다.</span></li>
+    </ol>
+    <div class="bg-callout info" style="margin-top:16px;">
+      <div class="ttl"><iconify-icon icon="solar:info-circle-bold-duotone"></iconify-icon> <span data-i18n-en="&ldquo;No match found&rdquo;?">&ldquo;No match found&rdquo;가 뜨면?</span></div>
+      <span data-i18n-en="It means no local buddy is available for that slot &mdash; not an error. Just pick another date or time.">그 시간에 가능한 현지 버디가 없다는 뜻입니다 (오류 아님). 다른 날짜·시간을 고르면 됩니다.</span>
+    </div>
+  </section>
+
+  <!-- Times & activities -->
+  <section class="bg-card fade-up">
+    <h2><span class="num">2</span> <span data-i18n-en="Times & Activities">시간 & 활동</span></h2>
+    <div class="bg-grid" style="margin-bottom:14px;">
+      <div class="bg-tile">
+        <div class="t"><iconify-icon icon="solar:sun-bold-duotone"></iconify-icon> <span class="time">16:10&ndash;17:00</span></div>
+        <div class="d" data-i18n-en="Peak slot &mdash; busier, more students on CELS 3F.">피크 시간 &mdash; 사람이 많고 CELS 3층이 붐빕니다.</div>
+      </div>
+      <div class="bg-tile">
+        <div class="t"><iconify-icon icon="solar:moon-stars-bold-duotone"></iconify-icon> <span class="time">17:10&ndash;18:00</span></div>
+        <div class="d" data-i18n-en="Quieter slot &mdash; choose this if you prefer fewer people.">한산한 시간 &mdash; 조용한 걸 원하면 이 시간.</div>
+      </div>
+    </div>
+    <div class="bg-grid">
+      <div class="bg-tile"><div class="t" data-i18n-en="Communications">Communications</div><div class="d" data-i18n-en="Free English conversation &mdash; the most popular choice.">영어로 자유 대화 &mdash; 가장 인기.</div></div>
+      <div class="bg-tile"><div class="t" data-i18n-en="Homework">Homework</div><div class="d" data-i18n-en="Your buddy guides you through homework (not a do-it-for-you service).">버디가 숙제를 안내 (대신 해주지 않음).</div></div>
+      <div class="bg-tile"><div class="t" data-i18n-en="Review Class">Review Class</div><div class="d" data-i18n-en="Explain your struggle first; the buddy helps you understand the class.">내 어려움을 먼저 설명하면 수업 이해를 도와줌.</div></div>
+      <div class="bg-tile"><div class="t" data-i18n-en="Fun Activity (Fri)">Fun Activity (금)</div><div class="d" data-i18n-en="Games, competitions, campus tour &mdash; Fridays only, 50 min.">게임·대회·캠퍼스 투어 &mdash; 금요일 전용 50분.</div></div>
+    </div>
+  </section>
+
+  <!-- Pairing & where to meet -->
+  <section class="bg-card fade-up">
+    <h2><span class="num">3</span> <span data-i18n-en="Pairing & Where to Meet">짝 & 만남 장소</span></h2>
+    <div class="bg-grid" style="margin-bottom:16px;">
+      <div class="bg-tile"><div class="t"><iconify-icon icon="solar:user-plus-bold-duotone"></iconify-icon> 1 : 1</div><div class="d" data-i18n-en="1 local buddy + you.">현지 버디 1명 + 나.</div></div>
+      <div class="bg-tile"><div class="t"><iconify-icon icon="solar:users-group-two-rounded-bold-duotone"></iconify-icon> 1 : 2</div><div class="d" data-i18n-en="1 local buddy + you + one more international student matched by the system.">현지 버디 1명 + 나 + 시스템이 랜덤 배정한 다른 국제 학생 1명.</div></div>
+    </div>
+    <div class="bg-callout info">
+      <div class="ttl"><iconify-icon icon="solar:map-point-wave-bold-duotone"></iconify-icon> <span data-i18n-en="Where to meet">만남 장소</span></div>
+      <span data-i18n-en="<b>Weekday sessions:</b> CELS 3rd floor &mdash; check your assignment on the <b>Buddy Tracker</b> sheet posted on the glass wall. <b>Friday Fun Activity & events</b> (e.g. awarding ceremony): <b>2nd floor, SALC, Language Building</b>. Always check the Event Guide calendar for the exact place & time."><b>평일 세션:</b> CELS 3층 &mdash; 유리벽에 붙은 <b>Buddy Tracker</b> 시트에서 본인 배정을 확인하세요. <b>금요일 Fun Activity·행사</b>(예: 시상식): <b>2층 SALC, Language Building</b>. 정확한 장소·시간은 Event Guide 캘린더에서 확인.</span>
+    </div>
+  </section>
+
+  <!-- Cancellation & penalty -->
+  <section class="bg-card fade-up">
+    <h2><span class="num">4</span> <span data-i18n-en="Cancellation & Penalty">취소 & 벌점</span></h2>
+    <ol class="bg-steps" style="margin-bottom:18px;">
+      <li><b data-i18n-en="Go to Student Buddy">Student Buddy로 이동</b><span class="sub" data-i18n-en="Find the booked session and click &ldquo;Show Details&rdquo;.">예약한 세션을 찾아 &ldquo;Show Details&rdquo; 클릭.</span></li>
+      <li><b data-i18n-en="Enter a reason & Cancel Class">사유 입력 후 Cancel Class</b><span class="sub" data-i18n-en="Type your reason, then click &ldquo;Cancel Class&rdquo;. The button turns red when canceled.">취소 사유를 적고 &ldquo;Cancel Class&rdquo; 클릭. 취소되면 버튼이 빨간색으로 변합니다.</span></li>
+    </ol>
+    <div class="bg-callout warn">
+      <div class="ttl"><iconify-icon icon="solar:danger-triangle-bold-duotone"></iconify-icon> <span data-i18n-en="Cancellation penalty &mdash; important!">취소 벌점 &mdash; 꼭 확인!</span></div>
+      <div class="bg-pen">
+        <div class="row"><span class="badge b1" data-i18n-en="1st">1회</span><span class="txt" data-i18n-en="No penalty.">벌점 없음.</span></div>
+        <div class="row"><span class="badge b2" data-i18n-en="2nd">2회차</span><span class="txt" data-i18n-en="<b>Cannot book for 1 week.</b>"><b>1주일간 예약 불가.</b></span></div>
+        <div class="row"><span class="badge b3" data-i18n-en="3rd">3회차</span><span class="txt" data-i18n-en="<b>Cannot book for 1 month.</b>"><b>1개월간 예약 불가.</b></span></div>
+      </div>
+      <div style="margin-top:11px;" data-i18n-en="⚠️ Never go to a session you canceled (even by mistake). If you canceled by accident, report it.">⚠️ 취소한 세션엔 (실수로 취소했더라도) 가지 마세요. 실수로 취소했다면 신고하세요.</div>
+    </div>
+  </section>
+
+  <!-- If buddy is late / absent -->
+  <section class="bg-card fade-up">
+    <h2><span class="num">5</span> <span data-i18n-en="If Your Buddy Is Late or Absent">버디가 늦거나 안 올 때</span></h2>
+    <div class="bg-grid" style="margin-bottom:14px;">
+      <div class="bg-tile"><div class="t"><iconify-icon icon="solar:alarm-bold-duotone"></iconify-icon> <span data-i18n-en="Late">지각</span></div><div class="d" data-i18n-en="Wait in the room for up to 15 minutes from the start time.">시작 시각부터 15분까지 방에서 기다리세요.</div></div>
+      <div class="bg-tile"><div class="t"><iconify-icon icon="solar:user-cross-bold-duotone"></iconify-icon> <span data-i18n-en="Absent / poor">결석·태도</span></div><div class="d" data-i18n-en="Report via the Student System (see below).">Student System에서 신고하세요 (아래 참고).</div></div>
+    </div>
+    <div class="bg-callout info">
+      <div class="ttl"><iconify-icon icon="solar:flag-bold-duotone"></iconify-icon> <span data-i18n-en="How to report">신고하는 법</span></div>
+      <span data-i18n-en="Student Buddy &rarr; <b>Show Details</b> &rarr; <b>Select an Issue</b> &rarr; <b>Submit Issue</b>. For a local student's poor performance, email ">Student Buddy &rarr; <b>Show Details</b> &rarr; <b>Select an Issue</b> &rarr; <b>Submit Issue</b>. 현지 학생의 태도 문제는 다음으로 이메일: </span>
+      <a class="bg-mail" href="mailto:mariaalyssa.paquibot@lcic.edu.ph">mariaalyssa.paquibot@lcic.edu.ph</a> · <a class="bg-mail" href="mailto:leo.ceniza@lcic.edu.ph">leo.ceniza@lcic.edu.ph</a>
+    </div>
+  </section>
+
+  <!-- Good buddy -->
+  <section class="bg-card fade-up">
+    <h2><iconify-icon icon="solar:heart-bold-duotone" style="color:var(--accent-hover)"></iconify-icon> <span data-i18n-en="Be a GOOD BUDDY">좋은 버디 되기</span></h2>
+    <p style="color:var(--text-dim); font-size:0.9rem; margin:0 0 14px;" data-i18n-en="A few daily reminders: book with a goal, arrive on time, avoid canceling, and enjoy the session.">매일 명심: 목표를 갖고 예약하기 &middot; 정시 출석 &middot; 취소 피하기 &middot; 세션 즐기기.</p>
+    <div class="bg-good">
+      <span class="chip"><b>A</b>ccountable</span>
+      <span class="chip"><b>G</b>raceful</span>
+      <span class="chip"><b>O</b>rganized</span>
+      <span class="chip"><b>O</b>bedient</span>
+      <span class="chip"><b>D</b>edicated</span>
+      <span class="chip"><b>B</b>rave</span>
+      <span class="chip"><b>U</b>nderstanding</span>
+      <span class="chip"><b>D</b>ynamic</span>
+      <span class="chip"><b>D</b>iligent</span>
+      <span class="chip"><b>Y</b>ou</span>
+    </div>
+  </section>
+
+  <p style="text-align:center; color:var(--text-faint); font-size:0.82rem; margin-top:30px;" data-i18n-en="Lapulapu Cebu International College &mdash; CELS &middot; Student Buddy System">Lapulapu Cebu International College &mdash; CELS &middot; Student Buddy System</p>
+
+</main>
+
+</body>
+</html>
