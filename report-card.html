@@ -120,8 +120,15 @@
   .tor-closed { text-align: center; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 22px; }
   .tor-remarks { font-size: 0.88rem; color: #1f2937; margin-bottom: 28px; }
   .tor-remarks b { color: #0f172a; }
-  .tor-signs { margin: 8px 0 4px; text-align: center; }
-  .tor-signs img { display: inline-block; width: 100%; max-width: 600px; height: auto; }
+  /* 서명란: 실제 서명은 공란(손글씨용). 영역 작게. */
+  .tor-signs { margin: 10px 0 4px; }
+  .sig-block { display: flex; align-items: flex-end; gap: 12px; }
+  .sig-by { font-size: 0.84rem; color: #334155; padding-bottom: 2px; }
+  .sig-col { width: 250px; }
+  .sig-space { height: 24px; }
+  .sig-line { border-bottom: 1px solid #475569; }
+  .sig-name { font-weight: 800; font-size: 0.85rem; color: #0f172a; margin-top: 4px; }
+  .sig-title { font-size: 0.72rem; color: #475569; letter-spacing: .03em; }
   .tor-foot2 { position: relative; display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-top: 30px; min-height: 110px; }
   .tor-tag { font-style: italic; font-weight: 700; color: #334155; font-size: 0.88rem; align-self: flex-end; }
   .tor-seal-area { position: relative; text-align: center; flex-shrink: 0; min-width: 200px; padding: 8px 0; }
@@ -153,9 +160,11 @@
     .tor-divider { margin: 10px 0 5px !important; }
     .tor-closed { margin-bottom: 7px !important; font-size: 0.76rem !important; }
     .tor-remarks { margin-bottom: 7px !important; font-size: 0.8rem !important; }
-    .tor-signs { margin: 2px 0 !important; }
-    .tor-signs img { max-width: 430px !important; }
-    .tor-foot2 { min-height: 40px !important; margin-top: 6px !important; }
+    .tor-signs { margin: 6px 0 2px !important; }
+    .sig-space { height: 20px !important; }
+    .sig-name { font-size: 0.78rem !important; }
+    .sig-title { font-size: 0.66rem !important; }
+    .tor-foot2 { min-height: 36px !important; margin-top: 6px !important; }
     .spr-foot { margin-top: 8px !important; padding-top: 5px !important; font-size: 0.66rem !important; }
     .info-tbl, .score-tbl, .cefr-legend, .comment-box, .comment-head, .spr, .charts, .chart-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .info-tbl td.lbl, .score-tbl thead th, .score-tbl tbody th, .score-tbl tr.change th, .score-tbl tr.change td, .cefr-legend td.band, .spr-rule, [class^="cefr-"] { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -263,25 +272,24 @@
   const sum = (t) => SK.reduce((a, k) => a + (Number(t && t[k]) || 0), 0);
   const avg = (t) => Math.round(sum(t) / 4);
 
-  // 점수 기반 자동 코멘트(간략, 격식 영어). 시트에 코멘트를 직접 적으면 그게 우선(override).
-  // 동사로 시작해 성별 무관. 최종 점수가 없으면 빈 코멘트.
+  // 점수 기반 자동 코멘트(격식 영어, 3문장 ≈ 3줄). 4영역(R/L/S/W)을 각각 분석.
+  // 시트에 코멘트를 직접 적으면 그게 우선(override). 동사 시작=성별 무관. 최종점수 없으면 빈칸.
   function autoComment(en, fi) {
     const e = sum(en), x = sum(fi);
     if (!x) return "";
-    const g = x - e;
-    const eL = cefrLabel(avg(en)), xL = cefrLabel(avg(fi));
+    const g = x - e, eL = cefrLabel(avg(en)), xL = cefrLabel(avg(fi));
     const up = cefrIdx(avg(fi)) - cefrIdx(avg(en));
-    const d = SK.map((k) => ({ k, d: (Number(fi[k]) || 0) - (Number(en[k]) || 0), f: Number(fi[k]) || 0 }));
-    const byImp = d.slice().sort((a, b) => b.d - a.d);
-    const byTop = d.slice().sort((a, b) => b.f - a.f);
-    const impK = byImp[0].k;
-    const topK = byTop[0].k === impK && byTop[1] ? byTop[1].k : byTop[0].k; // 최향상과 겹치면 차순위
-    const imp = SKFULL[impK], top = SKFULL[topK];
-    if (up >= 1 && g >= 30) return `Achieved excellent progress, advancing from ${eL} to ${xL} (+${g} overall), with the strongest gains in ${imp} and clear strength in ${top}.`;
-    if (g >= 25) return `Made strong, well-rounded progress (+${g} overall), led by improvement in ${imp} and a solid command of ${top}.`;
-    if (g >= 10) return `Showed steady improvement across all four skills (+${g} overall), most notably in ${imp}.`;
-    if (g >= 1) return `Made modest, consistent gains (+${g} overall), with reliable performance in ${top}.`;
-    return `Maintained a stable level across the four skills, performing most consistently in ${top}.`;
+    const band = (s) => s >= 71 ? "advanced" : s >= 51 ? "upper-intermediate" : s >= 41 ? "intermediate" : s >= 31 ? "developing" : "basic";
+    const chg = (d) => d >= 30 ? `a major +${d} gain` : d >= 15 ? `a strong +${d} gain` : d >= 5 ? `a solid +${d} gain` : d >= 1 ? `a slight +${d} gain` : d === 0 ? "no change" : `a ${d} change`;
+    const sht = (d) => d > 0 ? `+${d}` : d < 0 ? `${d}` : "±0";
+    const o = SK.map((k) => ({ name: SKFULL[k], f: Number(fi[k]) || 0, d: (Number(fi[k]) || 0) - (Number(en[k]) || 0) })).sort((a, b) => b.f - a.f);
+    const s1 = up >= 1
+      ? `Advanced from ${eL} to ${xL} over the program, with a +${g}-point overall improvement.`
+      : g >= 1 ? `Made steady overall progress (+${g} points), consolidating a ${xL} level.`
+        : `Maintained a stable ${xL} level across the four skills.`;
+    const s2 = `${o[0].name} was the strongest skill, reaching ${o[0].f}/100 (${band(o[0].f)}) with ${chg(o[0].d)}; ${o[1].name} followed at ${o[1].f} (${band(o[1].f)}, ${sht(o[1].d)}) and ${o[2].name} at ${o[2].f} (${band(o[2].f)}, ${sht(o[2].d)}).`;
+    const s3 = `${o[3].name}, at ${o[3].f} (${band(o[3].f)}, ${sht(o[3].d)}), ${o[3].d >= 10 ? "improved well and " : o[3].d >= 1 ? "showed modest growth and " : ""}is the main area for continued focus.`;
+    return `${s1} ${s2} ${s3}`;
   }
 
   const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -462,7 +470,15 @@
       <div class="tor-closed">(TRANSCRIPT CLOSED. ANY ENTRY BELOW THIS LINE IS NULL AND VOID.)</div>
       <div class="tor-remarks"><b>Remarks:</b> ${esc(s.remarks || "University Credits")}</div>
 
-      ${data.sig ? `<div class="tor-signs"><img src="${data.sig}" alt="Approved by MAKR RYEN ANDERSON (LCIC CELS Director)"></div>` : ""}
+      <div class="tor-signs"><div class="sig-block">
+        <div class="sig-by">Approved by:</div>
+        <div class="sig-col">
+          <div class="sig-space"></div>
+          <div class="sig-line"></div>
+          <div class="sig-name">MAKR RYEN ANDERSON</div>
+          <div class="sig-title">LCIC CELS DIRECTOR</div>
+        </div>
+      </div></div>
 
       <div class="tor-foot2">
         <div class="tor-tag">&ldquo;Bridging Communities through Education Excellence&rdquo;</div>
