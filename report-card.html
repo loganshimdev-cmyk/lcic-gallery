@@ -168,6 +168,10 @@
     .spr-foot { margin-top: 8px !important; padding-top: 5px !important; font-size: 0.66rem !important; }
     .info-tbl, .score-tbl, .cefr-legend, .comment-box, .comment-head, .spr, .charts, .chart-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .info-tbl td.lbl, .score-tbl thead th, .score-tbl tbody th, .score-tbl tr.change th, .score-tbl tr.change td, .cefr-legend td.band, .spr-rule, [class^="cefr-"] { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    /* 인쇄 시 표·차트 경계선이 너무 흐려 보이는 문제 보정: 진한 회색으로 */
+    .info-tbl, .score-tbl, .cefr-legend, .comment-box { border-color: #64748b !important; }
+    .info-tbl td, .score-tbl th, .score-tbl td, .cefr-legend td { border-color: #94a3b8 !important; }
+    .chart-box svg line, .chart-box svg polygon[fill="none"] { stroke: #94a3b8 !important; stroke-width: 1.1 !important; }
     @page { size: A4 portrait; margin: 10mm; }
   }
 </style>
