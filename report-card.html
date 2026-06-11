@@ -437,13 +437,13 @@
           <td class="lbl">Nationality</td><td class="val">${esc(s.nationality || "—")}</td>
         </tr>
         <tr>
-          <td class="lbl">DOB</td><td class="val">${fmtDate(s.dob)}</td>
-          <td class="lbl">Group</td><td class="val" colspan="3">${esc(s.group || "—")}</td>
+          <td class="lbl">Date of Birth</td><td class="val">${fmtDate(s.dob)}</td>
+          <td class="lbl">Center</td><td class="val" colspan="3">LCIC-CELS</td>
         </tr>
         <tr>
           <td class="lbl">Start Date</td><td class="val">${fmtDate(s.startDate)}</td>
           <td class="lbl">End Date</td><td class="val">${fmtDate(s.endDate)}</td>
-          <td class="lbl">Period of Stay</td><td class="val">${esc(s.period || "—")}</td>
+          <td class="lbl">Period of Stay</td><td class="val">4 weeks</td>
         </tr>
       </tbody></table>
 
@@ -468,7 +468,6 @@
 
       <hr class="tor-divider">
       <div class="tor-closed">(TRANSCRIPT CLOSED. ANY ENTRY BELOW THIS LINE IS NULL AND VOID.)</div>
-      <div class="tor-remarks"><b>Remarks:</b> ${esc(s.remarks || "University Credits")}</div>
 
       <div class="tor-signs"><div class="sig-block">
         <div class="sig-by">Approved by:</div>
@@ -488,8 +487,7 @@
           <div class="tor-novalid">NOT VALID WITHOUT SCHOOL SEAL</div>
         </div>
       </div>
-
-      <div class="spr-foot">EF SET = EF Standard English Test. RC·LC are EF Standard English Test sections; WR·SP are LCIC in-house assessments. CEFR is derived from the average of the four section scores (0–100 scale).</div>`;
+`;
 
     $("detail").classList.add("open");
     document.body.style.overflow = "hidden";
