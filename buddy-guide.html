@@ -84,6 +84,20 @@
   .bg-ig .ig-h { color: var(--accent-deep); font-weight: 800; margin-top: 4px; }
   .bg-ig .ig-d { color: var(--text-dim); font-size: 0.9rem; margin-top: 6px; line-height: 1.55; }
 
+  /* Q&A accordion */
+  .bg-qna { display: flex; flex-direction: column; gap: 10px; }
+  .bg-qna details { border: 1px solid var(--hairline); border-radius: 14px; background: var(--surface); overflow: hidden; transition: border-color .2s; }
+  .bg-qna details[open] { border-color: rgba(59,130,246,.32); background: var(--bg-elev); }
+  .bg-qna summary { list-style: none; cursor: pointer; padding: 15px 18px; display: flex; align-items: center; gap: 12px; font-weight: 700; color: var(--text); font-size: 0.96rem; line-height: 1.4; }
+  .bg-qna summary::-webkit-details-marker { display: none; }
+  .bg-qna summary .q { flex-shrink: 0; width: 25px; height: 25px; border-radius: 7px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent-deep); font-size: 0.8rem; font-weight: 800; }
+  .bg-qna summary .arr { margin-left: auto; flex-shrink: 0; color: var(--text-faint); font-size: 19px; transition: transform .2s; }
+  .bg-qna details[open] summary .arr { transform: rotate(180deg); color: var(--accent-hover); }
+  .bg-qna .ans { padding: 0 18px 16px 55px; color: var(--text-dim); font-size: 0.9rem; line-height: 1.7; }
+  .bg-qna .ans b { color: var(--text); }
+  .bg-qna .ans a { color: var(--accent-hover); font-weight: 700; text-decoration: none; }
+  .bg-qna .ans a:hover { text-decoration: underline; }
+
   @media (max-width: 720px) {
     .bg-facts { grid-template-columns: 1fr 1fr; }
     .bg-grid { grid-template-columns: 1fr; }
@@ -97,6 +111,7 @@
     header { padding: 10px 0 14px !important; }
     .bg-card, .bg-fact { box-shadow: none !important; break-inside: avoid; }
     .bg-callout, .bg-tile, .bg-pen .row { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .bg-qna summary .arr { display: none !important; }
     @page { size: A4; margin: 12mm; }
   }
 </style>
@@ -301,9 +316,80 @@
     </div>
   </section>
 
+  <!-- Q&A -->
+  <section class="bg-card fade-up">
+    <h2><iconify-icon icon="solar:question-circle-bold-duotone" style="color:var(--accent-hover)"></iconify-icon> <span data-i18n-en="Quick Q&amp;A">자주 묻는 질문</span></h2>
+    <div class="bg-qna">
+
+      <details>
+        <summary><span class="q">Q</span> <span data-i18n-en="How do I book a buddy session?">버디 세션은 어떻게 예약하나요?</span> <iconify-icon class="arr" icon="solar:alt-arrow-down-linear"></iconify-icon></summary>
+        <div class="ans" data-i18n-en="Log in to the <b>Student System</b> &rarr; click <b>Student Buddy</b> in the left menu &rarr; (tick <b>One to one only</b> if you want a 1:1) &rarr; toggle ON a date/time and pick an activity (Communications / Homework / Review Class) &rarr; press <b>Find</b>. You're booked once a local buddy is matched.">
+          <b>Student System</b>에 로그인 &rarr; 좌측 <b>Student Buddy</b> 클릭 &rarr; (1:1만 원하면 <b>One to one only</b> 체크) &rarr; 날짜·시간 토글을 켜고 활동(Communications / Homework / Review Class) 선택 &rarr; <b>Find</b> 클릭. 현지 버디가 매칭되면 예약 완료입니다.
+        </div>
+      </details>
+
+      <details>
+        <summary><span class="q">Q</span> <span data-i18n-en="What are the time slots and activities?">시간대와 활동 종류는 어떻게 되나요?</span> <iconify-icon class="arr" icon="solar:alt-arrow-down-linear"></iconify-icon></summary>
+        <div class="ans" data-i18n-en="Weekdays run <b>16:10&ndash;17:00</b> (busy) and <b>17:10&ndash;18:00</b> (quiet). Activities: <b>Communications</b> (free talk), <b>Homework</b> (guidance, not done for you), <b>Review Class</b> (help understanding lessons). <b>Fun Activity</b> is Fridays only, 50 min.">
+          평일은 <b>16:10&ndash;17:00</b>(붐빔)과 <b>17:10&ndash;18:00</b>(한산) 두 시간대입니다. 활동은 <b>Communications</b>(자유 대화), <b>Homework</b>(숙제 안내 &mdash; 대신 해주지 않음), <b>Review Class</b>(수업 이해 돕기). <b>Fun Activity</b>는 금요일 전용 50분 세션입니다.
+        </div>
+      </details>
+
+      <details>
+        <summary><span class="q">Q</span> <span data-i18n-en="What's the difference between 1:1 and 1:2?">1:1과 1:2는 무엇이 다른가요?</span> <iconify-icon class="arr" icon="solar:alt-arrow-down-linear"></iconify-icon></summary>
+        <div class="ans" data-i18n-en="Set it with the <b>One to one only</b> checkbox at the top of the booking screen. <b>1:1</b> = 1 local buddy + you. <b>1:2</b> = 1 local buddy + you + one more international student matched randomly by the system.">
+          예약 화면 상단의 <b>One to one only</b> 체크박스로 선택합니다. <b>1:1</b> = 현지 버디 1명 + 나. <b>1:2</b> = 현지 버디 1명 + 나 + 시스템이 랜덤 배정한 다른 국제 학생 1명.
+        </div>
+      </details>
+
+      <details>
+        <summary><span class="q">Q</span> <span data-i18n-en="Where do I meet my buddy?">버디는 어디서 만나나요?</span> <iconify-icon class="arr" icon="solar:alt-arrow-down-linear"></iconify-icon></summary>
+        <div class="ans" data-i18n-en="<b>Weekday sessions:</b> CELS 3rd floor &mdash; check your assignment on the <b>Buddy Tracker</b> sheet on the glass wall. <b>Friday Fun Activity &amp; events</b> (e.g. awarding ceremony): <b>2nd floor SALC, Language Building</b>. Check the Event Guide calendar for the exact place &amp; time.">
+          <b>평일 세션</b>은 CELS 3층에서 만납니다 &mdash; 유리벽의 <b>Buddy Tracker</b> 시트에서 본인 배정을 확인하세요. <b>금요일 Fun Activity·행사</b>(예: 시상식)는 <b>2층 SALC, Language Building</b>. 정확한 장소·시간은 Event Guide 캘린더에서 확인하세요.
+        </div>
+      </details>
+
+      <details>
+        <summary><span class="q">Q</span> <span data-i18n-en="Is there a penalty for canceling?">취소하면 불이익이 있나요?</span> <iconify-icon class="arr" icon="solar:alt-arrow-down-linear"></iconify-icon></summary>
+        <div class="ans" data-i18n-en="<b>1st</b> cancel: no penalty. <b>2nd</b>: cannot book for 1 week. <b>3rd</b>: cannot book for 1 month. To cancel: Show Details &rarr; enter a reason &rarr; <b>Cancel Class</b> (the button turns red). Never attend a session you canceled &mdash; if you canceled by mistake, report it.">
+          <b>1회</b> 취소는 벌점 없음, <b>2회차</b>는 1주일간 예약 불가, <b>3회차</b>는 1개월간 예약 불가입니다. 취소 방법: Show Details &rarr; 사유 입력 &rarr; <b>Cancel Class</b>(버튼이 빨갛게 변함). 취소한 세션엔 가지 마세요 &mdash; 실수로 취소했다면 신고해 주세요.
+        </div>
+      </details>
+
+      <details>
+        <summary><span class="q">Q</span> <span data-i18n-en="What if my buddy is late or absent?">버디가 늦거나 오지 않으면 어떻게 하나요?</span> <iconify-icon class="arr" icon="solar:alt-arrow-down-linear"></iconify-icon></summary>
+        <div class="ans" data-i18n-en="If late, wait in the room for up to <b>15 minutes</b> from the start time. For absence or poor behavior, report via Student Buddy &rarr; <b>Show Details</b> &rarr; <b>Select an Issue</b> &rarr; <b>Submit Issue</b>. For a local student's behavior, email <a href='mailto:mariaalyssa.paquibot@lcic.edu.ph'>mariaalyssa.paquibot@lcic.edu.ph</a> or <a href='mailto:leo.ceniza@lcic.edu.ph'>leo.ceniza@lcic.edu.ph</a>.">
+          지각한 경우 시작 시각부터 <b>15분</b>까지 방에서 기다리세요. 결석하거나 태도에 문제가 있으면 Student Buddy &rarr; <b>Show Details</b> &rarr; <b>Select an Issue</b> &rarr; <b>Submit Issue</b>로 신고합니다. 현지 학생의 태도 문제는 <a href="mailto:mariaalyssa.paquibot@lcic.edu.ph">mariaalyssa.paquibot@lcic.edu.ph</a> 또는 <a href="mailto:leo.ceniza@lcic.edu.ph">leo.ceniza@lcic.edu.ph</a>로 이메일 주세요.
+        </div>
+      </details>
+
+      <details>
+        <summary><span class="q">Q</span> <span data-i18n-en="Why does &ldquo;No match found&rdquo; appear?">&ldquo;No match found&rdquo;는 왜 뜨나요?</span> <iconify-icon class="arr" icon="solar:alt-arrow-down-linear"></iconify-icon></summary>
+        <div class="ans" data-i18n-en="It means no local buddy is available for the slot you chose &mdash; <b>it is not an error</b>. Just pick another date or time and try again.">
+          선택한 시간에 가능한 현지 버디가 없다는 뜻입니다 &mdash; <b>오류가 아닙니다</b>. 다른 날짜·시간을 골라 다시 시도하면 됩니다.
+        </div>
+      </details>
+
+      <details>
+        <summary><span class="q">Q</span> <span data-i18n-en="Where can I see Buddy System news?">버디시스템 소식은 어디서 보나요?</span> <iconify-icon class="arr" icon="solar:alt-arrow-down-linear"></iconify-icon></summary>
+        <div class="ans" data-i18n-en="Follow <b>@LCIC_BUDDYSYSTEM</b> on Instagram for events, news, and photos. You can also follow instantly using the QR code above.">
+          인스타그램 <b>@LCIC_BUDDYSYSTEM</b>에서 행사·소식·사진을 볼 수 있습니다. 위의 QR 코드로도 바로 팔로우할 수 있습니다.
+        </div>
+      </details>
+
+    </div>
+  </section>
+
   <p style="text-align:center; color:var(--text-faint); font-size:0.82rem; margin-top:30px;" data-i18n-en="Lapulapu Cebu International College &mdash; CELS &middot; Student Buddy System">Lapulapu Cebu International College &mdash; CELS &middot; Student Buddy System</p>
 
 </main>
+
+<script>
+  // 인쇄 시 모든 Q&A 아코디언을 펼쳐 한 장의 핸드아웃으로 출력
+  window.addEventListener("beforeprint", () => {
+    document.querySelectorAll(".bg-qna details").forEach((d) => { d.open = true; });
+  });
+</script>
 
 </body>
 </html>
