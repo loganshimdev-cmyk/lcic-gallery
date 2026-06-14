@@ -215,7 +215,7 @@
     display: inline-flex; align-items: center; gap: 3px;
     color: #15803d; font-weight: 700; font-size: 0.8rem;
   }
-  .regtag iconify-icon { font-size: 14px; }
+  .regtag .ck { font-size: 0.92rem; font-weight: 900; line-height: 1; }
   .reg-no { color: var(--text-faint); }
   .reg-cnt { color: #16a34a; font-weight: 700; }
   table.grid tbody tr.reg-row td { background: rgba(22,163,74,0.07); }
@@ -551,7 +551,7 @@
       return highlight(v, q);
     }
     if (c.kind === "reg") return r.registered
-      ? '<span class="regtag"><iconify-icon icon="solar:check-circle-bold" inline></iconify-icon> 등록</span>'
+      ? '<span class="regtag"><span class="ck" aria-hidden="true">✓</span> 등록</span>'
       : '<span class="reg-no">–</span>';
     if (c.kind === "gender") {
       const m = r.gender === "M";
