@@ -93,6 +93,108 @@ git push
 
 GitHub Pages 워크플로우(`.github/workflows/pages.yml`)가 자동으로 빌드/배포.
 
+---
+
+# 학생 정보 수집 폼 (apply.html) 셋업
+
+학생에게 링크 하나(`/apply.html`)를 주고, 입력 결과를 관리자(`/apply-admin.html`)에서
+CSV로 받기 위한 1회성 작업. **메인 앱과 같은 Supabase**(notices/faqs와 동일 프로젝트)를 사용한다.
+
+## A. 테이블 생성
+
+Supabase 대시보드 → **SQL Editor** → 새 쿼리 → 아래 SQL 붙여넣고 Run.
+(컬럼 순서/이름은 `students.csv` 업로드 양식과 동일)
+
+```sql
+create table if not exists student_applications (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz default now(),
+  email text,
+  first_name text,
+  last_name text,
+  first_name_passport text,
+  last_name_passport text,
+  middlename_passport text,
+  gender text,
+  national_number text,
+  phone text,
+  postal text,
+  state text,
+  city text,
+  address text,
+  about text,
+  birthday text,
+  country text,
+  nationality text,
+  study_period_start text,
+  study_period_end text,
+  number_of_weeks text,
+  stay_period_start text,
+  stay_period_end text,
+  university text,
+  academic_year text,
+  faculty text,
+  department text,
+  agency text,
+  "group" text,
+  passport_number text,
+  passport_date_of_issue text,
+  passport_expiration_date text,
+  emergency_contact_name text,
+  emergency_contact_relationship text,
+  emergency_contact_email text,
+  emergency_contact_phone text,
+  emergency_contact_address text,
+  university_incharge_name text,
+  agency_incharge_name text,
+  course text
+);
+create index if not exists student_applications_created_idx
+  on student_applications (created_at desc);
+```
+
+> 참고: `group`은 SQL 예약어라 컬럼명에 큰따옴표(`"group"`)가 필요하다. 그 외 컬럼은 그대로.
+> 날짜/주수도 전부 `text`로 저장해 학생이 입력한 형식을 그대로 보존한다.
+
+## B. RLS 정책 (보안의 핵심)
+
+같은 SQL Editor에서 이어서 실행. **학생은 제출만 가능하고 서로의 데이터를 볼 수 없다.**
+
+```sql
+alter table student_applications enable row level security;
+
+-- 누구나(비로그인 포함) 제출(INSERT)만 가능 — SELECT 정책은 만들지 않는다.
+create policy "anyone can submit application"
+  on student_applications for insert
+  to anon, authenticated
+  with check (true);
+
+-- 로그인된 관리자만 전체 조회/수정/삭제
+create policy "admin can read applications"
+  on student_applications for select
+  to authenticated using (true);
+
+create policy "admin can modify applications"
+  on student_applications for update
+  to authenticated using (true) with check (true);
+
+create policy "admin can delete applications"
+  on student_applications for delete
+  to authenticated using (true);
+```
+
+> ⚠️ **SELECT 정책을 `anon`에게 만들지 말 것.** 만들면 학생이 다른 학생 데이터를 볼 수 있다.
+> 관리자 계정은 위 "3. 관리자 계정 생성"에서 만든 계정을 그대로 쓰면 된다.
+
+## C. 사용
+
+- 학생에게 줄 링크: `https://lcic-campus.com/apply.html`
+- 관리자: `https://lcic-campus.com/apply-admin.html` 로그인 → 목록 확인 → **CSV 다운로드** → 학생관리 시스템에 업로드
+- CSV 날짜는 `YYYY-MM-DD`, 성별은 `Male`/`Female`로 출력된다. 외부 시스템이 다른 형식을
+  요구하면 `assets/student-fields.js`(성별 값)와 입력 형식만 조정하면 된다.
+
+---
+
 ## 사용 방법
 
 - 학생: `https://<사이트주소>/notice.html`, `/faq.html` 에서 읽기만
