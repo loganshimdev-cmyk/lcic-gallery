@@ -1914,7 +1914,7 @@ body {
       <div class="r d3" style="background: var(--paper-warm); padding: clamp(1.2rem, 2vw, 1.6rem); border-top: 3px solid var(--accent); display: flex; flex-direction: column; gap: 12px;">
         <div class="kicker">출석 규정 · Attendance</div>
         <h3 style="font-size: clamp(1.45rem, 2vw, 1.95rem); font-weight: 800;">매 수업 출석 체크</h3>
-        <ul style="list-style: none; display: flex; flex-direction: column; gap: 14px; font-size: clamp(1.05rem, 1.4vw, 1.35rem); color: var(--text-dim); line-height: 1.7; flex: 1; justify-content: space-between;">
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 14px; font-size: clamp(1.05rem, 1.4vw, 1.35rem); color: var(--text-dim); line-height: 1.7; flex: 1; justify-content: center;">
           <li>· 강사가 수업 시작 시 출석 체크</li>
           <li>· <b>출석률 70% 이상</b> 시 수료증 발급</li>
           <li>· 정당한 사유 없는 결석은 모두 무단 결석</li>
@@ -1924,7 +1924,7 @@ body {
       <div class="r d4" style="background: #fee2e2; padding: clamp(1.2rem, 2vw, 1.6rem); border-top: 3px solid #dc2626; display: flex; flex-direction: column; gap: 12px;">
         <div class="kicker" style="color: #991b1b;">지각·결석 · Late/Absent</div>
         <h3 style="font-size: clamp(1.45rem, 2vw, 1.95rem); font-weight: 800; color: #7f1d1d;">패널티 규정</h3>
-        <ul style="list-style: none; display: flex; flex-direction: column; gap: 14px; font-size: clamp(1.05rem, 1.4vw, 1.35rem); color: #7f1d1d; line-height: 1.7; flex: 1; justify-content: space-between;">
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 14px; font-size: clamp(1.05rem, 1.4vw, 1.35rem); color: #7f1d1d; line-height: 1.7; flex: 1; justify-content: center;">
           <li>· <b>지각 3회</b> = 결석 1회 처리</li>
           <li>· <b>사유 결석 3회</b> = 결석 1회 추가</li>
           <li>· 무단 결석은 출석률 즉시 차감</li>
@@ -1935,7 +1935,7 @@ body {
       <div class="r d5" style="background: var(--accent); color: #fff; padding: clamp(1.2rem, 2vw, 1.6rem); display: flex; flex-direction: column; gap: 12px;">
         <div class="kicker" style="color: var(--accent-light);">소통 채널 · Contact</div>
         <h3 style="font-size: clamp(1.45rem, 2vw, 1.95rem); font-weight: 800; color: #fff;">강사·학사 담당자 연락</h3>
-        <ul style="list-style: none; display: flex; flex-direction: column; gap: 14px; font-size: clamp(1.05rem, 1.4vw, 1.35rem); color: rgba(255,255,255,0.92); line-height: 1.7; flex: 1; justify-content: space-between;">
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 14px; font-size: clamp(1.05rem, 1.4vw, 1.35rem); color: rgba(255,255,255,0.92); line-height: 1.7; flex: 1; justify-content: center;">
           <li>· 강사 메시지는 <b>학생 포털</b>로 송수신</li>
           <li>· 학사 디렉터 면담 신청 → <b>어학관 3층 사무실</b></li>
           <li>· 수업 관련 사항 · 수업 시간 내 분실물 문의 → <b>어학관 3층 사무실</b></li>
@@ -3101,8 +3101,8 @@ body {
       font-size: clamp(0.9rem, 1.08vw, 1.08rem);
       color: var(--text-dim);
       line-height: 1.6;
-      align-self: stretch;
-      justify-content: space-between;
+      align-self: center;
+      gap: 11px;
       min-height: 5.6em;  /* reserve space for 4 list items so bodies align */
     }
     @media (max-width: 1200px) {
@@ -3253,9 +3253,8 @@ body {
       list-style: none; padding: 0; margin: 0;
       display: flex; flex-direction: column; gap: 10px;
       font-size: clamp(1.02rem, 1.35vw, 1.32rem);
-      line-height: 1.65;
+      line-height: 1.85;
       color: var(--text-dim);
-      flex: 1; justify-content: space-between;
     }
     .dorm-life-v2 .dl-col-room .dl-list { color: #4a4a4a; }
     .dorm-life-v2 .dl-col-rules .dl-list { color: rgba(255,255,255,0.92); }
@@ -3421,14 +3420,14 @@ body {
       <p class="lead r d3" style="max-width: 320px; text-align: right; font-size: 0.85rem;">현지 생활 첫 주에 꼭 필요한 4가지</p>
     </div>
 
-    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(1rem, 2vw, 1.4rem); flex: 1;">
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(0.7rem, 1.3vw, 1rem); flex: 1;">
       <div class="r d3" style="background: var(--paper-warm); padding: clamp(1.2rem, 2vw, 1.6rem); border-left: 3px solid var(--accent); display: flex; flex-direction: column; gap: 10px;">
         <div style="display: flex; justify-content: space-between; align-items: baseline;">
           <div class="kicker">01 · 교통 · Transport</div>
           <span style="font-family: 'Fraunces', serif; font-style: italic; font-size: 1.2rem; color: var(--accent); font-weight: 500;">Grab</span>
         </div>
-        <h3 style="font-size: clamp(0.95rem, 1.2vw, 1.08rem); font-weight: 800;">Grab 우선 · 일반 택시 주의</h3>
-        <ul style="list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 0.78rem; color: var(--text-dim); line-height: 1.5; flex: 1;">
+        <h3 style="font-size: clamp(1.08rem, 1.3vw, 1.26rem); font-weight: 800;">Grab 우선 · 일반 택시 주의</h3>
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: clamp(0.92rem, 1.1vw, 1.04rem); color: var(--text-dim); line-height: 1.4; flex: 1; justify-content: center;">
           <li>· <b>Grab 앱</b> 미리 설치 (Uber 대체, 가격 정찰제)</li>
           <li>· 일반 택시는 미터 또는 사전 협상</li>
           <li>· 트라이시클 단거리만 (가격 협상 필수)</li>
@@ -3441,12 +3440,12 @@ body {
           <div class="kicker">02 · 환전 · Money</div>
           <span style="font-family: 'Fraunces', serif; font-style: italic; font-size: 1.2rem; color: var(--accent); font-weight: 500;">PHP</span>
         </div>
-        <h3 style="font-size: clamp(0.95rem, 1.2vw, 1.08rem); font-weight: 800;">달러 → 페소 환전</h3>
-        <div style="background: #fff; padding: 8px 10px; border-left: 3px solid #2c4a73; font-size: 0.78rem; line-height: 1.45;">
+        <h3 style="font-size: clamp(1.08rem, 1.3vw, 1.26rem); font-weight: 800;">달러 → 페소 환전</h3>
+        <div style="background: #fff; padding: 8px 10px; border-left: 3px solid #2c4a73; font-size: clamp(0.86rem, 1vw, 0.98rem); line-height: 1.5;">
           <b style="color: var(--ink);"><span class="pic pic-school pic-ink"></span> 캠퍼스 1F Admin 사무실</b><br/>
           <span style="color: var(--text-dim);">오리엔테이션 직후 현장 환전 가능</span>
         </div>
-        <ul style="list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 0.78rem; color: var(--text-dim); line-height: 1.5; flex: 1;">
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: clamp(0.92rem, 1.1vw, 1.04rem); color: var(--text-dim); line-height: 1.4; flex: 1; justify-content: center;">
           <li>· 한국에서 <b>USD 100$ 권</b>으로 가져오기 (환율 유리)</li>
           <li>· 외부 환전소: SM몰·아얄라몰 내 위치</li>
           <li>· ATM은 한도 1회 1만 페소 (수수료 250페소)</li>
@@ -3459,12 +3458,12 @@ body {
           <div class="kicker">03 · 통신 · SIM</div>
           <span style="font-family: 'Fraunces', serif; font-style: italic; font-size: 1.2rem; color: var(--accent); font-weight: 500;">eSIM</span>
         </div>
-        <h3 style="font-size: clamp(0.95rem, 1.2vw, 1.08rem); font-weight: 800;">학교에서 유심 구매 + 설치 도움</h3>
-        <div style="background: #fff; padding: 8px 10px; border-left: 3px solid #2c4a73; font-size: 0.78rem; line-height: 1.45;">
+        <h3 style="font-size: clamp(1.08rem, 1.3vw, 1.26rem); font-weight: 800;">학교에서 유심 구매 + 설치 도움</h3>
+        <div style="background: #fff; padding: 8px 10px; border-left: 3px solid #2c4a73; font-size: clamp(0.86rem, 1vw, 0.98rem); line-height: 1.5;">
           <b style="color: var(--ink);"><span class="pic pic-school pic-ink"></span> 학교에서 직접 판매</b><br/>
           <span style="color: var(--text-dim);">유심 카드 + 유심 칩 · 기숙사 담당자가 연결 안내</span>
         </div>
-        <ul style="list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 0.78rem; color: var(--text-dim); line-height: 1.5; flex: 1;">
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: clamp(0.92rem, 1.1vw, 1.04rem); color: var(--text-dim); line-height: 1.4; flex: 1; justify-content: center;">
           <li>· <b>공항에서 구매 비추</b> (가격·호객 주의)</li>
           <li>· 한국 통신사 eSIM은 한국 번호 유지 가능</li>
           <li>· Wi-Fi만 쓸 거면 SIM 없이도 충분</li>
@@ -3476,18 +3475,18 @@ body {
           <div class="kicker" style="color: var(--accent-light);">04 · 편의시설 · Around</div>
           <span style="font-family: 'Fraunces', serif; font-style: italic; font-size: 1.2rem; color: var(--accent-light); font-weight: 500;">Grab</span>
         </div>
-        <h3 style="font-size: clamp(0.95rem, 1.2vw, 1.08rem); font-weight: 800; color: #fff;">캠퍼스 주변 — 도보 + 그랩</h3>
+        <h3 style="font-size: clamp(1.08rem, 1.3vw, 1.26rem); font-weight: 800; color: #fff;">캠퍼스 주변 — 도보 + 그랩</h3>
 
         <div style="display: flex; flex-direction: column; gap: 4px;">
-          <div style="font-size: 0.65rem; letter-spacing: 0.1em; color: var(--accent-light); font-weight: 800; text-transform: uppercase; margin-bottom: 2px;"><span class="pic pic-footprints pic-light"></span> 도보 5분</div>
-          <div style="display: grid; grid-template-columns: 50px 1fr; gap: 6px 10px; font-size: 0.76rem; color: rgba(255,255,255,0.92); line-height: 1.4;">
+          <div style="font-size: 0.82rem; letter-spacing: 0.1em; color: var(--accent-light); font-weight: 800; text-transform: uppercase; margin-bottom: 4px;"><span class="pic pic-footprints pic-light"></span> 도보 5분</div>
+          <div style="display: grid; grid-template-columns: 50px 1fr; gap: 7px 10px; font-size: clamp(0.85rem, 1vw, 0.96rem); color: rgba(255,255,255,0.92); line-height: 1.4;">
             <span style="font-family: 'Fraunces', serif; font-style: italic; color: var(--accent-light); text-align: right;">5'</span><span><b>GoMart</b> · 로즈 약국</span>
           </div>
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 4px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.15);">
-          <div style="font-size: 0.65rem; letter-spacing: 0.1em; color: var(--accent-light); font-weight: 800; text-transform: uppercase; margin-bottom: 2px;"><span class="pic pic-car pic-light"></span> 그랩 (차량) 이용 기준</div>
-          <div style="display: grid; grid-template-columns: 50px 1fr; gap: 6px 10px; font-size: 0.75rem; color: rgba(255,255,255,0.92); line-height: 1.4;">
+          <div style="font-size: 0.82rem; letter-spacing: 0.1em; color: var(--accent-light); font-weight: 800; text-transform: uppercase; margin-bottom: 4px;"><span class="pic pic-car pic-light"></span> 그랩 (차량) 이용 기준</div>
+          <div style="display: grid; grid-template-columns: 48px 1fr; gap: 5px 10px; font-size: clamp(0.8rem, 0.95vw, 0.9rem); color: rgba(255,255,255,0.92); line-height: 1.35;">
             <span style="font-family: 'Fraunces', serif; font-style: italic; color: var(--accent-light); text-align: right;">10'</span><span><b>환전소</b> <small style="opacity:0.72;">— 환율 좋은 환전소가 모여 있는 곳</small></span>
             <span style="font-family: 'Fraunces', serif; font-style: italic; color: var(--accent-light); text-align: right;">15'</span><span><b>LG 가든</b> <small style="opacity:0.72;">— 대형마트 · 편의시설 · 맛집이 모인 상권</small></span>
             <span style="font-family: 'Fraunces', serif; font-style: italic; color: var(--accent-light); text-align: right;">15'</span><span><b>막탄 뉴타운</b> <small style="opacity:0.72;">— 카지노 · 호텔 · 고급 식당 · 쇼핑몰이 있는 복합 단지</small></span>
@@ -3699,7 +3698,7 @@ body {
     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: clamp(0.8rem, 1.5vw, 1.2rem); flex: 1; min-height: 0;">
       <div class="r d4" style="background: #fff; padding: clamp(1rem, 1.6vw, 1.3rem); border-top: 3px solid var(--accent); display: flex; flex-direction: column; gap: 8px;">
         <div class="kicker">캠퍼스 안전 · On-Campus</div>
-        <ul style="list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 0.78rem; color: var(--text-dim); line-height: 1.5; flex: 1;">
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: clamp(1rem, 1.3vw, 1.24rem); color: var(--text-dim); line-height: 1.8; flex: 1; justify-content: center;">
           <li>· 학생증 항상 휴대 (출입 게이트)</li>
           <li>· <b>외부인 동반 출입 불가</b> · 동반 시 사전 매니저 연락</li>
           <li>· 분실물 발견 시 <b>어학관 3층 사무실</b>로 전달</li>
@@ -3710,7 +3709,7 @@ body {
 
       <div class="r d5" style="background: #fef3c7; padding: clamp(1rem, 1.6vw, 1.3rem); border-top: 3px solid #f59e0b; display: flex; flex-direction: column; gap: 8px;">
         <div class="kicker" style="color: #92400e;">외부 활동 · Off-Campus</div>
-        <ul style="list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 0.78rem; color: #78350f; line-height: 1.5; flex: 1;">
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: clamp(1rem, 1.3vw, 1.24rem); color: #78350f; line-height: 1.8; flex: 1; justify-content: center;">
           <li>· 야간 외출 시 <b>2인 이상 동행</b></li>
           <li>· 통금 <b>22:00 엄수</b> (주중·주말 동일)</li>
           <li>· 핸드폰 노출 자제 · 가방 앞으로 메기</li>
@@ -3721,7 +3720,7 @@ body {
 
       <div class="r d6" style="background: #d1fae5; padding: clamp(1rem, 1.6vw, 1.3rem); border-top: 3px solid #10b981; display: flex; flex-direction: column; gap: 8px;">
         <div class="kicker" style="color: #064e3b;">건강 · Wellness</div>
-        <ul style="list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 0.78rem; color: #065f46; line-height: 1.5; flex: 1;">
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: clamp(1rem, 1.3vw, 1.24rem); color: #065f46; line-height: 1.8; flex: 1; justify-content: center;">
           <li>· <b>물통 항상 휴대</b> (하루 2L 이상)</li>
           <li>· 자외선 차단제 매일 사용</li>
           <li>· 모기 기피제 휴대 (뎅기열 예방)</li>
@@ -3894,8 +3893,8 @@ body {
 
     .price-guide .pg-item {
       background: #fff;
-      padding: clamp(0.8rem, 1.4vw, 1.1rem);
-      display: flex; flex-direction: column; gap: 8px;
+      padding: clamp(1.1rem, 1.8vw, 1.7rem);
+      display: flex; flex-direction: column; justify-content: center; gap: 16px;
       border-top: 3px solid var(--accent);
       box-shadow: 0 6px 18px -10px rgba(20,30,55,0.15);
       min-height: 0; min-width: 0;
@@ -3908,32 +3907,32 @@ body {
     .price-guide .pg-life { border-top-color: #8b5cf6; }
 
     .price-guide .pg-emoji {
-      font-size: clamp(1.6rem, 2.4vw, 2rem);
+      font-size: clamp(2.2rem, 3vw, 2.9rem);
       line-height: 1;
     }
-    .price-guide .pg-info { display: flex; flex-direction: column; gap: 2px; }
+    .price-guide .pg-info { display: flex; flex-direction: column; gap: 4px; }
     .price-guide .pg-name {
-      font-size: clamp(0.84rem, 1.05vw, 0.95rem);
+      font-size: clamp(1.12rem, 1.45vw, 1.4rem);
       font-weight: 800;
       letter-spacing: -0.01em;
       color: var(--ink);
-      line-height: 1.2;
+      line-height: 1.25;
     }
     .price-guide .pg-en {
-      font-size: 0.68rem;
+      font-size: clamp(0.78rem, 0.95vw, 0.9rem);
       color: var(--text-dim);
       letter-spacing: 0.02em;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
     .price-guide .pg-price {
       font-family: 'Fraunces', serif; font-style: italic; font-weight: 600;
-      font-size: clamp(1rem, 1.4vw, 1.2rem);
+      font-size: clamp(1.55rem, 2.1vw, 2rem);
       color: var(--accent);
       letter-spacing: -0.01em;
       line-height: 1.1;
     }
     .price-guide .pg-krw {
-      font-size: 0.66rem;
+      font-size: clamp(0.85rem, 1.05vw, 1rem);
       color: var(--text-dim);
       letter-spacing: 0.02em;
     }
