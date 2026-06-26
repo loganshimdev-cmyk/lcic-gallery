@@ -1183,10 +1183,10 @@ body {
 .sched-page .head .left .module-tag { font-family: 'Fraunces', serif; font-style: italic; font-size: clamp(1rem, 1.4vw, 1.2rem); color: var(--accent); font-weight: 600; }
 .sched-page .head .left h2 { font-size: clamp(2rem, 3.4vw, 2.8rem); font-weight: 900; letter-spacing: -0.025em; line-height: 1; }
 .sched-page .head .period { font-size: 0.85rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-dim); }
-.stbl { width: 100%; border-collapse: collapse; font-size: clamp(0.65rem, 0.85vw, 0.78rem); }
-.stbl thead th { background: var(--ink); color: #fff; font-weight: 700; padding: 10px 8px; text-align: center; letter-spacing: 0.1em; text-transform: uppercase; font-size: clamp(0.62rem, 0.82vw, 0.74rem); border: 0; }
-.stbl td { padding: 10px 8px; border-bottom: 1px solid var(--rule); vertical-align: top; }
-.stbl td.tm { font-family: 'Fraunces', serif; font-style: italic; color: var(--accent); font-weight: 500; white-space: nowrap; width: 110px; font-size: clamp(0.7rem, 0.9vw, 0.82rem); }
+.stbl { width: 100%; border-collapse: collapse; font-size: clamp(0.88rem, 1.08vw, 1.05rem); }
+.stbl thead th { background: var(--ink); color: #fff; font-weight: 700; padding: 11px 10px; text-align: center; letter-spacing: 0.1em; text-transform: uppercase; font-size: clamp(0.78rem, 0.98vw, 0.92rem); border: 0; }
+.stbl td { padding: clamp(7px, 1.2vh, 12px) 10px; border-bottom: 1px solid var(--rule); vertical-align: middle; }
+.stbl td.tm { font-family: 'Fraunces', serif; font-style: italic; color: var(--accent); font-weight: 500; white-space: nowrap; width: 122px; font-size: clamp(0.92rem, 1.1vw, 1.06rem); }
 .stbl td.tm .pn { display: block; font-style: normal; font-family: 'Pretendard', sans-serif; font-size: 0.7em; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); }
 .stbl td.cell { background: rgba(0,0,0,0.015); }
 .stbl td.cell.eng { background: rgba(147, 197, 253, 0.25); }
@@ -1197,9 +1197,9 @@ body {
 .stbl td.cell.aw { background: rgba(216, 180, 254, 0.4); }
 .stbl td.cell.sdg { background: rgba(253, 230, 138, 0.4); }
 .stbl td.cell .sub-opt { display: block; font-size: 0.85em; color: var(--text-dim); margin-top: 4px; padding-top: 4px; border-top: 1px dashed rgba(15,23,42,0.15); font-family: 'Fraunces', serif; font-style: italic; }
-.stbl td.lunch { background: var(--ink); color: #fff; font-weight: 700; text-align: center; letter-spacing: 0.15em; text-transform: uppercase; padding: 8px; }
-.stbl td.buddy { background: var(--paper-warm); color: var(--accent); font-style: italic; font-family: 'Fraunces', serif; font-weight: 500; text-align: center; font-size: 0.85rem; }
-.sched-page .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 0.72rem; color: var(--text-dim); padding-top: 8px; align-items: center; }
+.stbl td.lunch { background: var(--ink); color: #fff; font-weight: 700; text-align: center; letter-spacing: 0.15em; text-transform: uppercase; padding: 9px; }
+.stbl td.buddy { background: var(--paper-warm); color: var(--accent); font-style: italic; font-family: 'Fraunces', serif; font-weight: 500; text-align: center; font-size: clamp(0.95rem, 1.15vw, 1.12rem); }
+.sched-page .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: clamp(0.82rem, 1vw, 0.95rem); color: var(--text-dim); padding-top: 8px; align-items: center; }
 .sched-page .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
 
 /* S19 — Certificate showcase */
@@ -2795,13 +2795,14 @@ body {
       padding-bottom: 4px;
       border-bottom: 1px solid var(--rule);
     }
-    .rules-waiver .rw-icon { font-size: 1.1rem; }
-    .rules-waiver .rw-rule h3 { font-size: clamp(0.92rem, 1.15vw, 1.05rem); font-weight: 800; color: var(--ink); }
+    .rules-waiver .rw-icon { font-size: 1.45rem; }
+    .rules-waiver .rw-rule h3 { font-size: clamp(1.2rem, 1.5vw, 1.48rem); font-weight: 800; color: var(--ink); }
     .rules-waiver .rw-rule-warn h3 { color: #7f1d1d; }
     .rules-waiver .rw-rule ul {
       list-style: none; padding: 0; margin: 0;
-      display: flex; flex-direction: column; gap: 4px;
-      font-size: 0.78rem; line-height: 1.5; color: var(--text-dim);
+      display: flex; flex-direction: column; gap: 9px;
+      font-size: clamp(0.98rem, 1.2vw, 1.18rem); line-height: 1.7; color: var(--text-dim);
+      flex: 1; justify-content: center;
     }
     .rules-waiver .rw-rule-warn ul li { color: #78350f; }
     .rules-waiver .rw-warn { color: #b91c1c !important; font-weight: 700; }
@@ -2888,28 +2889,28 @@ body {
     .rules-waiver .rw-badge-warn { background: #dc2626; }
     .rules-waiver .rw-noovn-head h3 {
       font-family: 'Fraunces', serif; font-style: italic; font-weight: 500;
-      font-size: clamp(1.5rem, 2.4vw, 2rem); color: #7f1d1d; letter-spacing: -0.02em;
+      font-size: clamp(1.9rem, 2.8vw, 2.5rem); color: #7f1d1d; letter-spacing: -0.02em;
     }
-    .rules-waiver .rw-noovn-head p { font-size: 0.86rem; color: #374151; line-height: 1.55; }
+    .rules-waiver .rw-noovn-head p { font-size: clamp(1rem, 1.2vw, 1.18rem); color: #374151; line-height: 1.6; }
     .rules-waiver .rw-noovn-list {
       list-style: none; padding: 0; margin: 0;
-      display: flex; flex-direction: column; gap: 8px;
-      flex: 1; min-height: 0;
+      display: flex; flex-direction: column; gap: 14px;
+      flex: 1; min-height: 0; justify-content: center;
     }
     .rules-waiver .rw-noovn-list li {
-      display: flex; align-items: flex-start; gap: 8px;
-      background: #fff; border-left: 3px solid #dc2626;
-      padding: 10px 12px;
-      font-size: 0.82rem; color: #78350f; line-height: 1.45;
+      display: flex; align-items: center; gap: 12px;
+      background: #fff; border-left: 4px solid #dc2626;
+      padding: 18px 18px;
+      font-size: clamp(1.05rem, 1.3vw, 1.25rem); color: #78350f; line-height: 1.5;
     }
     .rules-waiver .rw-noovn-list li .pic { color: #dc2626; flex: 0 0 auto; margin-top: 1px; }
     .rules-waiver .rw-noovn-foot {
-      display: flex; align-items: center; gap: 10px;
+      display: flex; align-items: center; gap: 13px;
       background: #0f1a30; color: #fff;
-      padding: 10px 14px; border-radius: 6px;
+      padding: 15px 18px; border-radius: 6px;
     }
-    .rules-waiver .rw-noovn-foot .pic { font-size: 1.1rem; flex: 0 0 auto; }
-    .rules-waiver .rw-noovn-foot p { font-size: 0.8rem; line-height: 1.45; color: rgba(255,255,255,0.92); }
+    .rules-waiver .rw-noovn-foot .pic { font-size: 1.45rem; flex: 0 0 auto; }
+    .rules-waiver .rw-noovn-foot p { font-size: clamp(0.92rem, 1.1vw, 1.06rem); line-height: 1.5; color: rgba(255,255,255,0.92); }
     .rules-waiver .rw-noovn-foot b { color: #fca5a5; }
   </style>
 </section>
