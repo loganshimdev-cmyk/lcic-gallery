@@ -214,7 +214,7 @@ create table if not exists status_reports (
   category text,            -- 신고 항목 (예: 'flight')
   on_file text,             -- 현재 등록된 값(참고용)
   correction text,          -- 학생이 적은 올바른 정보
-  file_path text,           -- 첨부파일 경로(비공개 버킷 status-reports 내)
+  file_paths text[],        -- 첨부파일 경로 목록(최대 5개, 비공개 버킷 status-reports 내)
   resolved boolean default false
 );
 create index if not exists status_reports_created_idx
@@ -222,7 +222,7 @@ create index if not exists status_reports_created_idx
 ```
 
 > 이미 테이블을 만든 뒤 첨부 기능을 추가한다면 컬럼만 더하면 된다:
-> `alter table status_reports add column if not exists file_path text;`
+> `alter table status_reports add column if not exists file_paths text[];`
 
 ## B. RLS 정책
 
@@ -287,7 +287,8 @@ create policy "admin can delete report files"
 ```
 
 > 버킷이 **비공개**라 학생은 자기가 올린 파일조차 URL로 못 본다(업로드 전용).
-> 관리자 페이지는 300초짜리 **서명 URL**로만 연다. 최대 첨부 크기는 클라이언트에서 10MB로 제한.
+> 관리자 페이지는 300초짜리 **서명 URL**로만 연다.
+> 첨부는 신고당 **최대 5장**, 각 파일 **최대 10MB**(클라이언트에서 제한).
 
 ## D. 사용
 

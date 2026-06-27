@@ -369,8 +369,8 @@
           <textarea class="report-msg" id="report-msg" placeholder="예: 편명 KE123 / 출발 2026-07-06 / 도착 2026-07-06"></textarea>
           <div><label class="file-pick" id="report-file-label">
             <iconify-icon icon="solar:paperclip-2-bold"></iconify-icon>
-            <span id="report-file-name">사진·PDF 첨부 (선택)</span>
-            <input type="file" id="report-file" accept="image/*,application/pdf" hidden>
+            <span id="report-file-name">사진·PDF 첨부 (선택, 최대 5장)</span>
+            <input type="file" id="report-file" accept="image/*,application/pdf" multiple hidden>
           </label></div>
           <div class="link-row"><button class="link-btn primary" id="report-send">
             <iconify-icon icon="solar:plain-2-bold"></iconify-icon> 신고 보내기</button></div>
@@ -396,6 +396,8 @@
   }
 
   const MAX_FILE = 10 * 1024 * 1024;   // 10MB
+  const MAX_COUNT = 5;
+  const FILE_DEFAULT = "사진·PDF 첨부 (선택, 최대 5장)";
 
   function wireReport(rec) {
     const toggle = $("report-toggle"), box = $("report-box"), send = $("report-send"),
@@ -404,47 +406,44 @@
     const f = rec.flight || {};
     const onFile = `편명 ${f.flightNo || "-"} / 출발 ${f.departure || "-"} / 도착 ${f.arrival || "-"}`;
     const setStatus = (color, text) => { statusEl.style.color = color; statusEl.textContent = text; };
+    const resetFiles = () => { fileInput.value = ""; fileLabel.classList.remove("has-file"); fileName.textContent = FILE_DEFAULT; };
 
     toggle.addEventListener("click", () => box.classList.toggle("show"));
     fileInput.addEventListener("change", () => {
-      const file = fileInput.files[0];
-      if (file && file.size > MAX_FILE) {
-        setStatus("#dc2626", "파일이 너무 큽니다 (최대 10MB).");
-        fileInput.value = ""; fileLabel.classList.remove("has-file"); fileName.textContent = "사진·PDF 첨부 (선택)";
-        return;
-      }
-      if (file) { fileLabel.classList.add("has-file"); fileName.textContent = file.name; setStatus("", ""); }
-      else { fileLabel.classList.remove("has-file"); fileName.textContent = "사진·PDF 첨부 (선택)"; }
+      const files = [...fileInput.files];
+      if (!files.length) { resetFiles(); return; }
+      if (files.length > MAX_COUNT) { setStatus("#dc2626", `최대 ${MAX_COUNT}장까지 첨부할 수 있습니다.`); resetFiles(); return; }
+      const big = files.find((x) => x.size > MAX_FILE);
+      if (big) { setStatus("#dc2626", `"${big.name}"이(가) 너무 큽니다 (최대 10MB).`); resetFiles(); return; }
+      fileLabel.classList.add("has-file");
+      fileName.textContent = files.length === 1 ? files[0].name : `${files.length}장 선택됨`;
+      setStatus("", "");
     });
 
     send.addEventListener("click", async () => {
       const correction = msg.value.trim();
-      const file = fileInput.files[0] || null;
-      if (!correction && !file) { setStatus("#dc2626", "올바른 정보를 적거나 파일을 첨부해 주세요."); return; }
+      const files = [...fileInput.files];
+      if (!correction && !files.length) { setStatus("#dc2626", "올바른 정보를 적거나 파일을 첨부해 주세요."); return; }
       if (!window.lcicSubmitReport) { setStatus("#dc2626", "잠시 후 다시 시도해 주세요."); return; }
+      const restore = () => { send.disabled = false; send.innerHTML = '<iconify-icon icon="solar:plain-2-bold"></iconify-icon> 신고 보내기'; };
       send.disabled = true; send.innerHTML = '<iconify-icon icon="svg-spinners:ring-resize" inline></iconify-icon> 보내는 중…';
       setStatus("", "");
 
-      let filePath = null;
-      if (file) {
-        const up = await window.lcicUploadReportFile(file);
-        if (up.error) {
-          send.disabled = false; send.innerHTML = '<iconify-icon icon="solar:plain-2-bold"></iconify-icon> 신고 보내기';
-          setStatus("#dc2626", "파일 업로드 실패: " + up.error); return;
-        }
-        filePath = up.path;
+      const paths = [];
+      for (let i = 0; i < files.length; i++) {
+        send.innerHTML = `<iconify-icon icon="svg-spinners:ring-resize" inline></iconify-icon> 첨부 올리는 중 (${i + 1}/${files.length})…`;
+        const up = await window.lcicUploadReportFile(files[i]);
+        if (up.error) { restore(); setStatus("#dc2626", "파일 업로드 실패: " + up.error); return; }
+        paths.push(up.path);
       }
 
       const err = await window.lcicSubmitReport({
         student_name: rec.name || "", student_email: CUR_EMAIL || "",
-        category: "flight", on_file: onFile, correction, file_path: filePath,
+        category: "flight", on_file: onFile, correction, file_paths: paths.length ? paths : null,
       });
-      if (err) {
-        send.disabled = false; send.innerHTML = '<iconify-icon icon="solar:plain-2-bold"></iconify-icon> 신고 보내기';
-        setStatus("#dc2626", "전송 실패: " + err + " 잠시 후 다시 시도해 주세요."); return;
-      }
+      if (err) { restore(); setStatus("#dc2626", "전송 실패: " + err + " 잠시 후 다시 시도해 주세요."); return; }
       setStatus("#15803d", "✓ 신고가 접수되었습니다. 확인 후 정정해 드릴게요.");
-      msg.value = ""; fileInput.value = ""; fileLabel.classList.remove("has-file"); fileName.textContent = "사진·PDF 첨부 (선택)";
+      msg.value = ""; resetFiles();
       send.disabled = true; send.innerHTML = '<iconify-icon icon="solar:check-circle-bold"></iconify-icon> 접수됨';
     });
   }
