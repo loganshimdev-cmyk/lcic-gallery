@@ -156,6 +156,15 @@
     background: var(--bg-elev); line-height: 1.5;
   }
   .report-hint { font-size: 0.82rem; color: var(--text-faint); margin: 8px 0; }
+  .file-pick {
+    display: inline-flex; align-items: center; gap: 7px; margin-top: 10px;
+    padding: 10px 14px; border: 1px dashed var(--hairline-strong); border-radius: 12px;
+    font-size: 0.88rem; font-weight: 600; color: var(--text-dim); cursor: pointer;
+    background: var(--bg-elev); transition: border-color .15s, color .15s; max-width: 100%;
+  }
+  .file-pick:hover { border-color: var(--accent); color: var(--accent-deep); }
+  .file-pick.has-file { border-style: solid; border-color: var(--accent); color: var(--accent-deep); background: var(--accent-soft); }
+  .file-pick span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
   .dash-foot { text-align: center; margin: 22px 0 60px; color: var(--text-faint); font-size: 0.82rem; }
   .logout-btn {
@@ -356,8 +365,13 @@
         `<div class="link-row"><button class="link-btn" id="report-toggle">
           <iconify-icon icon="solar:danger-triangle-bold"></iconify-icon> 정보가 틀려요</button></div>
         <div class="report-box" id="report-box">
-          <div class="report-hint">올바른 항공편 정보를 적어 주세요. 담당자에게 바로 접수됩니다.</div>
+          <div class="report-hint">올바른 정보를 적거나, 실제 항공권(e-ticket) 사진·PDF를 첨부해 주세요. 담당자에게 바로 접수됩니다.</div>
           <textarea class="report-msg" id="report-msg" placeholder="예: 편명 KE123 / 출발 2026-07-06 / 도착 2026-07-06"></textarea>
+          <div><label class="file-pick" id="report-file-label">
+            <iconify-icon icon="solar:paperclip-2-bold"></iconify-icon>
+            <span id="report-file-name">사진·PDF 첨부 (선택)</span>
+            <input type="file" id="report-file" accept="image/*,application/pdf" hidden>
+          </label></div>
           <div class="link-row"><button class="link-btn primary" id="report-send">
             <iconify-icon icon="solar:plain-2-bold"></iconify-icon> 신고 보내기</button></div>
           <div class="report-hint" id="report-status" style="min-height:18px;"></div>
@@ -381,28 +395,57 @@
     window.scrollTo(0, 0);
   }
 
+  const MAX_FILE = 10 * 1024 * 1024;   // 10MB
+
   function wireReport(rec) {
     const toggle = $("report-toggle"), box = $("report-box"), send = $("report-send"),
-      msg = $("report-msg"), statusEl = $("report-status");
+      msg = $("report-msg"), statusEl = $("report-status"),
+      fileInput = $("report-file"), fileLabel = $("report-file-label"), fileName = $("report-file-name");
     const f = rec.flight || {};
     const onFile = `편명 ${f.flightNo || "-"} / 출발 ${f.departure || "-"} / 도착 ${f.arrival || "-"}`;
+    const setStatus = (color, text) => { statusEl.style.color = color; statusEl.textContent = text; };
+
     toggle.addEventListener("click", () => box.classList.toggle("show"));
+    fileInput.addEventListener("change", () => {
+      const file = fileInput.files[0];
+      if (file && file.size > MAX_FILE) {
+        setStatus("#dc2626", "파일이 너무 큽니다 (최대 10MB).");
+        fileInput.value = ""; fileLabel.classList.remove("has-file"); fileName.textContent = "사진·PDF 첨부 (선택)";
+        return;
+      }
+      if (file) { fileLabel.classList.add("has-file"); fileName.textContent = file.name; setStatus("", ""); }
+      else { fileLabel.classList.remove("has-file"); fileName.textContent = "사진·PDF 첨부 (선택)"; }
+    });
+
     send.addEventListener("click", async () => {
       const correction = msg.value.trim();
-      if (!correction) { statusEl.style.color = "#dc2626"; statusEl.textContent = "올바른 정보를 입력해 주세요."; return; }
-      if (!window.lcicSubmitReport) { statusEl.style.color = "#dc2626"; statusEl.textContent = "잠시 후 다시 시도해 주세요."; return; }
+      const file = fileInput.files[0] || null;
+      if (!correction && !file) { setStatus("#dc2626", "올바른 정보를 적거나 파일을 첨부해 주세요."); return; }
+      if (!window.lcicSubmitReport) { setStatus("#dc2626", "잠시 후 다시 시도해 주세요."); return; }
       send.disabled = true; send.innerHTML = '<iconify-icon icon="svg-spinners:ring-resize" inline></iconify-icon> 보내는 중…';
-      statusEl.textContent = "";
+      setStatus("", "");
+
+      let filePath = null;
+      if (file) {
+        const up = await window.lcicUploadReportFile(file);
+        if (up.error) {
+          send.disabled = false; send.innerHTML = '<iconify-icon icon="solar:plain-2-bold"></iconify-icon> 신고 보내기';
+          setStatus("#dc2626", "파일 업로드 실패: " + up.error); return;
+        }
+        filePath = up.path;
+      }
+
       const err = await window.lcicSubmitReport({
         student_name: rec.name || "", student_email: CUR_EMAIL || "",
-        category: "flight", on_file: onFile, correction,
+        category: "flight", on_file: onFile, correction, file_path: filePath,
       });
-      send.disabled = false; send.innerHTML = '<iconify-icon icon="solar:plain-2-bold"></iconify-icon> 신고 보내기';
-      if (err) { statusEl.style.color = "#dc2626"; statusEl.textContent = "전송 실패: " + err + " 잠시 후 다시 시도해 주세요."; return; }
-      statusEl.style.color = "#15803d";
-      statusEl.textContent = "✓ 신고가 접수되었습니다. 확인 후 정정해 드릴게요.";
-      msg.value = ""; send.disabled = true;
-      send.innerHTML = '<iconify-icon icon="solar:check-circle-bold"></iconify-icon> 접수됨';
+      if (err) {
+        send.disabled = false; send.innerHTML = '<iconify-icon icon="solar:plain-2-bold"></iconify-icon> 신고 보내기';
+        setStatus("#dc2626", "전송 실패: " + err + " 잠시 후 다시 시도해 주세요."); return;
+      }
+      setStatus("#15803d", "✓ 신고가 접수되었습니다. 확인 후 정정해 드릴게요.");
+      msg.value = ""; fileInput.value = ""; fileLabel.classList.remove("has-file"); fileName.textContent = "사진·PDF 첨부 (선택)";
+      send.disabled = true; send.innerHTML = '<iconify-icon icon="solar:check-circle-bold"></iconify-icon> 접수됨';
     });
   }
 
@@ -448,15 +491,29 @@
 })();
 </script>
 
-<!-- 신고 전송 브리지: Supabase status_reports에 INSERT (apply.html과 동일 클라이언트) -->
+<!-- 신고 전송 브리지: Supabase status_reports INSERT + 비공개 버킷 업로드 -->
 <script type="module">
 import { supabase } from "./assets/supabase.js";
+const BUCKET = "status-reports";
 window.lcicSubmitReport = async (payload) => {
   try {
     const { error } = await supabase.from("status_reports").insert(payload);
     return error ? (error.message || "오류") : null;
   } catch (e) {
     return e && e.message ? e.message : "네트워크 오류";
+  }
+};
+window.lcicUploadReportFile = async (file) => {
+  try {
+    const ext = (file.name.split(".").pop() || "dat").toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 8) || "dat";
+    const id = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2));
+    const path = `reports/${id}.${ext}`;
+    const { data, error } = await supabase.storage.from(BUCKET).upload(path, file, {
+      contentType: file.type || "application/octet-stream", upsert: false,
+    });
+    return error ? { error: error.message || "오류" } : { path: data.path };
+  } catch (e) {
+    return { error: e && e.message ? e.message : "네트워크 오류" };
   }
 };
 </script>

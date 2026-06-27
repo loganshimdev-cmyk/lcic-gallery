@@ -94,11 +94,11 @@
         <thead>
           <tr>
             <th>접수일시</th><th>학생</th><th>이메일</th><th>항목</th>
-            <th>현재 등록값</th><th>학생이 알려준 올바른 정보</th><th>상태</th><th></th>
+            <th>현재 등록값</th><th>학생이 알려준 올바른 정보</th><th>첨부</th><th>상태</th><th></th>
           </tr>
         </thead>
         <tbody id="rows">
-          <tr><td colspan="8" class="muted" style="text-align:center; padding:50px;">
+          <tr><td colspan="9" class="muted" style="text-align:center; padding:50px;">
             <iconify-icon icon="svg-spinners:ring-resize" inline style="font-size:22px;"></iconify-icon>
           </td></tr>
         </tbody>
@@ -165,7 +165,7 @@ function fmtTime(iso) {
 }
 
 async function loadRows() {
-  $("rows").innerHTML = `<tr><td colspan="8" class="muted" style="text-align:center; padding:50px;"><iconify-icon icon="svg-spinners:ring-resize" inline style="font-size:22px;"></iconify-icon></td></tr>`;
+  $("rows").innerHTML = `<tr><td colspan="9" class="muted" style="text-align:center; padding:50px;"><iconify-icon icon="svg-spinners:ring-resize" inline style="font-size:22px;"></iconify-icon></td></tr>`;
   const { data, error } = await supabase
     .from("status_reports")
     .select("*")
@@ -175,7 +175,7 @@ async function loadRows() {
   const open = cache.filter((r) => !r.resolved).length;
   $("count-meta").textContent = `총 ${cache.length}건 · 미처리 ${open}건`;
   if (!cache.length) {
-    $("rows").innerHTML = `<tr><td colspan="8" class="muted" style="text-align:center; padding:60px;">아직 접수된 신고가 없습니다.</td></tr>`;
+    $("rows").innerHTML = `<tr><td colspan="9" class="muted" style="text-align:center; padding:60px;">아직 접수된 신고가 없습니다.</td></tr>`;
     return;
   }
   $("rows").innerHTML = cache.map((r) => {
@@ -188,6 +188,7 @@ async function loadRows() {
       <td><span class="cat-pill">${esc(r.category || "")}</span></td>
       <td class="muted">${esc(r.on_file || "")}</td>
       <td class="corr">${esc(r.correction || "")}</td>
+      <td>${r.file_path ? `<button class="act-btn file-btn" data-file="${esc(r.file_path)}"><iconify-icon icon="solar:paperclip-2-bold" inline></iconify-icon> 첨부 보기</button>` : '<span class="muted">—</span>'}</td>
       <td><button class="act-btn done-btn ${r.resolved ? "is-done" : ""}" data-id="${esc(r.id)}" data-done="${r.resolved ? 1 : 0}">${r.resolved ? "✓ 처리완료" : "처리하기"}</button></td>
       <td><button class="del-btn" title="삭제" data-del="${esc(r.id)}"><iconify-icon icon="solar:trash-bin-trash-bold-duotone"></iconify-icon></button></td>
     </tr>`;
@@ -199,6 +200,16 @@ async function loadRows() {
       const { error } = await supabase.from("status_reports").update({ resolved: next }).eq("id", btn.dataset.id);
       if (error) { showToast(`업데이트 실패: ${error.message}`, "error"); return; }
       loadRows();
+    });
+  });
+  document.querySelectorAll(".file-btn").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const orig = btn.innerHTML;
+      btn.disabled = true; btn.innerHTML = '<iconify-icon icon="svg-spinners:ring-resize" inline></iconify-icon> 여는 중…';
+      const { data, error } = await supabase.storage.from("status-reports").createSignedUrl(btn.dataset.file, 300);
+      btn.disabled = false; btn.innerHTML = orig;
+      if (error || !data) { showToast(`첨부 열기 실패: ${error ? error.message : "오류"}`, "error"); return; }
+      window.open(data.signedUrl, "_blank", "noopener");
     });
   });
   document.querySelectorAll(".del-btn").forEach((btn) => {

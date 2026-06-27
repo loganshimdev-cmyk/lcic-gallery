@@ -214,11 +214,15 @@ create table if not exists status_reports (
   category text,            -- 신고 항목 (예: 'flight')
   on_file text,             -- 현재 등록된 값(참고용)
   correction text,          -- 학생이 적은 올바른 정보
+  file_path text,           -- 첨부파일 경로(비공개 버킷 status-reports 내)
   resolved boolean default false
 );
 create index if not exists status_reports_created_idx
   on status_reports (created_at desc);
 ```
+
+> 이미 테이블을 만든 뒤 첨부 기능을 추가한다면 컬럼만 더하면 된다:
+> `alter table status_reports add column if not exists file_path text;`
 
 ## B. RLS 정책
 
@@ -247,11 +251,50 @@ create policy "admin can delete reports"
 
 > ⚠️ `anon`에게 SELECT 정책을 만들지 말 것 — 만들면 학생이 다른 학생 신고를 볼 수 있다.
 
-## C. 사용
+## C. 첨부파일 저장소 (Storage)
 
-- 학생: `status.html`에서 항공편 정보가 틀리면 "정보가 틀려요" → 올바른 정보 입력 → 신고
+학생이 실제 항공권(e-ticket) 사진·PDF를 첨부할 수 있다. 개인정보가 있으므로 **비공개 버킷**.
+
+1. Supabase 대시보드 → **Storage** → **New bucket** → 이름 `status-reports`,
+   **Public 체크 해제(비공개)** → 생성. (또는 아래 SQL로 생성)
+
+```sql
+insert into storage.buckets (id, name, public)
+values ('status-reports', 'status-reports', false)
+on conflict (id) do nothing;
+```
+
+2. 정책: **누구나 업로드(INSERT)만 가능, 관리자만 읽기**. SQL Editor에서 실행:
+
+```sql
+-- 학생(비로그인)도 status-reports 버킷에 업로드 가능
+create policy "anyone can upload report file"
+  on storage.objects for insert
+  to anon, authenticated
+  with check (bucket_id = 'status-reports');
+
+-- 로그인된 관리자만 파일 열람(서명 URL 생성)
+create policy "admin can read report files"
+  on storage.objects for select
+  to authenticated
+  using (bucket_id = 'status-reports');
+
+-- 로그인된 관리자만 파일 삭제
+create policy "admin can delete report files"
+  on storage.objects for delete
+  to authenticated
+  using (bucket_id = 'status-reports');
+```
+
+> 버킷이 **비공개**라 학생은 자기가 올린 파일조차 URL로 못 본다(업로드 전용).
+> 관리자 페이지는 300초짜리 **서명 URL**로만 연다. 최대 첨부 크기는 클라이언트에서 10MB로 제한.
+
+## D. 사용
+
+- 학생: `status.html`에서 항공편 정보가 틀리면 "정보가 틀려요" → 올바른 정보 입력
+  **또는 항공권 사진·PDF 첨부** → 신고
 - 관리자: `https://lcic-campus.com/status-reports.html` 로그인(apply-admin과 동일 계정) →
-  신고 목록 확인 → 처리하면 "처리완료" 토글
+  신고 목록·**첨부 보기** 확인 → 처리하면 "처리완료" 토글
 
 ---
 
