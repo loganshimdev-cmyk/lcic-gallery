@@ -9,6 +9,8 @@ scripts/encrypt-reports.cjs
 scripts/report-data.json
 scripts/_auto_report.json
 scripts/_*.json
+scripts/_*.csv
+scripts/encrypt-status.cjs
 .gstack/
 scripts/sheet-to-report.cjs
 scripts/make-agency-page.cjs
