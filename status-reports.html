@@ -181,6 +181,10 @@ async function loadRows() {
   $("rows").innerHTML = cache.map((r) => {
     const mail = r.student_email
       ? `<a class="mail" href="mailto:${esc(r.student_email)}">${esc(r.student_email)}</a>` : "";
+    const files = Array.isArray(r.file_paths) ? r.file_paths : (r.file_path ? [r.file_path] : []);
+    const fileCell = files.length
+      ? files.map((fp, i) => `<button class="act-btn file-btn" data-file="${esc(fp)}" style="margin:2px 2px 2px 0;"><iconify-icon icon="solar:paperclip-2-bold" inline></iconify-icon> ${files.length > 1 ? `#${i + 1}` : "첨부 보기"}</button>`).join("")
+      : '<span class="muted">—</span>';
     return `<tr class="${r.resolved ? "done" : ""}">
       <td class="muted">${esc(fmtTime(r.created_at))}</td>
       <td class="nm">${esc(r.student_name || "")}</td>
@@ -188,7 +192,7 @@ async function loadRows() {
       <td><span class="cat-pill">${esc(r.category || "")}</span></td>
       <td class="muted">${esc(r.on_file || "")}</td>
       <td class="corr">${esc(r.correction || "")}</td>
-      <td>${r.file_path ? `<button class="act-btn file-btn" data-file="${esc(r.file_path)}"><iconify-icon icon="solar:paperclip-2-bold" inline></iconify-icon> 첨부 보기</button>` : '<span class="muted">—</span>'}</td>
+      <td>${fileCell}</td>
       <td><button class="act-btn done-btn ${r.resolved ? "is-done" : ""}" data-id="${esc(r.id)}" data-done="${r.resolved ? 1 : 0}">${r.resolved ? "✓ 처리완료" : "처리하기"}</button></td>
       <td><button class="del-btn" title="삭제" data-del="${esc(r.id)}"><iconify-icon icon="solar:trash-bin-trash-bold-duotone"></iconify-icon></button></td>
     </tr>`;
