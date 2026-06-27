@@ -302,7 +302,7 @@
   };
   const ORDER = ["passport", "flight", "leveltest", "emergency"];
 
-  let CUR = null;
+  let CUR = null, CUR_EMAIL = null;
 
   function render(rec) {
     CUR = rec;
@@ -356,10 +356,11 @@
         `<div class="link-row"><button class="link-btn" id="report-toggle">
           <iconify-icon icon="solar:danger-triangle-bold"></iconify-icon> 정보가 틀려요</button></div>
         <div class="report-box" id="report-box">
-          <div class="report-hint">아래 메시지를 복사해 담당 매니저에게 보내 주세요.</div>
-          <textarea class="report-msg" id="report-msg" readonly></textarea>
-          <div class="link-row"><button class="link-btn primary" id="report-copy">
-            <iconify-icon icon="solar:copy-bold"></iconify-icon> 메시지 복사</button></div>
+          <div class="report-hint">올바른 항공편 정보를 적어 주세요. 담당자에게 바로 접수됩니다.</div>
+          <textarea class="report-msg" id="report-msg" placeholder="예: 편명 KE123 / 출발 2026-07-06 / 도착 2026-07-06"></textarea>
+          <div class="link-row"><button class="link-btn primary" id="report-send">
+            <iconify-icon icon="solar:plain-2-bold"></iconify-icon> 신고 보내기</button></div>
+          <div class="report-hint" id="report-status" style="min-height:18px;"></div>
         </div>`;
       wireReport(rec);
     } else {
@@ -381,16 +382,27 @@
   }
 
   function wireReport(rec) {
-    const toggle = $("report-toggle"), box = $("report-box"), copy = $("report-copy"), msg = $("report-msg");
+    const toggle = $("report-toggle"), box = $("report-box"), send = $("report-send"),
+      msg = $("report-msg"), statusEl = $("report-status");
     const f = rec.flight || {};
-    msg.value = `[항공편 정보 정정] ${rec.name || ""} 학생\n`
-      + `현재 등록: 편명 ${f.flightNo || "-"} / 출발 ${f.departure || "-"} / 도착 ${f.arrival || "-"}\n`
-      + `올바른 정보: (여기에 실제 항공권 정보를 적어 주세요)`;
+    const onFile = `편명 ${f.flightNo || "-"} / 출발 ${f.departure || "-"} / 도착 ${f.arrival || "-"}`;
     toggle.addEventListener("click", () => box.classList.toggle("show"));
-    copy.addEventListener("click", async () => {
-      try { await navigator.clipboard.writeText(msg.value); copy.innerHTML = "복사됨 ✓"; }
-      catch (_) { msg.select(); document.execCommand && document.execCommand("copy"); copy.innerHTML = "복사됨 ✓"; }
-      setTimeout(() => { copy.innerHTML = '<iconify-icon icon="solar:copy-bold"></iconify-icon> 메시지 복사'; }, 1500);
+    send.addEventListener("click", async () => {
+      const correction = msg.value.trim();
+      if (!correction) { statusEl.style.color = "#dc2626"; statusEl.textContent = "올바른 정보를 입력해 주세요."; return; }
+      if (!window.lcicSubmitReport) { statusEl.style.color = "#dc2626"; statusEl.textContent = "잠시 후 다시 시도해 주세요."; return; }
+      send.disabled = true; send.innerHTML = '<iconify-icon icon="svg-spinners:ring-resize" inline></iconify-icon> 보내는 중…';
+      statusEl.textContent = "";
+      const err = await window.lcicSubmitReport({
+        student_name: rec.name || "", student_email: CUR_EMAIL || "",
+        category: "flight", on_file: onFile, correction,
+      });
+      send.disabled = false; send.innerHTML = '<iconify-icon icon="solar:plain-2-bold"></iconify-icon> 신고 보내기';
+      if (err) { statusEl.style.color = "#dc2626"; statusEl.textContent = "전송 실패: " + err + " 잠시 후 다시 시도해 주세요."; return; }
+      statusEl.style.color = "#15803d";
+      statusEl.textContent = "✓ 신고가 접수되었습니다. 확인 후 정정해 드릴게요.";
+      msg.value = ""; send.disabled = true;
+      send.innerHTML = '<iconify-icon icon="solar:check-circle-bold"></iconify-icon> 접수됨';
     });
   }
 
@@ -405,6 +417,7 @@
     const cred = normEmail(email) + "|" + birth8(birthVal) + "|" + phone4(phoneVal);
     if (!entry) throw new Error("nomatch");
     const rec = await decrypt(entry.b, cred);   // 비번 틀리면 GCM 태그 실패 → throw
+    CUR_EMAIL = normEmail(email);
     try { sessionStorage.setItem(SS_KEY, JSON.stringify({ e: email, b: birthVal, p: phoneVal })); } catch (_) {}
     render(rec);
   }
@@ -433,6 +446,19 @@
     setTimeout(() => { const el = $("in-email"); if (el) el.focus(); }, 60);
   })();
 })();
+</script>
+
+<!-- 신고 전송 브리지: Supabase status_reports에 INSERT (apply.html과 동일 클라이언트) -->
+<script type="module">
+import { supabase } from "./assets/supabase.js";
+window.lcicSubmitReport = async (payload) => {
+  try {
+    const { error } = await supabase.from("status_reports").insert(payload);
+    return error ? (error.message || "오류") : null;
+  } catch (e) {
+    return e && e.message ? e.message : "네트워크 오류";
+  }
+};
 </script>
 </body>
 </html>
