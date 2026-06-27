@@ -195,6 +195,66 @@ create policy "admin can delete applications"
 
 ---
 
+# 준비현황 정정 신고 (`status.html` → `status-reports.html`)
+
+학생이 `status.html`에서 본인 현황(항공편 등)이 실제와 다를 때 누르는 "정보가 틀려요"
+신고를 모으는 테이블. 학생은 **신고 등록만** 가능하고, 관리자만 `status-reports.html`에서
+읽는다. `student_applications`와 동일한 anon-INSERT / admin-read 패턴.
+
+## A. 테이블 생성
+
+Supabase 대시보드 → **SQL Editor** → 아래 SQL 붙여넣고 Run.
+
+```sql
+create table if not exists status_reports (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz default now(),
+  student_name text,
+  student_email text,
+  category text,            -- 신고 항목 (예: 'flight')
+  on_file text,             -- 현재 등록된 값(참고용)
+  correction text,          -- 학생이 적은 올바른 정보
+  resolved boolean default false
+);
+create index if not exists status_reports_created_idx
+  on status_reports (created_at desc);
+```
+
+## B. RLS 정책
+
+```sql
+alter table status_reports enable row level security;
+
+-- 누구나 신고 등록(INSERT)만 가능 — SELECT 정책은 anon에게 만들지 않는다.
+create policy "anyone can submit report"
+  on status_reports for insert
+  to anon, authenticated
+  with check (true);
+
+-- 로그인된 관리자만 조회/수정(처리완료 토글)/삭제
+create policy "admin can read reports"
+  on status_reports for select
+  to authenticated using (true);
+
+create policy "admin can modify reports"
+  on status_reports for update
+  to authenticated using (true) with check (true);
+
+create policy "admin can delete reports"
+  on status_reports for delete
+  to authenticated using (true);
+```
+
+> ⚠️ `anon`에게 SELECT 정책을 만들지 말 것 — 만들면 학생이 다른 학생 신고를 볼 수 있다.
+
+## C. 사용
+
+- 학생: `status.html`에서 항공편 정보가 틀리면 "정보가 틀려요" → 올바른 정보 입력 → 신고
+- 관리자: `https://lcic-campus.com/status-reports.html` 로그인(apply-admin과 동일 계정) →
+  신고 목록 확인 → 처리하면 "처리완료" 토글
+
+---
+
 ## 사용 방법
 
 - 학생: `https://<사이트주소>/notice.html`, `/faq.html` 에서 읽기만
