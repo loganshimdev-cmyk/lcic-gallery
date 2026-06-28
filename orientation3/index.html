@@ -4715,18 +4715,27 @@ body {
       v.addEventListener('ended', function(){ setBadge('↻ 클릭해서 다시 재생'); syncPlayBtn(); });
       v.addEventListener('volumechange', syncMuteBtn);
 
+      // First user-initiated play unmutes automatically (a click counts as the
+      // gesture browsers require), so no separate "소리 켜기" press is needed.
+      // Only the first time — later manual mute toggles are respected.
+      var soundUnlocked = false;
+      function startWithSound(){
+        if(!soundUnlocked){ v.muted = false; soundUnlocked = true; syncMuteBtn(); }
+        v.play();
+      }
+
       if(posterBtn){
         posterBtn.addEventListener('click', function(e){
           e.stopPropagation();
-          v.play();
+          startWithSound();
         });
       }
 
       btnPlay.addEventListener('click', function(){
-        if(v.paused || v.ended){ v.play(); } else { v.pause(); }
+        if(v.paused || v.ended){ startWithSound(); } else { v.pause(); }
       });
       btnRestart.addEventListener('click', function(){
-        v.currentTime = 0; v.play();
+        v.currentTime = 0; startWithSound();
       });
       btnStop.addEventListener('click', function(){
         v.pause(); v.currentTime = 0;
@@ -4774,7 +4783,7 @@ body {
 
       // Click video itself = play/pause toggle
       v.addEventListener('click', function(){
-        if(v.paused || v.ended){ v.play(); } else { v.pause(); }
+        if(v.paused || v.ended){ startWithSound(); } else { v.pause(); }
       });
 
       // ===== Time bar / Seek bar =====
