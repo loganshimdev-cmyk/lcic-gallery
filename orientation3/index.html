@@ -1606,14 +1606,432 @@ body {
   <span class="section-stamp">Promo Film</span>
   <span class="page-marker"><span>Issue 36</span><span class="rule"></span><span class="pg">03</span></span>
   <div class="slide-inner">
-    <div class="video-stage r d1">
-      <video id="lcic-promo-video" controls preload="metadata" playsinline
-             style="width:100%; height:100%; object-fit: contain; background:#000;">
-        <source src="/orientation/assets/video/lcic-promo.mp4" type="video/mp4">
-        브라우저가 비디오를 지원하지 않습니다.
-      </video>
+    <div class="promo-wrap r d1" style="display:flex; flex-direction:column; gap:12px; width:min(80vw,1000px);">
+      <figure class="promo-figure"
+              style="margin:0; position:relative; aspect-ratio:16/9; background:#000; border-radius:4px; overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,0.25);">
+        <video class="promo-video-el" muted playsinline preload="metadata"
+               style="width:100%; height:100%; object-fit:contain; background:#000; display:block; cursor:pointer;">
+          <source src="/orientation/assets/video/lcic-promo.mp4" type="video/mp4">
+          브라우저가 비디오를 지원하지 않습니다.
+        </video>
+        <figcaption style="position:absolute; left:12px; bottom:12px; padding:4px 10px; background:rgba(15,23,42,0.7); color:#fff; font-size:0.72rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; border-radius:2px; pointer-events:none;">Promo Film · LCIC</figcaption>
+        <!-- Big center play overlay (visible until first play) -->
+        <button type="button" class="promo-poster-play" aria-label="영상 재생"
+                style="position:absolute; inset:0; background:rgba(15,23,42,0.45); border:0; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:opacity 0.25s ease; z-index:2;">
+          <span style="display:inline-flex; align-items:center; justify-content:center; width:clamp(64px,8vw,96px); height:clamp(64px,8vw,96px); background:rgba(255,255,255,0.95); border-radius:50%; box-shadow:0 8px 28px rgba(0,0,0,0.35); color:var(--accent); font-size:clamp(1.8rem,2.6vw,2.6rem); padding-left:6px;">▶</span>
+        </button>
+        <div class="promo-state-badge" style="position:absolute; top:12px; right:12px; padding:4px 10px; background:rgba(15,23,42,0.7); color:#fff; font-size:0.7rem; font-weight:700; letter-spacing:0.04em; border-radius:999px; pointer-events:none; backdrop-filter:blur(4px);">▶ 재생 대기</div>
+      </figure>
+
+      <!-- Time bar / Seek bar -->
+      <div class="promo-timebar" role="group" aria-label="재생 시간 바">
+        <span class="mt-time mt-current">0:00</span>
+        <div class="mt-track" tabindex="0" role="slider" aria-label="재생 위치"
+             aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div class="mt-buffered"></div>
+          <div class="mt-played"></div>
+          <div class="mt-knob"></div>
+        </div>
+        <span class="mt-time mt-duration">0:00</span>
+      </div>
+
+      <!-- Custom playback controls -->
+      <div class="promo-controls" role="group" aria-label="영상 컨트롤"
+           style="display:flex; gap:8px; align-items:stretch;">
+        <button type="button" class="mc-btn mc-play" aria-label="재생 / 일시정지">
+          <span class="mc-ico mc-ico-play">▶</span>
+          <span class="mc-ico mc-ico-pause" style="display:none;">⏸</span>
+          <span class="mc-lbl mc-lbl-play">재생</span>
+          <span class="mc-lbl mc-lbl-pause" style="display:none;">일시정지</span>
+        </button>
+        <button type="button" class="mc-btn mc-restart" aria-label="다시 재생">
+          <span class="mc-ico">↻</span><span class="mc-lbl">다시 재생</span>
+        </button>
+        <button type="button" class="mc-btn mc-stop" aria-label="정지">
+          <span class="mc-ico">■</span><span class="mc-lbl">정지</span>
+        </button>
+        <button type="button" class="mc-btn mc-mute" aria-label="소리">
+          <span class="mc-ico mc-ico-muted pic pic-volume-x"></span>
+          <span class="mc-ico mc-ico-sound pic pic-volume-2" style="display:none;"></span>
+          <span class="mc-lbl mc-lbl-muted">소리 켜기</span>
+          <span class="mc-lbl mc-lbl-sound" style="display:none;">음소거</span>
+        </button>
+        <div class="mc-vol" role="group" aria-label="음량 조절">
+          <input type="range" class="mc-vol-range" min="0" max="100" value="100" step="1" aria-label="음량">
+          <span class="mc-vol-pct">100</span>
+        </div>
+        <button type="button" class="mc-btn mc-fullscreen" aria-label="전체 화면">
+          <span class="mc-ico mc-ico-enter pic pic-maximize"></span>
+          <span class="mc-ico mc-ico-exit pic pic-minimize" style="display:none;"></span>
+          <span class="mc-lbl mc-lbl-enter">전체 화면</span>
+          <span class="mc-lbl mc-lbl-exit" style="display:none;">전체화면 종료</span>
+        </button>
+      </div>
     </div>
   </div>
+
+  <style>
+    #s2 .promo-controls .mc-btn {
+      flex: 1;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 10px 12px;
+      background: #fff;
+      border: 1px solid rgba(15,23,42,0.12);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #1f2937;
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: 0 2px 6px -2px rgba(15,23,42,0.1);
+    }
+    #s2 .promo-controls .mc-btn:hover {
+      background: #f3f4f6;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px -3px rgba(15,23,42,0.18);
+    }
+    #s2 .promo-controls .mc-btn:active { transform: translateY(0); }
+    #s2 .promo-controls .mc-ico { font-size: 0.95rem; line-height: 1; }
+    #s2 .promo-controls .mc-play {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+    #s2 .promo-controls .mc-play:hover { background: var(--accent-deep); }
+
+    /* Volume slider (lives inside the controls bar) */
+    #s2 .promo-controls .mc-vol {
+      flex: 1.4;
+      display: inline-flex; align-items: center; gap: 9px;
+      padding: 10px 14px;
+      background: #fff;
+      border: 1px solid rgba(15,23,42,0.12);
+      border-radius: 8px;
+      box-shadow: 0 2px 6px -2px rgba(15,23,42,0.1);
+      min-width: 0;
+    }
+    #s2 .mc-vol-range {
+      -webkit-appearance: none; appearance: none;
+      flex: 1; min-width: 0; height: 6px; margin: 0;
+      background: linear-gradient(90deg, var(--accent) var(--vol, 100%), #e5e7eb var(--vol, 100%));
+      border-radius: 999px; cursor: pointer; outline: none;
+    }
+    #s2 .mc-vol-range::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: var(--accent); border: 2px solid #fff;
+      box-shadow: 0 1px 4px rgba(15,23,42,0.35); cursor: pointer;
+    }
+    #s2 .mc-vol-range::-moz-range-thumb {
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--accent); border: 2px solid #fff;
+      box-shadow: 0 1px 4px rgba(15,23,42,0.35); cursor: pointer;
+    }
+    #s2 .mc-vol-range:focus-visible { box-shadow: 0 0 0 3px rgba(37,99,235,0.25); }
+    #s2 .mc-vol-pct {
+      flex-shrink: 0; min-width: 30px; text-align: right;
+      font-family: 'SF Mono', Consolas, monospace;
+      font-size: 0.76rem; font-weight: 700; color: #475569;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Fullscreen — when video figure goes fullscreen, fill the whole screen with black */
+    #s2 .promo-figure:fullscreen {
+      width: 100vw; height: 100vh;
+      aspect-ratio: auto;
+      background: #000;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #s2 .promo-figure:-webkit-full-screen {
+      width: 100vw; height: 100vh;
+      background: #000;
+    }
+    #s2 .promo-figure:fullscreen video { width: 100%; height: 100%; }
+
+    /* Time bar / Seek bar */
+    #s2 .promo-timebar {
+      display: flex; align-items: center; gap: 10px;
+      padding: 4px 2px;
+      font-family: 'SF Mono', Consolas, monospace;
+      font-size: 0.78rem;
+      color: #475569;
+      user-select: none;
+    }
+    #s2 .mt-time {
+      flex-shrink: 0;
+      min-width: 44px;
+      font-variant-numeric: tabular-nums;
+      font-weight: 700;
+      text-align: center;
+    }
+    #s2 .mt-track {
+      position: relative;
+      flex: 1;
+      height: 6px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: height 0.15s ease;
+    }
+    #s2 .mt-track:hover, #s2 .mt-track:focus-visible { height: 10px; outline: none; }
+    #s2 .mt-buffered {
+      position: absolute; top: 0; left: 0; bottom: 0;
+      background: rgba(15,23,42,0.18);
+      border-radius: 999px;
+      width: 0%;
+      pointer-events: none;
+    }
+    #s2 .mt-played {
+      position: absolute; top: 0; left: 0; bottom: 0;
+      background: var(--accent);
+      border-radius: 999px;
+      width: 0%;
+      pointer-events: none;
+    }
+    #s2 .mt-knob {
+      position: absolute; top: 50%;
+      left: 0%;
+      transform: translate(-50%, -50%);
+      width: 14px; height: 14px;
+      background: #fff;
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 2px 6px rgba(15,23,42,0.2);
+      pointer-events: none;
+      transition: transform 0.15s ease;
+    }
+    #s2 .mt-track:hover .mt-knob,
+    #s2 .mt-track:focus-visible .mt-knob,
+    #s2 .mt-track.mt-dragging .mt-knob {
+      transform: translate(-50%, -50%) scale(1.25);
+    }
+    #s2 .mt-track.mt-dragging { height: 10px; }
+  </style>
+  <script>
+    (function(){
+      var v = document.querySelector('#s2 .promo-video-el');
+      if(!v) return;
+      var badge = document.querySelector('#s2 .promo-state-badge');
+      var btnPlay = document.querySelector('#s2 .mc-play');
+      var btnRestart = document.querySelector('#s2 .mc-restart');
+      var btnStop = document.querySelector('#s2 .mc-stop');
+      var btnMute = document.querySelector('#s2 .mc-mute');
+      var btnFs = document.querySelector('#s2 .mc-fullscreen');
+      var figure = document.querySelector('#s2 .promo-figure');
+      var posterBtn = document.querySelector('#s2 .promo-poster-play');
+      var volRange = document.querySelector('#s2 .mc-vol-range');
+      var volPct = document.querySelector('#s2 .mc-vol-pct');
+
+      function setBadge(text){ if(badge) badge.textContent = text; }
+      function syncPlayBtn(){
+        var playIco = btnPlay.querySelector('.mc-ico-play');
+        var pauseIco = btnPlay.querySelector('.mc-ico-pause');
+        var playLbl = btnPlay.querySelector('.mc-lbl-play');
+        var pauseLbl = btnPlay.querySelector('.mc-lbl-pause');
+        var playing = !v.paused && !v.ended;
+        playIco.style.display = playing ? 'none' : '';
+        pauseIco.style.display = playing ? '' : 'none';
+        playLbl.style.display = playing ? 'none' : '';
+        pauseLbl.style.display = playing ? '' : 'none';
+      }
+      function syncMuteBtn(){
+        var mIco = btnMute.querySelector('.mc-ico-muted');
+        var sIco = btnMute.querySelector('.mc-ico-sound');
+        var mLbl = btnMute.querySelector('.mc-lbl-muted');
+        var sLbl = btnMute.querySelector('.mc-lbl-sound');
+        mIco.style.display = v.muted ? '' : 'none';
+        sIco.style.display = v.muted ? 'none' : '';
+        mLbl.style.display = v.muted ? '' : 'none';
+        sLbl.style.display = v.muted ? 'none' : '';
+      }
+      // Reflect effective volume (0 when muted) on the slider + percent label.
+      function syncVol(){
+        if(!volRange) return;
+        var pct = Math.round((v.muted ? 0 : v.volume) * 100);
+        volRange.value = pct;
+        volRange.style.setProperty('--vol', pct + '%');
+        if(volPct) volPct.textContent = pct;
+      }
+
+      function hidePoster(){ if(posterBtn) posterBtn.style.display = 'none'; }
+      function showPoster(){ if(posterBtn) posterBtn.style.display = 'flex'; }
+
+      v.addEventListener('play',  function(){ setBadge('▶ 재생 중'); syncPlayBtn(); hidePoster(); });
+      v.addEventListener('pause', function(){
+        if(v.ended) return;
+        setBadge('⏸ 일시정지'); syncPlayBtn();
+      });
+      v.addEventListener('ended', function(){ setBadge('↻ 클릭해서 다시 재생'); syncPlayBtn(); });
+      v.addEventListener('volumechange', function(){ syncMuteBtn(); syncVol(); });
+
+      if(volRange){
+        volRange.addEventListener('input', function(){
+          var pct = parseInt(volRange.value, 10) || 0;
+          v.volume = pct / 100;
+          v.muted = (pct === 0);   // dragging to 0 mutes; above 0 unmutes
+          soundUnlocked = true;     // user set volume → don't auto-unmute later
+          syncVol();
+        });
+      }
+
+      // First user-initiated play unmutes automatically (a click counts as the
+      // gesture browsers require), so no separate "소리 켜기" press is needed.
+      var soundUnlocked = false;
+      function startWithSound(){
+        if(!soundUnlocked){ v.muted = false; soundUnlocked = true; syncMuteBtn(); }
+        v.play();
+      }
+
+      if(posterBtn){
+        posterBtn.addEventListener('click', function(e){
+          e.stopPropagation();
+          startWithSound();
+        });
+      }
+
+      btnPlay.addEventListener('click', function(){
+        if(v.paused || v.ended){ startWithSound(); } else { v.pause(); }
+      });
+      btnRestart.addEventListener('click', function(){
+        v.currentTime = 0; startWithSound();
+      });
+      btnStop.addEventListener('click', function(){
+        v.pause(); v.currentTime = 0;
+        setBadge('■ 정지'); syncPlayBtn();
+      });
+      btnMute.addEventListener('click', function(){
+        v.muted = !v.muted;
+      });
+
+      // ===== Fullscreen =====
+      function isFs(){
+        return document.fullscreenElement === figure
+            || document.webkitFullscreenElement === figure
+            || document.msFullscreenElement === figure;
+      }
+      function syncFsBtn(){
+        var enterIco = btnFs.querySelector('.mc-ico-enter');
+        var exitIco  = btnFs.querySelector('.mc-ico-exit');
+        var enterLbl = btnFs.querySelector('.mc-lbl-enter');
+        var exitLbl  = btnFs.querySelector('.mc-lbl-exit');
+        var on = isFs();
+        enterIco.style.display = on ? 'none' : '';
+        exitIco.style.display  = on ? '' : 'none';
+        enterLbl.style.display = on ? 'none' : '';
+        exitLbl.style.display  = on ? '' : 'none';
+      }
+      btnFs.addEventListener('click', function(){
+        if(isFs()){
+          (document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen).call(document);
+        } else {
+          var req = figure.requestFullscreen || figure.webkitRequestFullscreen || figure.msRequestFullscreen;
+          if(req){
+            req.call(figure).catch(function(err){
+              if(v.webkitEnterFullscreen) v.webkitEnterFullscreen();
+            });
+          } else if(v.webkitEnterFullscreen){
+            v.webkitEnterFullscreen();
+          }
+        }
+      });
+      document.addEventListener('fullscreenchange', syncFsBtn);
+      document.addEventListener('webkitfullscreenchange', syncFsBtn);
+      document.addEventListener('msfullscreenchange', syncFsBtn);
+
+      // Click video itself = play/pause toggle
+      v.addEventListener('click', function(){
+        if(v.paused || v.ended){ startWithSound(); } else { v.pause(); }
+      });
+
+      // ===== Time bar / Seek bar =====
+      var track = document.querySelector('#s2 .mt-track');
+      var played = document.querySelector('#s2 .mt-played');
+      var buffered = document.querySelector('#s2 .mt-buffered');
+      var knob = document.querySelector('#s2 .mt-knob');
+      var elCur = document.querySelector('#s2 .mt-current');
+      var elDur = document.querySelector('#s2 .mt-duration');
+
+      function fmt(s){
+        if(!isFinite(s) || s < 0) s = 0;
+        var m = Math.floor(s / 60);
+        var sec = Math.floor(s % 60);
+        return m + ':' + (sec < 10 ? '0' : '') + sec;
+      }
+      function updateProgress(){
+        if(!v.duration || !isFinite(v.duration)) return;
+        var pct = (v.currentTime / v.duration) * 100;
+        played.style.width = pct + '%';
+        knob.style.left = pct + '%';
+        elCur.textContent = fmt(v.currentTime);
+        track.setAttribute('aria-valuenow', Math.round(pct));
+      }
+      function updateBuffered(){
+        if(!v.buffered.length || !v.duration) return;
+        var end = v.buffered.end(v.buffered.length - 1);
+        buffered.style.width = ((end / v.duration) * 100) + '%';
+      }
+      function updateDuration(){
+        if(isFinite(v.duration)) elDur.textContent = fmt(v.duration);
+      }
+
+      v.addEventListener('timeupdate', updateProgress);
+      v.addEventListener('progress', updateBuffered);
+      v.addEventListener('loadedmetadata', function(){ updateDuration(); updateProgress(); });
+      v.addEventListener('durationchange', updateDuration);
+      if(v.readyState >= 1) { updateDuration(); updateProgress(); }
+
+      // Click / drag to seek
+      var dragging = false;
+      function seekFromEvent(e){
+        var rect = track.getBoundingClientRect();
+        var clientX = (e.touches && e.touches[0]) ? e.touches[0].clientX : e.clientX;
+        var ratio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+        if(isFinite(v.duration)) v.currentTime = ratio * v.duration;
+      }
+      track.addEventListener('mousedown', function(e){
+        dragging = true;
+        track.classList.add('mt-dragging');
+        seekFromEvent(e);
+      });
+      document.addEventListener('mousemove', function(e){
+        if(!dragging) return;
+        seekFromEvent(e);
+      });
+      document.addEventListener('mouseup', function(){
+        if(!dragging) return;
+        dragging = false;
+        track.classList.remove('mt-dragging');
+      });
+      track.addEventListener('touchstart', function(e){
+        dragging = true;
+        track.classList.add('mt-dragging');
+        seekFromEvent(e);
+      });
+      document.addEventListener('touchmove', function(e){
+        if(!dragging) return;
+        seekFromEvent(e);
+      });
+      document.addEventListener('touchend', function(){
+        if(!dragging) return;
+        dragging = false;
+        track.classList.remove('mt-dragging');
+      });
+      track.addEventListener('keydown', function(e){
+        if(!isFinite(v.duration)) return;
+        if(e.key === 'ArrowLeft')  { v.currentTime = Math.max(0, v.currentTime - 5); e.preventDefault(); }
+        if(e.key === 'ArrowRight') { v.currentTime = Math.min(v.duration, v.currentTime + 5); e.preventDefault(); }
+        if(e.key === 'Home')       { v.currentTime = 0; e.preventDefault(); }
+        if(e.key === 'End')        { v.currentTime = v.duration; e.preventDefault(); }
+      });
+
+      // Init UI to current state
+      syncPlayBtn();
+      syncMuteBtn();
+      syncFsBtn();
+      syncVol();
+    })();
+  </script>
 </section>
 
 
