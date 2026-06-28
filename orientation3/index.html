@@ -4538,6 +4538,10 @@ body {
             <span class="mc-lbl mc-lbl-muted">소리 켜기</span>
             <span class="mc-lbl mc-lbl-sound" style="display:none;">음소거</span>
           </button>
+          <div class="mc-vol" role="group" aria-label="음량 조절">
+            <input type="range" class="mc-vol-range" min="0" max="100" value="100" step="1" aria-label="음량">
+            <span class="mc-vol-pct">100</span>
+          </div>
           <button type="button" class="mc-btn mc-fullscreen" aria-label="전체 화면">
             <span class="mc-ico mc-ico-enter pic pic-maximize"></span>
             <span class="mc-ico mc-ico-exit pic pic-minimize" style="display:none;"></span>
@@ -4591,6 +4595,42 @@ body {
       border-color: var(--accent);
     }
     #s15 .mark-controls .mc-play:hover { background: var(--accent-deep); }
+
+    /* Volume slider (lives inside the controls bar) */
+    #s15 .mark-controls .mc-vol {
+      flex: 1.4;
+      display: inline-flex; align-items: center; gap: 9px;
+      padding: 10px 14px;
+      background: #fff;
+      border: 1px solid rgba(15,23,42,0.12);
+      border-radius: 8px;
+      box-shadow: 0 2px 6px -2px rgba(15,23,42,0.1);
+      min-width: 0;
+    }
+    #s15 .mc-vol-range {
+      -webkit-appearance: none; appearance: none;
+      flex: 1; min-width: 0; height: 6px; margin: 0;
+      background: linear-gradient(90deg, var(--accent) var(--vol, 100%), #e5e7eb var(--vol, 100%));
+      border-radius: 999px; cursor: pointer; outline: none;
+    }
+    #s15 .mc-vol-range::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: var(--accent); border: 2px solid #fff;
+      box-shadow: 0 1px 4px rgba(15,23,42,0.35); cursor: pointer;
+    }
+    #s15 .mc-vol-range::-moz-range-thumb {
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--accent); border: 2px solid #fff;
+      box-shadow: 0 1px 4px rgba(15,23,42,0.35); cursor: pointer;
+    }
+    #s15 .mc-vol-range:focus-visible { box-shadow: 0 0 0 3px rgba(37,99,235,0.25); }
+    #s15 .mc-vol-pct {
+      flex-shrink: 0; min-width: 30px; text-align: right;
+      font-family: 'SF Mono', Consolas, monospace;
+      font-size: 0.76rem; font-weight: 700; color: #475569;
+      font-variant-numeric: tabular-nums;
+    }
 
     /* Fullscreen — when video figure goes fullscreen, fill the whole screen with black */
     #s15 .mark-video:fullscreen {
@@ -4680,6 +4720,8 @@ body {
       var btnFs = document.querySelector('#s15 .mc-fullscreen');
       var figure = document.querySelector('#s15 .mark-video');
       var posterBtn = document.querySelector('#s15 .mark-poster-play');
+      var volRange = document.querySelector('#s15 .mc-vol-range');
+      var volPct = document.querySelector('#s15 .mc-vol-pct');
 
       function setBadge(text){ if(badge) badge.textContent = text; }
       function syncPlayBtn(){
@@ -4703,6 +4745,14 @@ body {
         mLbl.style.display = v.muted ? '' : 'none';
         sLbl.style.display = v.muted ? 'none' : '';
       }
+      // Reflect effective volume (0 when muted) on the slider + percent label.
+      function syncVol(){
+        if(!volRange) return;
+        var pct = Math.round((v.muted ? 0 : v.volume) * 100);
+        volRange.value = pct;
+        volRange.style.setProperty('--vol', pct + '%');
+        if(volPct) volPct.textContent = pct;
+      }
 
       function hidePoster(){ if(posterBtn) posterBtn.style.display = 'none'; }
       function showPoster(){ if(posterBtn) posterBtn.style.display = 'flex'; }
@@ -4713,7 +4763,17 @@ body {
         setBadge('⏸ 일시정지'); syncPlayBtn();
       });
       v.addEventListener('ended', function(){ setBadge('↻ 클릭해서 다시 재생'); syncPlayBtn(); });
-      v.addEventListener('volumechange', syncMuteBtn);
+      v.addEventListener('volumechange', function(){ syncMuteBtn(); syncVol(); });
+
+      if(volRange){
+        volRange.addEventListener('input', function(){
+          var pct = parseInt(volRange.value, 10) || 0;
+          v.volume = pct / 100;
+          v.muted = (pct === 0);   // dragging to 0 mutes; above 0 unmutes
+          soundUnlocked = true;     // user set volume → don't auto-unmute later
+          syncVol();
+        });
+      }
 
       // First user-initiated play unmutes automatically (a click counts as the
       // gesture browsers require), so no separate "소리 켜기" press is needed.
@@ -4873,6 +4933,7 @@ body {
       syncPlayBtn();
       syncMuteBtn();
       syncFsBtn();
+      syncVol();
     })();
   </script>
 </section>
