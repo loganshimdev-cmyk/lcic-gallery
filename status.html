@@ -145,6 +145,13 @@
   .all-done {
     text-align: center; padding: 8px 0; color: #15803d; font-weight: 700; font-size: 1.02rem;
   }
+  .submit-card { padding: 16px 0; border-top: 1px solid var(--hairline); }
+  .submit-card:first-child { border-top: none; padding-top: 4px; }
+  .submit-head { display: flex; align-items: center; gap: 8px; font-size: 1.02rem; }
+  .submit-head .sx { color: #dc2626; font-weight: 800; }
+  .submit-head b { font-weight: 700; color: var(--text); }
+  .submit-tag { font-size: 0.7rem; font-weight: 800; padding: 2px 9px; border-radius: 999px; background: rgba(220,38,38,0.1); color: #b91c1c; }
+  .submit-fix { font-size: 0.88rem; color: var(--text-dim); margin: 7px 0 2px; line-height: 1.55; }
   .link-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
   .link-btn {
     display: inline-flex; align-items: center; gap: 6px;
@@ -259,7 +266,7 @@
 
   <!-- 다음 단계 -->
   <section class="card fade-up">
-    <div class="card-title"><iconify-icon icon="solar:list-check-bold-duotone"></iconify-icon> 다음 단계</div>
+    <div class="card-title"><iconify-icon icon="solar:upload-track-bold-duotone"></iconify-icon> 제출이 필요한 항목</div>
     <div id="d-steps"></div>
   </section>
 
@@ -323,10 +330,14 @@
   }
 
   const ITEM_META = {
-    passport:  { label: "여권 정보",   desc: "여권번호 · 만료일",        fix: "신청서에 여권번호를 입력해 주세요." },
-    flight:    { label: "항공편 정보", desc: "편명 · 출발일/도착일",     fix: "왕복 항공권(편명·날짜)을 입력해 주세요." },
-    leveltest: { label: "레벨테스트",  desc: "반 배정용 레벨 점수",      fix: "레벨테스트 자료를 제출해 주세요." },
-    emergency: { label: "비상연락처",  desc: "보호자 연락처",            fix: "비상연락처(이름·전화)를 입력해 주세요." },
+    passport:  { label: "여권 정보",   desc: "여권번호 · 만료일",        fix: "여권번호와 여권 사진(인적사항 면)을 제출해 주세요.",
+      sub: { hint: "여권번호를 적고, 여권 사진(인적사항 면)을 첨부해 주세요. 확인 후 등록해 드립니다.", ph: "여권번호 예: M12345678" } },
+    flight:    { label: "항공편 정보", desc: "편명 · 출발일/도착일",     fix: "왕복 항공권(가는 편·오는 편)과 e-ticket을 제출해 주세요.",
+      sub: { hint: "왕복 항공권(가는 편·오는 편) 편명·날짜·시간을 적고, e-ticket 사진·PDF를 첨부해 주세요.", ph: "예: 가는편 KE123 / 7-6  ·  오는편 KE124 / 8-1" } },
+    leveltest: { label: "레벨테스트",  desc: "반 배정용 레벨 점수",      fix: "EF-SET 레벨테스트 결과(Certificate)를 제출해 주세요.",
+      sub: { hint: "EF-SET 시험 결과(점수·CEFR)를 적거나, 결과 화면 캡처·PDF를 첨부해 주세요.", ph: "예: EF-SET 52 / B1 (결과 화면 첨부)" } },
+    emergency: { label: "비상연락처",  desc: "보호자 연락처",            fix: "비상시 연락할 보호자 이름·전화번호를 제출해 주세요.",
+      sub: { hint: "비상시 연락할 보호자 이름·관계·전화번호를 적어 주세요.", ph: "예: 홍길동 (모) / 010-1234-5678" } },
   };
   const ORDER = ["passport", "flight", "leveltest", "emergency"];
 
@@ -389,22 +400,13 @@
         stay +
         `<div class="flight-note"><iconify-icon icon="solar:check-read-bold"></iconify-icon> 위 <b>가는 편·오는 편</b> 항공권 정보(편명·날짜·시간)가 실제 e-ticket과 맞는지 꼭 확인해 주세요. 다르면 아래로 알려주세요.</div>` +
         `<div class="flight-warn"><iconify-icon icon="solar:danger-triangle-bold"></iconify-icon><span>항공편 정보가 <b>비어 있거나 실제와 다르면</b> 공항 <b>픽업·드랍 서비스를 받으실 수 없으며</b>, 픽업·드랍이 <b>필요 없는 것으로 간주</b>됩니다. 위 정보가 맞는지 <b>꼭 확인</b>해 주세요.</span></div>`;
-      $("d-report-wrap").innerHTML =
-        `<div class="link-row"><button class="link-btn" id="report-toggle">
-          <iconify-icon icon="solar:danger-triangle-bold"></iconify-icon> 정보가 틀려요</button></div>
-        <div class="report-box" id="report-box">
-          <div class="report-hint">올바른 정보를 적거나, 실제 항공권(e-ticket) 사진·PDF를 첨부해 주세요. 담당자에게 바로 접수됩니다.</div>
-          <textarea class="report-msg" id="report-msg" placeholder="예: 편명 KE123 / 출발 2026-07-06 / 도착 2026-07-06"></textarea>
-          <div><label class="file-pick" id="report-file-label">
-            <iconify-icon icon="solar:paperclip-2-bold"></iconify-icon>
-            <span id="report-file-name">사진·PDF 첨부 (선택, 최대 5장)</span>
-            <input type="file" id="report-file" accept="image/*,application/pdf" multiple hidden>
-          </label></div>
-          <div class="link-row"><button class="link-btn primary" id="report-send">
-            <iconify-icon icon="solar:plain-2-bold"></iconify-icon> 보내기</button></div>
-          <div class="report-hint" id="report-status" style="min-height:18px;"></div>
-        </div>`;
-      wireReport(rec);
+      $("d-report-wrap").innerHTML = submitBoxHTML("report", {
+        toggleLabel: "정보가 틀려요", toggleIcon: "solar:danger-triangle-bold",
+        hint: "올바른 정보를 적거나, 실제 항공권(e-ticket) 사진·PDF를 첨부해 주세요. 담당자에게 바로 접수됩니다.",
+        ph: "예: 가는편 KE123 / 7-6  ·  오는편 KE124 / 8-1",
+      });
+      wireSubmitBox("report", { category: "flight",
+        onFile: `편명 ${f.flightNo || "-"} / 출발 ${f.departure || "-"} / 도착 ${f.arrival || "-"}` });
     } else {
       flightEl.innerHTML =
         `<div class="flight-empty">아직 등록된 항공권 정보가 없습니다.<br>왕복 항공권(가는 편 · 오는 편 · 날짜 · 시간)을 신청서에 입력해 주세요.</div>` +
@@ -412,12 +414,21 @@
       $("d-report-wrap").innerHTML = "";
     }
 
-    // 다음 단계
-    const missing = (rec.missingItems && rec.missingItems.length)
-      ? ORDER.filter((k) => !cl[k]) : [];
-    $("d-steps").innerHTML = missing.length
-      ? missing.map((k) => `<div class="step-item"><span class="sx">✗</span><span>${escapeHtml(ITEM_META[k].fix)}</span></div>`).join("")
-      : `<div class="all-done">✓ 제출해야 할 항목을 모두 완료했습니다.</div>`;
+    // 제출이 필요한 항목 — 미입력 항목마다 제출/업로드 박스
+    const missing = ORDER.filter((k) => !cl[k]);
+    if (!missing.length) {
+      $("d-steps").innerHTML = `<div class="all-done">✓ 제출해야 할 항목을 모두 완료했습니다.</div>`;
+    } else {
+      $("d-steps").innerHTML = missing.map((k) => {
+        const m = ITEM_META[k];
+        return `<div class="submit-card">
+          <div class="submit-head"><span class="sx">✗</span> <b>${escapeHtml(m.label)}</b> <span class="submit-tag">미입력</span></div>
+          <div class="submit-fix">${escapeHtml(m.fix)}</div>
+          ${submitBoxHTML(`sub-${k}`, { toggleLabel: "제출 / 업로드하기", toggleIcon: "solar:upload-track-bold", btnClass: "primary", hint: m.sub.hint, ph: m.sub.ph, open: missing.length === 1 })}
+        </div>`;
+      }).join("");
+      missing.forEach((k) => wireSubmitBox(`sub-${k}`, { category: k, onFile: "(미입력)" }));
+    }
 
     // 수강신청 (마지막 단계) — 본인 보고, 결과는 관리자 집계
     renderCourse(rec);
@@ -431,12 +442,27 @@
   const MAX_COUNT = 5;
   const FILE_DEFAULT = "사진·PDF 첨부 (선택, 최대 5장)";
 
-  function wireReport(rec) {
-    const toggle = $("report-toggle"), box = $("report-box"), send = $("report-send"),
-      msg = $("report-msg"), statusEl = $("report-status"),
-      fileInput = $("report-file"), fileLabel = $("report-file-label"), fileName = $("report-file-name");
-    const f = rec.flight || {};
-    const onFile = `편명 ${f.flightNo || "-"} / 출발 ${f.departure || "-"} / 도착 ${f.arrival || "-"}`;
+  // 재사용 제출/업로드 박스 (항공편 정정 + 미입력 항목 제출에 공용)
+  function submitBoxHTML(prefix, opts) {
+    return `<div class="link-row"><button class="link-btn ${opts.btnClass || ""}" id="${prefix}-toggle">
+        <iconify-icon icon="${opts.toggleIcon || "solar:upload-track-bold"}"></iconify-icon> ${opts.toggleLabel}</button></div>
+      <div class="report-box${opts.open ? " show" : ""}" id="${prefix}-box">
+        <div class="report-hint">${opts.hint}</div>
+        <textarea class="report-msg" id="${prefix}-msg" placeholder="${opts.ph || ""}"></textarea>
+        <div><label class="file-pick" id="${prefix}-file-label">
+          <iconify-icon icon="solar:paperclip-2-bold"></iconify-icon>
+          <span id="${prefix}-file-name">${FILE_DEFAULT}</span>
+          <input type="file" id="${prefix}-file" accept="image/*,application/pdf" multiple hidden></label></div>
+        <div class="link-row"><button class="link-btn primary" id="${prefix}-send">
+          <iconify-icon icon="solar:plain-2-bold"></iconify-icon> 보내기</button></div>
+        <div class="report-hint" id="${prefix}-status" style="min-height:18px;"></div>
+      </div>`;
+  }
+
+  function wireSubmitBox(prefix, opts) {
+    const toggle = $(`${prefix}-toggle`), box = $(`${prefix}-box`), send = $(`${prefix}-send`),
+      msg = $(`${prefix}-msg`), statusEl = $(`${prefix}-status`),
+      fileInput = $(`${prefix}-file`), fileLabel = $(`${prefix}-file-label`), fileName = $(`${prefix}-file-name`);
     const setStatus = (color, text) => { statusEl.style.color = color; statusEl.textContent = text; };
     const resetFiles = () => { fileInput.value = ""; fileLabel.classList.remove("has-file"); fileName.textContent = FILE_DEFAULT; };
 
@@ -455,7 +481,7 @@
     send.addEventListener("click", async () => {
       const correction = msg.value.trim();
       const files = [...fileInput.files];
-      if (!correction && !files.length) { setStatus("#dc2626", "올바른 정보를 적거나 파일을 첨부해 주세요."); return; }
+      if (!correction && !files.length) { setStatus("#dc2626", "정보를 적거나 파일을 첨부해 주세요."); return; }
       if (!window.lcicSubmitReport) { setStatus("#dc2626", "잠시 후 다시 시도해 주세요."); return; }
       const restore = () => { send.disabled = false; send.innerHTML = '<iconify-icon icon="solar:plain-2-bold"></iconify-icon> 보내기'; };
       send.disabled = true; send.innerHTML = '<iconify-icon icon="svg-spinners:ring-resize" inline></iconify-icon> 보내는 중…';
@@ -470,11 +496,11 @@
       }
 
       const err = await window.lcicSubmitReport({
-        student_name: rec.name || "", student_email: CUR_EMAIL || "",
-        category: "flight", on_file: onFile, correction, file_paths: paths.length ? paths : null,
+        student_name: (CUR && CUR.name) || "", student_email: CUR_EMAIL || "",
+        category: opts.category, on_file: opts.onFile || "", correction, file_paths: paths.length ? paths : null,
       });
       if (err) { restore(); setStatus("#dc2626", "전송 실패: " + err + " 잠시 후 다시 시도해 주세요."); return; }
-      setStatus("#15803d", "✓ 접수되었습니다. 확인 후 정정해 드릴게요.");
+      setStatus("#15803d", "✓ 접수되었습니다. 확인 후 반영해 드릴게요.");
       msg.value = ""; resetFiles();
       send.disabled = true; send.innerHTML = '<iconify-icon icon="solar:check-circle-bold"></iconify-icon> 접수됨';
     });
