@@ -490,12 +490,12 @@
       return;
     }
     el.innerHTML =
-      `<div class="course-ask">학생 포털에서 <b>수강신청</b>을 완료하셨나요?</div>
+      `<div class="course-ask">MyCamu에서 <b>수강신청</b>을 완료하셨나요?</div>
        <div class="link-row">
          <button class="link-btn primary" id="course-done-btn"><iconify-icon icon="solar:check-circle-bold"></iconify-icon> 네, 완료했어요</button>
-         <a class="link-btn" href="https://lcic-students-system.com/login" target="_blank" rel="noopener"><iconify-icon icon="solar:square-top-down-bold"></iconify-icon> 학생 포털 열기</a>
+         <a class="link-btn" href="assets/manual/MyCamu-User-Guide-Korean.pdf" target="_blank" rel="noopener"><iconify-icon icon="solar:document-text-bold"></iconify-icon> 수강신청 방법 (MyCamu 안내)</a>
        </div>
-       <div class="report-hint">아직이라면 학생 포털에서 수강신청을 먼저 완료해 주세요.</div>
+       <div class="report-hint">아직이라면 위 <b>MyCamu 안내(PDF)</b>를 보고 수강신청을 먼저 완료해 주세요.</div>
        <div class="report-hint" id="course-status" style="min-height:18px;"></div>`;
     const cbtn = $("course-done-btn"), cst = $("course-status");
     cbtn.addEventListener("click", async () => {
