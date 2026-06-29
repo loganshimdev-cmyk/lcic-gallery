@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow, noarchive">
-<title>준비현황 정정 신고 · LCIC</title>
+<title>학생 현황 관리 · LCIC</title>
 <link rel="icon" type="image/png" href="assets/brand/lcic-logo.png">
 <script src="assets/background.js?v=8"></script>
 <link rel="stylesheet" href="assets/shared.css?v=13">
@@ -20,18 +20,30 @@
   .field { margin-bottom: 14px; }
   .field label { display: block; font-size: 0.78rem; color: var(--text-dim); margin-bottom: 7px; }
 
-  .admin-head {
-    display: flex; align-items: flex-end; justify-content: space-between;
-    gap: 16px; flex-wrap: wrap; margin-bottom: 24px;
-  }
+  .admin-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
   .admin-head h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; }
   .admin-head .meta { color: var(--text-dim); font-size: 0.85rem; margin-top: 4px; }
   .toolbar { display: flex; gap: 8px; align-items: center; }
 
-  .table-wrap {
-    background: var(--bg-elev); border: 1px solid var(--hairline);
-    border-radius: 18px; overflow: auto; box-shadow: var(--shadow-sm);
-  }
+  /* 탭 */
+  .tabs { display: flex; gap: 6px; margin-bottom: 22px; border-bottom: 1px solid var(--hairline); }
+  .tab-btn { background: none; border: none; border-bottom: 2px solid transparent; margin-bottom: -1px;
+    padding: 11px 16px; font-size: 0.95rem; font-weight: 700; color: var(--text-faint); cursor: pointer; font-family: inherit;
+    display: inline-flex; align-items: center; gap: 7px; }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent-deep); border-bottom-color: var(--accent); }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+
+  .stat-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+  .stat-card { flex: 1; min-width: 150px; background: var(--bg-elev); border: 1px solid var(--hairline);
+    border-radius: 16px; padding: 18px 20px; box-shadow: var(--shadow-sm); }
+  .stat-card .n { font-size: 2rem; font-weight: 800; letter-spacing: -0.02em; color: var(--accent-deep); }
+  .stat-card .l { font-size: 0.82rem; color: var(--text-dim); margin-top: 2px; }
+  .search-row { margin-bottom: 14px; }
+  .search-row input { max-width: 320px; }
+
+  .table-wrap { background: var(--bg-elev); border: 1px solid var(--hairline); border-radius: 18px; overflow: auto; box-shadow: var(--shadow-sm); }
   table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
   th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--hairline); vertical-align: top; }
   th { font-size: 0.74rem; letter-spacing: 0.04em; color: var(--text-faint); text-transform: uppercase; position: sticky; top: 0; background: var(--bg-elev); white-space: nowrap; }
@@ -41,6 +53,7 @@
   td.nm { font-weight: 600; white-space: nowrap; }
   td.corr { min-width: 240px; white-space: pre-wrap; line-height: 1.5; }
   .cat-pill { display: inline-block; font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-deep); }
+  .ok-pill { display: inline-block; font-size: 0.74rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: rgba(22,163,74,0.12); color: #15803d; }
   .act-btn { background: none; border: 1px solid var(--hairline-strong); color: var(--text-dim); cursor: pointer; font-size: 0.78rem; font-weight: 600; padding: 6px 10px; border-radius: 9px; font-family: inherit; white-space: nowrap; }
   .act-btn:hover { border-color: var(--accent); color: var(--accent-deep); }
   .act-btn.done-btn.is-done { color: #15803d; border-color: rgba(22,163,74,0.4); background: rgba(22,163,74,0.08); }
@@ -58,7 +71,7 @@
   <div id="login-view">
     <div class="login-card">
       <h2>관리자 로그인</h2>
-      <p>학생 정정 신고는 관리자만 열람할 수 있습니다.</p>
+      <p>학생 현황은 관리자만 열람할 수 있습니다.</p>
       <form id="login-form">
         <div class="field">
           <label>이메일</label>
@@ -79,8 +92,8 @@
   <div id="admin-view" class="hidden">
     <div class="admin-head">
       <div>
-        <h1>준비현황 정정 신고</h1>
-        <div class="meta" id="count-meta">불러오는 중…</div>
+        <h1>학생 현황 관리</h1>
+        <div class="meta" id="count-meta"></div>
       </div>
       <div class="toolbar">
         <span class="user-chip"><iconify-icon icon="solar:user-circle-bold-duotone"></iconify-icon> <span id="user-email"></span></span>
@@ -89,20 +102,51 @@
       </div>
     </div>
 
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>접수일시</th><th>학생</th><th>이메일</th><th>항목</th>
-            <th>현재 등록값</th><th>학생이 알려준 올바른 정보</th><th>첨부</th><th>상태</th><th></th>
-          </tr>
-        </thead>
-        <tbody id="rows">
-          <tr><td colspan="9" class="muted" style="text-align:center; padding:50px;">
-            <iconify-icon icon="svg-spinners:ring-resize" inline style="font-size:22px;"></iconify-icon>
-          </td></tr>
-        </tbody>
-      </table>
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="reports"><iconify-icon icon="solar:danger-triangle-bold-duotone"></iconify-icon> 정정 신고</button>
+      <button class="tab-btn" data-tab="course"><iconify-icon icon="solar:notebook-bookmark-bold-duotone"></iconify-icon> 수강신청 현황</button>
+    </div>
+
+    <!-- 탭 1: 정정 신고 -->
+    <div class="tab-pane active" id="pane-reports">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>접수일시</th><th>학생</th><th>이메일</th><th>항목</th>
+              <th>현재 등록값</th><th>학생이 알려준 올바른 정보</th><th>첨부</th><th>상태</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="report-rows">
+            <tr><td colspan="9" class="muted" style="text-align:center; padding:50px;">
+              <iconify-icon icon="svg-spinners:ring-resize" inline style="font-size:22px;"></iconify-icon>
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 탭 2: 수강신청 현황 -->
+    <div class="tab-pane" id="pane-course">
+      <div class="stat-row">
+        <div class="stat-card"><div class="n" id="stat-students">–</div><div class="l">수강신청 완료 보고 학생</div></div>
+        <div class="stat-card"><div class="n" id="stat-rows">–</div><div class="l">총 보고 건수</div></div>
+      </div>
+      <div class="search-row">
+        <input class="input" type="search" id="course-search" placeholder="이름·이메일 검색">
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>최근 보고</th><th>학생</th><th>이메일</th><th>상태</th><th></th></tr>
+          </thead>
+          <tbody id="course-rows">
+            <tr><td colspan="5" class="muted" style="text-align:center; padding:50px;">
+              <iconify-icon icon="svg-spinners:ring-resize" inline style="font-size:22px;"></iconify-icon>
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </main>
@@ -114,14 +158,15 @@ import { supabase } from "./assets/supabase.js";
 
 const $ = (id) => document.getElementById(id);
 const toast = $("toast");
-function showToast(msg, type = "") {
-  toast.textContent = msg;
-  toast.className = `toast show ${type}`;
-  setTimeout(() => toast.classList.remove("show"), 2800);
-}
+function showToast(msg, type = "") { toast.textContent = msg; toast.className = `toast show ${type}`; setTimeout(() => toast.classList.remove("show"), 2800); }
 const esc = (s) => (s == null ? "" : String(s)).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+function fmtTime(iso) {
+  if (!iso) return "";
+  const d = new Date(iso); const p = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}.${p(d.getMonth() + 1)}.${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
 
-let cache = [];
+let activeTab = "reports";
 
 // ---- Auth ----
 async function refreshAuthUI() {
@@ -130,57 +175,62 @@ async function refreshAuthUI() {
     $("login-view").classList.add("hidden");
     $("admin-view").classList.remove("hidden");
     $("user-email").textContent = session.user.email;
-    loadRows();
+    loadActive();
   } else {
     $("admin-view").classList.add("hidden");
     $("login-view").classList.remove("hidden");
   }
 }
-
 $("login-form").addEventListener("submit", async (e) => {
   e.preventDefault();
   const btn = $("login-btn");
-  btn.disabled = true;
-  btn.innerHTML = '<iconify-icon icon="svg-spinners:ring-resize" inline></iconify-icon> 로그인 중…';
-  const { error } = await supabase.auth.signInWithPassword({
-    email: $("email").value.trim(), password: $("password").value,
-  });
-  btn.disabled = false;
-  btn.innerHTML = '<iconify-icon icon="solar:login-3-bold-duotone" inline></iconify-icon> 로그인';
+  btn.disabled = true; btn.innerHTML = '<iconify-icon icon="svg-spinners:ring-resize" inline></iconify-icon> 로그인 중…';
+  const { error } = await supabase.auth.signInWithPassword({ email: $("email").value.trim(), password: $("password").value });
+  btn.disabled = false; btn.innerHTML = '<iconify-icon icon="solar:login-3-bold-duotone" inline></iconify-icon> 로그인';
   if (error) { showToast(`로그인 실패: ${error.message}`, "error"); return; }
   $("password").value = "";
   refreshAuthUI();
 });
-
 $("logout-btn").addEventListener("click", async () => { await supabase.auth.signOut(); refreshAuthUI(); });
-$("refresh-btn").addEventListener("click", loadRows);
+$("refresh-btn").addEventListener("click", loadActive);
 supabase.auth.onAuthStateChange(() => refreshAuthUI());
 
-// ---- Load ----
-function fmtTime(iso) {
-  if (!iso) return "";
-  const d = new Date(iso);
-  const p = (n) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}.${p(d.getMonth() + 1)}.${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+// ---- Tabs ----
+document.querySelectorAll(".tab-btn").forEach((b) => {
+  b.addEventListener("click", () => {
+    activeTab = b.dataset.tab;
+    document.querySelectorAll(".tab-btn").forEach((x) => x.classList.toggle("active", x === b));
+    $("pane-reports").classList.toggle("active", activeTab === "reports");
+    $("pane-course").classList.toggle("active", activeTab === "course");
+    loadActive();
+  });
+});
+function loadActive() { activeTab === "course" ? loadCourse() : loadReports(); }
+function selectTab(name) {
+  const b = document.querySelector(`.tab-btn[data-tab="${name}"]`);
+  if (b) b.click();
+}
+// course-status.html → status-reports.html#course 리다이렉트 지원
+if (location.hash === "#course") { activeTab = "course";
+  document.querySelectorAll(".tab-btn").forEach((x) => x.classList.toggle("active", x.dataset.tab === "course"));
+  $("pane-reports").classList.remove("active"); $("pane-course").classList.add("active");
 }
 
-async function loadRows() {
-  $("rows").innerHTML = `<tr><td colspan="9" class="muted" style="text-align:center; padding:50px;"><iconify-icon icon="svg-spinners:ring-resize" inline style="font-size:22px;"></iconify-icon></td></tr>`;
-  const { data, error } = await supabase
-    .from("status_reports")
-    .select("*")
-    .order("created_at", { ascending: false });
+// ================= 탭 1: 정정 신고 =================
+let reportCache = [];
+async function loadReports() {
+  $("report-rows").innerHTML = `<tr><td colspan="9" class="muted" style="text-align:center; padding:50px;"><iconify-icon icon="svg-spinners:ring-resize" inline style="font-size:22px;"></iconify-icon></td></tr>`;
+  const { data, error } = await supabase.from("status_reports").select("*").order("created_at", { ascending: false });
   if (error) { showToast(`불러오기 실패: ${error.message}`, "error"); return; }
-  cache = data || [];
-  const open = cache.filter((r) => !r.resolved).length;
-  $("count-meta").textContent = `총 ${cache.length}건 · 미처리 ${open}건`;
-  if (!cache.length) {
-    $("rows").innerHTML = `<tr><td colspan="9" class="muted" style="text-align:center; padding:60px;">아직 접수된 신고가 없습니다.</td></tr>`;
+  reportCache = data || [];
+  const open = reportCache.filter((r) => !r.resolved).length;
+  $("count-meta").textContent = `정정 신고 ${reportCache.length}건 · 미처리 ${open}건`;
+  if (!reportCache.length) {
+    $("report-rows").innerHTML = `<tr><td colspan="9" class="muted" style="text-align:center; padding:60px;">아직 접수된 신고가 없습니다.</td></tr>`;
     return;
   }
-  $("rows").innerHTML = cache.map((r) => {
-    const mail = r.student_email
-      ? `<a class="mail" href="mailto:${esc(r.student_email)}">${esc(r.student_email)}</a>` : "";
+  $("report-rows").innerHTML = reportCache.map((r) => {
+    const mail = r.student_email ? `<a class="mail" href="mailto:${esc(r.student_email)}">${esc(r.student_email)}</a>` : "";
     const files = Array.isArray(r.file_paths) ? r.file_paths : (r.file_path ? [r.file_path] : []);
     const fileCell = files.length
       ? files.map((fp, i) => `<button class="act-btn file-btn" data-file="${esc(fp)}" style="margin:2px 2px 2px 0;"><iconify-icon icon="solar:paperclip-2-bold" inline></iconify-icon> ${files.length > 1 ? `#${i + 1}` : "첨부 보기"}</button>`).join("")
@@ -198,15 +248,15 @@ async function loadRows() {
     </tr>`;
   }).join("");
 
-  document.querySelectorAll(".done-btn").forEach((btn) => {
+  document.querySelectorAll("#pane-reports .done-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
       const next = btn.dataset.done === "1" ? false : true;
       const { error } = await supabase.from("status_reports").update({ resolved: next }).eq("id", btn.dataset.id);
       if (error) { showToast(`업데이트 실패: ${error.message}`, "error"); return; }
-      loadRows();
+      loadReports();
     });
   });
-  document.querySelectorAll(".file-btn").forEach((btn) => {
+  document.querySelectorAll("#pane-reports .file-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
       const orig = btn.innerHTML;
       btn.disabled = true; btn.innerHTML = '<iconify-icon icon="svg-spinners:ring-resize" inline></iconify-icon> 여는 중…';
@@ -216,13 +266,64 @@ async function loadRows() {
       window.open(data.signedUrl, "_blank", "noopener");
     });
   });
-  document.querySelectorAll(".del-btn").forEach((btn) => {
+  document.querySelectorAll("#pane-reports .del-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
       if (!confirm("이 신고를 삭제할까요? 되돌릴 수 없습니다.")) return;
       const { error } = await supabase.from("status_reports").delete().eq("id", btn.dataset.del);
       if (error) { showToast(`삭제 실패: ${error.message}`, "error"); return; }
       showToast("삭제되었습니다.", "success");
-      loadRows();
+      loadReports();
+    });
+  });
+}
+
+// ================= 탭 2: 수강신청 현황 =================
+let courseStudents = [];
+$("course-search").addEventListener("input", renderCourse);
+async function loadCourse() {
+  $("course-rows").innerHTML = `<tr><td colspan="5" class="muted" style="text-align:center; padding:50px;"><iconify-icon icon="svg-spinners:ring-resize" inline style="font-size:22px;"></iconify-icon></td></tr>`;
+  const { data, error } = await supabase.from("course_registrations").select("*").order("created_at", { ascending: false });
+  if (error) { showToast(`불러오기 실패: ${error.message}`, "error"); return; }
+  const rows = data || [];
+  const byEmail = new Map();
+  for (const r of rows) {
+    const key = (r.student_email || "").trim().toLowerCase();
+    if (!byEmail.has(key)) byEmail.set(key, { ...r, _ids: [r.id] });
+    else byEmail.get(key)._ids.push(r.id);
+  }
+  courseStudents = [...byEmail.values()];
+  $("stat-students").textContent = courseStudents.length;
+  $("stat-rows").textContent = rows.length;
+  $("count-meta").textContent = `수강신청 완료 ${courseStudents.length}명 · 총 ${rows.length}건`;
+  renderCourse();
+}
+function renderCourse() {
+  const q = ($("course-search").value || "").trim().toLowerCase();
+  const list = q
+    ? courseStudents.filter((s) => (s.student_name || "").toLowerCase().includes(q) || (s.student_email || "").toLowerCase().includes(q))
+    : courseStudents;
+  if (!list.length) {
+    $("course-rows").innerHTML = `<tr><td colspan="5" class="muted" style="text-align:center; padding:60px;">${courseStudents.length ? "검색 결과가 없습니다." : "아직 수강신청 완료 보고가 없습니다."}</td></tr>`;
+    return;
+  }
+  $("course-rows").innerHTML = list.map((s) => {
+    const mail = s.student_email ? `<a class="mail" href="mailto:${esc(s.student_email)}">${esc(s.student_email)}</a>` : "";
+    return `<tr>
+      <td class="muted">${esc(fmtTime(s.created_at))}</td>
+      <td class="nm">${esc(s.student_name || "")}</td>
+      <td>${mail}</td>
+      <td><span class="ok-pill">✓ 완료</span></td>
+      <td><button class="del-btn" title="이 학생 보고 삭제" data-ids="${esc((s._ids || []).join(","))}"><iconify-icon icon="solar:trash-bin-trash-bold-duotone"></iconify-icon></button></td>
+    </tr>`;
+  }).join("");
+  document.querySelectorAll("#pane-course .del-btn").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      if (!confirm("이 학생의 수강신청 보고를 삭제할까요?")) return;
+      const ids = (btn.dataset.ids || "").split(",").filter(Boolean);
+      const { error } = await supabase.from("course_registrations").delete().in("id", ids);
+      if (error) { showToast(`삭제 실패: ${error.message}`, "error"); return; }
+      showToast("삭제되었습니다.", "success");
+      loadCourse();
     });
   });
 }
