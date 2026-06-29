@@ -304,7 +304,8 @@ create policy "admin can delete report files"
 # 수강신청 완료 현황 (course_registrations)
 
 `status.html`의 "수강신청" 카드에서 학생이 **완료했어요**를 누르면 한 줄이 INSERT 되고,
-관리자는 `course-status.html`(apply-admin과 동일 계정)에서 **취합**해 본다.
+관리자는 `status-reports.html`의 **"수강신청 현황" 탭**(apply-admin과 동일 계정)에서 **취합**해 본다.
+(예전 `course-status.html` 주소는 그 탭으로 리다이렉트됨)
 익명은 INSERT만, 조회·삭제는 관리자(authenticated)만.
 
 Supabase 대시보드 → SQL Editor 에서 **1회 실행**:
