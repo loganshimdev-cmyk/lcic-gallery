@@ -124,6 +124,11 @@
     display: flex; align-items: center; gap: 7px;
   }
   .flight-empty { color: var(--text-dim); font-size: 0.95rem; line-height: 1.6; }
+  .flight-warn { margin-top: 14px; padding: 12px 14px; border-radius: 12px;
+    background: rgba(220,38,38,0.06); border: 1px solid rgba(220,38,38,0.28);
+    color: #b91c1c; font-size: 0.88rem; line-height: 1.65; display: flex; gap: 9px; align-items: flex-start; }
+  .flight-warn iconify-icon { font-size: 19px; flex-shrink: 0; margin-top: 1px; color: #dc2626; }
+  .flight-warn b { color: #991b1b; font-weight: 800; }
   .flight-leg { margin-bottom: 14px; padding: 14px; border: 1px solid var(--hairline); border-radius: 14px; background: var(--surface); }
   .flight-leg .leg-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 800;
     padding: 4px 11px; border-radius: 999px; margin-bottom: 11px; }
@@ -382,7 +387,8 @@
       flightEl.innerHTML =
         legGo + legBack +
         stay +
-        `<div class="flight-note"><iconify-icon icon="solar:check-read-bold"></iconify-icon> 위 <b>가는 편·오는 편</b> 항공권 정보(편명·날짜·시간)가 실제 e-ticket과 맞는지 꼭 확인해 주세요. 다르면 아래로 알려주세요.</div>`;
+        `<div class="flight-note"><iconify-icon icon="solar:check-read-bold"></iconify-icon> 위 <b>가는 편·오는 편</b> 항공권 정보(편명·날짜·시간)가 실제 e-ticket과 맞는지 꼭 확인해 주세요. 다르면 아래로 알려주세요.</div>` +
+        `<div class="flight-warn"><iconify-icon icon="solar:danger-triangle-bold"></iconify-icon><span>항공편 정보가 <b>비어 있거나 실제와 다르면</b> 공항 <b>픽업·드랍 서비스를 받으실 수 없으며</b>, 픽업·드랍이 <b>필요 없는 것으로 간주</b>됩니다. 위 정보가 맞는지 <b>꼭 확인</b>해 주세요.</span></div>`;
       $("d-report-wrap").innerHTML =
         `<div class="link-row"><button class="link-btn" id="report-toggle">
           <iconify-icon icon="solar:danger-triangle-bold"></iconify-icon> 정보가 틀려요</button></div>
@@ -401,7 +407,8 @@
       wireReport(rec);
     } else {
       flightEl.innerHTML =
-        `<div class="flight-empty">아직 등록된 항공권 정보가 없습니다.<br>왕복 항공권(편명 · 출발일 · 도착일)을 신청서에 입력해 주세요.</div>`;
+        `<div class="flight-empty">아직 등록된 항공권 정보가 없습니다.<br>왕복 항공권(가는 편 · 오는 편 · 날짜 · 시간)을 신청서에 입력해 주세요.</div>` +
+        `<div class="flight-warn"><iconify-icon icon="solar:danger-triangle-bold"></iconify-icon><span>항공편을 <b>입력하지 않으시면</b> 공항 <b>픽업·드랍이 불가</b>하며, 픽업·드랍이 <b>필요 없는 것으로 간주</b>됩니다. 픽업·드랍이 필요하시면 반드시 정확한 항공편 정보를 입력해 주세요.</span></div>`;
       $("d-report-wrap").innerHTML = "";
     }
 
