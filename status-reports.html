@@ -154,7 +154,7 @@
 <div class="toast" id="toast"></div>
 
 <script type="module">
-import { supabase } from "./assets/supabase.js?v=2";
+import { supabase } from "./assets/supabase.js?v=4";
 
 const $ = (id) => document.getElementById(id);
 const toast = $("toast");
@@ -169,24 +169,26 @@ function fmtTime(iso) {
 let activeTab = "reports";
 
 // ---- Auth ----
-// 깨진 세션이 남아 인증이 멈추는 것을 막는 안전장치(타임아웃 후 세션 비우고 복구).
 const clearAdminSession = () => { try { localStorage.removeItem("lcic-admin-auth"); } catch (_) {} };
 const withTimeout = (promise, ms) => Promise.race([promise, new Promise((res) => setTimeout(() => res({ __timeout: true }), ms))]);
 
-async function refreshAuthUI() {
-  const r = await withTimeout(supabase.auth.getSession(), 6000);
-  const session = r && r.data && r.data.session;
+// 인증 상태는 onAuthStateChange 의 session 으로만 화면을 바꾼다.
+// (클릭마다 getSession 을 호출하지 않으므로, 일시적 지연으로 튕겨 로그아웃되지 않는다.)
+let loadedOnce = false;
+function applySession(session) {
   if (session) {
     $("login-view").classList.add("hidden");
     $("admin-view").classList.remove("hidden");
     $("user-email").textContent = session.user.email;
-    loadActive();
+    if (!loadedOnce) { loadedOnce = true; loadActive(); }   // 데이터는 처음 1번만 (토큰 갱신마다 재로딩 방지)
   } else {
-    if (r && r.__timeout) clearAdminSession();   // 멈췄으면 깨진 세션 제거
+    loadedOnce = false;
     $("admin-view").classList.add("hidden");
     $("login-view").classList.remove("hidden");
   }
 }
+supabase.auth.onAuthStateChange((_event, session) => applySession(session));
+
 $("login-form").addEventListener("submit", async (e) => {
   e.preventDefault();
   const btn = $("login-btn");
@@ -202,11 +204,10 @@ $("login-form").addEventListener("submit", async (e) => {
   reset();
   if (r.error) { showToast(`로그인 실패: ${r.error.message}`, "error"); return; }
   $("password").value = "";
-  refreshAuthUI();
+  // 로그인 성공 → onAuthStateChange(SIGNED_IN) 가 applySession 호출
 });
-$("logout-btn").addEventListener("click", async () => { await supabase.auth.signOut(); refreshAuthUI(); });
+$("logout-btn").addEventListener("click", async () => { await supabase.auth.signOut(); applySession(null); });
 $("refresh-btn").addEventListener("click", loadActive);
-supabase.auth.onAuthStateChange(() => refreshAuthUI());
 
 // ---- Tabs ----
 document.querySelectorAll(".tab-btn").forEach((b) => {
@@ -341,7 +342,12 @@ function renderCourse() {
   });
 }
 
-refreshAuthUI();
+// 초기 상태는 onAuthStateChange 의 INITIAL_SESSION 이벤트가 잡아준다.
+// (혹시 이벤트가 늦거나 누락돼도) 안전망으로 한 번 더 확인.
+(async () => {
+  const r = await withTimeout(supabase.auth.getSession(), 6000);
+  if (r && !r.__timeout) applySession(r.data && r.data.session);
+})();
 </script>
 </body>
 </html>
