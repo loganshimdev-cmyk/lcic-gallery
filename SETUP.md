@@ -299,6 +299,46 @@ create policy "admin can delete report files"
 
 ---
 
+---
+
+# 수강신청 완료 현황 (course_registrations)
+
+`status.html`의 "수강신청" 카드에서 학생이 **완료했어요**를 누르면 한 줄이 INSERT 되고,
+관리자는 `course-status.html`(apply-admin과 동일 계정)에서 **취합**해 본다.
+익명은 INSERT만, 조회·삭제는 관리자(authenticated)만.
+
+Supabase 대시보드 → SQL Editor 에서 **1회 실행**:
+
+```sql
+create table if not exists public.course_registrations (
+  id uuid primary key default gen_random_uuid(),
+  student_email text not null,
+  student_name  text,
+  completed     boolean not null default true,
+  created_at    timestamptz not null default now()
+);
+create index if not exists course_reg_email_idx on public.course_registrations (lower(student_email));
+
+alter table public.course_registrations enable row level security;
+
+-- 학생(익명): 본인 완료 보고 INSERT만
+create policy "anon can insert course reg"
+  on public.course_registrations for insert
+  to anon with check (true);
+
+-- 관리자: 전체 조회·삭제
+create policy "admin can read course reg"
+  on public.course_registrations for select
+  to authenticated using (true);
+create policy "admin can delete course reg"
+  on public.course_registrations for delete
+  to authenticated using (true);
+```
+
+> 익명은 되읽기(SELECT) 불가라, 학생 화면은 완료 표시를 **브라우저 localStorage**에 기억한다
+> (`lcic.coursereg.<email>`). 권위 있는 집계는 Supabase(관리자 화면)에 있다.
+> 같은 학생이 여러 번 눌러도 관리자 화면은 **이메일별 최신 1건**으로 합쳐 보여준다.
+
 ## 사용 방법
 
 - 학생: `https://<사이트주소>/notice.html`, `/faq.html` 에서 읽기만
