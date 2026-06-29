@@ -169,14 +169,20 @@ function fmtTime(iso) {
 let activeTab = "reports";
 
 // ---- Auth ----
+// 깨진 세션이 남아 인증이 멈추는 것을 막는 안전장치(타임아웃 후 세션 비우고 복구).
+const clearAdminSession = () => { try { localStorage.removeItem("lcic-admin-auth"); } catch (_) {} };
+const withTimeout = (promise, ms) => Promise.race([promise, new Promise((res) => setTimeout(() => res({ __timeout: true }), ms))]);
+
 async function refreshAuthUI() {
-  const { data: { session } } = await supabase.auth.getSession();
+  const r = await withTimeout(supabase.auth.getSession(), 6000);
+  const session = r && r.data && r.data.session;
   if (session) {
     $("login-view").classList.add("hidden");
     $("admin-view").classList.remove("hidden");
     $("user-email").textContent = session.user.email;
     loadActive();
   } else {
+    if (r && r.__timeout) clearAdminSession();   // 멈췄으면 깨진 세션 제거
     $("admin-view").classList.add("hidden");
     $("login-view").classList.remove("hidden");
   }
@@ -184,10 +190,17 @@ async function refreshAuthUI() {
 $("login-form").addEventListener("submit", async (e) => {
   e.preventDefault();
   const btn = $("login-btn");
+  const reset = () => { btn.disabled = false; btn.innerHTML = '<iconify-icon icon="solar:login-3-bold-duotone" inline></iconify-icon> 로그인'; };
   btn.disabled = true; btn.innerHTML = '<iconify-icon icon="svg-spinners:ring-resize" inline></iconify-icon> 로그인 중…';
-  const { error } = await supabase.auth.signInWithPassword({ email: $("email").value.trim(), password: $("password").value });
-  btn.disabled = false; btn.innerHTML = '<iconify-icon icon="solar:login-3-bold-duotone" inline></iconify-icon> 로그인';
-  if (error) { showToast(`로그인 실패: ${error.message}`, "error"); return; }
+  const r = await withTimeout(
+    supabase.auth.signInWithPassword({ email: $("email").value.trim(), password: $("password").value }), 9000);
+  if (r && r.__timeout) {   // 9초 내 응답 없으면 깨진 세션 비우고 재시도 안내
+    clearAdminSession(); reset();
+    showToast("세션이 멈춰 자동 복구했습니다. 한 번 더 로그인해 주세요.", "error");
+    return;
+  }
+  reset();
+  if (r.error) { showToast(`로그인 실패: ${r.error.message}`, "error"); return; }
   $("password").value = "";
   refreshAuthUI();
 });
