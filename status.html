@@ -147,6 +147,15 @@
   .link-btn.primary { background: var(--accent); color: #fff; border-color: transparent; box-shadow: var(--shadow-accent); }
   .link-btn.primary:hover { background: var(--accent-hover); color: #fff; }
 
+  /* 수강신청 */
+  .course-ask { font-size: 0.96rem; line-height: 1.6; color: var(--text); }
+  .course-done { display: flex; align-items: center; gap: 9px; padding: 12px 14px; border-radius: 12px;
+    background: var(--accent-soft); color: #15803d; font-weight: 700; font-size: 1rem; }
+  .course-done iconify-icon { font-size: 22px; }
+  .course-undo { margin-top: 10px; }
+  .course-undo button { background: none; border: none; color: var(--text-faint); font-size: 0.82rem;
+    text-decoration: underline; cursor: pointer; font-family: inherit; padding: 0; }
+
   /* 신고 박스 */
   .report-box { display: none; margin-top: 14px; padding: 14px; background: var(--surface); border: 1px solid var(--hairline); border-radius: 14px; }
   .report-box.show { display: block; }
@@ -242,12 +251,12 @@
   <section class="card fade-up">
     <div class="card-title"><iconify-icon icon="solar:list-check-bold-duotone"></iconify-icon> 다음 단계</div>
     <div id="d-steps"></div>
-    <div class="link-row">
-      <a class="link-btn primary" href="procedure.html" target="_blank" rel="noopener">
-        <iconify-icon icon="solar:document-text-bold"></iconify-icon> 신청·서류 안내 보기</a>
-      <a class="link-btn" href="https://lcic-students-system.com/login" target="_blank" rel="noopener">
-        <iconify-icon icon="solar:square-top-down-bold"></iconify-icon> 학생 포털 열기</a>
-    </div>
+  </section>
+
+  <!-- 수강신청 (마지막 단계) -->
+  <section class="card fade-up">
+    <div class="card-title"><iconify-icon icon="solar:notebook-bookmark-bold-duotone"></iconify-icon> 수강신청</div>
+    <div id="d-course"></div>
   </section>
 
   <div class="dash-foot">
@@ -373,7 +382,7 @@
             <input type="file" id="report-file" accept="image/*,application/pdf" multiple hidden>
           </label></div>
           <div class="link-row"><button class="link-btn primary" id="report-send">
-            <iconify-icon icon="solar:plain-2-bold"></iconify-icon> 신고 보내기</button></div>
+            <iconify-icon icon="solar:plain-2-bold"></iconify-icon> 보내기</button></div>
           <div class="report-hint" id="report-status" style="min-height:18px;"></div>
         </div>`;
       wireReport(rec);
@@ -389,6 +398,9 @@
     $("d-steps").innerHTML = missing.length
       ? missing.map((k) => `<div class="step-item"><span class="sx">✗</span><span>${escapeHtml(ITEM_META[k].fix)}</span></div>`).join("")
       : `<div class="all-done">✓ 제출해야 할 항목을 모두 완료했습니다.</div>`;
+
+    // 수강신청 (마지막 단계) — 본인 보고, 결과는 관리자 집계
+    renderCourse(rec);
 
     $("login").style.display = "none";
     $("dash").style.display = "block";
@@ -425,7 +437,7 @@
       const files = [...fileInput.files];
       if (!correction && !files.length) { setStatus("#dc2626", "올바른 정보를 적거나 파일을 첨부해 주세요."); return; }
       if (!window.lcicSubmitReport) { setStatus("#dc2626", "잠시 후 다시 시도해 주세요."); return; }
-      const restore = () => { send.disabled = false; send.innerHTML = '<iconify-icon icon="solar:plain-2-bold"></iconify-icon> 신고 보내기'; };
+      const restore = () => { send.disabled = false; send.innerHTML = '<iconify-icon icon="solar:plain-2-bold"></iconify-icon> 보내기'; };
       send.disabled = true; send.innerHTML = '<iconify-icon icon="svg-spinners:ring-resize" inline></iconify-icon> 보내는 중…';
       setStatus("", "");
 
@@ -442,9 +454,47 @@
         category: "flight", on_file: onFile, correction, file_paths: paths.length ? paths : null,
       });
       if (err) { restore(); setStatus("#dc2626", "전송 실패: " + err + " 잠시 후 다시 시도해 주세요."); return; }
-      setStatus("#15803d", "✓ 신고가 접수되었습니다. 확인 후 정정해 드릴게요.");
+      setStatus("#15803d", "✓ 접수되었습니다. 확인 후 정정해 드릴게요.");
       msg.value = ""; resetFiles();
       send.disabled = true; send.innerHTML = '<iconify-icon icon="solar:check-circle-bold"></iconify-icon> 접수됨';
+    });
+  }
+
+  // ── 수강신청 자기보고 (결과는 Supabase에 저장 → 관리자 집계) ──
+  function courseKey() { return "lcic.coursereg." + (CUR_EMAIL || ""); }
+  function renderCourse(rec) {
+    const el = $("d-course");
+    let done = false;
+    try { done = localStorage.getItem(courseKey()) === "1"; } catch (_) {}
+    if (done) {
+      el.innerHTML =
+        `<div class="course-done"><iconify-icon icon="solar:check-circle-bold"></iconify-icon> 수강신청을 완료로 보고했습니다.</div>
+         <div class="course-undo"><button id="course-undo-btn">아직 안 했어요 (취소)</button></div>`;
+      $("course-undo-btn").addEventListener("click", () => {
+        try { localStorage.removeItem(courseKey()); } catch (_) {}
+        renderCourse(rec);
+      });
+      return;
+    }
+    el.innerHTML =
+      `<div class="course-ask">학생 포털에서 <b>수강신청</b>을 완료하셨나요?</div>
+       <div class="link-row">
+         <button class="link-btn primary" id="course-done-btn"><iconify-icon icon="solar:check-circle-bold"></iconify-icon> 네, 완료했어요</button>
+         <a class="link-btn" href="https://lcic-students-system.com/login" target="_blank" rel="noopener"><iconify-icon icon="solar:square-top-down-bold"></iconify-icon> 학생 포털 열기</a>
+       </div>
+       <div class="report-hint">아직이라면 학생 포털에서 수강신청을 먼저 완료해 주세요.</div>
+       <div class="report-hint" id="course-status" style="min-height:18px;"></div>`;
+    const cbtn = $("course-done-btn"), cst = $("course-status");
+    cbtn.addEventListener("click", async () => {
+      if (!window.lcicSubmitCourseReg) { cst.style.color = "#dc2626"; cst.textContent = "잠시 후 다시 시도해 주세요."; return; }
+      cbtn.disabled = true; cbtn.innerHTML = '<iconify-icon icon="svg-spinners:ring-resize" inline></iconify-icon> 보내는 중…';
+      const err = await window.lcicSubmitCourseReg({ student_name: rec.name || "", student_email: CUR_EMAIL || "" });
+      if (err) {
+        cbtn.disabled = false; cbtn.innerHTML = '<iconify-icon icon="solar:check-circle-bold"></iconify-icon> 네, 완료했어요';
+        cst.style.color = "#dc2626"; cst.textContent = "전송 실패: " + err + " 잠시 후 다시 시도해 주세요."; return;
+      }
+      try { localStorage.setItem(courseKey(), "1"); } catch (_) {}
+      renderCourse(rec);
     });
   }
 
@@ -513,6 +563,15 @@ window.lcicUploadReportFile = async (file) => {
     return error ? { error: error.message || "오류" } : { path: data.path };
   } catch (e) {
     return { error: e && e.message ? e.message : "네트워크 오류" };
+  }
+};
+// 수강신청 완료 자기보고 → course_registrations INSERT (관리자만 집계 조회)
+window.lcicSubmitCourseReg = async (payload) => {
+  try {
+    const { error } = await supabase.from("course_registrations").insert({ ...payload, completed: true });
+    return error ? (error.message || "오류") : null;
+  } catch (e) {
+    return e && e.message ? e.message : "네트워크 오류";
   }
 };
 </script>
