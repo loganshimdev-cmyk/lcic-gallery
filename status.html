@@ -558,6 +558,18 @@
     CUR_EMAIL = normEmail(email);
     try { sessionStorage.setItem(SS_KEY, JSON.stringify({ e: email, b: birthVal, p: phoneVal })); } catch (_) {}
     render(rec);
+    maybeLogView(rec);   // 본인 확인 기록(관리자 집계용)
+  }
+
+  // 로그인(본인 확인) 1일 1회만 Supabase 에 기록 → 관리자 '확인 현황'
+  function maybeLogView(rec) {
+    try {
+      const key = "lcic.statusview." + (CUR_EMAIL || "");
+      const today = new Date().toISOString().slice(0, 10);
+      if (localStorage.getItem(key) === today) return;
+      localStorage.setItem(key, today);
+    } catch (_) {}
+    if (window.lcicLogView) window.lcicLogView({ student_name: rec.name || "", student_email: CUR_EMAIL || "" });
   }
 
   $("login-form").addEventListener("submit", async (e) => {
@@ -619,6 +631,10 @@ window.lcicSubmitCourseReg = async (payload) => {
   } catch (e) {
     return e && e.message ? e.message : "네트워크 오류";
   }
+};
+// 본인 확인(로그인) 기록 → status_views INSERT (조용히, 실패해도 무시)
+window.lcicLogView = async (payload) => {
+  try { await supabase.from("status_views").insert(payload); } catch (_) {}
 };
 </script>
 </body>

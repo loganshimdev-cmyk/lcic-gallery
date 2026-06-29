@@ -340,6 +340,41 @@ create policy "admin can delete course reg"
 > (`lcic.coursereg.<email>`). 권위 있는 집계는 Supabase(관리자 화면)에 있다.
 > 같은 학생이 여러 번 눌러도 관리자 화면은 **이메일별 최신 1건**으로 합쳐 보여준다.
 
+---
+
+# 본인 확인(로그인) 기록 (status_views)
+
+학생이 `status.html`에 로그인(=본인 확인)하면 **하루 1회** 한 줄이 INSERT 되고,
+관리자는 `status-reports.html`의 **"확인 현황" 탭**에서 누가 확인했는지 본다.
+익명 INSERT만, 조회·삭제는 관리자(authenticated)만.
+
+Supabase 대시보드 → SQL Editor 에서 **1회 실행**:
+
+```sql
+create table if not exists public.status_views (
+  id uuid primary key default gen_random_uuid(),
+  student_email text not null,
+  student_name  text,
+  viewed_at     timestamptz not null default now()
+);
+create index if not exists status_views_email_idx on public.status_views (lower(student_email));
+
+alter table public.status_views enable row level security;
+
+create policy "anon can insert view"
+  on public.status_views for insert
+  to anon with check (true);
+create policy "admin can read view"
+  on public.status_views for select
+  to authenticated using (true);
+create policy "admin can delete view"
+  on public.status_views for delete
+  to authenticated using (true);
+```
+
+> 학생 화면은 하루 1회만 기록하도록 `localStorage`(`lcic.statusview.<email>`)로 조절한다.
+> 관리자 화면은 이메일별 최신 1건으로 합쳐 "확인한 학생 N명"을 보여준다.
+
 ## 사용 방법
 
 - 학생: `https://<사이트주소>/notice.html`, `/faq.html` 에서 읽기만
