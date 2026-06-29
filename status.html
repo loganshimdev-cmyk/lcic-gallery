@@ -70,6 +70,30 @@
   .dash-greet .nm { color: var(--accent-deep); }
   .dash-sub { color: var(--text-dim); font-size: 0.95rem; margin-top: 6px; }
 
+  /* 운영 안내 (기본=인라인 카드 / 데스크탑=우측 고정) */
+  .dash-notice {
+    margin: 0 0 16px; padding: 16px 18px;
+    border-radius: 18px; border: 1px solid rgba(245,158,11,0.35);
+    background: rgba(245,158,11,0.07); box-shadow: var(--shadow-sm);
+  }
+  .dash-notice .dn-title {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 0.92rem; font-weight: 800; color: #b45309; margin-bottom: 10px;
+  }
+  .dash-notice .dn-title iconify-icon { font-size: 19px; color: #d97706; }
+  .dash-notice .dn-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 11px; }
+  .dash-notice .dn-list li { display: flex; gap: 9px; font-size: 0.9rem; line-height: 1.55; color: #78350f; }
+  .dash-notice .dn-list li .dn-ic { flex-shrink: 0; }
+  .dash-notice .dn-list li b { color: #92400e; font-weight: 800; }
+  /* 본문(container-narrow=880px) 옆에 여유가 생기는 넓은 화면에서만 우측 고정.
+     좁은 화면에선 위 기본 스타일대로 상단 인라인 카드로 보인다. */
+  @media (min-width: 1400px) {
+    .dash-notice {
+      position: fixed; top: 116px; left: calc(50vw + 456px);
+      width: 240px; margin: 0; z-index: 30;
+    }
+  }
+
   .card {
     background: var(--bg-elev); border: 1px solid var(--hairline);
     border-radius: 20px; box-shadow: var(--shadow-sm);
@@ -242,6 +266,12 @@
     <div class="dash-sub">연수 준비 현황입니다. 빠진 항목이 있으면 출국 전에 채워 주세요.</div>
   </div>
 
+  <!-- 운영 안내 (데스크탑=우측 고정 / 모바일=상단 인라인) -->
+  <aside id="dash-notice" class="dash-notice fade-up" aria-label="안내">
+    <div class="dn-title"><iconify-icon icon="solar:bell-bing-bold-duotone"></iconify-icon> 꼭 확인해 주세요</div>
+    <ul class="dn-list" id="dn-list"></ul>
+  </aside>
+
   <!-- 완료율 -->
   <section class="card fade-up">
     <div class="prog-top">
@@ -340,6 +370,18 @@
       sub: { hint: "비상시 연락할 보호자 이름·관계·전화번호를 적어 주세요.", ph: "예: 홍길동 (모) / 010-1234-5678" } },
   };
   const ORDER = ["passport", "flight", "leveltest", "emergency"];
+
+  // 학생 공통 운영 안내(여기에 한 줄씩 추가/수정하면 됨)
+  const NOTICES = [
+    { icon: "🤝", t: "<b>버디 세션 신청</b>은 <b>7월 1일까지</b> 꼭 해주세요." },
+    { icon: "💱", t: "<b>환전</b>은 오리엔테이션(어드민 건물 <b>3층</b>) 끝난 뒤, 같은 건물 <b>1층</b>에서 진행해요." },
+  ];
+  (function renderNotices() {
+    const el = document.getElementById("dn-list");
+    if (!el) return;
+    if (!NOTICES.length) { const n = document.getElementById("dash-notice"); if (n) n.style.display = "none"; return; }
+    el.innerHTML = NOTICES.map((x) => `<li><span class="dn-ic">${x.icon}</span><span>${x.t}</span></li>`).join("");
+  })();
 
   let CUR = null, CUR_EMAIL = null;
 
