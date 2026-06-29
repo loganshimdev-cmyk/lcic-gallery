@@ -372,10 +372,10 @@
   const ORDER = ["passport", "flight", "leveltest", "emergency"];
 
   // 학생 공통 운영 안내(여기에 한 줄씩 추가/수정하면 됨)
-  const NOTICES = [
-    { icon: "🤝", t: "<b>버디 세션 신청</b>은 <b>7월 1일까지</b> 꼭 해주세요." },
-    { icon: "💱", t: "<b>환전</b>은 오리엔테이션(어드민 건물 <b>3층</b>) 끝난 뒤, 같은 건물 <b>1층</b>에서 진행해요." },
-  ];
+  // 잠시 숨김 — 아래 두 줄을 NOTICES 안으로 옮기면 안내 카드가 다시 보입니다.
+  // { icon: "🤝", t: "<b>버디 세션 신청</b>은 <b>7월 1일까지</b> 꼭 해주세요." },
+  // { icon: "💱", t: "<b>환전</b>은 오리엔테이션(어드민 건물 <b>3층</b>) 끝난 뒤, 같은 건물 <b>1층</b>에서 진행해요." },
+  const NOTICES = [];
   (function renderNotices() {
     const el = document.getElementById("dn-list");
     if (!el) return;
