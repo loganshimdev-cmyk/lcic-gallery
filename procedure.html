@@ -924,6 +924,16 @@
     background: var(--accent-tint);
     outline: none;
   }
+  /* "Open the site" button inside the LOA lightbox */
+  .lb-loa-link {
+    display: inline-flex; align-items: center; gap: 9px;
+    margin: 16px auto 0; padding: 13px 22px;
+    background: #2563eb; color: #fff; font-weight: 800; font-size: 1rem;
+    border-radius: 12px; text-decoration: none;
+    box-shadow: 0 6px 18px rgba(37,99,235,0.32); transition: background 0.18s ease, transform 0.18s ease;
+  }
+  .lb-loa-link:hover { background: #1d4ed8; transform: translateY(-1px); }
+  .lb-loa-link iconify-icon { font-size: 20px; }
 
   /* Image lightbox */
   .img-lightbox {
@@ -1586,7 +1596,7 @@
             <iconify-icon icon="solar:document-add-bold-duotone"></iconify-icon>
             <div>
               <b data-i18n-en="Letter of Acceptance (LOA)" data-i18n-zh="入學許可書 (LOA)" data-i18n-ja="入学許可書 (LOA)">입학허가서 (LOA)</b>
-              <span data-i18n-en="The official acceptance letter, used for visa and flight. <b>Tap to see where to download it.</b>" data-i18n-zh="正式入學許可書,用於簽證、訂機票。<b>點一下查看下載位置。</b>" data-i18n-ja="ビザや航空券に使う正式な入学許可書です。<b>タップでダウンロード場所を確認。</b>">비자·항공권 등에 쓰는 공식 입학 확인 서류. <b>눌러서 다운로드 위치를 확인하세요.</b></span>
+              <span data-i18n-en="The official acceptance letter, used for visa and flight. <b>Tap to see where to download it and open the site.</b>" data-i18n-zh="正式入學許可書,用於簽證、訂機票。<b>點一下查看下載位置並前往網站。</b>" data-i18n-ja="ビザや航空券に使う正式な入学許可書です。<b>タップでダウンロード場所を確認し、サイトへ移動。</b>">비자·항공권 등에 쓰는 공식 입학 확인 서류. <b>눌러서 다운로드 위치 확인 및 사이트로 이동하세요.</b></span>
             </div>
           </li>
           <li>
@@ -1715,6 +1725,10 @@
   </button>
   <figure class="lb-figure" id="lb-figure">
     <img id="lb-image" src="" alt="">
+    <a id="lb-loa-link" class="lb-loa-link" href="https://lcic-students-system.com/login" target="_blank" rel="noopener noreferrer" style="display:none;">
+      <iconify-icon icon="solar:square-top-down-bold-duotone"></iconify-icon>
+      <span data-i18n-en="Open the site to download (lcic-students-system.com)" data-i18n-zh="開啟網站下載 (lcic-students-system.com)" data-i18n-ja="サイトを開いてダウンロード (lcic-students-system.com)">사이트 열기 — 여기서 다운로드 (lcic-students-system.com)</span>
+    </a>
   </figure>
 </div>
 
@@ -1730,6 +1744,8 @@
     if (!img) return;
     lbImg.src = img.src;
     lbImg.alt = img.alt || "";
+    const loaLink = document.getElementById("lb-loa-link");
+    if (loaLink) loaLink.style.display = "none";
     // Clear previous annotations
     lbFigure.querySelectorAll(".m-annot-box").forEach(a => a.remove());
     // Clone annotations from source figure (positioned via inline style, so they scale with image)
@@ -1761,6 +1777,8 @@
     lbFigure.querySelectorAll(".m-annot-box").forEach(a => a.remove());
     lbImg.src = "assets/manual/loa-portal.png";
     lbImg.alt = "LOA 다운로드 화면 — Student Profile · Billing & Invoices 탭";
+    const loaLink = document.getElementById("lb-loa-link");
+    if (loaLink) loaLink.style.display = "inline-flex";
     lightbox.classList.add("active");
     document.body.style.overflow = "hidden";
   };
