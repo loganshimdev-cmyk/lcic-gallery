@@ -1,39 +1,61 @@
 import { supabase } from "./supabase.js?v=4";
-import { assignColor } from "./team-util.js";
 
-// 현재 세션 사용자. 없으면 null.
-export async function currentUser() {
-  const { data: { session } } = await supabase.auth.getSession();
-  return session?.user ?? null;
+// 간편 로그인(아이디/비번) — Supabase Auth 미사용.
+// 세션은 localStorage에 보관(로그인한 멤버 {id,name,color,username}).
+const SESSION_KEY = "lcic-team-member";
+
+// 현재 로그인 멤버(localStorage). 없으면 null.
+export function myMember() {
+  try { return JSON.parse(localStorage.getItem(SESSION_KEY) || "null"); }
+  catch { return null; }
 }
 
-// 로그인 사용자의 team_members 행. 없으면 null (등록 모달 필요).
-export async function myMember() {
-  const user = await currentUser();
-  if (!user) return null;
-  const { data } = await supabase
-    .from("team_members").select("*").eq("id", user.id).maybeSingle();
-  return data ?? null;
+// 호환용 별칭(기존 코드가 currentUser를 부를 수 있음).
+export function currentUser() { return myMember(); }
+
+// 아이디/비번 로그인. 성공 시 멤버 저장 후 반환, 실패 시 throw.
+export async function login(username, password) {
+  const { data, error } = await supabase.rpc("team_login", {
+    p_username: username.trim().toLowerCase(),
+    p_password: password,
+  });
+  if (error) throw error;
+  const member = Array.isArray(data) ? data[0] : data;
+  if (!member) throw new Error("아이디 또는 비밀번호가 올바르지 않습니다.");
+  localStorage.setItem(SESSION_KEY, JSON.stringify(member));
+  return member;
+}
+
+export function logout() { localStorage.removeItem(SESSION_KEY); }
+
+// 비밀번호 변경(현재 비번 확인). 성공 true.
+export async function changePassword(oldPw, newPw) {
+  const me = myMember();
+  if (!me) throw new Error("로그인이 필요합니다.");
+  const { data, error } = await supabase.rpc("team_set_password", {
+    p_id: me.id, p_old: oldPw, p_new: newPw,
+  });
+  if (error) throw error;
+  if (!data) throw new Error("현재 비밀번호가 올바르지 않습니다.");
+  return true;
 }
 
 export async function listMembers() {
   const { data, error } = await supabase
-    .from("team_members").select("*").order("created_at");
+    .from("team_members").select("id,name,color,username,active,created_at").order("created_at");
   if (error) throw error;
   return data ?? [];
 }
 
-// 첫 로그인 등록: 이름 받아 색 자동 배정 후 upsert.
+// 첫 로그인 시 한글 이름 등록(현재 멤버의 name 갱신).
 export async function registerMember(name) {
-  const user = await currentUser();
-  if (!user) throw new Error("로그인이 필요합니다.");
-  const members = await listMembers();
-  const color = assignColor(members.map((m) => m.color));
+  const me = myMember();
+  if (!me) throw new Error("로그인이 필요합니다.");
   const { data, error } = await supabase
-    .from("team_members")
-    .upsert({ id: user.id, name: name.trim(), color, active: true })
-    .select().single();
+    .from("team_members").update({ name: name.trim() }).eq("id", me.id)
+    .select("id,name,color,username").single();
   if (error) throw error;
+  localStorage.setItem(SESSION_KEY, JSON.stringify(data));
   return data;
 }
 

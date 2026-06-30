@@ -93,8 +93,7 @@
 <div class="toast" id="toast"></div>
 
 <script type="module">
-import { supabase } from "./assets/supabase.js?v=4";
-import { myMember, registerMember } from "./assets/team-data.js";
+import { myMember, registerMember, login, logout, changePassword } from "./assets/team-data.js";
 import { initBoard } from "./assets/team-board.js";
 import { initCalendar } from "./assets/team-calendar.js";
 import { renderSummary } from "./assets/team-summary.js";
@@ -110,10 +109,9 @@ window.__toast = showToast;
 let me = null;
 
 async function refresh() {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) { show("login"); return; }
-  me = await myMember();
-  if (!me) { show("register"); return; }
+  me = myMember();
+  if (!me) { show("login"); return; }
+  if (!me.name) { show("register"); return; }
   show("app");
   $("me-name").textContent = me.name;
   await renderAll();
@@ -134,23 +132,21 @@ async function renderAll() {
 }
 window.__teamRefresh = renderAll;
 
-// 아이디 → 이메일 변환. "@"가 있으면 그대로(이메일), 없으면 도메인 자동 부착.
-const ID_DOMAIN = "@lcic-campus.com";
-const toEmail = (id) => (id.includes("@") ? id : id + ID_DOMAIN);
-
 $("login-form").addEventListener("submit", async (e) => {
   e.preventDefault();
-  const email = toEmail($("email").value.trim().toLowerCase()), password = $("password").value;
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) return showToast(`로그인 실패: ${error.message}`, "error");
-  $("password").value = ""; refresh();
+  const id = $("email").value.trim(), password = $("password").value;
+  try {
+    await login(id, password);
+    $("password").value = ""; refresh();
+  } catch (err) { showToast(`로그인 실패: ${err.message}`, "error"); }
 });
 
-// 비밀번호 변경
+// 비밀번호 변경(현재 비번 확인 후 교체)
 $("pw-btn").addEventListener("click", () => {
   const root = document.getElementById("modal-root");
   root.innerHTML = `<div class="modal-bg"><div class="modal">
     <h3 style="margin-bottom:14px;">비밀번호 변경</h3>
+    <input id="pw-old" type="password" placeholder="현재 비밀번호" />
     <input id="pw-new" type="password" placeholder="새 비밀번호 (6자 이상)" />
     <input id="pw-new2" type="password" placeholder="새 비밀번호 확인" />
     <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:8px;">
@@ -162,12 +158,12 @@ $("pw-btn").addEventListener("click", () => {
   root.querySelector("#pw-cancel").onclick = close;
   root.querySelector(".modal-bg").onclick = (ev) => { if (ev.target.classList.contains("modal-bg")) close(); };
   root.querySelector("#pw-save").onclick = async () => {
+    const oldP = root.querySelector("#pw-old").value;
     const p1 = root.querySelector("#pw-new").value, p2 = root.querySelector("#pw-new2").value;
     if (p1.length < 6) return showToast("6자 이상 입력하세요", "error");
     if (p1 !== p2) return showToast("두 비밀번호가 다릅니다", "error");
     try {
-      const { error } = await supabase.auth.updateUser({ password: p1 });
-      if (error) throw error;
+      await changePassword(oldP, p1);
       close(); showToast("비밀번호를 변경했어요", "success");
     } catch (err) { showToast(err.message || "변경 실패", "error"); }
   };
@@ -179,7 +175,7 @@ $("register-form").addEventListener("submit", async (e) => {
   catch (err) { showToast(err.message, "error"); }
 });
 
-$("logout-btn").addEventListener("click", async () => { await supabase.auth.signOut(); refresh(); });
+$("logout-btn").addEventListener("click", () => { logout(); refresh(); });
 
 document.querySelectorAll(".tabs button").forEach((b) => b.addEventListener("click", () => {
   document.querySelectorAll(".tabs button").forEach((x) => x.classList.remove("active"));
@@ -188,10 +184,6 @@ document.querySelectorAll(".tabs button").forEach((b) => b.addEventListener("cli
   $("tab-calendar").classList.toggle("hidden", b.dataset.tab !== "calendar");
 }));
 
-// onAuthStateChange 콜백 안에서 getSession 등 auth 함수를 동기 호출하면
-// 인증 락이 잡힌 채라 데드락이 난다(supabase 공식 주의사항). setTimeout으로
-// 콜백 컨텍스트(락) 밖으로 빼서 호출한다.
-supabase.auth.onAuthStateChange(() => { setTimeout(refresh, 0); });
 refresh();
 </script>
 </body>
