@@ -169,6 +169,7 @@
   .fee-note .fee-title iconify-icon { font-size: 18px; }
   .fee-note ul { margin: 0; padding-left: 18px; }
   .fee-note li { margin: 4px 0; }
+  .fee-note .fee-ex { margin-top: 5px; font-size: 0.82rem; line-height: 1.55; opacity: 0.92; }
   .fee-note b { color: #92400e; font-weight: 800; }
   @media (max-width: 520px) { .flight-grid { grid-template-columns: 1fr; } }
 
@@ -433,7 +434,8 @@
     const FEE_NOTE =
       `<div class="fee-note"><div class="fee-title"><iconify-icon icon="solar:wad-of-money-bold"></iconify-icon> 도착·출국 요일 안내 (추가 요금)</div>
         <ul>
-          <li><b>도착일은 일요일 기준</b>입니다. <b>토요일에 도착</b>하시는 분은 <b>1,200페소</b> 추가 요금이 있습니다. (항목: 픽업 · 식사 · 숙박)</li>
+          <li><b>도착일은 일요일 기준</b>입니다. <b>토요일에 도착</b>하시는 분은 <b>1,200페소</b> 추가 요금이 있습니다. (항목: 픽업 · 식사 · 숙박)
+            <div class="fee-ex"><b>밤에 도착</b>하시는 분은 해당되지 않습니다. 기숙사에는 <b>다음날</b> 들어가기 때문입니다. (추가 요금은 <b>기숙사 도착 기준</b>)</div></li>
           <li><b>출국일은 토요일 기준</b>입니다. <b>일요일에 출국</b>하시는 분은 <b>1,200페소</b> 추가 요금이 있습니다. (항목: 드랍 · 식사 · 숙박)</li>
         </ul></div>`;
 
