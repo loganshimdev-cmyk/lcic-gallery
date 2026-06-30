@@ -1,5 +1,5 @@
 import { listTasks, listComments, addComment, updateTask, moveTask, deleteTask } from "./team-data.js";
-import { escapeHtml } from "./team-board.js";
+import { escapeHtml, memberLabel } from "./team-board.js";
 
 export async function openTaskDetail({ taskId, me, members, onChange }) {
   const tasks = await listTasks();
@@ -14,13 +14,13 @@ export async function openTaskDetail({ taskId, me, members, onChange }) {
     <textarea id="d-detail" rows="3" placeholder="설명">${escapeHtml(t.detail || "")}</textarea>
     <div style="display:flex; gap:8px;">
       <select id="d-assignee" style="flex:1;"><option value="">미지정</option>
-        ${members.map((m) => `<option value="${m.id}" ${m.id === t.assignee_id ? "selected" : ""}>${escapeHtml(m.name)}</option>`).join("")}</select>
+        ${members.map((m) => `<option value="${m.id}" ${m.id === t.assignee_id ? "selected" : ""}>${escapeHtml(memberLabel(m))}</option>`).join("")}</select>
       <input id="d-due" type="date" value="${t.due_date || ""}" style="flex:1;" />
     </div>
     <div style="display:flex; gap:6px; margin:6px 0 12px;">
       ${["todo", "doing", "done"].map((s) => `<button class="btn-ghost d-move ${t.status === s ? "active" : ""}" data-s="${s}" style="flex:1; ${t.status === s ? "background:var(--accent);color:#fff;" : ""}">${{ todo: "할 일", doing: "진행중", done: "완료" }[s]}</button>`).join("")}
     </div>
-    ${t.status === "done" && t.done_by ? `<div style="font-size:.75rem; color:var(--text-faint); margin-bottom:8px;">✓ ${escapeHtml(memberById[t.done_by]?.name || "")} 완료</div>` : ""}
+    ${t.status === "done" && t.done_by ? `<div style="font-size:.75rem; color:var(--text-faint); margin-bottom:8px;">✓ ${escapeHtml(memberLabel(memberById[t.done_by]))} 완료</div>` : ""}
 
     <div style="font-size:.8rem; color:var(--text-dim); margin:10px 0 4px;">코멘트</div>
     <div id="d-comments">${comments.map((c) => commentHtml(c, memberById)).join("") || '<div style="color:var(--text-faint);font-size:.8rem;">아직 없음</div>'}</div>
