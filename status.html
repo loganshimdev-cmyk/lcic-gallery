@@ -448,27 +448,14 @@
       let stay = "";
       const st = rec.stay || {};
       if (st.start || st.end) stay = `<div class="stay-line">체류 기간: <b>${escapeHtml(st.start || "—")}</b> ~ <b>${escapeHtml(st.end || "—")}</b></div>`;
-      // 가는 편: 저장된 날짜=세부 도착일, 시간=세부 도착시각.
-      // 한국→세부 약 5시간. 새벽(0~5시) 도착편은 전날 밤 한국에서 출발 → 한국 출발일 = 도착일 −1일.
-      const addDaysIso = (iso, n) => {
-        const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ""); if (!m) return iso || "";
-        let y = +m[1], mo = +m[2], d = +m[3] + n;
-        const dim = (yy) => [31, (yy % 4 === 0 && (yy % 100 !== 0 || yy % 400 === 0)) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-        while (d < 1) { mo--; if (mo < 1) { mo = 12; y--; } d += dim(y)[mo - 1]; }
-        while (d > dim(y)[mo - 1]) { d -= dim(y)[mo - 1]; mo++; if (mo > 12) { mo = 1; y++; } }
-        return `${y}-${String(mo).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-      };
-      const koreaDepart = (arrIso, timeStr) => {
-        const h = parseInt(String(timeStr || "").split(":")[0], 10);
-        return (arrIso && Number.isFinite(h) && h >= 0 && h <= 5) ? addDaysIso(arrIso, -1) : (arrIso || "");
-      };
+      // 가는 편: 세부 도착 일자·시각만 표시(헷갈림 방지).
       const legGo =
         `<div class="flight-leg"><div class="leg-tag go"><iconify-icon icon="solar:plane-bold"></iconify-icon> 가는 편 (한국 → 세부)</div>
-          <div class="flight-grid">${cell("항공편명", f.flightNo)}${cell("출발일자 (한국)", koreaDepart(f.departure, f.departureTime))}${cell("도착일자 (세부)", f.departure)}${f.departureTime ? cell("도착시간 (세부)", f.departureTime) : ""}</div>
+          <div class="flight-grid">${cell("항공편명", f.flightNo)}${cell("세부 도착 일자", f.departure)}${f.departureTime ? cell("세부 도착 시간", f.departureTime) : ""}</div>
           <div class="leg-note">공항 <b>픽업</b>은 <b>세부 도착</b> 일자·시각 기준이에요.</div></div>`;
       const legBack = (rf.flightNo || rf.date)
         ? `<div class="flight-leg"><div class="leg-tag back"><iconify-icon icon="solar:plane-bold" style="transform:scaleX(-1)"></iconify-icon> 오는 편 (세부 → 한국)</div>
-          <div class="flight-grid">${cell("항공편명", rf.flightNo)}${cell("출발일자 (세부)", rf.date)}${rf.time ? cell("출발시간 (세부)", rf.time) : ""}</div>
+          <div class="flight-grid">${cell("항공편명", rf.flightNo)}${cell("세부 출발 일자", rf.date)}${rf.time ? cell("세부 출발 시간", rf.time) : ""}</div>
           <div class="leg-note">공항 <b>드랍</b>은 <b>세부 출발</b> 일자·시각 기준이에요.</div></div>`
         : "";
       flightEl.innerHTML =
