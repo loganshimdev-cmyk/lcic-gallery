@@ -100,7 +100,7 @@ import { renderSummary } from "./assets/team-summary.js";
 
 const $ = (id) => document.getElementById(id);
 const toast = $("toast");
-export function showToast(msg, type = "") {
+function showToast(msg, type = "") {
   toast.textContent = msg; toast.className = `toast show ${type}`;
   setTimeout(() => toast.classList.remove("show"), 2400);
 }

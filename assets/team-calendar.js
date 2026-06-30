@@ -61,11 +61,16 @@ function openDay({ iso, items, me, members, onChange }) {
   const close = () => (root.innerHTML = "");
   root.querySelector("#e-cancel").onclick = close;
   root.querySelector(".modal-bg").onclick = (e) => { if (e.target.classList.contains("modal-bg")) close(); };
-  root.querySelectorAll(".ev-del").forEach((b) => b.onclick = async () => { await deleteEvent(b.dataset.id); close(); onChange(); });
+  root.querySelectorAll(".ev-del").forEach((b) => b.onclick = async () => {
+    try { await deleteEvent(b.dataset.id); close(); onChange(); }
+    catch (err) { window.__toast(err.message || "삭제 실패", "error"); }
+  });
   root.querySelector("#e-save").onclick = async () => {
     const title = root.querySelector("#e-title").value.trim();
     if (!title) return window.__toast("제목을 입력하세요", "error");
-    await createEvent({ title, date: iso, all_day: true, owner_id: root.querySelector("#e-owner").value, detail: root.querySelector("#e-detail").value });
-    close(); window.__toast("일정 추가", "success"); onChange();
+    try {
+      await createEvent({ title, date: iso, all_day: true, owner_id: root.querySelector("#e-owner").value, detail: root.querySelector("#e-detail").value });
+      close(); window.__toast("일정 추가", "success"); onChange();
+    } catch (err) { window.__toast(err.message || "일정 추가 실패", "error"); }
   };
 }
