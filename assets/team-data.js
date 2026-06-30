@@ -1,4 +1,12 @@
-import { supabase } from "./supabase.js?v=4";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from "./supabase.js?v=4";
+
+// 간편 로그인 전용 클라이언트: 세션 저장 안 함 → 항상 순수 anon 역할로 요청.
+// (공유 supabase.js 클라이언트는 예전 admin 세션 JWT를 들고 있어 authenticated 로
+//  요청이 나가고, team_* 정책은 anon 대상이라 RLS에 막힘.)
+const db = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  auth: { persistSession: false, autoRefreshToken: false },
+});
 
 // 간편 로그인(아이디/비번) — Supabase Auth 미사용.
 // 세션은 localStorage에 보관(로그인한 멤버 {id,name,color,username}).
@@ -15,7 +23,7 @@ export function currentUser() { return myMember(); }
 
 // 아이디/비번 로그인. 성공 시 멤버 저장 후 반환, 실패 시 throw.
 export async function login(username, password) {
-  const { data, error } = await supabase.rpc("team_login", {
+  const { data, error } = await db.rpc("team_login", {
     p_username: username.trim().toLowerCase(),
     p_password: password,
   });
@@ -32,7 +40,7 @@ export function logout() { localStorage.removeItem(SESSION_KEY); }
 export async function changePassword(oldPw, newPw) {
   const me = myMember();
   if (!me) throw new Error("로그인이 필요합니다.");
-  const { data, error } = await supabase.rpc("team_set_password", {
+  const { data, error } = await db.rpc("team_set_password", {
     p_id: me.id, p_old: oldPw, p_new: newPw,
   });
   if (error) throw error;
@@ -41,7 +49,7 @@ export async function changePassword(oldPw, newPw) {
 }
 
 export async function listMembers() {
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from("team_members").select("id,name,color,username,active,created_at").order("created_at");
   if (error) throw error;
   return data ?? [];
@@ -51,7 +59,7 @@ export async function listMembers() {
 export async function registerMember(name) {
   const me = myMember();
   if (!me) throw new Error("로그인이 필요합니다.");
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from("team_members").update({ name: name.trim() }).eq("id", me.id)
     .select("id,name,color,username").single();
   if (error) throw error;
@@ -60,14 +68,14 @@ export async function registerMember(name) {
 }
 
 export async function listTasks() {
-  const { data, error } = await supabase.from("team_tasks").select("*");
+  const { data, error } = await db.from("team_tasks").select("*");
   if (error) throw error;
   return data ?? [];
 }
 
 export async function createTask({ title, detail, assignee_id, due_date }) {
   const me = await myMember();
-  const { error } = await supabase.from("team_tasks").insert({
+  const { error } = await db.from("team_tasks").insert({
     title, detail: detail || null, assignee_id: assignee_id || null,
     due_date: due_date || null, status: "todo", created_by: me?.id ?? null,
   });
@@ -75,7 +83,7 @@ export async function createTask({ title, detail, assignee_id, due_date }) {
 }
 
 export async function updateTask(id, patch) {
-  const { error } = await supabase.from("team_tasks").update(patch).eq("id", id);
+  const { error } = await db.from("team_tasks").update(patch).eq("id", id);
   if (error) throw error;
 }
 
@@ -93,12 +101,12 @@ export async function moveTask(id, status) {
 }
 
 export async function deleteTask(id) {
-  const { error } = await supabase.from("team_tasks").delete().eq("id", id);
+  const { error } = await db.from("team_tasks").delete().eq("id", id);
   if (error) throw error;
 }
 
 export async function listComments(taskId) {
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from("team_comments").select("*").eq("task_id", taskId).order("created_at");
   if (error) throw error;
   return data ?? [];
@@ -106,20 +114,20 @@ export async function listComments(taskId) {
 
 export async function addComment(taskId, body) {
   const me = await myMember();
-  const { error } = await supabase.from("team_comments")
+  const { error } = await db.from("team_comments")
     .insert({ task_id: taskId, author_id: me?.id ?? null, body: body.trim() });
   if (error) throw error;
 }
 
 export async function listEvents() {
-  const { data, error } = await supabase.from("team_events").select("*");
+  const { data, error } = await db.from("team_events").select("*");
   if (error) throw error;
   return data ?? [];
 }
 
 export async function createEvent({ title, date, all_day, start_time, end_time, owner_id, detail }) {
   const me = await myMember();
-  const { error } = await supabase.from("team_events").insert({
+  const { error } = await db.from("team_events").insert({
     title, date, all_day: all_day ?? true,
     start_time: all_day ? null : (start_time || null),
     end_time: all_day ? null : (end_time || null),
@@ -129,6 +137,6 @@ export async function createEvent({ title, date, all_day, start_time, end_time, 
 }
 
 export async function deleteEvent(id) {
-  const { error } = await supabase.from("team_events").delete().eq("id", id);
+  const { error } = await db.from("team_events").delete().eq("id", id);
   if (error) throw error;
 }
