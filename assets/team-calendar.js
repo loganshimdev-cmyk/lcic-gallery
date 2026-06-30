@@ -1,6 +1,6 @@
 import { listEvents, listTasks, listMembers, createEvent, deleteEvent } from "./team-data.js";
 import { monthGrid, ymd } from "./team-util.js";
-import { escapeHtml } from "./team-board.js";
+import { escapeHtml, memberLabel } from "./team-board.js";
 
 let view = null; // {y, m} m=0-based
 
@@ -51,7 +51,7 @@ function openDay({ iso, items, me, members, onChange }) {
     <div style="font-size:.8rem; color:var(--text-dim); margin-bottom:6px;">새 일정</div>
     <input id="e-title" placeholder="일정 제목" />
     <select id="e-owner"><option value="">담당자 미지정</option>
-      ${members.map((m) => `<option value="${m.id}" ${m.id === me.id ? "selected" : ""}>${escapeHtml(m.name)}</option>`).join("")}</select>
+      ${members.map((m) => `<option value="${m.id}" ${m.id === me.id ? "selected" : ""}>${escapeHtml(memberLabel(m))}</option>`).join("")}</select>
     <textarea id="e-detail" rows="2" placeholder="메모(선택)"></textarea>
     <div style="display:flex; gap:8px; justify-content:flex-end;">
       <button id="e-cancel" class="btn-ghost">닫기</button>

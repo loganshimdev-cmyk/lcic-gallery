@@ -49,7 +49,7 @@ function cardHtml(t, memberById, today, lastVisit) {
   return `<div class="card" data-id="${t.id}">
     <div style="font-weight:600; font-size:.9rem;">${escapeHtml(t.title)}${fresh ? '<span class="new-badge">NEW</span>' : ""}</div>
     <div class="meta">
-      ${m ? `<span class="badge"><span class="swatch" style="background:${m.color}"></span>${escapeHtml(m.name)}</span>` : `<span class="badge" style="color:var(--text-faint)">미지정</span>`}
+      ${m ? `<span class="badge"><span class="swatch" style="background:${m.color}"></span>${escapeHtml(memberLabel(m))}</span>` : `<span class="badge" style="color:var(--text-faint)">미지정</span>`}
       ${t.due_date ? `<span class="${overdue ? "overdue" : ""}">📅 ${t.due_date.slice(5)}</span>` : ""}
     </div>
   </div>`;
@@ -62,7 +62,7 @@ function openAddTask({ me, members, onChange }) {
     <input id="t-title" placeholder="제목" />
     <textarea id="t-detail" rows="2" placeholder="설명(선택)"></textarea>
     <select id="t-assignee"><option value="">담당자 미지정</option>
-      ${members.map((m) => `<option value="${m.id}" ${m.id === me.id ? "selected" : ""}>${escapeHtml(m.name)}</option>`).join("")}</select>
+      ${members.map((m) => `<option value="${m.id}" ${m.id === me.id ? "selected" : ""}>${escapeHtml(memberLabel(m))}</option>`).join("")}</select>
     <input id="t-due" type="date" />
     <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:8px;">
       <button id="t-cancel" class="btn-ghost">취소</button>
@@ -86,6 +86,11 @@ function openAddTask({ me, members, onChange }) {
   };
 }
 
-export function escapeHtml(s = "") {
-  return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+export function escapeHtml(s) {
+  return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+// 멤버 표시명: 이름 미등록이면 아이디로.
+export function memberLabel(m) {
+  return m ? (m.name || m.username || "(이름없음)") : "";
 }
