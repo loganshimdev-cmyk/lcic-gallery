@@ -375,6 +375,52 @@ create policy "admin can delete view"
 > 학생 화면은 하루 1회만 기록하도록 `localStorage`(`lcic.statusview.<email>`)로 조절한다.
 > 관리자 화면은 이메일별 최신 1건으로 합쳐 "확인한 학생 N명"을 보여준다.
 
+---
+
+## 버디 신청 주간 체크 (buddy_checkins)
+
+`buddy-check.html`(학생 자가 보고) → INSERT, `status-reports.html`(관리자) → SELECT.
+`student_applications`/`status_reports`와 동일한 anon-INSERT / admin-read 패턴.
+스크린샷은 기존 `status-reports` 버킷의 `buddy/` 하위 폴더를 재사용한다(신규 버킷 불필요).
+
+Supabase 대시보드 → SQL Editor 에서 1회 실행:
+
+```sql
+create table if not exists buddy_checkins (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  student_name text,
+  student_email text,
+  university text,
+  week_no int,
+  week_label text,
+  checkin_date date,
+  file_path text
+);
+
+create index if not exists buddy_checkins_email_idx on buddy_checkins (student_email);
+create index if not exists buddy_checkins_week_idx on buddy_checkins (week_no);
+
+alter table buddy_checkins enable row level security;
+
+-- 누구나 제출(INSERT)만 가능 — anon SELECT 정책은 만들지 않는다.
+create policy "anyone can submit buddy checkin"
+  on buddy_checkins for insert
+  to anon, authenticated
+  with check (true);
+
+create policy "admin can read buddy checkins"
+  on buddy_checkins for select
+  to authenticated using (true);
+
+create policy "admin can delete buddy checkins"
+  on buddy_checkins for delete
+  to authenticated using (true);
+```
+
+스토리지 정책은 기존 `status-reports` 버킷 정책(anyone can upload / admin read·delete)을
+그대로 사용하므로 추가 작업이 없다.
+
 ## 사용 방법
 
 - 학생: `https://<사이트주소>/notice.html`, `/faq.html` 에서 읽기만

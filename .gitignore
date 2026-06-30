@@ -11,6 +11,7 @@ scripts/_auto_report.json
 scripts/_*.json
 scripts/_*.csv
 scripts/encrypt-status.cjs
+scripts/encrypt-buddy.cjs
 .gstack/
 scripts/sheet-to-report.cjs
 scripts/make-agency-page.cjs
