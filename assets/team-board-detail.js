@@ -16,6 +16,7 @@ export async function openTaskDetail({ taskId, me, members, onChange }) {
       <select id="d-assignee" style="flex:1;"><option value="">미지정</option>
         ${members.map((m) => `<option value="${m.id}" ${m.id === t.assignee_id ? "selected" : ""}>${escapeHtml(memberLabel(m))}</option>`).join("")}</select>
       <input id="d-due" type="date" value="${t.due_date || ""}" style="flex:1;" />
+      <input id="d-time" type="time" value="${t.due_time ? t.due_time.slice(0, 5) : ""}" style="flex:1;" />
     </div>
     <div style="display:flex; gap:6px; margin:6px 0 12px;">
       ${["todo", "doing", "done"].map((s) => `<button class="btn-ghost d-move ${t.status === s ? "active" : ""}" data-s="${s}" style="flex:1; ${t.status === s ? "background:var(--accent);color:#fff;" : ""}">${{ todo: "할 일", doing: "진행중", done: "완료" }[s]}</button>`).join("")}
@@ -54,6 +55,7 @@ export async function openTaskDetail({ taskId, me, members, onChange }) {
         detail: root.querySelector("#d-detail").value.trim() || null,
         assignee_id: root.querySelector("#d-assignee").value || null,
         due_date: root.querySelector("#d-due").value || null,
+        due_time: root.querySelector("#d-time").value || null,
       });
       close(); window.__toast("저장했어요", "success"); onChange();
     } catch (err) { window.__toast(err.message || "저장 실패", "error"); }

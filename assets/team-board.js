@@ -50,7 +50,7 @@ function cardHtml(t, memberById, today, lastVisit) {
     <div style="font-weight:600; font-size:.9rem;">${escapeHtml(t.title)}${fresh ? '<span class="new-badge">NEW</span>' : ""}</div>
     <div class="meta">
       ${m ? `<span class="badge"><span class="swatch" style="background:${m.color}"></span>${escapeHtml(memberLabel(m))}</span>` : `<span class="badge" style="color:var(--text-faint)">미지정</span>`}
-      ${t.due_date ? `<span class="${overdue ? "overdue" : ""}">📅 ${t.due_date.slice(5)}</span>` : ""}
+      ${t.due_date ? `<span class="${overdue ? "overdue" : ""}">📅 ${t.due_date.slice(5)}${t.due_time ? " " + t.due_time.slice(0, 5) : ""}</span>` : ""}
     </div>
   </div>`;
 }
@@ -63,7 +63,10 @@ function openAddTask({ me, members, onChange }) {
     <textarea id="t-detail" rows="2" placeholder="설명(선택)"></textarea>
     <select id="t-assignee"><option value="">담당자 미지정</option>
       ${members.map((m) => `<option value="${m.id}" ${m.id === me.id ? "selected" : ""}>${escapeHtml(memberLabel(m))}</option>`).join("")}</select>
-    <input id="t-due" type="date" />
+    <div style="display:flex; gap:10px;">
+      <div style="flex:1;"><label style="display:block;font-size:.75rem;color:var(--text-dim);margin-bottom:5px;">마감일(선택)</label><input id="t-due" type="date" /></div>
+      <div style="flex:1;"><label style="display:block;font-size:.75rem;color:var(--text-dim);margin-bottom:5px;">시간(선택)</label><input id="t-time" type="time" /></div>
+    </div>
     <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:8px;">
       <button id="t-cancel" class="btn-ghost">취소</button>
       <button id="t-save" class="btn-primary">추가</button>
@@ -80,6 +83,7 @@ function openAddTask({ me, members, onChange }) {
         title, detail: root.querySelector("#t-detail").value,
         assignee_id: root.querySelector("#t-assignee").value,
         due_date: root.querySelector("#t-due").value,
+        due_time: root.querySelector("#t-time").value,
       });
       close(); window.__toast("추가했어요", "success"); onChange();
     } catch (err) { window.__toast(err.message, "error"); }
