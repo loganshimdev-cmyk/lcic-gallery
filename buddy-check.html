@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>버디시스템 주간 신청 · LCIC</title>
+<link rel="icon" type="image/png" href="assets/brand/lcic-logo.png">
+<script src="assets/background.js?v=8"></script>
+<link rel="stylesheet" href="assets/shared.css?v=13">
+<script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+<style>
+  .gate-wrap { min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: 120px 20px 60px; }
+  .gate-card { max-width: 440px; width: 100%; }
+  .gate-card .bezel-inner { padding: 36px 32px; }
+  .gate-icon { width: 64px; height: 64px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-deep);
+    display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 20px; }
+  .gate-title { text-align: center; font-size: 1.35rem; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 8px; }
+  .gate-sub { text-align: center; color: var(--text-dim); font-size: 0.92rem; line-height: 1.55; margin-bottom: 24px; }
+  .gate-form { display: flex; flex-direction: column; gap: 12px; }
+  .gate-field { display: flex; flex-direction: column; gap: 6px; text-align: left; }
+  .gate-label { font-size: 0.82rem; font-weight: 600; color: var(--text-dim); padding-left: 2px; }
+  .gate-input { width: 100%; padding: 13px 15px; border: 1px solid var(--hairline-strong); border-radius: 13px;
+    background: var(--bg-elev); font-family: inherit; font-size: 1rem; color: var(--text); transition: border-color 0.15s, box-shadow 0.15s; }
+  .gate-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+  .gate-btn { width: 100%; padding: 14px 16px; margin-top: 4px; border: none; border-radius: 14px; background: var(--accent);
+    color: white; font-family: inherit; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.15s, transform 0.05s; box-shadow: var(--shadow-accent); }
+  .gate-btn:hover { background: var(--accent-hover); }
+  .gate-btn[disabled] { opacity: 0.55; cursor: not-allowed; }
+  .gate-err { color: #dc2626; font-size: 0.86rem; text-align: center; min-height: 20px; line-height: 1.5; }
+  .gate-privacy { text-align: center; font-size: 0.8rem; color: var(--text-faint); margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+
+  .dash { display: none; }
+  .dash-head { text-align: center; margin-bottom: 22px; }
+  .dash-greet { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
+  .dash-greet .nm { color: var(--accent-deep); }
+  .dash-sub { color: var(--text-dim); font-size: 0.95rem; margin-top: 6px; }
+  .week-banner { margin: 0 0 16px; padding: 16px 18px; border-radius: 18px; border: 1px solid var(--accent);
+    background: var(--accent-soft); color: var(--accent-deep); font-weight: 700; text-align: center; }
+  .week-banner small { display:block; font-weight:600; color: var(--text-dim); margin-top: 4px; }
+  .week-list { list-style: none; margin: 0 0 16px; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .week-chip { font-size: 0.82rem; font-weight: 700; padding: 7px 12px; border-radius: 999px;
+    border: 1px solid var(--hairline-strong); color: var(--text-dim); display:inline-flex; align-items:center; gap:5px; }
+  .week-chip.done { background: rgba(22,163,74,0.12); color: #15803d; border-color: rgba(22,163,74,0.4); }
+  .week-chip.now { border-color: var(--accent); color: var(--accent-deep); }
+  .up-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .file-name { font-size: 0.86rem; color: var(--text-dim); }
+  .dash-foot { text-align:center; margin: 26px 0 60px; }
+  .logout-btn { background:none; border:1px solid var(--hairline-strong); color: var(--text-dim);
+    padding: 8px 16px; border-radius: 10px; font-family: inherit; cursor: pointer; }
+  .logout-btn:hover { color: var(--accent-deep); }
+</style>
+</head>
+<body>
+
+<!-- ── 로그인 ── -->
+<section id="login" class="gate-wrap">
+  <div class="bezel gate-card fade-up">
+    <div class="bezel-inner">
+      <div class="gate-icon"><iconify-icon icon="solar:users-group-rounded-bold-duotone"></iconify-icon></div>
+      <div class="gate-title">버디시스템 주간 신청 체크</div>
+      <div class="gate-sub">백석대 학생 본인만 확인할 수 있습니다.<br>아래 정보로 로그인해 주세요.</div>
+      <form id="login-form" class="gate-form" autocomplete="off">
+        <div class="gate-field">
+          <label class="gate-label" for="in-email">이메일 (신청 시 입력한 이메일)</label>
+          <input id="in-email" class="gate-input" type="email" inputmode="email" placeholder="example@email.com" autocomplete="email" required>
+        </div>
+        <div class="gate-field">
+          <label class="gate-label" for="in-birth">생년월일</label>
+          <input id="in-birth" class="gate-input" type="date" required>
+        </div>
+        <div class="gate-field">
+          <label class="gate-label" for="in-phone">휴대폰 번호 끝 4자리</label>
+          <input id="in-phone" class="gate-input" type="tel" inputmode="numeric" maxlength="4" placeholder="예: 1451" autocomplete="off" required>
+        </div>
+        <button id="login-btn" class="gate-btn" type="submit"><span id="login-btn-label">확인</span></button>
+        <div id="login-err" class="gate-err" role="alert"></div>
+        <div class="gate-privacy"><iconify-icon icon="solar:lock-keyhole-minimalistic-bold"></iconify-icon> 본인 정보만 표시됩니다.</div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ── 대시보드 ── -->
+<main id="dash" class="dash container-narrow" style="padding: 110px 14px 0;">
+  <div class="dash-head fade-up">
+    <div class="dash-greet"><span class="nm" id="d-name"></span>님, 안녕하세요 👋</div>
+    <div class="dash-sub">매주 <b>수요일</b>까지 버디시스템 신청 스크린샷을 올려 주세요.</div>
+  </div>
+
+  <div id="week-banner" class="week-banner fade-up"></div>
+  <ul id="week-list" class="week-list fade-up"></ul>
+
+  <section class="card fade-up">
+    <div class="card-title"><iconify-icon icon="solar:upload-track-bold-duotone"></iconify-icon> 이번 주 신청 스크린샷 올리기</div>
+    <div id="up-area" style="margin-top:12px;">
+      <div class="up-row">
+        <input id="file-input" type="file" accept="image/*" capture="environment" class="gate-input" style="padding:9px;">
+      </div>
+      <button id="submit-btn" class="gate-btn" style="margin-top:14px;" disabled>
+        <span id="submit-label">스크린샷 제출</span>
+      </button>
+      <div id="up-msg" class="gate-err" style="color:var(--text-dim);"></div>
+    </div>
+  </section>
+
+  <div class="dash-foot">
+    <button class="logout-btn" id="logout-btn">로그아웃</button>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { supabase } from "./assets/supabase.js?v=4";
+const BUCKET = "status-reports";
+window.lcicBuddyUpload = async (file) => {
+  try {
+    const ext = (file.name.split(".").pop() || "dat").toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 8) || "dat";
+    const id = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2));
+    const path = `buddy/${id}.${ext}`;
+    const { data, error } = await supabase.storage.from(BUCKET).upload(path, file, {
+      contentType: file.type || "application/octet-stream", upsert: false });
+    return error ? { error: error.message || "오류" } : { path: data.path };
+  } catch (e) { return { error: e && e.message ? e.message : "네트워크 오류" }; }
+};
+window.lcicBuddyInsert = async (payload) => {
+  try { const { error } = await supabase.from("buddy_checkins").insert(payload);
+    return error ? (error.message || "오류") : null;
+  } catch (e) { return e && e.message ? e.message : "네트워크 오류"; }
+};
+</script>
+
+<script>
+(function () {
+  "use strict";
+
+  // ── 설정 상수 (사용자 확정 필요) ──
+  const PROGRAM_START = "2026-07-01";   // 백석대 프로그램 첫 수요일
+  const TOTAL_WEEKS = 4;
+
+  const PBKDF2_ITER = 100000;
+  const SS_KEY = "lcic.buddy.session";
+  const $ = (id) => document.getElementById(id);
+  const toast = $("toast");
+  function showToast(msg, type = "") { toast.textContent = msg; toast.className = `toast show ${type}`; setTimeout(() => toast.classList.remove("show"), 2800); }
+
+  /* @@BUDDY_DATA@@ — generated by scripts/encrypt-buddy.cjs, do not edit by hand */
+  const BUDDY_PEPPER = "7aff068943fd941c6a223b7358b68c71";
+  const BUDDY_BLOBS = [{"k":"25d73d9453f47333fe8aeeddb1d96210","b":"uwe0LuZXMxIGc2ABpQn7xmbR/z4nYz6VbV/bPys85c3UaU5UBytUq0d6XQEtRW/Zck5ZBxngms0hu2oxRuilxoCqjTLqx5Hs5XkWIaombQjNbFsXgIokfefkCoHG8kIwLfLUvsIugR+ZYPTmdA=="},{"k":"d0a9dc4756a977ea8ddfb892efd6affb","b":"3TUqYvogUj5tFYyDMQsVwXs34rHAVbMf37L7W81bEd5VmF8bJQalfV8WiNeF2bxajDrVun0jNw0z+6qPCPBFA8SVBsyhFxAi4KUQjSFonkLASx2zHCHl4SCzFW+d5B3ZxH/aZ4T0GTQdsJyhHg=="},{"k":"b6e6a638aa63830b09f1b3b017629a79","b":"f1QHjkV4hJbDgwjslfvl38kSvFHVabmsQR+58bDXa3QYNTxLm1mXw29+ZO3/t78DRBlq8r6kMvMqBYU+rTgFpXVDSzVmf3NyNvheriWSSqgVahMdryF93A=="},{"k":"d94634c47065a878c73ea34768f68d8e","b":"Iu/KlgqiauuSmrSR65RUb1m6g5mu/TGbXkjsHjCcXGCQWNwcTuzA15IVCTSLH8P7ZrrSd1phWxQ86S86gZhtxeEGQqVOfxtBQcE2rPVvYH6Y9LLIJe8v9Q=="},{"k":"b84ba1f47aabff392463c6bb21c4964b","b":"R/G5HCdexgCI+zld6WUQT6UgsdPKYHfmZvYqxZJ/6C90U8nReunnSHWfHyflb+hLkALcKHQJKxGKxwKeXVCTWtDdIj8SGfqBt/mezWgQwW3PfIs9EljNeop/v2cuiZQUwqr0DfXyfp67dLEqZw=="},{"k":"6318050b386bb43a65f8b5fb7d8117b4","b":"Wv/oZORs8+Q3ogHj1lO2OcEp89jbR3d5QQw7gWfKD1i6XKq6MsUxDqLasfM24Kv9TYU/1oZk7qXNcYL5pm63ubk2yHmZvvxvk6np9mkdrZ+qkAgnvbl4jLzcZss32JdcTXfzteURAVIubjaxJw=="},{"k":"d2caadb9e1270889cc5a3c0b4bcaf2cf","b":"yX2pRebX4rerWfJmmqTqncfwE7DBAo5+iGxeslvD+YjIztmjLUui+bCZQTGaS9Ob7tUUXPe1321OjgQDzXlCRMcWVYew38vp3iHAbiv7PZlC+nWNjpQjQSyuLW+/qfpR8tlbJ7txh/2mfwAXDQ=="},{"k":"c344615628a9fd669543bb91435bbf93","b":"msrUStJ1RP7K0wPRh8TrRNx6pLTkCX40K4fEryFW4OdF7WUceU2S7MNSa2jbu/v28+YSUs3QAomw8ty8ksLM62XHkWT48zgV9ac8zdL3bqirqV5SWvmi7A=="},{"k":"2633a0d729dc5cda828978ea1ec20cbb","b":"Yt4Zscz/X2pAQ73ocQ+C/gnaekjDmaqgfBXyX426Gh+zKDgn6Y8XsKg2Iy2/Xo6lEzPO1wwiCOjWTJi2cjKf4H5/MaVDv1qMEIXq3AOC04bdT1inWiqQxg=="},{"k":"815876ca268b4f7d7defc97fd0aa30a4","b":"AUxgAT+kM87nN6awGAp27DIcQx7x1AcajBXB6BzQ4xgtUNCqLpWJRCiwkuUqP9XV7+ipBZUyLWGjafMIYgEmtgOGiOCgSF0jn6akmlxr/HJtVFBOLUr9Vg=="},{"k":"a31716b746035ee739c8a6a89b800ed8","b":"NbWri7woAjeho1h+aqZeYwG4L72ANlJzEZ4Wdn+eOWMD5J9xQrd8+ypmCHrYkdWEcCAM9T4PNMCotnEY94hZ4Fjay3nu+enOiOa4vWAyJe8++lS6SIilEXCpjwUuXb4R05mwig8fJr6kBvS3qg=="},{"k":"2b56ba7930784228e776bdb3b2f2ae66","b":"S1yZjFCPyQWOiuKY3qKWAvotBdpFONeEvOeREkVxtVIcLB+HZIM23p6gfXBqzV5VLKj379/FbuyW9NTxA9MNEx0xaEVevkjpmrVGCIBSMPX9jocgpi80HQ=="},{"k":"6387570cd2c810e5164082673b3618f0","b":"n7b3MKfG4DS2M9/j4Hl9x++nfWqJavNk6DO3rbjAtNYg/DX+nWKhL/GUQe4UAngQ6qfMD/mZCqiCG/X9xHZj73Rxj2KEjzU87Gm4S5PUB1VtgulR0poZEixjvOmaXhY0znGBgWDELCCyssbmZg=="},{"k":"1036bbd3578cbd3f44334fcb7e23bafa","b":"0dUiqRDS2KdTkHeIi+GPKpvw+GTeuUSYCxMHneeXhkNEoxqLrz9og2JItAbMD4xR7Xl1RneD5DtHIgP4qdOercJ78S6dgTccrvMTzwzZCI0NVcpk7xQaVaesf4jj2kqV6Z6FF6Phlidp6WV1Fg=="},{"k":"55bc22312cc715b438b2de73a422777f","b":"BfcmfQW+HtU84dx3Gkvl3Scqw9t+ZfSQEZB+g+JV7Tm9Kli2zuawbUjSfWdnf3dp0Sa6Mm5YdNPWyUS1Zi6UHnwpDml8VzJzZNhCZIhtCYhqeJYLJTS88w=="},{"k":"71af27f2a14015c4f759108e2f15d9ad","b":"Hj0Rd5xj+7+VVcaw0vvO9usmROsaZjeF4M1Df6Djr2J8JZlgHXXWlZpxoJR4rztvHx2KvmvSNCRpcmjbA4d8ygn9bFn0LNepJEVuZGS3kvtjmXwWs5TVFoH37W+4/SoHnXHdNH24QF6gI1r3ag=="},{"k":"384281741dee1e22a13e377e14fd4641","b":"MhH2c5YwLXNbuE26t5LnxvgG13Z1fSP54SuzTUauSdzD240/Nu/qKXfvW2SRiB38LpizRu/rWcteIvKg6JnoHYjjPy+YCeKMuz4XRVW7iWpGIaHL0OS9KflCt3xumixgYVzikuaTAtZvcK4spg=="},{"k":"4f78e8e77c99709bd4de35ff3653f4f6","b":"49+5aiFW0+yPfPEyT34of0WY1P7e6k8f9+jIgnSx2qL4j8frT8wK/5ZFUnyoaObFW4nktYIZJOu+0R0gwSPR2oCYcedUXC9Tv2xkbfF8S3FUbelvtbdN1dXUoFHLpnJQ/eM9hDmwtbkdwBgAZgwF5/qLGhUDmnEFrWZS"},{"k":"c620088239ed1a41239d1a31ce2b86e3","b":"5m62SRIMZn11gki6jJeAY74/tYQt2y5yLZUj2ubh5umbbVH28iKGpULoTvRkTyDQ9eOOv8Sd5m9noYdq8XcattKKKRVnLG7+uhONxtpN+payuFlsaDYSBA=="},{"k":"462faba108515cff2e9de2db77a9e2fd","b":"wTstrPv77Nx6U5ac6zB7qwSZuiTeId++54y208sirmu2u/TMoyAS6laQz3goLbrsTMpHRqLEv3NEzsALqRBjf4QP/Fei00ibxQ/a+outTYndaeE+c5/GxPeOT/O7zA3YEvDPBy2HDlLB8YrBlA=="},{"k":"3ed414d5b44bf1e543e6c3456076eb19","b":"CEFqv2TW5jZoKpNRg6ScEdY/zQTkk6sG0Ojtvyxg966/dz82HS2C/XswdjwZHZNWuJKQ0v9TU3Hw2vjAlw5nV67t7QWirCEetcl8zIORA9olmcX+iCyJ94ZjFazehDIF8/x3ls/o5NtJS2RUKQ=="},{"k":"6db07327b29213f318c796869cbb34f2","b":"d3OhjbetY/ImoTyki0L8GOZ69XxNtS3If8VQM0KVfPm5IDNhsS6K54MbK9cYWU8oxEJuZfBWdmwLTJuYHUCT9Ri4NxL6wRYlBtygEUFuhSslcGVtuQ+17jR9z0HDBx6gmW0bz/zNG+SqIwvgcw=="},{"k":"09fcd10ff354fc8d850867ca7a2b0941","b":"+q41zDGbm+P8GIUP5YZJGXgQJWbFBoAemgNUNYrXPD5pet2c9T/JqONc0QhREJAKuShay0IkLSSF1PbBtUi798jTbwSaZYM8buIyeGHnoDsGgwqXWLtmJ5k8F0kUCk9sBCDer842L4cg+QfKfA=="},{"k":"cf0e6c0c113eb8dcb70b44660c297ee2","b":"JBF0EmL+1WDnSAAxrEsIKUsNUT3p6giOJer4xNiyVvMmhi1LWu3WtzHnyqFlHUp3kQC08KHQKD2umhZeLxCRMH2rO83l3D9RsqMItwYCiKAc5JziEFJ4rhY4JMZvMmiR9VulStBU1Uo5Zy6r6A=="},{"k":"0437a6a05789d3b071c35ac42feb2166","b":"YVJtMEqKbKEyIMwqI9NXUISIHFZEzhyUBS1DphiOzBXDPUpqKJ/StZ+qzcjBXwV4y7R3A0D1qA2up0jFHTaSLMB7fm8WVzn550D2+YzN0MqZEif9zJX3bbsc+tzTIkDddNBFMP6wAH2QrUAdrsE/GZ65FT53nvl6d8Xg"},{"k":"0a4f87dcd1be52b1027d1279351e096d","b":"XnFbnte6IasAoZa2qB/mS2EaxqNWOM+9/M9OZotxbfCVWfdVDyyIM8fYAcLrGpC4N/zP8Nnew1xW7QszyLEvqcJdCAZI+vIcD13ePFiL3Fe2Yl+3HlsrVg=="},{"k":"6736ab59254d58d4b6972ace2c534b8f","b":"AtpZdloYNUgDpKfrr9OE3u3Xy6DZXBYfHiEjhhBPCOUsRIdiIg4gJFWEqJ5VViZ/XJ4N67TVfWZhJF5fyGJ7QVozde1K38wMh00ixTr/aTXkoT04Y19b+qGgy2wP5P1iGDnwj/K+4uqZ0mFX3SLfJB5u5m6ynzbxmuxm"},{"k":"5318d2b1b19bf2a45937ffd286e2eb6b","b":"L6wml2fESs37OvS3IY7EtQfLNNy+Vpu49kf4hIniGmOW4BPYAV4EOjaOEMGT6V4t9RDqg447L1NNmTrLBR5GscH6Xb5yCu2cpKqO/ucmXXYTEVZx015Psg=="},{"k":"4585f2f77d71f5e73e95ba62ae5bf835","b":"Gc6WycmYVe22UbsgU7b6kiu8rP3IciRXzcMfUG0w+m5jvdMON17ELslFY3/yTff+PcGFZ2c2eRT6sbtwG7y9JdfHZn1Xk+prdDohprt2QHdk9dK+2zaXthD9a/buSZHzT+LeAgA9J7etXrwAOQ=="},{"k":"c03d0dadc390b56508ba36f58d42b537","b":"iqQhdWXEL53kAyMmyE+nF/Lk+H9VDKkSU3Bjlwnym/1N6yrcu6h/TPk5e4u4qbROkFl0xGOCWYCmdvSEB4oH/NewbXhMy4E3RUdw8EEjuOPcgQREms1f1s/dyCL0JAENZwIVcCiZZENarVxI7A=="},{"k":"2f1095c8f6a8f1988287ce4b871e19d2","b":"3q4f2OJ0XslC/z+v0LIAIJubd1L8AGodaM6N3VVZMy9ygKavG6uHTAsx4dWiy83tXj820SUx+2FP5S5WVDXNAdbZWiKIjgZ2WozC216EBwL/H/ls/Q4AOPHIp/HW2yvXg2lrrwEaPF7IOq6WQg=="},{"k":"798c8c818a3f31eaebe527303edcf81e","b":"1Oze0zFKEo/lt3H6r/Beg53JJfw7d34i64y+DpkIe/41lTJqwLlaP7beh+295z0QRfDsm9BSg0njTroGtJ+n6F8B/JU1+JyvqrF9rBtYSFUBzEcxnXxcdIyDpHSWdSoXS+WNEofuYYRrwA=="},{"k":"6e99a00b28f05b5850fc496e6cc70d3f","b":"RfSHp0icV+2h/F3jtFxxHaW16mFNvxGaMbxJPI2/3V0HBKd03Rj37ZyiSGyMh3q3yWg1Qv9O1orXw/Beqhs8pb2tyXwZP6TRvg/3uhUXcMWZnRcpgzlcUA=="},{"k":"4280b08125152e91194cca5edc94511f","b":"h3aNWzqFTFmFZB7AxJ2llu6il97Aj67moq71w8ewWOgQsdTqFPvdulkma1tk071cZPuH0aC+JHMpkyV33fCrPgVYUApF7aMXfWTyFzdXfO/NDbQDX4EpCE/e8GAV8M4j1UljUZwdIgshVeXI8Q=="},{"k":"0a9c831d9b97a61689eb520513f45c46","b":"oGCxXIECXGHZAth+9co1nvOaMd4HKQFI8DzQ7ykfXO+zUN0NrQ0vrIaqoOP4Wbu+moglw5lXWQo60oWq748r/IeSdXZ5s09QWMVSYf3EH5713CEzRdXwDqvMC2enz6XrSmsfM8q4fJySsy84vA=="},{"k":"f109e507fe3015f4b9c3fc01c490223a","b":"KgvhMwKDUCK2twZ6bcjNNGlEQioqvZjcgpf1jJeAGk6xkyL4z7ZrT/Qeg6Q4cYVYp7LxNedi902BqlgjROZLjGEumWy9Ms4GH1ZAarqLQizJEOrZaHMoLmTqZvBSt5GeZiWvwy91dhhlcVdeqA=="},{"k":"32abac60fa664842e7fd4cb76bad0679","b":"p/yLwv3iZU3CdCMa4KQhVcWPazlsnOtayrheE+Z8KkVVGs5w70zeTni7gIh6thHocuwFfXBTZU0XTMoUp2iP4nnKQ/xWSNrC8FZLGV9GAze6N4RjK7hbYB9MXgYddJ2bgb5fXwUZIFWZTLeu+g=="},{"k":"660bbd6555fca285a09d14bfac2cc29f","b":"c1iX23InaFZA/tPomlZ6nA/BJ/UhAtcqD4C4zC3qg3kzKvwjXXYSaSbp41RdnbcSkWIvhTV0S5InG2BDZftFw7D92pCtzeQ8KYBQZ1xy8AJ5HLGbHj3jfg=="},{"k":"84354eb8e3e398e31d2232a7439ce224","b":"gkXHnbkKmRsgas/aWjtkJTPj8MwhoGsmcn56cLiFRxfIBX6iYI/0WOwL/UFO7QRtrqTn12ZDV4kDWL/b/kClatYxd7gnmGGdMhwwmy6O3n15TL+tnPI+wlQgt6OePwg4befTGI7ZvH4eWvG2BQ=="},{"k":"bc882f6d14a899953355426606726dc5","b":"LJcFL4YhJGdoFMgDQ5SIxE4Es7OF7E1AsfatISTH9hv5N8K7UtoDtn8HrSnuy59/zCZwxZ5wveO8s+OtaZHS3/8Ke9zuMLqrY+iGKmJCNJ5p6v3R5Lfwj0fUSJYVDAHEyDsh8zKhFn6pSzPLpa/YXZ9OrR+XrcivKIwX"}];
+  /* @@END_BUDDY_DATA@@ */
+
+  // ── crypto helpers (status.html과 동일) ──
+  function b64ToBytes(b64) {
+    const bin = atob(b64); const arr = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    return arr;
+  }
+  async function decrypt(blobB64, password) {
+    const raw = b64ToBytes(blobB64);
+    const salt = raw.slice(0, 16), iv = raw.slice(16, 28), tag = raw.slice(28, 44), ct = raw.slice(44);
+    const ctWithTag = new Uint8Array(ct.length + tag.length);
+    ctWithTag.set(ct); ctWithTag.set(tag, ct.length);
+    const pwKey = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveKey"]);
+    const key = await crypto.subtle.deriveKey(
+      { name: "PBKDF2", salt, iterations: PBKDF2_ITER, hash: "SHA-256" },
+      pwKey, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+    const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ctWithTag);
+    return JSON.parse(new TextDecoder().decode(plain));
+  }
+  async function sha256hex(str) {
+    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+    return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+  }
+  const normEmail = (e) => String(e || "").trim().toLowerCase();
+  const birth8 = (d) => String(d || "").replace(/-/g, "");
+  const phone4 = (p) => String(p || "").replace(/\D/g, "").slice(-4);
+
+  // ── 주차 계산 (수요일 앵커) ──
+  const DAY = 86400000;
+  function ymd(d) { const p = (n) => String(n).padStart(2, "0"); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`; }
+  function startDate() { const [y,m,dd] = PROGRAM_START.split("-").map(Number); return new Date(y, m-1, dd); }
+  // 오늘이 속한 주차(1..TOTAL_WEEKS), 범위 밖이면 0
+  function currentWeek() {
+    const diff = Math.floor((new Date().setHours(0,0,0,0) - startDate().getTime()) / (7*DAY));
+    const wk = diff + 1;
+    return (wk >= 1 && wk <= TOTAL_WEEKS) ? wk : 0;
+  }
+  function weekDeadline(wk) { return new Date(startDate().getTime() + (wk-1)*7*DAY); }  // 해당 주 수요일
+  const weekKey = (email, wk) => `lcic.buddy.${email}.w${wk}`;
+  const isDone = (email, wk) => { try { return localStorage.getItem(weekKey(email, wk)) === "1"; } catch (_) { return false; } };
+
+  let CUR = null;  // { email, name }
+
+  function render() {
+    $("login").style.display = "none";
+    $("dash").style.display = "block";
+    $("d-name").textContent = CUR.name;
+    const wk = currentWeek();
+    const banner = $("week-banner");
+    if (wk === 0) {
+      banner.innerHTML = `프로그램 기간이 아닙니다.<small>${PROGRAM_START} ~ ${TOTAL_WEEKS}주차</small>`;
+      $("file-input").disabled = true; $("submit-btn").disabled = true;
+    } else {
+      const dl = weekDeadline(wk);
+      banner.innerHTML = `${wk}주차 · 이번 주 수요일(${ymd(dl)})까지 제출<small>${isDone(CUR.email, wk) ? "이번 주 제출 완료 ✓ (다시 올리면 갱신)" : "아직 제출하지 않았습니다"}</small>`;
+    }
+    const ul = $("week-list");
+    let chips = "";
+    for (let w = 1; w <= TOTAL_WEEKS; w++) {
+      const done = isDone(CUR.email, w);
+      const cls = done ? "week-chip done" : (w === wk ? "week-chip now" : "week-chip");
+      const mark = done ? "✓" : (w === wk ? "●" : "·");
+      chips += `<li class="${cls}">${mark} ${w}주차</li>`;
+    }
+    ul.innerHTML = chips;
+  }
+
+  // ── 업로드 ──
+  $("file-input").addEventListener("change", () => { $("submit-btn").disabled = !$("file-input").files.length; });
+  $("submit-btn").addEventListener("click", async () => {
+    const wk = currentWeek();
+    if (wk === 0) { showToast("프로그램 기간이 아닙니다.", "error"); return; }
+    const file = $("file-input").files[0];
+    if (!file) { showToast("스크린샷을 선택해 주세요.", "error"); return; }
+    const btn = $("submit-btn"), label = $("submit-label");
+    btn.disabled = true; label.textContent = "업로드 중…";
+    const up = await window.lcicBuddyUpload(file);
+    if (up.error) { btn.disabled = false; label.textContent = "스크린샷 제출"; showToast(`업로드 실패: ${up.error}`, "error"); return; }
+    const err = await window.lcicBuddyInsert({
+      student_name: CUR.name, student_email: CUR.email, university: CUR.uni || "백석대학교",
+      week_no: wk, week_label: `${wk}주차`, checkin_date: ymd(weekDeadline(wk)), file_path: up.path });
+    btn.disabled = false; label.textContent = "스크린샷 제출";
+    if (err) { showToast(`제출 실패: ${err}`, "error"); return; }
+    try { localStorage.setItem(weekKey(CUR.email, wk), "1"); } catch (_) {}
+    $("file-input").value = ""; $("submit-btn").disabled = true;
+    showToast(`${wk}주차 제출 완료!`, "success");
+    render();
+  });
+
+  // ── 로그인 ──
+  const errEl = $("login-err"), btn = $("login-btn"), btnLabel = $("login-btn-label");
+  function showErr() { errEl.textContent = "정보가 일치하지 않습니다. 이메일·생년월일·휴대폰 끝 4자리를 확인해 주세요."; }
+  async function tryLogin(email, birthVal, phoneVal) {
+    const id = (await sha256hex(normEmail(email) + BUDDY_PEPPER)).slice(0, 32);
+    const entry = BUDDY_BLOBS.find((e) => e.k === id);
+    if (!entry) throw new Error("nomatch");
+    const cred = normEmail(email) + "|" + birth8(birthVal) + "|" + phone4(phoneVal);
+    const rec = await decrypt(entry.b, cred);   // 틀리면 GCM 태그 실패 → throw
+    CUR = { email: normEmail(email), name: rec.name || "학생", uni: rec.uni || "백석대학교" };
+    try { sessionStorage.setItem(SS_KEY, JSON.stringify({ e: email, b: birthVal, p: phoneVal })); } catch (_) {}
+    render();
+  }
+  $("login-form").addEventListener("submit", async (e) => {
+    e.preventDefault(); errEl.textContent = "";
+    const email = $("in-email").value, birth = $("in-birth").value, phone = $("in-phone").value;
+    if (!email || !birth || !phone) { showErr(); return; }
+    btn.disabled = true; btnLabel.textContent = "확인 중…";
+    try { await tryLogin(email, birth, phone); }
+    catch (_) { showErr(); }
+    finally { btn.disabled = false; btnLabel.textContent = "확인"; }
+  });
+  $("logout-btn").addEventListener("click", () => { try { sessionStorage.removeItem(SS_KEY); } catch (_) {} location.reload(); });
+
+  // 새로고침 자동 복원
+  (async function () {
+    let s = null;
+    try { s = JSON.parse(sessionStorage.getItem(SS_KEY) || "null"); } catch (_) {}
+    if (s && s.e) { try { await tryLogin(s.e, s.b, s.p); return; } catch (_) {} }
+    setTimeout(() => { const el = $("in-email"); if (el) el.focus(); }, 60);
+  })();
+})();
+</script>
+</body>
+</html>
