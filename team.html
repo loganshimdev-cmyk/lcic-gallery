@@ -10,7 +10,8 @@
 <link rel="stylesheet" href="assets/shared.css?v=8">
 <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
 <style>
-  .login-card { max-width: 420px; margin: 60px auto 0; padding: 40px 36px; border-radius: 28px; }
+  .auth-view { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; padding: 24px; box-sizing: border-box; }
+  .login-card { width: 100%; max-width: 420px; padding: 40px 36px; border-radius: 28px; }
   .field { margin-bottom: 16px; }
   .field label { display:block; font-size:.78rem; color:var(--text-dim); margin-bottom:8px; }
   .field input { width:100%; }
@@ -49,23 +50,27 @@
 <body>
 <main class="container" style="max-width:980px; padding:32px 18px;">
 
-  <div id="login-view" class="login-card glass hidden">
-    <h2>한국팀 보드</h2>
-    <p style="color:var(--text-dim); font-size:.88rem; margin-bottom:24px;">담당자 계정으로 로그인하세요.</p>
-    <form id="login-form">
-      <div class="field"><label>아이디</label><input id="email" type="text" autocomplete="username" required placeholder="예: miguel"></div>
-      <div class="field"><label>비밀번호</label><input id="password" type="password" autocomplete="current-password" required></div>
-      <button id="login-btn" class="btn-primary" type="submit" style="width:100%;">로그인</button>
-    </form>
+  <div id="login-view" class="auth-view hidden">
+    <div class="login-card glass">
+      <h2>한국팀 보드</h2>
+      <p style="color:var(--text-dim); font-size:.88rem; margin-bottom:24px;">담당자 계정으로 로그인하세요.</p>
+      <form id="login-form">
+        <div class="field"><label>아이디</label><input id="email" type="text" autocomplete="username" required placeholder="예: miguel"></div>
+        <div class="field"><label>비밀번호</label><input id="password" type="password" autocomplete="current-password" required></div>
+        <button id="login-btn" class="btn-primary" type="submit" style="width:100%;">로그인</button>
+      </form>
+    </div>
   </div>
 
-  <div id="register-view" class="login-card glass hidden">
-    <h2>처음 오셨네요 👋</h2>
-    <p style="color:var(--text-dim); font-size:.88rem; margin-bottom:24px;">팀에 표시될 한글 이름을 등록하세요.</p>
-    <form id="register-form">
-      <div class="field"><label>이름</label><input id="reg-name" type="text" required placeholder="예: 심상현"></div>
-      <button class="btn-primary" type="submit" style="width:100%;">시작하기</button>
-    </form>
+  <div id="register-view" class="auth-view hidden">
+    <div class="login-card glass">
+      <h2>처음 오셨네요 👋</h2>
+      <p style="color:var(--text-dim); font-size:.88rem; margin-bottom:24px;">팀에 표시될 한글 이름을 등록하세요.</p>
+      <form id="register-form">
+        <div class="field"><label>이름</label><input id="reg-name" type="text" required placeholder="예: 심상현"></div>
+        <button class="btn-primary" type="submit" style="width:100%;">시작하기</button>
+      </form>
+    </div>
   </div>
 
   <div id="app-view" class="hidden">
