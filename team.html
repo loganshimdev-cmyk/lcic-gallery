@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>한국팀 보드 · LCIC</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="assets/brand/lcic-logo.png">
+<script src="assets/background.js?v=8"></script>
+<link rel="stylesheet" href="assets/shared.css?v=8">
+<script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+<style>
+  .login-card { max-width: 420px; margin: 60px auto 0; padding: 40px 36px; border-radius: 28px; }
+  .field { margin-bottom: 16px; }
+  .field label { display:block; font-size:.78rem; color:var(--text-dim); margin-bottom:8px; }
+  .field input { width:100%; }
+  .topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:20px; flex-wrap:wrap; }
+  .tabs { display:inline-flex; padding:5px; background:rgba(0,0,0,.04); border:1px solid var(--hairline); border-radius:999px; }
+  .tabs button { border:none; background:none; padding:8px 18px; border-radius:999px; cursor:pointer; font-weight:600; color:var(--text-dim); }
+  .tabs button.active { background:var(--accent); color:#fff; }
+  .summary-bar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px; }
+  .chip { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:999px; background:rgba(0,0,0,.04); border:1px solid var(--hairline); font-size:.85rem; cursor:pointer; }
+  .chip .dot { width:8px; height:8px; border-radius:50%; background:var(--accent); }
+  .chip.alert .dot { background:#dc2626; }
+  .hidden { display:none !important; }
+  .board { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  .col { background:rgba(0,0,0,.03); border:1px solid var(--hairline); border-radius:16px; padding:12px; min-height:120px; }
+  .col h3 { font-size:.85rem; color:var(--text-dim); margin:4px 6px 10px; }
+  .card { background:#fff; border:1px solid var(--hairline); border-radius:12px; padding:10px 12px; margin-bottom:10px; cursor:pointer; box-shadow:0 1px 2px rgba(0,0,0,.04); }
+  .card .badge { display:inline-flex; align-items:center; gap:5px; font-size:.72rem; color:var(--text-dim); }
+  .card .swatch { width:9px; height:9px; border-radius:50%; display:inline-block; }
+  .card .meta { display:flex; gap:10px; align-items:center; margin-top:6px; font-size:.72rem; color:var(--text-faint); }
+  .card .overdue { color:#dc2626; font-weight:600; }
+  .new-badge { font-size:.62rem; background:#dc2626; color:#fff; border-radius:6px; padding:1px 5px; margin-left:6px; }
+  .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; }
+  .cal-cell { min-height:84px; border:1px solid var(--hairline); border-radius:10px; padding:6px; background:#fff; cursor:pointer; }
+  .cal-cell.dim { background:rgba(0,0,0,.02); color:var(--text-faint); }
+  .cal-cell .pill { font-size:.66rem; border-radius:6px; padding:1px 5px; color:#fff; margin-top:3px; display:block; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+  .modal-bg { position:fixed; inset:0; background:rgba(0,0,0,.4); display:flex; align-items:center; justify-content:center; z-index:50; }
+  .modal { background:#fff; border-radius:20px; padding:24px; max-width:480px; width:92%; max-height:88vh; overflow:auto; }
+  .modal textarea, .modal input, .modal select { width:100%; margin-bottom:10px; }
+  .comment { border-top:1px solid var(--hairline); padding:8px 0; font-size:.85rem; }
+  .comment .who { font-weight:600; font-size:.75rem; color:var(--text-dim); }
+  .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:#111; color:#fff; padding:10px 18px; border-radius:999px; opacity:0; transition:opacity .3s; pointer-events:none; }
+  .toast.show { opacity:1; }
+  .toast.error { background:#dc2626; } .toast.success { background:#059669; }
+</style>
+</head>
+<body>
+<main class="container" style="max-width:980px; padding:32px 18px;">
+
+  <div id="login-view" class="login-card glass hidden">
+    <h2>한국팀 보드</h2>
+    <p style="color:var(--text-dim); font-size:.88rem; margin-bottom:24px;">담당자 계정으로 로그인하세요.</p>
+    <form id="login-form">
+      <div class="field"><label>이메일</label><input id="email" type="email" required></div>
+      <div class="field"><label>비밀번호</label><input id="password" type="password" required></div>
+      <button id="login-btn" class="btn-primary" type="submit" style="width:100%;">로그인</button>
+    </form>
+  </div>
+
+  <div id="register-view" class="login-card glass hidden">
+    <h2>처음 오셨네요 👋</h2>
+    <p style="color:var(--text-dim); font-size:.88rem; margin-bottom:24px;">팀에 표시될 한글 이름을 등록하세요.</p>
+    <form id="register-form">
+      <div class="field"><label>이름</label><input id="reg-name" type="text" required placeholder="예: 심상현"></div>
+      <button class="btn-primary" type="submit" style="width:100%;">시작하기</button>
+    </form>
+  </div>
+
+  <div id="app-view" class="hidden">
+    <div class="topbar">
+      <div class="tabs">
+        <button data-tab="board" class="active">🗂 할일판</button>
+        <button data-tab="calendar">📅 캘린더</button>
+      </div>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <span id="me-name" style="font-size:.85rem; color:var(--text-dim);"></span>
+        <button id="logout-btn" class="btn-ghost" style="font-size:.8rem;">로그아웃</button>
+      </div>
+    </div>
+
+    <div id="summary-bar" class="summary-bar"></div>
+
+    <section id="tab-board"></section>
+    <section id="tab-calendar" class="hidden"></section>
+  </div>
+
+</main>
+
+<div id="modal-root"></div>
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { supabase } from "./assets/supabase.js?v=4";
+import { myMember, registerMember } from "./assets/team-data.js";
+import { initBoard } from "./assets/team-board.js";
+import { initCalendar } from "./assets/team-calendar.js";
+import { renderSummary } from "./assets/team-summary.js";
+
+const $ = (id) => document.getElementById(id);
+const toast = $("toast");
+export function showToast(msg, type = "") {
+  toast.textContent = msg; toast.className = `toast show ${type}`;
+  setTimeout(() => toast.classList.remove("show"), 2400);
+}
+window.__toast = showToast;
+
+let me = null;
+
+async function refresh() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) { show("login"); return; }
+  me = await myMember();
+  if (!me) { show("register"); return; }
+  show("app");
+  $("me-name").textContent = me.name;
+  await renderAll();
+}
+
+function show(view) {
+  $("login-view").classList.toggle("hidden", view !== "login");
+  $("register-view").classList.toggle("hidden", view !== "register");
+  $("app-view").classList.toggle("hidden", view !== "app");
+}
+
+async function renderAll() {
+  await Promise.all([
+    initBoard({ me, container: $("tab-board"), onChange: renderAll }),
+    initCalendar({ me, container: $("tab-calendar"), onChange: renderAll }),
+    renderSummary({ me, container: $("summary-bar") }),
+  ]);
+}
+window.__teamRefresh = renderAll;
+
+$("login-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = $("email").value.trim(), password = $("password").value;
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) return showToast(`로그인 실패: ${error.message}`, "error");
+  $("password").value = ""; refresh();
+});
+
+$("register-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  try { me = await registerMember($("reg-name").value); refresh(); }
+  catch (err) { showToast(err.message, "error"); }
+});
+
+$("logout-btn").addEventListener("click", async () => { await supabase.auth.signOut(); refresh(); });
+
+document.querySelectorAll(".tabs button").forEach((b) => b.addEventListener("click", () => {
+  document.querySelectorAll(".tabs button").forEach((x) => x.classList.remove("active"));
+  b.classList.add("active");
+  $("tab-board").classList.toggle("hidden", b.dataset.tab !== "board");
+  $("tab-calendar").classList.toggle("hidden", b.dataset.tab !== "calendar");
+}));
+
+supabase.auth.onAuthStateChange(() => refresh());
+refresh();
+</script>
+</body>
+</html>
