@@ -158,6 +158,8 @@
     padding: 4px 11px; border-radius: 999px; margin-bottom: 11px; }
   .flight-leg .leg-tag.go { background: var(--accent-soft); color: var(--accent-deep); }
   .flight-leg .leg-tag.back { background: rgba(22,163,74,0.12); color: #15803d; }
+  .flight-leg .leg-note { margin-top: 10px; font-size: 0.82rem; color: var(--text-dim); line-height: 1.5; }
+  .flight-leg .leg-note b { color: var(--text); font-weight: 700; }
   .stay-line { margin-top: 14px; font-size: 0.9rem; color: var(--text-dim); }
   .stay-line b { color: var(--text); font-weight: 700; }
   .fee-note { margin-top: 14px; padding: 13px 15px; border-radius: 12px;
@@ -446,17 +448,33 @@
       let stay = "";
       const st = rec.stay || {};
       if (st.start || st.end) stay = `<div class="stay-line">체류 기간: <b>${escapeHtml(st.start || "—")}</b> ~ <b>${escapeHtml(st.end || "—")}</b></div>`;
+      // 가는 편: 저장된 날짜=한국 출발일, 시간=세부 도착시각.
+      // 자정~새벽(0~5시) 도착이면 한국에서 밤에 출발해 다음날 새벽 도착 → 도착일자 +1일.
+      const addDaysIso = (iso, n) => {
+        const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ""); if (!m) return iso || "";
+        let y = +m[1], mo = +m[2], d = +m[3] + n;
+        const leap = (y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0));
+        const dim = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        while (d > dim[mo - 1]) { d -= dim[mo - 1]; mo++; if (mo > 12) { mo = 1; y++; } }
+        return `${y}-${String(mo).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+      };
+      const arrivalDate = (depIso, timeStr) => {
+        const h = parseInt(String(timeStr || "").split(":")[0], 10);
+        return (depIso && Number.isFinite(h) && h >= 0 && h <= 5) ? addDaysIso(depIso, 1) : (depIso || "");
+      };
       const legGo =
-        `<div class="flight-leg"><div class="leg-tag go"><iconify-icon icon="solar:plane-bold"></iconify-icon> 가는 편 · 출국 (한국 → 세부)</div>
-          <div class="flight-grid">${cell("항공편명", f.flightNo)}${cell("날짜", f.departure)}${f.departureTime ? cell("시간", f.departureTime) : ""}</div></div>`;
+        `<div class="flight-leg"><div class="leg-tag go"><iconify-icon icon="solar:plane-bold"></iconify-icon> 가는 편 (한국 → 세부)</div>
+          <div class="flight-grid">${cell("항공편명", f.flightNo)}${cell("출발일자 (한국)", f.departure)}${cell("도착일자 (세부)", arrivalDate(f.departure, f.departureTime))}${f.departureTime ? cell("도착시간 (세부)", f.departureTime) : ""}</div>
+          <div class="leg-note">공항 <b>픽업</b>은 <b>세부 도착</b> 일자·시각 기준이에요.</div></div>`;
       const legBack = (rf.flightNo || rf.date)
-        ? `<div class="flight-leg"><div class="leg-tag back"><iconify-icon icon="solar:plane-bold" style="transform:scaleX(-1)"></iconify-icon> 오는 편 · 귀국 (세부 → 한국)</div>
-          <div class="flight-grid">${cell("항공편명", rf.flightNo)}${cell("날짜", rf.date)}${rf.time ? cell("시간", rf.time) : ""}</div></div>`
+        ? `<div class="flight-leg"><div class="leg-tag back"><iconify-icon icon="solar:plane-bold" style="transform:scaleX(-1)"></iconify-icon> 오는 편 (세부 → 한국)</div>
+          <div class="flight-grid">${cell("항공편명", rf.flightNo)}${cell("출발일자 (세부)", rf.date)}${rf.time ? cell("출발시간 (세부)", rf.time) : ""}</div>
+          <div class="leg-note">공항 <b>드랍</b>은 <b>세부 출발</b> 일자·시각 기준이에요.</div></div>`
         : "";
       flightEl.innerHTML =
         legGo + legBack +
         stay +
-        `<div class="flight-note"><iconify-icon icon="solar:check-read-bold"></iconify-icon> 위 <b>가는 편·오는 편</b> 항공권 정보(편명·날짜·시간)가 실제 e-ticket과 맞는지 꼭 확인해 주세요. 다르면 아래로 알려주세요.</div>` +
+        `<div class="flight-note"><iconify-icon icon="solar:check-read-bold"></iconify-icon> 위 <b>가는 편(세부 도착)·오는 편(세부 출발)</b> 정보가 실제 e-ticket과 맞는지 꼭 확인해 주세요. 다르면 아래로 알려주세요.</div>` +
         `<div class="flight-warn"><iconify-icon icon="solar:danger-triangle-bold"></iconify-icon><span>항공편 정보가 <b>비어 있거나 실제와 다르면</b> 공항 <b>픽업·드랍 서비스를 받으실 수 없으며</b>, 픽업·드랍이 <b>필요 없는 것으로 간주</b>됩니다. 위 정보가 맞는지 <b>꼭 확인</b>해 주세요.</span></div>` +
         FEE_NOTE;
       $("d-report-wrap").innerHTML = submitBoxHTML("report", {
