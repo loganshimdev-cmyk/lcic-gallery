@@ -91,12 +91,39 @@
 <div id="modal-root"></div>
 <div class="toast" id="toast"></div>
 
+<!-- 임시 진단: 에러/진행상황을 화면에 직접 표시 -->
+<script>
+(function () {
+  function box() {
+    var d = document.getElementById("__diag");
+    if (!d) {
+      d = document.createElement("pre");
+      d.id = "__diag";
+      d.style.cssText = "position:fixed;inset:0 auto auto 0;width:100%;background:#dc2626;color:#fff;padding:10px;margin:0;z-index:99999;white-space:pre-wrap;font:12px monospace;max-height:70vh;overflow:auto;box-sizing:border-box";
+      document.documentElement.appendChild(d);
+    }
+    return d;
+  }
+  window.__diag = function (m) { box().textContent += m + "\n"; };
+  window.addEventListener("error", function (e) {
+    window.__diag("ERROR: " + (e.message || e.error) + " @ " + (e.filename || "") + ":" + (e.lineno || "") + ":" + (e.colno || ""));
+  });
+  window.addEventListener("unhandledrejection", function (e) {
+    var r = e.reason;
+    window.__diag("REJECT: " + (r && r.message ? r.message : r) + (r && r.stack ? "\n" + r.stack : ""));
+  });
+  setTimeout(function () { window.__diag("[3s] still alive — 위에 ERROR/REJECT 또는 'booted/refresh' 로그 확인"); }, 3000);
+})();
+</script>
+
 <script type="module">
 import { supabase } from "./assets/supabase.js?v=4";
 import { myMember, registerMember } from "./assets/team-data.js";
 import { initBoard } from "./assets/team-board.js";
 import { initCalendar } from "./assets/team-calendar.js";
 import { renderSummary } from "./assets/team-summary.js";
+
+window.__diag && window.__diag("[1] module booted (imports OK)");
 
 const $ = (id) => document.getElementById(id);
 const toast = $("toast");
@@ -109,9 +136,12 @@ window.__toast = showToast;
 let me = null;
 
 async function refresh() {
+  window.__diag && window.__diag("[2] refresh: calling getSession…");
   const { data: { session } } = await supabase.auth.getSession();
-  if (!session) { show("login"); return; }
+  window.__diag && window.__diag("[3] getSession returned. session=" + !!session);
+  if (!session) { show("login"); window.__diag && window.__diag("[4] show(login) done"); return; }
   me = await myMember();
+  window.__diag && window.__diag("[5] myMember returned. me=" + (me ? me.name : "null"));
   if (!me) { show("register"); return; }
   show("app");
   $("me-name").textContent = me.name;
