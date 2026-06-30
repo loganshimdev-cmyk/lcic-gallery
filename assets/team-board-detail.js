@@ -43,29 +43,35 @@ export async function openTaskDetail({ taskId, me, members, onChange }) {
   root.querySelector(".modal-bg").onclick = (e) => { if (e.target.classList.contains("modal-bg")) close(); };
 
   root.querySelectorAll(".d-move").forEach((b) => b.onclick = async () => {
-    await moveTask(taskId, b.dataset.s); close(); onChange();
+    try { await moveTask(taskId, b.dataset.s); close(); onChange(); }
+    catch (err) { window.__toast(err.message || "상태 변경 실패", "error"); }
   });
 
   root.querySelector("#d-save").onclick = async () => {
-    await updateTask(taskId, {
-      title: root.querySelector("#d-title").value.trim(),
-      detail: root.querySelector("#d-detail").value.trim() || null,
-      assignee_id: root.querySelector("#d-assignee").value || null,
-      due_date: root.querySelector("#d-due").value || null,
-    });
-    close(); window.__toast("저장했어요", "success"); onChange();
+    try {
+      await updateTask(taskId, {
+        title: root.querySelector("#d-title").value.trim(),
+        detail: root.querySelector("#d-detail").value.trim() || null,
+        assignee_id: root.querySelector("#d-assignee").value || null,
+        due_date: root.querySelector("#d-due").value || null,
+      });
+      close(); window.__toast("저장했어요", "success"); onChange();
+    } catch (err) { window.__toast(err.message || "저장 실패", "error"); }
   };
 
   root.querySelector("#d-delete").onclick = async () => {
     if (!confirm("이 할 일을 삭제할까요?")) return;
-    await deleteTask(taskId); close(); window.__toast("삭제했어요"); onChange();
+    try { await deleteTask(taskId); close(); window.__toast("삭제했어요"); onChange(); }
+    catch (err) { window.__toast(err.message || "삭제 실패", "error"); }
   };
 
   root.querySelector("#d-add-comment").onclick = async () => {
     const body = root.querySelector("#d-comment").value.trim();
     if (!body) return;
-    await addComment(taskId, body);
-    openTaskDetail({ taskId, me, members, onChange }); // 다시 그려 코멘트 갱신
+    try {
+      await addComment(taskId, body);
+      openTaskDetail({ taskId, me, members, onChange }); // 다시 그려 코멘트 갱신
+    } catch (err) { window.__toast(err.message || "코멘트 등록 실패", "error"); }
   };
 }
 
