@@ -14,7 +14,7 @@ export async function initCalendar({ me, container, onChange }) {
   const push = (iso, item) => { (byDate[iso] ||= []).push(item); };
   events.forEach((e) => push(e.date, { kind: "event", title: e.title, color: e.owner_id ? memberById[e.owner_id]?.color : "#64748b", raw: e }));
   tasks.filter((t) => t.due_date && t.status !== "done").forEach((t) =>
-    push(t.due_date, { kind: "task", title: "⏰ " + t.title, color: t.assignee_id ? memberById[t.assignee_id]?.color : "#94a3b8" }));
+    push(t.due_date, { kind: "task", title: "⏰ " + (t.due_time ? t.due_time.slice(0, 5) + " " : "") + t.title, color: t.assignee_id ? memberById[t.assignee_id]?.color : "#94a3b8" }));
 
   const dows = ["일", "월", "화", "수", "목", "금", "토"];
   container.innerHTML = `

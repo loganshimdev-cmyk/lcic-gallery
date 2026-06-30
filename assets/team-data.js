@@ -73,11 +73,12 @@ export async function listTasks() {
   return data ?? [];
 }
 
-export async function createTask({ title, detail, assignee_id, due_date }) {
+export async function createTask({ title, detail, assignee_id, due_date, due_time }) {
   const me = await myMember();
   const { error } = await db.from("team_tasks").insert({
     title, detail: detail || null, assignee_id: assignee_id || null,
-    due_date: due_date || null, status: "todo", created_by: me?.id ?? null,
+    due_date: due_date || null, due_time: due_time || null,
+    status: "todo", created_by: me?.id ?? null,
   });
   if (error) throw error;
 }
