@@ -432,3 +432,12 @@ create policy "admin can delete buddy checkins"
 - **글이 안 올라감 (관리자)**: RLS 정책이 제대로 적용되었는지, 로그인이 되어있는지 확인
 - **목록이 비어있음 (학생)**: `public read` 정책이 잘 만들어졌는지 확인
 - **세션이 자꾸 풀림**: 같은 도메인(GitHub Pages 주소)에서 접속 중인지 확인 (localhost와 배포 도메인은 별개 세션)
+
+---
+
+## 한국팀 보드 (team.html)
+
+1. Supabase 대시보드 → SQL Editor에서 `scripts/team-setup.sql` 전체 실행.
+2. Authentication → Users 에서 한국담당자별 계정(이메일/비번) 생성.
+3. 각 담당자가 `https://lcic-campus.com/team.html` 첫 로그인 시 한글 이름 등록(자동으로 team_members 생성, 색 배정).
+4. RLS상 로그인하지 않으면 어떤 데이터도 보이지 않음.
