@@ -186,7 +186,10 @@ document.querySelectorAll(".tabs button").forEach((b) => b.addEventListener("cli
   $("tab-calendar").classList.toggle("hidden", b.dataset.tab !== "calendar");
 }));
 
-supabase.auth.onAuthStateChange(() => refresh());
+// onAuthStateChange 콜백 안에서 getSession 등 auth 함수를 동기 호출하면
+// 인증 락이 잡힌 채라 데드락이 난다(supabase 공식 주의사항). setTimeout으로
+// 콜백 컨텍스트(락) 밖으로 빼서 호출한다.
+supabase.auth.onAuthStateChange(() => { setTimeout(refresh, 0); });
 refresh();
 </script>
 </body>
