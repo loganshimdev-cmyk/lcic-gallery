@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dorm Room Inspection · LCIC</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="assets/brand/lcic-logo.png">
+<link rel="stylesheet" href="assets/shared.css?v=8">
+<style>
+  main { max-width: 1200px; margin: 0 auto; padding: 28px 22px 96px; }
+  .auth-view { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; padding: 24px; box-sizing: border-box; }
+  .login-card { width: 100%; max-width: 400px; padding: 38px 32px; border-radius: 26px; }
+  .login-card h2 { margin-bottom: 6px; }
+  .field { margin-bottom: 16px; }
+  .field label { display:block; font-size:.78rem; color:var(--text-dim); margin-bottom:8px; }
+  .hidden { display:none !important; }
+
+  .topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:22px; flex-wrap:wrap; }
+  .topbar .title { font-size:1.15rem; font-weight:700; letter-spacing:-.01em; }
+  .who { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .gender-badge { font-size:.72rem; font-weight:700; padding:3px 10px; border-radius:999px; text-transform:uppercase; letter-spacing:.03em; }
+  .gender-badge.male   { background:rgba(37,99,235,.12); color:#1d4ed8; }
+  .gender-badge.female { background:rgba(219,39,119,.12); color:#be185d; }
+  .gender-badge.admin  { background:rgba(15,23,42,.08); color:var(--text-dim); }
+
+  .summary-bar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px; }
+  .chip { display:inline-flex; align-items:center; gap:8px; padding:9px 15px; border-radius:14px; background:var(--bg-elev); border:1px solid var(--hairline); font-size:.85rem; cursor:pointer; transition:border-color .15s, box-shadow .15s; }
+  .chip:hover { border-color:var(--accent); }
+  .chip.active { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
+  .chip b { font-size:1rem; font-weight:700; }
+  .chip .dot { width:9px; height:9px; border-radius:50%; }
+  .dot.ok { background:#16a34a; } .dot.issue { background:#dc2626; } .dot.none { background:#94a3b8; } .dot.all { background:var(--accent); }
+
+  .filters { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px; }
+  .filters input, .filters select { padding:10px 13px; border:1px solid var(--hairline); border-radius:12px; background:var(--bg-elev); color:var(--text); font-family:inherit; font-size:.88rem; }
+  .filters input { flex:1; min-width:160px; }
+  .filters input:focus, .filters select:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
+
+  .rooms { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:14px; }
+  .room { background:var(--bg-elev); border:1px solid var(--hairline); border-radius:16px; padding:16px 18px; cursor:pointer; transition:box-shadow .18s, transform .18s, border-color .18s; }
+  .room:hover { box-shadow:0 5px 16px rgba(15,23,42,.10); transform:translateY(-1px); }
+  .room .rnum { font-size:1.25rem; font-weight:700; letter-spacing:-.01em; }
+  .room .rmeta { font-size:.78rem; color:var(--text-faint); margin-top:2px; }
+  .room .status { display:inline-flex; align-items:center; gap:6px; margin-top:12px; font-size:.78rem; font-weight:600; padding:5px 11px; border-radius:999px; }
+  .status.s-none  { background:rgba(148,163,184,.14); color:#64748b; }
+  .status.s-ok    { background:rgba(22,163,74,.12);  color:#15803d; }
+  .status.s-issue { background:rgba(220,38,38,.10);  color:#b91c1c; }
+  .room .last { font-size:.72rem; color:var(--text-faint); margin-top:8px; }
+  .room.issue { border-color:rgba(220,38,38,.35); }
+  .empty { text-align:center; color:var(--text-faint); padding:60px 20px; }
+
+  /* modal */
+  .modal-bg { position:fixed; inset:0; background:rgba(15,23,42,.45); backdrop-filter:blur(3px); display:flex; align-items:flex-end; justify-content:center; z-index:9000; animation:fade .2s ease; }
+  @media (min-width:720px){ .modal-bg { align-items:center; padding:20px; } }
+  @keyframes fade { from { opacity:0; } to { opacity:1; } }
+  .modal { background:#fff; width:100%; max-width:560px; max-height:92vh; overflow:auto; border-radius:24px 24px 0 0; padding:26px 22px 0; box-shadow:0 -8px 40px rgba(15,23,42,.22); animation:pop .22s cubic-bezier(.16,1,.3,1); }
+  @media (min-width:720px){ .modal { border-radius:22px; padding:28px 28px 0; } }
+  @keyframes pop { from { transform:translateY(16px); opacity:.6; } to { transform:none; opacity:1; } }
+  .modal h3 { font-size:1.35rem; font-weight:700; letter-spacing:-.01em; }
+  .modal .sub { color:var(--text-dim); font-size:.85rem; margin:3px 0 20px; }
+
+  .check-item { border:1px solid var(--hairline); border-radius:14px; padding:14px 15px; margin-bottom:12px; transition:border-color .18s, background .18s; }
+  .check-item.problem { border-color:rgba(220,38,38,.4); background:rgba(220,38,38,.03); }
+  .check-item .clabel { font-size:.9rem; font-weight:600; line-height:1.4; margin-bottom:10px; }
+  .seg { display:inline-flex; border:1px solid var(--hairline); border-radius:10px; overflow:hidden; }
+  .seg button { border:none; background:var(--bg-elev); padding:7px 18px; font-size:.82rem; font-weight:700; cursor:pointer; color:var(--text-dim); font-family:inherit; }
+  .seg button.on.ok { background:#16a34a; color:#fff; }
+  .seg button.on.problem { background:#dc2626; color:#fff; }
+  .detail { width:100%; margin-top:11px; padding:10px 12px; border:1px solid var(--hairline); border-radius:10px; font-family:inherit; font-size:.88rem; background:#fff; box-sizing:border-box; resize:vertical; min-height:56px; }
+  .detail:focus { outline:none; border-color:#dc2626; box-shadow:0 0 0 3px rgba(220,38,38,.12); }
+
+  .gnote { width:100%; padding:12px 14px; border:1px solid var(--hairline); border-radius:12px; font-family:inherit; font-size:.9rem; box-sizing:border-box; resize:vertical; min-height:64px; background:#f8fafc; }
+  .gnote:focus { outline:none; border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px var(--accent-soft); }
+
+  .save-bar { position:sticky; bottom:0; background:#fff; padding:16px 0; margin-top:8px; display:flex; gap:10px; border-top:1px solid var(--hairline); }
+  .save-bar .btn-primary { flex:1; }
+
+  /* read-only report */
+  .rep-item { display:flex; gap:10px; padding:11px 0; border-top:1px solid var(--hairline); font-size:.88rem; }
+  .rep-item .mark { flex-shrink:0; width:22px; height:22px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.8rem; }
+  .rep-item .mark.ok { background:rgba(22,163,74,.12); color:#16a34a; }
+  .rep-item .mark.problem { background:rgba(220,38,38,.12); color:#dc2626; }
+  .rep-item .rd { color:var(--text-dim); font-size:.82rem; margin-top:3px; white-space:pre-wrap; }
+
+  .toast { position:fixed; top:24px; left:50%; transform:translateX(-50%); background:#111; color:#fff; font-weight:600; font-size:.92rem; padding:12px 22px; border-radius:13px; box-shadow:0 8px 24px rgba(0,0,0,.25); opacity:0; transition:opacity .25s; pointer-events:none; z-index:100000; max-width:90vw; text-align:center; }
+  .toast.show { opacity:1; }
+  .toast.error { background:#dc2626; } .toast.success { background:#059669; }
+</style>
+</head>
+<body>
+
+<!-- Login -->
+<div id="login-view" class="auth-view hidden">
+  <div class="login-card glass">
+    <h2>Dorm Inspection</h2>
+    <p style="color:var(--text-dim); font-size:.88rem; margin-bottom:22px;">Sign in with your inspector account.</p>
+    <form id="login-form">
+      <div class="field"><label>Username</label><input id="username" class="input" type="text" autocomplete="username" required placeholder="e.g. john"></div>
+      <div class="field"><label>Password</label><input id="password" class="input" type="password" autocomplete="current-password" required></div>
+      <button class="btn-primary" type="submit" style="width:100%;">Sign in</button>
+    </form>
+  </div>
+</div>
+
+<!-- App -->
+<main id="app-view" class="hidden">
+  <div class="topbar">
+    <div class="title">Dorm Room Inspection</div>
+    <div class="who">
+      <span id="me-name" style="font-size:.9rem; color:var(--text-dim);"></span>
+      <span id="me-badge" class="gender-badge"></span>
+      <button id="pw-btn" class="btn-ghost" style="font-size:.78rem;">Password</button>
+      <button id="logout-btn" class="btn-ghost" style="font-size:.78rem;">Sign out</button>
+    </div>
+  </div>
+
+  <div id="summary-bar" class="summary-bar"></div>
+
+  <div class="filters">
+    <input id="f-search" type="text" placeholder="Search room number or building…">
+    <select id="f-building"><option value="">All buildings</option></select>
+    <select id="f-gender" class="hidden">
+      <option value="">All genders</option>
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+    </select>
+    <select id="f-status">
+      <option value="">All statuses</option>
+      <option value="none">Not inspected</option>
+      <option value="ok">OK</option>
+      <option value="issue">Issues</option>
+    </select>
+  </div>
+
+  <div id="rooms" class="rooms"></div>
+  <div id="empty" class="empty hidden">No rooms match your filters.</div>
+</main>
+
+<div id="modal-root"></div>
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import {
+  myInspector, login, logout, changePassword,
+  listRooms, listInspections, latestByRoom, saveInspection, CHECK_ITEMS,
+} from "./assets/room-check-data.js?v=1";
+import { formatDate } from "./assets/supabase.js?v=4";
+
+const $ = (id) => document.getElementById(id);
+const root = $("modal-root");
+const toast = $("toast");
+function showToast(msg, type = "") {
+  toast.textContent = msg; toast.className = `toast show ${type}`;
+  setTimeout(() => toast.classList.remove("show"), 2400);
+}
+
+let me = null;
+let rooms = [];
+let latest = new Map();          // room_id -> latest inspection
+const filters = { q: "", building: "", gender: "", status: "" };
+
+// ---- status helpers ---------------------------------------------------------
+function statusOf(room) {
+  const rec = latest.get(room.id);
+  if (!rec) return "none";
+  return rec.has_issues ? "issue" : "ok";
+}
+const STATUS_LABEL = { none: "Not inspected", ok: "OK", issue: "Issues" };
+
+// ---- auth flow --------------------------------------------------------------
+function show(view) {
+  $("login-view").classList.toggle("hidden", view !== "login");
+  $("app-view").classList.toggle("hidden", view !== "app");
+}
+
+async function boot() {
+  me = myInspector();
+  if (!me) { show("login"); return; }
+  show("app");
+  $("me-name").textContent = me.name;
+  const g = me.role === "admin" ? "admin" : (me.gender || "admin");
+  $("me-badge").textContent = me.role === "admin" ? "Admin" : (me.gender || "");
+  $("me-badge").className = `gender-badge ${g}`;
+  $("f-gender").classList.toggle("hidden", me.role !== "admin");
+  await loadData();
+}
+
+async function loadData() {
+  [rooms] = await Promise.all([listRooms(me)]);
+  const inspections = await listInspections();
+  latest = latestByRoom(inspections);
+  // building filter options
+  const buildings = [...new Set(rooms.map((r) => r.building).filter(Boolean))].sort();
+  $("f-building").innerHTML = `<option value="">All buildings</option>` +
+    buildings.map((b) => `<option value="${esc(b)}">${esc(b)}</option>`).join("");
+  render();
+}
+
+// ---- rendering --------------------------------------------------------------
+function render() {
+  renderSummary();
+  renderRooms();
+}
+
+function renderSummary() {
+  const total = rooms.length;
+  let ok = 0, issue = 0, none = 0;
+  for (const r of rooms) {
+    const s = statusOf(r);
+    if (s === "ok") ok++; else if (s === "issue") issue++; else none++;
+  }
+  const chip = (key, dot, label, n) =>
+    `<div class="chip ${filters.status === key ? "active" : ""}" data-status="${key}">
+       <span class="dot ${dot}"></span><b>${n}</b> ${label}</div>`;
+  $("summary-bar").innerHTML =
+    chip("", "all", "Total", total) +
+    chip("ok", "ok", "OK", ok) +
+    chip("issue", "issue", "Issues", issue) +
+    chip("none", "none", "Not inspected", none);
+  $("summary-bar").querySelectorAll(".chip").forEach((c) =>
+    c.addEventListener("click", () => {
+      filters.status = c.dataset.status;
+      $("f-status").value = c.dataset.status;
+      render();
+    }));
+}
+
+function filtered() {
+  return rooms.filter((r) => {
+    if (filters.building && r.building !== filters.building) return false;
+    if (filters.gender && r.gender !== filters.gender) return false;
+    if (filters.status && statusOf(r) !== filters.status) return false;
+    if (filters.q) {
+      const hay = `${r.room_number} ${r.building || ""}`.toLowerCase();
+      if (!hay.includes(filters.q.toLowerCase())) return false;
+    }
+    return true;
+  });
+}
+
+function renderRooms() {
+  const list = filtered();
+  $("empty").classList.toggle("hidden", list.length > 0);
+  $("rooms").innerHTML = list.map((r) => {
+    const s = statusOf(r);
+    const rec = latest.get(r.id);
+    const meta = [r.building, r.floor ? `Floor ${r.floor}` : null].filter(Boolean).join(" · ");
+    const last = rec ? `Last: ${formatDate(rec.inspected_at)} · ${esc(rec.inspector_name || "")}` : "";
+    return `<div class="room ${s === "issue" ? "issue" : ""}" data-id="${r.id}">
+      <div class="rnum">${esc(r.room_number)}</div>
+      <div class="rmeta">${esc(meta) || "&nbsp;"}</div>
+      <div class="status s-${s}"><span class="dot ${s === "none" ? "none" : s}"></span>${STATUS_LABEL[s]}</div>
+      <div class="last">${esc(last)}</div>
+    </div>`;
+  }).join("");
+  $("rooms").querySelectorAll(".room").forEach((el) =>
+    el.addEventListener("click", () => openRoom(el.dataset.id)));
+}
+
+// ---- open a room: inspectors edit, admins view report -----------------------
+function openRoom(roomId) {
+  const room = rooms.find((r) => r.id === roomId);
+  if (!room) return;
+  if (me.role === "admin") openReport(room);
+  else openInspectForm(room);
+}
+
+// ---- inspection form (create / re-inspect) ----------------------------------
+function openInspectForm(room) {
+  const prev = latest.get(room.id);
+  const prevItems = prev && Array.isArray(prev.items) ? prev.items : [];
+  const state = CHECK_ITEMS.map((ci) => {
+    const p = prevItems.find((x) => x.key === ci.key);
+    return { key: ci.key, label: ci.label, status: p ? p.status : "ok", detail: p ? (p.detail || "") : "" };
+  });
+  let gnote = prev ? (prev.general_note || "") : "";
+
+  const meta = [room.building, room.floor ? `Floor ${room.floor}` : null].filter(Boolean).join(" · ");
+  root.innerHTML = `<div class="modal-bg"><div class="modal">
+    <h3>Room ${esc(room.room_number)}</h3>
+    <div class="sub">${esc(meta)}${prev ? " · re-inspecting" : ""}</div>
+    <div id="items"></div>
+    <label style="font-size:.78rem; color:var(--text-dim); display:block; margin:6px 0 8px;">General note (optional)</label>
+    <textarea id="gnote" class="gnote" placeholder="Anything else to note about this room…">${esc(gnote)}</textarea>
+    <div class="save-bar">
+      <button id="cancel" class="btn-ghost">Cancel</button>
+      <button id="save" class="btn-primary">Save inspection</button>
+    </div>
+  </div></div>`;
+
+  const itemsEl = root.querySelector("#items");
+  function drawItems() {
+    itemsEl.innerHTML = state.map((it, i) => `
+      <div class="check-item ${it.status === "problem" ? "problem" : ""}" data-i="${i}">
+        <div class="clabel">${esc(it.label)}</div>
+        <div class="seg">
+          <button type="button" class="ok ${it.status === "ok" ? "on" : ""}" data-set="ok">OK</button>
+          <button type="button" class="problem ${it.status === "problem" ? "on" : ""}" data-set="problem">Problem</button>
+        </div>
+        ${it.status === "problem"
+          ? `<textarea class="detail" placeholder="Describe the problem…">${esc(it.detail)}</textarea>`
+          : ""}
+      </div>`).join("");
+    itemsEl.querySelectorAll(".check-item").forEach((row) => {
+      const i = +row.dataset.i;
+      row.querySelectorAll(".seg button").forEach((b) =>
+        b.addEventListener("click", () => {
+          state[i].status = b.dataset.set;
+          drawItems();
+        }));
+      const d = row.querySelector(".detail");
+      if (d) d.addEventListener("input", () => { state[i].detail = d.value; });
+    });
+  }
+  drawItems();
+
+  const close = () => (root.innerHTML = "");
+  root.querySelector("#cancel").onclick = close;
+  root.querySelector(".modal-bg").onclick = (e) => {
+    if (e.target.classList.contains("modal-bg")) close();
+  };
+  root.querySelector("#save").onclick = async () => {
+    const btn = root.querySelector("#save");
+    btn.disabled = true;
+    try {
+      const items = state.map((it) => ({
+        key: it.key, label: it.label, status: it.status,
+        detail: it.status === "problem" ? (it.detail || "").trim() : "",
+      }));
+      await saveInspection({ room_id: room.id, items, general_note: root.querySelector("#gnote").value });
+      close();
+      showToast("Inspection saved", "success");
+      await loadData();
+    } catch (err) {
+      btn.disabled = false;
+      showToast(err.message || "Save failed", "error");
+    }
+  };
+}
+
+// ---- read-only report (admin) ----------------------------------------------
+function openReport(room) {
+  const rec = latest.get(room.id);
+  const meta = [room.building, room.floor ? `Floor ${room.floor}` : null, room.gender].filter(Boolean).join(" · ");
+  let body;
+  if (!rec) {
+    body = `<div class="empty" style="padding:40px 10px;">Not inspected yet.</div>`;
+  } else {
+    const items = Array.isArray(rec.items) ? rec.items : [];
+    const rows = items.map((it) => `
+      <div class="rep-item">
+        <div class="mark ${it.status === "problem" ? "problem" : "ok"}">${it.status === "problem" ? "!" : "✓"}</div>
+        <div>
+          <div>${esc(it.label)}</div>
+          ${it.status === "problem" && it.detail ? `<div class="rd">${esc(it.detail)}</div>` : ""}
+        </div>
+      </div>`).join("");
+    const gnote = rec.general_note ? `<div class="rd" style="margin-top:14px;"><b>Note:</b> ${esc(rec.general_note)}</div>` : "";
+    body = `<div style="font-size:.82rem; color:var(--text-faint); margin-bottom:6px;">
+        Inspected ${formatDate(rec.inspected_at)} by ${esc(rec.inspector_name || "")}
+      </div>${rows}${gnote}`;
+  }
+  root.innerHTML = `<div class="modal-bg"><div class="modal">
+    <h3>Room ${esc(room.room_number)}</h3>
+    <div class="sub">${esc(meta)}</div>
+    ${body}
+    <div class="save-bar"><button id="close" class="btn-primary" style="flex:1;">Close</button></div>
+  </div></div>`;
+  const close = () => (root.innerHTML = "");
+  root.querySelector("#close").onclick = close;
+  root.querySelector(".modal-bg").onclick = (e) => {
+    if (e.target.classList.contains("modal-bg")) close();
+  };
+}
+
+// ---- change password --------------------------------------------------------
+$("pw-btn").addEventListener("click", () => {
+  root.innerHTML = `<div class="modal-bg"><div class="modal" style="max-width:400px;">
+    <h3 style="font-size:1.15rem;">Change password</h3>
+    <div style="height:16px;"></div>
+    <input id="pw-old" class="input" type="password" placeholder="Current password" style="margin-bottom:10px;">
+    <input id="pw-new" class="input" type="password" placeholder="New password (6+ chars)" style="margin-bottom:10px;">
+    <input id="pw-new2" class="input" type="password" placeholder="Confirm new password">
+    <div class="save-bar"><button id="pw-cancel" class="btn-ghost">Cancel</button><button id="pw-save" class="btn-primary">Change</button></div>
+  </div></div>`;
+  const close = () => (root.innerHTML = "");
+  root.querySelector("#pw-cancel").onclick = close;
+  root.querySelector(".modal-bg").onclick = (e) => { if (e.target.classList.contains("modal-bg")) close(); };
+  root.querySelector("#pw-save").onclick = async () => {
+    const oldP = root.querySelector("#pw-old").value;
+    const p1 = root.querySelector("#pw-new").value, p2 = root.querySelector("#pw-new2").value;
+    if (p1.length < 6) return showToast("At least 6 characters", "error");
+    if (p1 !== p2) return showToast("Passwords do not match", "error");
+    try { await changePassword(oldP, p1); close(); showToast("Password changed", "success"); }
+    catch (err) { showToast(err.message || "Failed", "error"); }
+  };
+});
+
+// ---- events -----------------------------------------------------------------
+$("login-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  try {
+    await login($("username").value, $("password").value);
+    $("password").value = "";
+    await boot();
+  } catch (err) { showToast(`Sign in failed: ${err.message}`, "error"); }
+});
+$("logout-btn").addEventListener("click", () => { logout(); me = null; show("login"); });
+
+$("f-search").addEventListener("input", (e) => { filters.q = e.target.value; renderRooms(); });
+$("f-building").addEventListener("change", (e) => { filters.building = e.target.value; renderRooms(); });
+$("f-gender").addEventListener("change", (e) => { filters.gender = e.target.value; renderRooms(); });
+$("f-status").addEventListener("change", (e) => { filters.status = e.target.value; render(); });
+
+function esc(s) {
+  return String(s ?? "").replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+boot();
+</script>
+</body>
+</html>
