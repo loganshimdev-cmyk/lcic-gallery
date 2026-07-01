@@ -91,6 +91,58 @@
   .toast { position:fixed; top:24px; bottom:auto; height:auto; width:max-content; left:50%; transform:translateX(-50%); background:#111; color:#fff; font-weight:600; font-size:.92rem; padding:12px 22px; border-radius:13px; box-shadow:0 8px 24px rgba(0,0,0,.25); opacity:0; transition:opacity .25s; pointer-events:none; z-index:100000; max-width:90vw; text-align:center; }
   .toast.show { opacity:1; }
   .toast.error { background:#dc2626; } .toast.success { background:#059669; }
+
+  /* ---- admin dashboard ---- */
+  #admin-dash { margin-bottom:22px; }
+  .dash-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px; flex-wrap:wrap; }
+  .dash-title { font-size:1.05rem; font-weight:700; display:inline; }
+  .print-date { color:var(--text-faint); font-size:.8rem; margin-left:10px; }
+  .charts { display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:14px; margin-bottom:18px; }
+  .chart-card { background:var(--bg-elev); border:1px solid var(--hairline); border-radius:16px; padding:16px 18px; }
+  .chart-title { font-size:.85rem; font-weight:700; color:var(--text-dim); margin-bottom:14px; }
+  .donut { width:132px; height:132px; border-radius:50%; margin:2px auto 14px; display:flex; align-items:center; justify-content:center; }
+  .donut-hole { width:94px; height:94px; border-radius:50%; background:var(--bg-elev); display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .donut-hole b { font-size:1.5rem; font-weight:800; letter-spacing:-.02em; }
+  .donut-hole span { font-size:.72rem; color:var(--text-faint); }
+  .chart-legend { display:flex; flex-direction:column; gap:5px; font-size:.78rem; color:var(--text-dim); }
+  .chart-legend i.dot { display:inline-block; width:9px; height:9px; border-radius:3px; margin-right:6px; vertical-align:middle; }
+  .bar-row { display:flex; align-items:center; gap:10px; margin-bottom:9px; font-size:.8rem; }
+  .bar-label { width:96px; flex-shrink:0; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .bar-track { flex:1; height:9px; background:var(--hairline); border-radius:6px; overflow:hidden; }
+  .bar-fill { display:block; height:100%; background:var(--accent); border-radius:6px; }
+  .bar-fill.red { background:#dc2626; }
+  .bar-val { width:52px; text-align:right; flex-shrink:0; color:var(--text-faint); font-variant-numeric:tabular-nums; }
+
+  .panel { background:var(--bg-elev); border:1px solid var(--hairline); border-radius:16px; padding:16px 18px; margin-bottom:16px; }
+  .panel h4 { font-size:.9rem; font-weight:700; margin-bottom:12px; }
+  .ins-table { display:flex; flex-direction:column; }
+  .ins-row { display:grid; grid-template-columns:1.4fr .8fr .7fr .7fr .7fr 1.6fr; gap:8px; align-items:center; padding:8px 4px; border-top:1px solid var(--hairline); font-size:.82rem; font-variant-numeric:tabular-nums; }
+  .ins-row.head { border-top:none; color:var(--text-faint); font-size:.72rem; text-transform:uppercase; letter-spacing:.03em; }
+  .ins-row .uname { font-weight:600; }
+  .ins-row .has { color:#dc2626; font-weight:700; }
+  .pbar { position:relative; height:16px; background:var(--hairline); border-radius:8px; overflow:hidden; display:flex; align-items:center; }
+  .pbar-fill { position:absolute; left:0; top:0; height:100%; background:var(--accent); border-radius:8px; }
+  .pbar em { position:relative; margin-left:8px; font-style:normal; font-size:.7rem; color:var(--text); z-index:1; }
+
+  .issue-card { border-top:1px solid var(--hairline); padding:11px 0; }
+  .issue-head { display:flex; gap:10px; align-items:baseline; flex-wrap:wrap; margin-bottom:5px; }
+  .issue-head b { font-size:1rem; }
+  .issue-head span { font-size:.76rem; color:var(--text-faint); }
+  .issue-item { font-size:.82rem; color:var(--text-dim); padding:2px 0 2px 2px; }
+  .muted { color:var(--text-faint); font-size:.85rem; }
+  .print-only { display:none; }
+
+  @media print {
+    body { background:#fff; }
+    .topbar .who, #pw-hint, .filters, #rooms, #empty, #summary-bar, #print-btn, .toast { display:none !important; }
+    main { max-width:none; padding:0; }
+    #admin-dash { display:block !important; margin:0; }
+    .chart-card, .panel, .issue-card, .ins-row { break-inside:avoid; }
+    .chart-card, .panel { border-color:#ddd; box-shadow:none; }
+    .print-only { display:inline; }
+    .donut { print-color-adjust:exact; -webkit-print-color-adjust:exact; }
+    .bar-fill, .pbar-fill, .donut { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  }
 </style>
 </head>
 <body>
@@ -126,6 +178,16 @@
   </div>
 
   <div id="summary-bar" class="summary-bar"></div>
+
+  <div id="admin-dash" class="hidden">
+    <div class="dash-head">
+      <div><h3 class="dash-title">Inspection Dashboard</h3><span id="print-date" class="print-date"></span></div>
+      <button id="print-btn" class="btn-ghost">🖨 Print report</button>
+    </div>
+    <div id="charts" class="charts"></div>
+    <div id="inspectors" class="panel"></div>
+    <div id="issues-list" class="panel"></div>
+  </div>
 
   <div class="filters">
     <input id="f-search" type="text" placeholder="Search room number or building…">
@@ -211,7 +273,97 @@ async function loadData() {
 // ---- rendering --------------------------------------------------------------
 function render() {
   renderSummary();
+  renderAdminDashboard();
   renderRooms();
+}
+
+// ---- admin dashboard --------------------------------------------------------
+const SHORT = { aircon:"Aircon", electrical:"Electrical", openings:"Doors/Win/Safe",
+                furniture:"Furniture", structure:"Walls/Floor", other:"Clean/Other" };
+const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
+
+function donutCard(title, done, total, issues) {
+  const deg = total ? Math.round(done / total * 360) : 0;
+  const pct = total ? Math.round(done / total * 100) : 0;
+  return `<div class="chart-card"><div class="chart-title">${title}</div>
+    <div class="donut" style="background:conic-gradient(var(--accent) ${deg}deg, var(--hairline) ${deg}deg 360deg)">
+      <div class="donut-hole"><b>${pct}%</b><span>${done}/${total}</span></div>
+    </div>
+    <div class="chart-legend">
+      <span><i class="dot" style="background:var(--accent)"></i>Inspected ${done}</span>
+      <span><i class="dot" style="background:var(--hairline-strong)"></i>Remaining ${total - done}</span>
+      <span><i class="dot" style="background:#dc2626"></i>Issues ${issues}</span>
+    </div></div>`;
+}
+function barsCard(title, rows) {
+  return `<div class="chart-card"><div class="chart-title">${title}</div>
+    ${rows.map((r) => { const p = r.total ? Math.round(r.inspected / r.total * 100) : 0;
+      return `<div class="bar-row"><span class="bar-label">${esc(r.label)}</span>
+        <span class="bar-track"><span class="bar-fill" style="width:${p}%"></span></span>
+        <span class="bar-val">${r.inspected}/${r.total}</span></div>`; }).join("")}
+  </div>`;
+}
+function catCard(title, cats) {
+  const max = Math.max(1, ...cats.map((c) => c.count));
+  return `<div class="chart-card"><div class="chart-title">${title}</div>
+    ${cats.map((c) => { const p = Math.round(c.count / max * 100);
+      return `<div class="bar-row"><span class="bar-label">${esc(c.short)}</span>
+        <span class="bar-track"><span class="bar-fill red" style="width:${p}%"></span></span>
+        <span class="bar-val">${c.count}</span></div>`; }).join("")}
+  </div>`;
+}
+
+function renderAdminDashboard() {
+  const isAdmin = me && me.role === "admin";
+  $("admin-dash").classList.toggle("hidden", !isAdmin);
+  if (!isAdmin) return;
+
+  const total = rooms.length;
+  let inspected = 0, issues = 0;
+  const buildings = {}, insMap = {};
+  const cats = CHECK_ITEMS.map((ci) => ({ key: ci.key, short: SHORT[ci.key] || ci.key, count: 0 }));
+  const cix = Object.fromEntries(cats.map((c, i) => [c.key, i]));
+
+  for (const r of rooms) {
+    const rec = latest.get(r.id);
+    const b = r.building || "—";
+    buildings[b] ??= { inspected: 0, total: 0 };
+    buildings[b].total++;
+    const u = r.assigned_username;
+    if (u) { insMap[u] ??= { assigned: 0, inspected: 0, issues: 0 }; insMap[u].assigned++; }
+    if (rec) {
+      inspected++; buildings[b].inspected++;
+      if (u) insMap[u].inspected++;
+      if (rec.has_issues) { issues++; if (u) insMap[u].issues++; }
+      (rec.items || []).forEach((it) => { if (it.status === "problem" && it.key in cix) cats[cix[it.key]].count++; });
+    }
+  }
+
+  $("charts").innerHTML =
+    donutCard("Overall progress", inspected, total, issues) +
+    barsCard("Progress by building", Object.entries(buildings).sort().map(([label, v]) => ({ label, inspected: v.inspected, total: v.total }))) +
+    catCard("Issues by item", cats);
+
+  const inspectors = Object.keys(insMap).sort();
+  $("inspectors").innerHTML = `<h4>Per-inspector progress</h4>
+    <div class="ins-table">
+      <div class="ins-row head"><span>Inspector</span><span>Assigned</span><span>Done</span><span>Left</span><span>Issues</span><span>Progress</span></div>
+      ${inspectors.map((u) => { const v = insMap[u]; const p = v.assigned ? Math.round(v.inspected / v.assigned * 100) : 0;
+        return `<div class="ins-row"><span class="uname">${esc(cap(u))}</span><span>${v.assigned}</span><span>${v.inspected}</span><span>${v.assigned - v.inspected}</span><span class="${v.issues ? "has" : ""}">${v.issues}</span>
+          <span class="pbar"><span class="pbar-fill" style="width:${p}%"></span><em>${p}%</em></span></div>`; }).join("")}
+    </div>`;
+
+  const issueRooms = rooms.filter((r) => latest.get(r.id)?.has_issues);
+  $("issues-list").innerHTML = `<h4>Issues found (${issueRooms.length})</h4>` +
+    (issueRooms.length ? issueRooms.map((r) => { const rec = latest.get(r.id);
+      const probs = (rec.items || []).filter((i) => i.status === "problem");
+      return `<div class="issue-card"><div class="issue-head"><b>${esc(r.room_number)}</b>
+        <span>${esc(r.building)} · ${esc(rec.inspector_name || "")} · ${formatDate(rec.inspected_at)}</span></div>
+        ${probs.map((pp) => `<div class="issue-item">⚠️ ${esc(SHORT[pp.key] || pp.key)}${pp.detail ? ` — ${esc(pp.detail)}` : ""}</div>`).join("")}</div>`;
+    }).join("") : `<div class="muted">No issues reported yet.</div>`);
+
+  const pd = $("print-date");
+  if (pd && !pd.textContent) pd.textContent = new Date().toLocaleDateString();
 }
 
 function renderSummary() {
@@ -426,6 +578,7 @@ $("pw-hint-x").addEventListener("click", () => {
   localStorage.setItem("lcic-dorm-pw-hint", "1");
   $("pw-hint").classList.add("hidden");
 });
+$("print-btn").addEventListener("click", () => window.print());
 
 $("f-search").addEventListener("input", (e) => { filters.q = e.target.value; renderRooms(); });
 $("f-building").addEventListener("change", (e) => { filters.building = e.target.value; renderRooms(); });
