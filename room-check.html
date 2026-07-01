@@ -24,6 +24,9 @@
   .gender-badge.female { background:rgba(219,39,119,.12); color:#be185d; }
   .gender-badge.admin  { background:rgba(15,23,42,.08); color:var(--text-dim); }
 
+  .pw-hint { display:flex; align-items:center; gap:12px; justify-content:space-between; background:var(--accent-tint); border:1px solid var(--accent-soft); color:var(--text-dim); font-size:.85rem; padding:11px 15px; border-radius:12px; margin-bottom:16px; }
+  .pw-hint b { color:var(--text); }
+  .pw-hint button { flex-shrink:0; border:none; background:none; color:var(--text-faint); font-size:1rem; cursor:pointer; padding:2px 6px; }
   .summary-bar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px; }
   .chip { display:inline-flex; align-items:center; gap:8px; padding:9px 15px; border-radius:14px; background:var(--bg-elev); border:1px solid var(--hairline); font-size:.85rem; cursor:pointer; transition:border-color .15s, box-shadow .15s; }
   .chip:hover { border-color:var(--accent); }
@@ -117,6 +120,11 @@
     </div>
   </div>
 
+  <div id="pw-hint" class="pw-hint hidden">
+    <span>🔑 First time here? Please set your own password using the <b>Password</b> button above.</span>
+    <button id="pw-hint-x" title="Dismiss">✕</button>
+  </div>
+
   <div id="summary-bar" class="summary-bar"></div>
 
   <div class="filters">
@@ -185,6 +193,7 @@ async function boot() {
   $("me-badge").textContent = me.role === "admin" ? "Admin" : (me.gender || "");
   $("me-badge").className = `gender-badge ${g}`;
   $("f-gender").classList.toggle("hidden", me.role !== "admin");
+  $("pw-hint").classList.toggle("hidden", me.role === "admin" || !!localStorage.getItem("lcic-dorm-pw-hint"));
   await loadData();
 }
 
@@ -413,6 +422,10 @@ $("login-form").addEventListener("submit", async (e) => {
   } catch (err) { showToast(`Sign in failed: ${err.message}`, "error"); }
 });
 $("logout-btn").addEventListener("click", () => { logout(); me = null; show("login"); });
+$("pw-hint-x").addEventListener("click", () => {
+  localStorage.setItem("lcic-dorm-pw-hint", "1");
+  $("pw-hint").classList.add("hidden");
+});
 
 $("f-search").addEventListener("input", (e) => { filters.q = e.target.value; renderRooms(); });
 $("f-building").addEventListener("change", (e) => { filters.building = e.target.value; renderRooms(); });
