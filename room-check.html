@@ -282,7 +282,7 @@ function openInspectForm(room) {
   root.innerHTML = `<div class="modal-bg"><div class="modal">
     <h3>Room ${esc(room.room_number)}</h3>
     <div class="sub">${esc(meta)}${prev ? " · re-inspecting" : ""}</div>
-    <div class="cluster-note">This cluster has <b>6 single rooms + 1 four-person room</b>. If a problem is in one specific room, note which room in the details.</div>
+    <div class="cluster-note">Rooms in this cluster: <b>${esc(room.room_number)}-1 … ${esc(room.room_number)}-6</b> (single) and <b>${esc(room.room_number)}-7</b> (four-person). If a problem is in one specific room, note its number in the details.</div>
     <div id="items"></div>
     <label style="font-size:.78rem; color:var(--text-dim); display:block; margin:6px 0 8px;">General note (optional)</label>
     <textarea id="gnote" class="gnote" placeholder="Anything else about this cluster…">${esc(gnote)}</textarea>
@@ -302,7 +302,7 @@ function openInspectForm(room) {
           <button type="button" class="problem ${it.status === "problem" ? "on" : ""}" data-set="problem">Problem</button>
         </div>
         ${it.status === "problem"
-          ? `<textarea class="detail" placeholder="Describe the problem — which room? (single 1–6 / 4-person)">${esc(it.detail)}</textarea>`
+          ? `<textarea class="detail" placeholder="Describe the problem — which room? (e.g. ${esc(room.room_number)}-3, or ${esc(room.room_number)}-7)">${esc(it.detail)}</textarea>`
           : ""}
       </div>`).join("");
     itemsEl.querySelectorAll(".check-item").forEach((row) => {
