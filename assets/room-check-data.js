@@ -14,13 +14,15 @@ const SESSION_KEY = "lcic-dorm-inspector";
 
 // Fixed, ordered checklist. Each item defaults to "ok"; the inspector taps to
 // flag "problem" and can add a detail note. Adjust labels here only.
-// Rooms/clusters have no plumbing or toilet, so those items are omitted.
+// Grouped checklist (rooms have no plumbing/toilet). Related things are bundled
+// so inspectors tap fewer buttons; specifics go in the detail note.
 export const CHECK_ITEMS = [
-  { key: "aircon",      label: "Air conditioner (cooling / noise / power)" },
-  { key: "electrical",  label: "Electrical, outlets & lights" },
-  { key: "furniture",   label: "Furniture & fixtures (bed, desk, closet, door, window)" },
-  { key: "cleanliness", label: "Cleanliness" },
-  { key: "other",       label: "Other" },
+  { key: "aircon",     label: "Air conditioner (cooling / noise / power)" },
+  { key: "electrical", label: "Electrical & lighting (outlets, lights, lamp)" },
+  { key: "openings",   label: "Doors, windows, locks & safe (door/key, blinds/curtains, personal safe)" },
+  { key: "furniture",  label: "Furniture (bed, mattress, desk, chair, closet)" },
+  { key: "structure",  label: "Walls, ceiling & floor (leaks, mold, cracks, paint)" },
+  { key: "other",      label: "Cleanliness & other (tidiness, anything else)" },
 ];
 
 // ---- session ----------------------------------------------------------------
