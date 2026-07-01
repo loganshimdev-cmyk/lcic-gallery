@@ -146,7 +146,7 @@
 import {
   myInspector, login, logout, changePassword,
   listRooms, listInspections, latestByRoom, saveInspection, CHECK_ITEMS,
-} from "./assets/room-check-data.js?v=2";
+} from "./assets/room-check-data.js?v=3";
 import { formatDate } from "./assets/supabase.js?v=4";
 
 const $ = (id) => document.getElementById(id);
@@ -347,7 +347,8 @@ function openInspectForm(room) {
 function openReport(room) {
   const rec = latest.get(room.id);
   const typeLabel = room.room_type === "quad" ? "4-person room" : "Single room";
-  const meta = [room.building, room.floor ? `Floor ${room.floor}` : null, typeLabel, room.gender].filter(Boolean).join(" · ");
+  const meta = [room.building, room.floor ? `Floor ${room.floor}` : null, typeLabel,
+                room.assigned_username ? `Assigned: ${room.assigned_username}` : null].filter(Boolean).join(" · ");
   let body;
   if (!rec) {
     body = `<div class="empty" style="padding:40px 10px;">Not inspected yet.</div>`;

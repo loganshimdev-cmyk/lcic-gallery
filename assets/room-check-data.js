@@ -57,11 +57,11 @@ export async function changePassword(oldPw, newPw) {
 
 // ---- rooms ------------------------------------------------------------------
 
-// Rooms visible to the current user. Inspectors see only their own gender;
-// admins (gender null / role 'admin') see every room.
+// Rooms visible to the current user. Inspectors see only the clusters assigned
+// to them (dorm_rooms.assigned_username); admins (role 'admin') see every room.
 export async function listRooms(me) {
   let q = db.from("dorm_rooms").select("*").eq("active", true);
-  if (me && me.role !== "admin" && me.gender) q = q.eq("gender", me.gender);
+  if (me && me.role !== "admin") q = q.eq("assigned_username", me.username);
   const { data, error } = await q
     .order("building", { ascending: true })
     .order("sort", { ascending: true })
