@@ -441,3 +441,28 @@ create policy "admin can delete buddy checkins"
 2. Authentication → Users 에서 한국담당자별 계정(이메일/비번) 생성.
 3. 각 담당자가 `https://lcic-campus.com/team.html` 첫 로그인 시 한글 이름 등록(자동으로 team_members 생성, 색 배정).
 4. RLS상 로그인하지 않으면 어떤 데이터도 보이지 않음.
+
+---
+
+## 기숙사 방 점검 (room-check.html)
+
+기숙사 방을 점검자(현지 스태프)가 폰으로 돌며 체크하고, 관리자는 요약 대시보드로
+현황을 본다. 로그인은 Supabase Auth가 아니라 **커스텀 username/password RPC**
+(`inspector_login`, pgcrypto 해시)로, team.html과 동일한 방식이다. 어디에도 링크하지
+않는 비공개 페이지(`/room-check.html`).
+
+관련 파일: `room-check.html`, `assets/room-check-data.js`, `scripts/room-check-setup.sql`.
+
+1. Supabase 대시보드 → SQL Editor에서 `scripts/room-check-setup.sql`의 스키마 부분 실행
+   (확장·테이블·RPC·RLS). `lcic-cels` 프로젝트.
+2. 같은 파일 하단 **SEED** 블록에서:
+   - `dorm_rooms`에 방 목록 INSERT — 각 방의 `gender`는 `'male'` 또는 `'female'`.
+   - `dorm_inspectors`에 계정 INSERT — `crypt('비번', gen_salt('bf'))`로 해시 저장.
+     `gender`는 남/여 점검자에게 지정, 관리자는 `null` + `role='admin'`.
+3. 점검자는 `https://lcic-campus.com/room-check.html` 로그인 → 본인 성별 방만 보임.
+   방 카드를 눌러 항목별 OK/Problem 체크 + 문제 상세 메모 후 저장.
+4. 관리자(`role='admin'`)는 전체 방·문제 방 집계와 방별 점검 리포트를 본다.
+
+보안: `dorm_inspectors`는 RLS on이지만 anon SELECT 정책이 없어 `password_hash`가
+클라이언트에서 조회되지 않는다(로그인 RPC만 SECURITY DEFINER로 접근). `dorm_rooms`
+읽기·`dorm_inspections` 읽기/작성만 anon에 열려 있다. 계정 발급은 대시보드에서만.
