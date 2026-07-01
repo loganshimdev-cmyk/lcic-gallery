@@ -99,6 +99,7 @@
         <button data-tab="board" class="active">🗂 할일판</button>
         <button data-tab="calendar">📅 캘린더</button>
         <button data-tab="summer">🏫 여름 배정현황</button>
+        <button data-tab="arrivals">🛬 도착/입소</button>
       </div>
       <div style="display:flex; align-items:center; gap:12px;">
         <span id="me-name" style="font-size:.85rem; color:var(--text-dim);"></span>
@@ -113,6 +114,9 @@
     <section id="tab-calendar" class="hidden"></section>
     <section id="tab-summer" class="hidden">
       <iframe id="summer-frame" title="여름 배정현황" style="width:100%; height:calc(100vh - 200px); border:1px solid var(--hairline); border-radius:16px; background:#fff;"></iframe>
+    </section>
+    <section id="tab-arrivals" class="hidden">
+      <iframe id="arrivals-frame" title="도착/입소 명단" style="width:100%; height:calc(100vh - 200px); border:1px solid var(--hairline); border-radius:16px; background:#fff;"></iframe>
     </section>
   </div>
 
@@ -213,6 +217,11 @@ document.querySelectorAll(".tabs button").forEach((b) => b.addEventListener("cli
   $("tab-board").classList.toggle("hidden", tab !== "board");
   $("tab-calendar").classList.toggle("hidden", tab !== "calendar");
   $("tab-summer").classList.toggle("hidden", tab !== "summer");
+  $("tab-arrivals").classList.toggle("hidden", tab !== "arrivals");
+  if (tab === "arrivals") {
+    const f = $("arrivals-frame");
+    if (!f.getAttribute("src")) f.setAttribute("src", "arrivals.html");
+  }
   // 여름 배정현황: 처음이면 로드. 안에서 다른 페이지로 이동했으면 다시 배정현황으로 복귀.
   if (tab === "summer") {
     const f = $("summer-frame");
