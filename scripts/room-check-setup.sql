@@ -11,9 +11,11 @@ create extension if not exists pgcrypto;
 create table if not exists public.dorm_rooms (
   id          uuid primary key default gen_random_uuid(),
   building    text,
-  room_number text not null,
+  cluster     text,                    -- e.g. '101' (the cluster/unit this room belongs to)
+  room_number text not null,           -- individual room, e.g. '101-1' .. '101-7'
   floor       int,
   gender      text not null check (gender in ('male','female')),
+  room_type   text,                    -- 'single' (개인실) | 'quad' (4인실)
   active      boolean not null default true,
   sort        int not null default 0
 );

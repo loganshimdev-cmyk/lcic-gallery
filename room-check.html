@@ -247,7 +247,8 @@ function renderRooms() {
   $("rooms").innerHTML = list.map((r) => {
     const s = statusOf(r);
     const rec = latest.get(r.id);
-    const meta = [r.building, r.floor ? `Floor ${r.floor}` : null].filter(Boolean).join(" · ");
+    const typeShort = r.room_type === "quad" ? "4-person" : "Single";
+    const meta = [r.building, typeShort].filter(Boolean).join(" · ");
     const last = rec ? `Last: ${formatDate(rec.inspected_at)} · ${esc(rec.inspector_name || "")}` : "";
     return `<div class="room ${s === "issue" ? "issue" : ""}" data-id="${r.id}">
       <div class="rnum">${esc(r.room_number)}</div>
@@ -278,11 +279,11 @@ function openInspectForm(room) {
   });
   let gnote = prev ? (prev.general_note || "") : "";
 
-  const meta = [room.building, room.floor ? `Floor ${room.floor}` : null].filter(Boolean).join(" · ");
+  const typeLabel = room.room_type === "quad" ? "4-person room" : "Single room";
+  const meta = [room.building, room.floor ? `Floor ${room.floor}` : null, typeLabel].filter(Boolean).join(" · ");
   root.innerHTML = `<div class="modal-bg"><div class="modal">
     <h3>Room ${esc(room.room_number)}</h3>
     <div class="sub">${esc(meta)}${prev ? " · re-inspecting" : ""}</div>
-    <div class="cluster-note">Rooms in this cluster: <b>${esc(room.room_number)}-1 … ${esc(room.room_number)}-6</b> (single) and <b>${esc(room.room_number)}-7</b> (four-person). If a problem is in one specific room, note its number in the details.</div>
     <div id="items"></div>
     <label style="font-size:.78rem; color:var(--text-dim); display:block; margin:6px 0 8px;">General note (optional)</label>
     <textarea id="gnote" class="gnote" placeholder="Anything else about this cluster…">${esc(gnote)}</textarea>
@@ -302,7 +303,7 @@ function openInspectForm(room) {
           <button type="button" class="problem ${it.status === "problem" ? "on" : ""}" data-set="problem">Problem</button>
         </div>
         ${it.status === "problem"
-          ? `<textarea class="detail" placeholder="Describe the problem — which room? (e.g. ${esc(room.room_number)}-3, or ${esc(room.room_number)}-7)">${esc(it.detail)}</textarea>`
+          ? `<textarea class="detail" placeholder="Describe the problem…">${esc(it.detail)}</textarea>`
           : ""}
       </div>`).join("");
     itemsEl.querySelectorAll(".check-item").forEach((row) => {
@@ -345,7 +346,8 @@ function openInspectForm(room) {
 // ---- read-only report (admin) ----------------------------------------------
 function openReport(room) {
   const rec = latest.get(room.id);
-  const meta = [room.building, room.floor ? `Floor ${room.floor}` : null, room.gender].filter(Boolean).join(" · ");
+  const typeLabel = room.room_type === "quad" ? "4-person room" : "Single room";
+  const meta = [room.building, room.floor ? `Floor ${room.floor}` : null, typeLabel, room.gender].filter(Boolean).join(" · ");
   let body;
   if (!rec) {
     body = `<div class="empty" style="padding:40px 10px;">Not inspected yet.</div>`;
