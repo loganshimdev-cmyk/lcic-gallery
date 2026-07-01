@@ -12,9 +12,19 @@ export async function initCalendar({ me, container, onChange }) {
 
   const byDate = {};
   const push = (iso, item) => { (byDate[iso] ||= []).push(item); };
-  events.forEach((e) => push(e.date, { kind: "event", title: e.title, color: e.owner_id ? memberById[e.owner_id]?.color : "#64748b", raw: e }));
-  tasks.filter((t) => t.due_date && t.status !== "done").forEach((t) =>
-    push(t.due_date, { kind: "task", title: "⏰ " + (t.due_time ? t.due_time.slice(0, 5) + " " : "") + t.title, color: t.assignee_id ? memberById[t.assignee_id]?.color : "#94a3b8" }));
+  events.forEach((e) => push(e.date, {
+    kind: "event", title: e.title, time: e.all_day ? "" : (e.start_time ? e.start_time.slice(0, 5) : ""),
+    color: e.owner_id ? memberById[e.owner_id]?.color : "#64748b", raw: e,
+  }));
+  tasks.filter((t) => t.due_date && t.status !== "done").forEach((t) => {
+    const time = t.due_time ? t.due_time.slice(0, 5) : "";
+    push(t.due_date, {
+      kind: "task", title: (time ? time + " " : "") + t.title, time,
+      color: t.assignee_id ? memberById[t.assignee_id]?.color : "#94a3b8",
+    });
+  });
+  // 각 날짜: 시간 빠른 순(위). 시간 없는 항목은 아래로.
+  Object.values(byDate).forEach((arr) => arr.sort((a, b) => (a.time || "99:99").localeCompare(b.time || "99:99")));
 
   const dows = ["일", "월", "화", "수", "목", "금", "토"];
   container.innerHTML = `

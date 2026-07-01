@@ -50,9 +50,17 @@ function cardHtml(t, memberById, today, lastVisit) {
     <div style="font-weight:600; font-size:.9rem;">${escapeHtml(t.title)}${fresh ? '<span class="new-badge">NEW</span>' : ""}</div>
     <div class="meta">
       ${m ? `<span class="badge"><span class="swatch" style="background:${m.color}"></span>${escapeHtml(memberLabel(m))}</span>` : `<span class="badge" style="color:var(--text-faint)">미지정</span>`}
-      ${t.due_date ? `<span class="${overdue ? "overdue" : ""}">📅 ${t.due_date.slice(5)}${t.due_time ? " " + t.due_time.slice(0, 5) : ""}</span>` : ""}
+      ${t.due_date ? `<span class="${overdue ? "overdue" : ""}">예정 ${md(t.due_date)}${t.due_time ? " " + t.due_time.slice(0, 5) : ""}</span>` : ""}
+      <span style="color:var(--text-faint)">${md(t.created_at)} 기록</span>
     </div>
   </div>`;
+}
+
+// ISO/날짜문자열 → "M/D"
+function md(iso) {
+  if (!iso) return "";
+  const [, m, d] = iso.slice(0, 10).split("-");
+  return `${+m}/${+d}`;
 }
 
 function openAddTask({ me, members, onChange }) {
@@ -64,8 +72,8 @@ function openAddTask({ me, members, onChange }) {
     <select id="t-assignee"><option value="">담당자 미지정</option>
       ${members.map((m) => `<option value="${m.id}" ${m.id === me.id ? "selected" : ""}>${escapeHtml(memberLabel(m))}</option>`).join("")}</select>
     <div style="display:flex; gap:10px;">
-      <div style="flex:1;"><label style="display:block;font-size:.75rem;color:var(--text-dim);margin-bottom:5px;">마감일(선택)</label><input id="t-due" type="date" /></div>
-      <div style="flex:1;"><label style="display:block;font-size:.75rem;color:var(--text-dim);margin-bottom:5px;">시간(선택)</label><input id="t-time" type="time" /></div>
+      <div style="flex:1;"><label style="display:block;font-size:.75rem;color:var(--text-dim);margin-bottom:5px;">예정일</label><input id="t-due" type="date" value="${ymd(new Date())}" /></div>
+      <div style="flex:1;"><label style="display:block;font-size:.75rem;color:var(--text-dim);margin-bottom:5px;">시간(선택)</label><input id="t-time" type="time" lang="en-GB" /></div>
     </div>
     <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:8px;">
       <button id="t-cancel" class="btn-ghost">취소</button>

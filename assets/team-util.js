@@ -18,12 +18,13 @@ export function isNew(itemIso, lastVisitIso) {
   return new Date(itemIso).getTime() > new Date(lastVisitIso).getTime();
 }
 
-// 상태별 분류 + 각 열 sort 오름차순(동률은 created_at).
+// 상태별 분류 + 각 열 예정일(due_date+due_time) 빠른 순. 날짜 없으면 맨 아래, 동률은 created_at.
 export function bucketTasks(tasks = []) {
   const out = { todo: [], doing: [], done: [] };
   for (const t of tasks) (out[t.status] || out.todo).push(t);
+  const key = (t) => `${t.due_date || "9999-12-31"} ${t.due_time || "99:99"}`;
   const sorter = (a, b) =>
-    (a.sort - b.sort) ||
+    key(a).localeCompare(key(b)) ||
     (new Date(a.created_at || 0) - new Date(b.created_at || 0));
   out.todo.sort(sorter); out.doing.sort(sorter); out.done.sort(sorter);
   return out;

@@ -12,12 +12,13 @@ export async function openTaskDetail({ taskId, me, members, onChange }) {
   root.innerHTML = `<div class="modal-bg"><div class="modal">
     <input id="d-title" value="${escapeHtml(t.title)}" style="font-weight:700;" />
     <textarea id="d-detail" rows="3" placeholder="설명">${escapeHtml(t.detail || "")}</textarea>
+    <select id="d-assignee"><option value="">미지정</option>
+      ${members.map((m) => `<option value="${m.id}" ${m.id === t.assignee_id ? "selected" : ""}>${escapeHtml(memberLabel(m))}</option>`).join("")}</select>
     <div style="display:flex; gap:8px;">
-      <select id="d-assignee" style="flex:1;"><option value="">미지정</option>
-        ${members.map((m) => `<option value="${m.id}" ${m.id === t.assignee_id ? "selected" : ""}>${escapeHtml(memberLabel(m))}</option>`).join("")}</select>
-      <input id="d-due" type="date" value="${t.due_date || ""}" style="flex:1;" />
-      <input id="d-time" type="time" value="${t.due_time ? t.due_time.slice(0, 5) : ""}" style="flex:1;" />
+      <div style="flex:1;"><label style="display:block;font-size:.72rem;color:var(--text-dim);margin-bottom:4px;">예정일</label><input id="d-due" type="date" value="${t.due_date || ""}" /></div>
+      <div style="flex:1;"><label style="display:block;font-size:.72rem;color:var(--text-dim);margin-bottom:4px;">시간(선택)</label><input id="d-time" type="time" lang="en-GB" value="${t.due_time ? t.due_time.slice(0, 5) : ""}" /></div>
     </div>
+    <div style="font-size:.74rem; color:var(--text-faint); margin:2px 0 10px;">${mdDot(t.created_at)} 기록</div>
     <div style="display:flex; gap:6px; margin:6px 0 12px;">
       ${["todo", "doing", "done"].map((s) => `<button class="btn-ghost d-move ${t.status === s ? "active" : ""}" data-s="${s}" style="flex:1; ${t.status === s ? "background:var(--accent);color:#fff;" : ""}">${{ todo: "할 일", doing: "진행중", done: "완료" }[s]}</button>`).join("")}
     </div>
@@ -75,6 +76,13 @@ export async function openTaskDetail({ taskId, me, members, onChange }) {
       openTaskDetail({ taskId, me, members, onChange }); // 다시 그려 코멘트 갱신
     } catch (err) { window.__toast(err.message || "코멘트 등록 실패", "error"); }
   };
+}
+
+// ISO/날짜문자열 → "M/D"
+function mdDot(iso) {
+  if (!iso) return "";
+  const [, m, d] = iso.slice(0, 10).split("-");
+  return `${+m}/${+d}`;
 }
 
 function commentHtml(c, memberById) {

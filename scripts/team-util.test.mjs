@@ -24,16 +24,25 @@ test("isNew: 마지막 방문 없으면 false (첫 진입은 NEW 폭주 방지)"
   assert.equal(isNew("2026-06-30T08:00:00Z", null), false);
 });
 
-test("bucketTasks: 상태별 분류 + sort 오름차순", () => {
+test("bucketTasks: 상태별 분류 + 예정일 빠른 순(날짜없음 맨아래)", () => {
   const tasks = [
-    { id: "a", status: "done", sort: 1 },
-    { id: "b", status: "todo", sort: 2 },
-    { id: "c", status: "todo", sort: 1 },
+    { id: "a", status: "done", due_date: "2026-07-01" },
+    { id: "b", status: "todo", due_date: "2026-07-10" },
+    { id: "c", status: "todo", due_date: "2026-07-05" },
+    { id: "d", status: "todo", due_date: null },
   ];
   const b = bucketTasks(tasks);
-  assert.deepEqual(b.todo.map((t) => t.id), ["c", "b"]);
+  assert.deepEqual(b.todo.map((t) => t.id), ["c", "b", "d"]);
   assert.deepEqual(b.doing.map((t) => t.id), []);
   assert.deepEqual(b.done.map((t) => t.id), ["a"]);
+});
+
+test("bucketTasks: 같은 날짜는 시간 빠른 순", () => {
+  const tasks = [
+    { id: "x", status: "todo", due_date: "2026-07-05", due_time: "22:30" },
+    { id: "y", status: "todo", due_date: "2026-07-05", due_time: "10:00" },
+  ];
+  assert.deepEqual(bucketTasks(tasks).todo.map((t) => t.id), ["y", "x"]);
 });
 
 test("isOverdue: 마감 지나고 미완료면 true", () => {
