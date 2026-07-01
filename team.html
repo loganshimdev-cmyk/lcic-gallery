@@ -213,8 +213,16 @@ document.querySelectorAll(".tabs button").forEach((b) => b.addEventListener("cli
   $("tab-board").classList.toggle("hidden", tab !== "board");
   $("tab-calendar").classList.toggle("hidden", tab !== "calendar");
   $("tab-summer").classList.toggle("hidden", tab !== "summer");
-  // 여름 배정현황은 처음 열 때만 로드(iframe 지연 로딩)
-  if (tab === "summer") { const f = $("summer-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "summer-2026.html"); }
+  // 여름 배정현황: 처음이면 로드. 안에서 다른 페이지로 이동했으면 다시 배정현황으로 복귀.
+  if (tab === "summer") {
+    const f = $("summer-frame");
+    let drifted = false;
+    try {
+      const p = f.contentWindow && f.contentWindow.location && f.contentWindow.location.pathname;
+      if (p && !p.endsWith("summer-2026.html")) drifted = true;
+    } catch (e) { /* 접근 불가 시 그대로 둠 */ }
+    if (!f.getAttribute("src") || drifted) f.setAttribute("src", "summer-2026.html");
+  }
 }));
 
 refresh();
