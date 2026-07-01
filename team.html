@@ -95,12 +95,10 @@
 
   <div id="app-view" class="hidden">
     <div class="topbar">
-      <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
-        <div class="tabs">
-          <button data-tab="board" class="active">🗂 할일판</button>
-          <button data-tab="calendar">📅 캘린더</button>
-        </div>
-        <a href="summer-2026.html" target="_blank" rel="noopener" class="btn-ghost" style="font-size:.82rem; text-decoration:none; display:inline-flex; align-items:center; gap:5px;">여름 배정현황 ↗</a>
+      <div class="tabs">
+        <button data-tab="board" class="active">🗂 할일판</button>
+        <button data-tab="calendar">📅 캘린더</button>
+        <button data-tab="summer">🏫 여름 배정현황</button>
       </div>
       <div style="display:flex; align-items:center; gap:12px;">
         <span id="me-name" style="font-size:.85rem; color:var(--text-dim);"></span>
@@ -113,6 +111,9 @@
 
     <section id="tab-board"></section>
     <section id="tab-calendar" class="hidden"></section>
+    <section id="tab-summer" class="hidden">
+      <iframe id="summer-frame" title="여름 배정현황" style="width:100%; height:calc(100vh - 200px); border:1px solid var(--hairline); border-radius:16px; background:#fff;"></iframe>
+    </section>
   </div>
 
 </main>
@@ -208,8 +209,12 @@ $("logout-btn").addEventListener("click", () => { logout(); refresh(); });
 document.querySelectorAll(".tabs button").forEach((b) => b.addEventListener("click", () => {
   document.querySelectorAll(".tabs button").forEach((x) => x.classList.remove("active"));
   b.classList.add("active");
-  $("tab-board").classList.toggle("hidden", b.dataset.tab !== "board");
-  $("tab-calendar").classList.toggle("hidden", b.dataset.tab !== "calendar");
+  const tab = b.dataset.tab;
+  $("tab-board").classList.toggle("hidden", tab !== "board");
+  $("tab-calendar").classList.toggle("hidden", tab !== "calendar");
+  $("tab-summer").classList.toggle("hidden", tab !== "summer");
+  // 여름 배정현황은 처음 열 때만 로드(iframe 지연 로딩)
+  if (tab === "summer") { const f = $("summer-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "summer-2026.html"); }
 }));
 
 refresh();
