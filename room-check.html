@@ -52,6 +52,13 @@
   .status.s-occupied { background:rgba(217,119,6,.12); color:#b45309; }
   .dot.occupied { background:#d97706; }
   .room.occupied { border-color:rgba(217,119,6,.35); }
+  .status.s-resolved { background:rgba(13,148,136,.12); color:#0f766e; }
+  .dot.resolved { background:#0d9488; }
+  .room.resolved { border-color:rgba(13,148,136,.30); }
+  .gender-badge.handler { background:rgba(13,148,136,.12); color:#0f766e; }
+  .issue-card.done { opacity:.7; }
+  .resolved-line { margin-top:8px; font-size:.8rem; color:#0f766e; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .link-btn { border:none; background:none; color:var(--accent); cursor:pointer; font-size:.78rem; text-decoration:underline; padding:0; font-family:inherit; }
   .room .last { font-size:.72rem; color:var(--text-faint); margin-top:8px; }
   .room.issue { border-color:rgba(220,38,38,.35); }
   .empty { text-align:center; color:var(--text-faint); padding:60px 20px; }
@@ -166,6 +173,18 @@
   </div>
 </div>
 
+<!-- First-login name registration -->
+<div id="register-view" class="auth-view hidden">
+  <div class="login-card glass">
+    <h2>Welcome 👋</h2>
+    <p style="color:var(--text-dim); font-size:.88rem; margin-bottom:22px;">Please enter your name so your work is credited.</p>
+    <form id="register-form">
+      <div class="field"><label>Your name</label><input id="reg-name" class="input" type="text" required placeholder="e.g. Juan Dela Cruz"></div>
+      <button class="btn-primary" type="submit" style="width:100%;">Start</button>
+    </form>
+  </div>
+</div>
+
 <!-- App -->
 <main id="app-view" class="hidden">
   <div class="topbar">
@@ -173,6 +192,7 @@
     <div class="who">
       <span id="me-name" style="font-size:.9rem; color:var(--text-dim);"></span>
       <span id="me-badge" class="gender-badge"></span>
+      <button id="refresh-btn" class="btn-ghost" style="font-size:.78rem;">↻ Refresh</button>
       <button id="pw-btn" class="btn-ghost" style="font-size:.78rem;">Password</button>
       <button id="logout-btn" class="btn-ghost" style="font-size:.78rem;">Sign out</button>
     </div>
@@ -185,6 +205,8 @@
 
   <div id="summary-bar" class="summary-bar"></div>
 
+  <div id="handler-view" class="hidden"></div>
+
   <div id="admin-dash" class="hidden">
     <div class="dash-head">
       <div><h3 class="dash-title">Inspection Dashboard</h3><span id="print-date" class="print-date"></span></div>
@@ -195,7 +217,7 @@
     <div id="issues-list" class="panel"></div>
   </div>
 
-  <div class="filters">
+  <div class="filters" id="filters">
     <input id="f-search" type="text" placeholder="Search room number or building…">
     <select id="f-building"><option value="">All buildings</option></select>
     <select id="f-gender" class="hidden">
@@ -207,7 +229,8 @@
       <option value="">All statuses</option>
       <option value="none">Not inspected</option>
       <option value="ok">OK</option>
-      <option value="issue">Issues</option>
+      <option value="issue">Issues (open)</option>
+      <option value="resolved">Resolved</option>
       <option value="occupied">Occupied</option>
     </select>
   </div>
@@ -221,9 +244,10 @@
 
 <script type="module">
 import {
-  myInspector, login, logout, changePassword,
+  myInspector, login, logout, changePassword, setInspectorName,
   listRooms, listInspections, latestByRoom, saveInspection, CHECK_ITEMS,
-} from "./assets/room-check-data.js?v=5";
+  resolveIssue, reopenIssue,
+} from "./assets/room-check-data.js?v=7";
 import { formatDate } from "./assets/supabase.js?v=4";
 
 const $ = (id) => document.getElementById(id);
@@ -237,30 +261,33 @@ function showToast(msg, type = "") {
 let me = null;
 let rooms = [];
 let latest = new Map();          // room_id -> latest inspection
-const filters = { q: "", building: "", gender: "", status: "" };
+const filters = { q: "", building: "", gender: "", status: "", showResolved: false };
 
 // ---- status helpers ---------------------------------------------------------
 function statusOf(room) {
   const rec = latest.get(room.id);
   if (!rec) return "none";
   if (rec.status === "occupied") return "occupied";
-  return rec.has_issues ? "issue" : "ok";
+  if (rec.has_issues) return rec.resolved ? "resolved" : "issue";
+  return "ok";
 }
-const STATUS_LABEL = { none: "Not inspected", ok: "OK", issue: "Issues", occupied: "Occupied" };
+const STATUS_LABEL = { none: "Not inspected", ok: "OK", issue: "Issues", occupied: "Occupied", resolved: "Resolved" };
 
 // ---- auth flow --------------------------------------------------------------
 function show(view) {
   $("login-view").classList.toggle("hidden", view !== "login");
+  $("register-view").classList.toggle("hidden", view !== "register");
   $("app-view").classList.toggle("hidden", view !== "app");
 }
 
 async function boot() {
   me = myInspector();
   if (!me) { show("login"); return; }
+  if (!me.name) { show("register"); return; }
   show("app");
   $("me-name").textContent = me.name;
-  const g = me.role === "admin" ? "admin" : (me.gender || "admin");
-  $("me-badge").textContent = me.role === "admin" ? "Admin" : (me.gender || "");
+  const g = me.role === "admin" ? "admin" : me.role === "handler" ? "handler" : (me.gender || "admin");
+  $("me-badge").textContent = me.role === "admin" ? "Admin" : me.role === "handler" ? "Handler" : (me.gender || "");
   $("me-badge").className = `gender-badge ${g}`;
   $("f-gender").classList.toggle("hidden", me.role !== "admin");
   $("pw-hint").classList.toggle("hidden", me.role === "admin" || !!localStorage.getItem("lcic-dorm-pw-hint"));
@@ -280,9 +307,79 @@ async function loadData() {
 
 // ---- rendering --------------------------------------------------------------
 function render() {
+  const handler = me && me.role === "handler";
+  $("handler-view").classList.toggle("hidden", !handler);
+  $("summary-bar").classList.toggle("hidden", handler);
+  $("filters").classList.toggle("hidden", handler);
+  $("rooms").classList.toggle("hidden", handler);
+  if (handler) {
+    $("admin-dash").classList.add("hidden");
+    $("empty").classList.add("hidden");
+    renderHandlerView();
+    return;
+  }
   renderSummary();
   renderAdminDashboard();
   renderRooms();
+}
+
+// ---- handler view (issue resolution) ----------------------------------------
+function renderHandlerView() {
+  const open = [], done = [];
+  for (const r of rooms) {
+    const rec = latest.get(r.id);
+    if (rec && rec.has_issues) (rec.resolved ? done : open).push({ r, rec });
+  }
+  const cardHtml = ({ r, rec }, resolved) => {
+    const probs = (rec.items || []).filter((i) => i.status === "problem");
+    return `<div class="issue-card ${resolved ? "done" : ""}">
+      <div class="issue-head"><b>${esc(r.room_number)}</b>
+        <span>${esc(r.building)}${r.floor ? " · Floor " + r.floor : ""} · found by ${esc(rec.inspector_name || "")} · ${formatDate(rec.inspected_at)}</span></div>
+      ${probs.map((pp) => `<div class="issue-item">⚠️ <b>${esc(SHORT[pp.key] || pp.key)}</b>${pp.detail ? ` — ${esc(pp.detail)}` : ""}</div>`).join("")}
+      ${rec.general_note ? `<div class="issue-item" style="color:var(--text-faint)">📝 ${esc(rec.general_note)}</div>` : ""}
+      ${resolved
+        ? `<div class="resolved-line">✅ Resolved by ${esc(rec.resolved_by || "")} · ${formatDate(rec.resolved_at)}${rec.resolution_note ? ` — ${esc(rec.resolution_note)}` : ""} <button class="link-btn" data-reopen="${rec.id}">Reopen</button></div>`
+        : `<div style="margin-top:9px;"><button class="btn-primary resolve-btn" data-id="${rec.id}" data-room="${esc(r.room_number)}">✅ Mark resolved</button></div>`}
+    </div>`;
+  };
+  $("handler-view").innerHTML = `
+    <div class="dash-head"><div><h3 class="dash-title">Issues to fix</h3></div>
+      <label style="font-size:.82rem; color:var(--text-dim); display:flex; align-items:center; gap:6px;">
+        <input type="checkbox" id="show-resolved" ${filters.showResolved ? "checked" : ""}> Show resolved</label></div>
+    <div class="panel"><h4>Open (${open.length})</h4>
+      ${open.length ? open.map((x) => cardHtml(x, false)).join("") : `<div class="muted">No open issues 🎉</div>`}</div>
+    ${filters.showResolved ? `<div class="panel"><h4>Resolved (${done.length})</h4>
+      ${done.length ? done.map((x) => cardHtml(x, true)).join("") : `<div class="muted">None yet.</div>`}</div>` : ""}`;
+  $("show-resolved").addEventListener("change", (e) => { filters.showResolved = e.target.checked; renderHandlerView(); });
+  $("handler-view").querySelectorAll(".resolve-btn").forEach((b) =>
+    b.addEventListener("click", () => openResolve(b.dataset.id, b.dataset.room)));
+  $("handler-view").querySelectorAll("[data-reopen]").forEach((b) =>
+    b.addEventListener("click", async () => {
+      try { await reopenIssue(b.dataset.reopen); showToast("Reopened", "success"); await loadData(); }
+      catch (err) { showToast(err.message || "Failed", "error"); }
+    }));
+}
+
+function openResolve(inspectionId, roomNum) {
+  root.innerHTML = `<div class="modal-bg"><div class="modal" style="max-width:420px;">
+    <h3 style="font-size:1.15rem;">Resolve — Room ${esc(roomNum)}</h3>
+    <div class="sub">What did you fix? (optional)</div>
+    <textarea id="res-note" class="gnote" placeholder="e.g. Replaced aircon remote, fixed door lock"></textarea>
+    <div class="save-bar"><div class="save-row">
+      <button id="res-cancel" class="btn-ghost">Cancel</button>
+      <button id="res-save" class="btn-primary">✅ Mark resolved</button>
+    </div></div>
+  </div></div>`;
+  const close = () => (root.innerHTML = "");
+  root.querySelector("#res-cancel").onclick = close;
+  root.querySelector(".modal-bg").onclick = (e) => { if (e.target.classList.contains("modal-bg")) close(); };
+  root.querySelector("#res-save").onclick = async () => {
+    const btn = root.querySelector("#res-save"); btn.disabled = true;
+    try {
+      await resolveIssue(inspectionId, root.querySelector("#res-note").value);
+      close(); showToast("Issue resolved", "success"); await loadData();
+    } catch (err) { btn.disabled = false; showToast(err.message || "Failed", "error"); }
+  };
 }
 
 // ---- admin dashboard --------------------------------------------------------
@@ -290,7 +387,7 @@ const SHORT = { aircon:"Aircon", electrical:"Electrical", openings:"Doors/Win/Sa
                 furniture:"Furniture", structure:"Walls/Floor", other:"Clean/Other" };
 const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 
-function donutCard(title, done, total, issues, occupied) {
+function donutCard(title, done, total, issues, occupied, resolved) {
   const deg = total ? Math.round(done / total * 360) : 0;
   const pct = total ? Math.round(done / total * 100) : 0;
   return `<div class="chart-card"><div class="chart-title">${title}</div>
@@ -301,7 +398,8 @@ function donutCard(title, done, total, issues, occupied) {
       <span><i class="dot" style="background:var(--accent)"></i>Inspected ${done}</span>
       <span><i class="dot" style="background:#d97706"></i>Occupied ${occupied}</span>
       <span><i class="dot" style="background:var(--hairline-strong)"></i>Remaining ${total - done - occupied}</span>
-      <span><i class="dot" style="background:#dc2626"></i>Issues ${issues}</span>
+      <span><i class="dot" style="background:#dc2626"></i>Open issues ${issues}</span>
+      <span><i class="dot" style="background:#0d9488"></i>Resolved ${resolved}</span>
     </div></div>`;
 }
 function barsCard(title, rows) {
@@ -328,7 +426,7 @@ function renderAdminDashboard() {
   if (!isAdmin) return;
 
   const total = rooms.length;
-  let inspected = 0, issues = 0, occupied = 0;
+  let inspected = 0, openIssues = 0, resolvedIssues = 0, occupied = 0;
   const buildings = {}, insMap = {};
   const cats = CHECK_ITEMS.map((ci) => ({ key: ci.key, short: SHORT[ci.key] || ci.key, count: 0 }));
   const cix = Object.fromEntries(cats.map((c, i) => [c.key, i]));
@@ -346,13 +444,16 @@ function renderAdminDashboard() {
     } else {
       inspected++; buildings[b].inspected++;
       if (u) insMap[u].inspected++;
-      if (rec.has_issues) { issues++; if (u) insMap[u].issues++; }
-      (rec.items || []).forEach((it) => { if (it.status === "problem" && it.key in cix) cats[cix[it.key]].count++; });
+      if (rec.has_issues) {
+        if (u) insMap[u].issues++;
+        if (rec.resolved) resolvedIssues++; else openIssues++;
+        (rec.items || []).forEach((it) => { if (it.status === "problem" && it.key in cix) cats[cix[it.key]].count++; });
+      }
     }
   }
 
   $("charts").innerHTML =
-    donutCard("Overall progress", inspected, total, issues, occupied) +
+    donutCard("Overall progress", inspected, total, openIssues, occupied, resolvedIssues) +
     barsCard("Progress by building", Object.entries(buildings).sort().map(([label, v]) => ({ label, inspected: v.inspected, total: v.total }))) +
     catCard("Issues by item", cats);
 
@@ -365,13 +466,15 @@ function renderAdminDashboard() {
           <span class="pbar"><span class="pbar-fill" style="width:${p}%"></span><em>${p}%</em></span></div>`; }).join("")}
     </div>`;
 
-  const issueRooms = rooms.filter((r) => latest.get(r.id)?.has_issues);
-  $("issues-list").innerHTML = `<h4>Issues found (${issueRooms.length})</h4>` +
+  const issueRooms = rooms.filter((r) => latest.get(r.id)?.has_issues)
+    .sort((a, b) => (latest.get(a.id).resolved ? 1 : 0) - (latest.get(b.id).resolved ? 1 : 0));
+  $("issues-list").innerHTML = `<h4>Issues found (${openIssues} open · ${resolvedIssues} resolved)</h4>` +
     (issueRooms.length ? issueRooms.map((r) => { const rec = latest.get(r.id);
       const probs = (rec.items || []).filter((i) => i.status === "problem");
-      return `<div class="issue-card"><div class="issue-head"><b>${esc(r.room_number)}</b>
+      return `<div class="issue-card ${rec.resolved ? "done" : ""}"><div class="issue-head"><b>${esc(r.room_number)}</b>
         <span>${esc(r.building)} · ${esc(rec.inspector_name || "")} · ${formatDate(rec.inspected_at)}</span></div>
-        ${probs.map((pp) => `<div class="issue-item">⚠️ ${esc(SHORT[pp.key] || pp.key)}${pp.detail ? ` — ${esc(pp.detail)}` : ""}</div>`).join("")}</div>`;
+        ${probs.map((pp) => `<div class="issue-item">⚠️ ${esc(SHORT[pp.key] || pp.key)}${pp.detail ? ` — ${esc(pp.detail)}` : ""}</div>`).join("")}
+        ${rec.resolved ? `<div class="resolved-line">✅ Resolved by ${esc(rec.resolved_by || "")} · ${formatDate(rec.resolved_at)}${rec.resolution_note ? ` — ${esc(rec.resolution_note)}` : ""}</div>` : ""}</div>`;
     }).join("") : `<div class="muted">No issues reported yet.</div>`);
 
   const pd = $("print-date");
@@ -380,10 +483,11 @@ function renderAdminDashboard() {
 
 function renderSummary() {
   const total = rooms.length;
-  let ok = 0, issue = 0, none = 0, occ = 0;
+  let ok = 0, issue = 0, none = 0, occ = 0, resolved = 0;
   for (const r of rooms) {
     const s = statusOf(r);
     if (s === "ok") ok++; else if (s === "issue") issue++;
+    else if (s === "resolved") resolved++;
     else if (s === "occupied") occ++; else none++;
   }
   const chip = (key, dot, label, n) =>
@@ -393,6 +497,7 @@ function renderSummary() {
     chip("", "all", "Total", total) +
     chip("ok", "ok", "OK", ok) +
     chip("issue", "issue", "Issues", issue) +
+    chip("resolved", "resolved", "Resolved", resolved) +
     chip("occupied", "occupied", "Occupied", occ) +
     chip("none", "none", "Not inspected", none);
   $("summary-bar").querySelectorAll(".chip").forEach((c) =>
@@ -425,7 +530,7 @@ function renderRooms() {
     const typeShort = r.room_type === "quad" ? "4-person" : "Single";
     const meta = [r.building, typeShort].filter(Boolean).join(" · ");
     const last = rec ? `Last: ${formatDate(rec.inspected_at)} · ${esc(rec.inspector_name || "")}` : "";
-    return `<div class="room ${s === "issue" ? "issue" : s === "occupied" ? "occupied" : ""}" data-id="${r.id}">
+    return `<div class="room ${s === "issue" ? "issue" : s === "occupied" ? "occupied" : s === "resolved" ? "resolved" : ""}" data-id="${r.id}">
       <div class="rnum">${esc(r.room_number)}</div>
       <div class="rmeta">${esc(meta) || "&nbsp;"}</div>
       <div class="status s-${s}"><span class="dot ${s === "none" ? "none" : s}"></span>${STATUS_LABEL[s]}</div>
@@ -608,12 +713,27 @@ $("login-form").addEventListener("submit", async (e) => {
     await boot();
   } catch (err) { showToast(`Sign in failed: ${err.message}`, "error"); }
 });
+$("register-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const name = $("reg-name").value.trim();
+  if (!name) return;
+  try { await setInspectorName(name); await boot(); }
+  catch (err) { showToast(err.message || "Failed", "error"); }
+});
 $("logout-btn").addEventListener("click", () => { logout(); me = null; show("login"); });
 $("pw-hint-x").addEventListener("click", () => {
   localStorage.setItem("lcic-dorm-pw-hint", "1");
   $("pw-hint").classList.add("hidden");
 });
 $("print-btn").addEventListener("click", () => window.print());
+$("refresh-btn").addEventListener("click", async () => {
+  const b = $("refresh-btn"); b.disabled = true;
+  try { await loadData(); showToast("Updated", "success"); } finally { b.disabled = false; }
+});
+// auto-refresh: on tab focus / return, and every 60s while idle (skip if a modal is open)
+document.addEventListener("visibilitychange", () => { if (!document.hidden && me) loadData(); });
+window.addEventListener("focus", () => { if (me) loadData(); });
+setInterval(() => { if (me && !root.innerHTML && document.visibilityState === "visible") loadData(); }, 60000);
 
 $("f-search").addEventListener("input", (e) => { filters.q = e.target.value; renderRooms(); });
 $("f-building").addEventListener("change", (e) => { filters.building = e.target.value; renderRooms(); });
