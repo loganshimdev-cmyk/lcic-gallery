@@ -49,6 +49,9 @@
   .status.s-none  { background:rgba(148,163,184,.14); color:#64748b; }
   .status.s-ok    { background:rgba(22,163,74,.12);  color:#15803d; }
   .status.s-issue { background:rgba(220,38,38,.10);  color:#b91c1c; }
+  .status.s-occupied { background:rgba(217,119,6,.12); color:#b45309; }
+  .dot.occupied { background:#d97706; }
+  .room.occupied { border-color:rgba(217,119,6,.35); }
   .room .last { font-size:.72rem; color:var(--text-faint); margin-top:8px; }
   .room.issue { border-color:rgba(220,38,38,.35); }
   .empty { text-align:center; color:var(--text-faint); padding:60px 20px; }
@@ -78,8 +81,11 @@
   .gnote { width:100%; padding:12px 14px; border:1px solid var(--hairline); border-radius:12px; font-family:inherit; font-size:.9rem; box-sizing:border-box; resize:vertical; min-height:64px; background:#f8fafc; }
   .gnote:focus { outline:none; border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px var(--accent-soft); }
 
-  .save-bar { position:sticky; bottom:0; background:#fff; padding:16px 0; margin-top:8px; display:flex; gap:10px; border-top:1px solid var(--hairline); }
-  .save-bar .btn-primary { flex:1; }
+  .save-bar { position:sticky; bottom:0; background:#fff; padding:16px 0; margin-top:8px; display:flex; flex-direction:column; gap:9px; border-top:1px solid var(--hairline); }
+  .save-row { display:flex; gap:10px; }
+  .save-row .btn-primary { flex:1; }
+  .occ-btn { width:100%; padding:11px; border-radius:12px; border:1px solid rgba(217,119,6,.45); background:rgba(217,119,6,.07); color:#b45309; font-weight:700; font-size:.9rem; font-family:inherit; cursor:pointer; }
+  .occ-btn:hover { background:rgba(217,119,6,.13); }
 
   /* read-only report */
   .rep-item { display:flex; gap:10px; padding:11px 0; border-top:1px solid var(--hairline); font-size:.88rem; }
@@ -116,7 +122,7 @@
   .panel { background:var(--bg-elev); border:1px solid var(--hairline); border-radius:16px; padding:16px 18px; margin-bottom:16px; }
   .panel h4 { font-size:.9rem; font-weight:700; margin-bottom:12px; }
   .ins-table { display:flex; flex-direction:column; }
-  .ins-row { display:grid; grid-template-columns:1.4fr .8fr .7fr .7fr .7fr 1.6fr; gap:8px; align-items:center; padding:8px 4px; border-top:1px solid var(--hairline); font-size:.82rem; font-variant-numeric:tabular-nums; }
+  .ins-row { display:grid; grid-template-columns:1.4fr .7fr .6fr .6fr .6fr .6fr 1.4fr; gap:8px; align-items:center; padding:8px 4px; border-top:1px solid var(--hairline); font-size:.82rem; font-variant-numeric:tabular-nums; }
   .ins-row.head { border-top:none; color:var(--text-faint); font-size:.72rem; text-transform:uppercase; letter-spacing:.03em; }
   .ins-row .uname { font-weight:600; }
   .ins-row .has { color:#dc2626; font-weight:700; }
@@ -202,6 +208,7 @@
       <option value="none">Not inspected</option>
       <option value="ok">OK</option>
       <option value="issue">Issues</option>
+      <option value="occupied">Occupied</option>
     </select>
   </div>
 
@@ -216,7 +223,7 @@
 import {
   myInspector, login, logout, changePassword,
   listRooms, listInspections, latestByRoom, saveInspection, CHECK_ITEMS,
-} from "./assets/room-check-data.js?v=4";
+} from "./assets/room-check-data.js?v=5";
 import { formatDate } from "./assets/supabase.js?v=4";
 
 const $ = (id) => document.getElementById(id);
@@ -236,9 +243,10 @@ const filters = { q: "", building: "", gender: "", status: "" };
 function statusOf(room) {
   const rec = latest.get(room.id);
   if (!rec) return "none";
+  if (rec.status === "occupied") return "occupied";
   return rec.has_issues ? "issue" : "ok";
 }
-const STATUS_LABEL = { none: "Not inspected", ok: "OK", issue: "Issues" };
+const STATUS_LABEL = { none: "Not inspected", ok: "OK", issue: "Issues", occupied: "Occupied" };
 
 // ---- auth flow --------------------------------------------------------------
 function show(view) {
@@ -282,7 +290,7 @@ const SHORT = { aircon:"Aircon", electrical:"Electrical", openings:"Doors/Win/Sa
                 furniture:"Furniture", structure:"Walls/Floor", other:"Clean/Other" };
 const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 
-function donutCard(title, done, total, issues) {
+function donutCard(title, done, total, issues, occupied) {
   const deg = total ? Math.round(done / total * 360) : 0;
   const pct = total ? Math.round(done / total * 100) : 0;
   return `<div class="chart-card"><div class="chart-title">${title}</div>
@@ -291,7 +299,8 @@ function donutCard(title, done, total, issues) {
     </div>
     <div class="chart-legend">
       <span><i class="dot" style="background:var(--accent)"></i>Inspected ${done}</span>
-      <span><i class="dot" style="background:var(--hairline-strong)"></i>Remaining ${total - done}</span>
+      <span><i class="dot" style="background:#d97706"></i>Occupied ${occupied}</span>
+      <span><i class="dot" style="background:var(--hairline-strong)"></i>Remaining ${total - done - occupied}</span>
       <span><i class="dot" style="background:#dc2626"></i>Issues ${issues}</span>
     </div></div>`;
 }
@@ -319,7 +328,7 @@ function renderAdminDashboard() {
   if (!isAdmin) return;
 
   const total = rooms.length;
-  let inspected = 0, issues = 0;
+  let inspected = 0, issues = 0, occupied = 0;
   const buildings = {}, insMap = {};
   const cats = CHECK_ITEMS.map((ci) => ({ key: ci.key, short: SHORT[ci.key] || ci.key, count: 0 }));
   const cix = Object.fromEntries(cats.map((c, i) => [c.key, i]));
@@ -330,8 +339,11 @@ function renderAdminDashboard() {
     buildings[b] ??= { inspected: 0, total: 0 };
     buildings[b].total++;
     const u = r.assigned_username;
-    if (u) { insMap[u] ??= { assigned: 0, inspected: 0, issues: 0 }; insMap[u].assigned++; }
-    if (rec) {
+    if (u) { insMap[u] ??= { assigned: 0, inspected: 0, issues: 0, occupied: 0 }; insMap[u].assigned++; }
+    if (!rec) continue;
+    if (rec.status === "occupied") {
+      occupied++; if (u) insMap[u].occupied++;
+    } else {
       inspected++; buildings[b].inspected++;
       if (u) insMap[u].inspected++;
       if (rec.has_issues) { issues++; if (u) insMap[u].issues++; }
@@ -340,16 +352,16 @@ function renderAdminDashboard() {
   }
 
   $("charts").innerHTML =
-    donutCard("Overall progress", inspected, total, issues) +
+    donutCard("Overall progress", inspected, total, issues, occupied) +
     barsCard("Progress by building", Object.entries(buildings).sort().map(([label, v]) => ({ label, inspected: v.inspected, total: v.total }))) +
     catCard("Issues by item", cats);
 
   const inspectors = Object.keys(insMap).sort();
   $("inspectors").innerHTML = `<h4>Per-inspector progress</h4>
     <div class="ins-table">
-      <div class="ins-row head"><span>Inspector</span><span>Assigned</span><span>Done</span><span>Left</span><span>Issues</span><span>Progress</span></div>
+      <div class="ins-row head"><span>Inspector</span><span>Assigned</span><span>Done</span><span>Occ.</span><span>Left</span><span>Issues</span><span>Progress</span></div>
       ${inspectors.map((u) => { const v = insMap[u]; const p = v.assigned ? Math.round(v.inspected / v.assigned * 100) : 0;
-        return `<div class="ins-row"><span class="uname">${esc(cap(u))}</span><span>${v.assigned}</span><span>${v.inspected}</span><span>${v.assigned - v.inspected}</span><span class="${v.issues ? "has" : ""}">${v.issues}</span>
+        return `<div class="ins-row"><span class="uname">${esc(cap(u))}</span><span>${v.assigned}</span><span>${v.inspected}</span><span>${v.occupied || 0}</span><span>${v.assigned - v.inspected - (v.occupied || 0)}</span><span class="${v.issues ? "has" : ""}">${v.issues}</span>
           <span class="pbar"><span class="pbar-fill" style="width:${p}%"></span><em>${p}%</em></span></div>`; }).join("")}
     </div>`;
 
@@ -368,10 +380,11 @@ function renderAdminDashboard() {
 
 function renderSummary() {
   const total = rooms.length;
-  let ok = 0, issue = 0, none = 0;
+  let ok = 0, issue = 0, none = 0, occ = 0;
   for (const r of rooms) {
     const s = statusOf(r);
-    if (s === "ok") ok++; else if (s === "issue") issue++; else none++;
+    if (s === "ok") ok++; else if (s === "issue") issue++;
+    else if (s === "occupied") occ++; else none++;
   }
   const chip = (key, dot, label, n) =>
     `<div class="chip ${filters.status === key ? "active" : ""}" data-status="${key}">
@@ -380,6 +393,7 @@ function renderSummary() {
     chip("", "all", "Total", total) +
     chip("ok", "ok", "OK", ok) +
     chip("issue", "issue", "Issues", issue) +
+    chip("occupied", "occupied", "Occupied", occ) +
     chip("none", "none", "Not inspected", none);
   $("summary-bar").querySelectorAll(".chip").forEach((c) =>
     c.addEventListener("click", () => {
@@ -411,7 +425,7 @@ function renderRooms() {
     const typeShort = r.room_type === "quad" ? "4-person" : "Single";
     const meta = [r.building, typeShort].filter(Boolean).join(" · ");
     const last = rec ? `Last: ${formatDate(rec.inspected_at)} · ${esc(rec.inspector_name || "")}` : "";
-    return `<div class="room ${s === "issue" ? "issue" : ""}" data-id="${r.id}">
+    return `<div class="room ${s === "issue" ? "issue" : s === "occupied" ? "occupied" : ""}" data-id="${r.id}">
       <div class="rnum">${esc(r.room_number)}</div>
       <div class="rmeta">${esc(meta) || "&nbsp;"}</div>
       <div class="status s-${s}"><span class="dot ${s === "none" ? "none" : s}"></span>${STATUS_LABEL[s]}</div>
@@ -449,8 +463,11 @@ function openInspectForm(room) {
     <label style="font-size:.78rem; color:var(--text-dim); display:block; margin:6px 0 8px;">General note (optional)</label>
     <textarea id="gnote" class="gnote" placeholder="Anything else about this cluster…">${esc(gnote)}</textarea>
     <div class="save-bar">
-      <button id="cancel" class="btn-ghost">Cancel</button>
-      <button id="save" class="btn-primary">Save inspection</button>
+      <button id="occupied" class="occ-btn">🚪 Someone inside — can't check now</button>
+      <div class="save-row">
+        <button id="cancel" class="btn-ghost">Cancel</button>
+        <button id="save" class="btn-primary">Save inspection</button>
+      </div>
     </div>
   </div></div>`;
 
@@ -502,6 +519,19 @@ function openInspectForm(room) {
       showToast(err.message || "Save failed", "error");
     }
   };
+  root.querySelector("#occupied").onclick = async () => {
+    const btn = root.querySelector("#occupied");
+    btn.disabled = true;
+    try {
+      await saveInspection({ room_id: room.id, items: [], general_note: root.querySelector("#gnote").value, status: "occupied" });
+      close();
+      showToast("Marked as occupied — check again later", "success");
+      await loadData();
+    } catch (err) {
+      btn.disabled = false;
+      showToast(err.message || "Save failed", "error");
+    }
+  };
 }
 
 // ---- read-only report (admin) ----------------------------------------------
@@ -513,6 +543,11 @@ function openReport(room) {
   let body;
   if (!rec) {
     body = `<div class="empty" style="padding:40px 10px;">Not inspected yet.</div>`;
+  } else if (rec.status === "occupied") {
+    const gnote = rec.general_note ? `<div class="rd" style="margin-top:10px;"><b>Note:</b> ${esc(rec.general_note)}</div>` : "";
+    body = `<div style="font-size:.82rem; color:var(--text-faint); margin-bottom:10px;">
+        ${formatDate(rec.inspected_at)} by ${esc(rec.inspector_name || "")}</div>
+      <div class="status s-occupied" style="display:inline-flex; gap:6px;"><span class="dot occupied"></span>Occupied — could not inspect</div>${gnote}`;
   } else {
     const items = Array.isArray(rec.items) ? rec.items : [];
     const rows = items.map((it) => `
