@@ -137,6 +137,11 @@
   .pbar-fill { position:absolute; left:0; top:0; height:100%; background:var(--accent); border-radius:8px; }
   .pbar em { position:relative; margin-left:8px; font-style:normal; font-size:.7rem; color:var(--text); z-index:1; }
 
+  .icat-bar { display:flex; flex-wrap:wrap; gap:8px; margin:2px 0 14px; }
+  .icat { border:1px solid var(--hairline); background:var(--bg-elev); border-radius:999px; padding:6px 13px; font-size:.8rem; cursor:pointer; color:var(--text-dim); font-family:inherit; }
+  .icat:hover { border-color:var(--accent); }
+  .icat.on { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .icat b { font-weight:700; }
   .issue-card { border-top:1px solid var(--hairline); padding:11px 0; }
   .issue-head { display:flex; gap:10px; align-items:baseline; flex-wrap:wrap; margin-bottom:5px; }
   .issue-head b { font-size:1rem; }
@@ -147,7 +152,7 @@
 
   @media print {
     body { background:#fff; }
-    .topbar .who, #pw-hint, .filters, #rooms, #empty, #summary-bar, #print-btn, .toast { display:none !important; }
+    .topbar .who, #pw-hint, .filters, #rooms, #empty, #summary-bar, #print-btn, .toast, .icat-bar { display:none !important; }
     main { max-width:none; padding:0; }
     #admin-dash { display:block !important; margin:0; }
     .chart-card, .panel, .issue-card, .ins-row { break-inside:avoid; }
@@ -386,6 +391,7 @@ function openResolve(inspectionId, roomNum) {
 const SHORT = { aircon:"Aircon", electrical:"Electrical", openings:"Doors/Win/Safe",
                 furniture:"Furniture", structure:"Walls/Floor", other:"Clean/Other" };
 const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
+let adminIssueCat = "";  // "" = all; otherwise a CHECK_ITEMS key
 
 function donutCard(title, inspected, occupied, total, issues, resolved) {
   const handled = inspected + occupied;
@@ -469,16 +475,33 @@ function renderAdminDashboard() {
           <span class="pbar"><span class="pbar-fill" style="width:${p}%"></span><em>${p}%</em></span></div>`; }).join("")}
     </div>`;
 
-  const issueRooms = rooms.filter((r) => latest.get(r.id)?.has_issues)
+  const issueRoomsAll = rooms.filter((r) => latest.get(r.id)?.has_issues);
+  // how many issue rooms have a problem of each category
+  const catRoom = {}; CHECK_ITEMS.forEach((ci) => (catRoom[ci.key] = 0));
+  issueRoomsAll.forEach((r) => {
+    new Set((latest.get(r.id).items || []).filter((i) => i.status === "problem").map((i) => i.key))
+      .forEach((k) => { if (k in catRoom) catRoom[k]++; });
+  });
+  const chip = (key, label, n) =>
+    `<button class="icat ${adminIssueCat === key ? "on" : ""}" data-cat="${key}">${esc(label)} <b>${n}</b></button>`;
+  const chipsHtml = `<div class="icat-bar">` + chip("", "All", issueRoomsAll.length) +
+    CHECK_ITEMS.filter((ci) => catRoom[ci.key] > 0).map((ci) => chip(ci.key, SHORT[ci.key] || ci.key, catRoom[ci.key])).join("") + `</div>`;
+
+  const list = (adminIssueCat
+    ? issueRoomsAll.filter((r) => (latest.get(r.id).items || []).some((i) => i.status === "problem" && i.key === adminIssueCat))
+    : issueRoomsAll)
     .sort((a, b) => (latest.get(a.id).resolved ? 1 : 0) - (latest.get(b.id).resolved ? 1 : 0));
-  $("issues-list").innerHTML = `<h4>Issues found (${openIssues} open · ${resolvedIssues} resolved)</h4>` +
-    (issueRooms.length ? issueRooms.map((r) => { const rec = latest.get(r.id);
-      const probs = (rec.items || []).filter((i) => i.status === "problem");
+
+  $("issues-list").innerHTML = `<h4>Issues found (${openIssues} open · ${resolvedIssues} resolved)</h4>` + chipsHtml +
+    (list.length ? list.map((r) => { const rec = latest.get(r.id);
+      const probs = (rec.items || []).filter((i) => i.status === "problem" && (!adminIssueCat || i.key === adminIssueCat));
       return `<div class="issue-card ${rec.resolved ? "done" : ""}"><div class="issue-head"><b>${esc(r.room_number)}</b>
         <span>${esc(r.building)} · ${esc(rec.inspector_name || "")} · ${formatDate(rec.inspected_at)}</span></div>
         ${probs.map((pp) => `<div class="issue-item">⚠️ ${esc(SHORT[pp.key] || pp.key)}${pp.detail ? ` — ${esc(pp.detail)}` : ""}</div>`).join("")}
         ${rec.resolved ? `<div class="resolved-line">✅ Resolved by ${esc(rec.resolved_by || "")} · ${formatDate(rec.resolved_at)}${rec.resolution_note ? ` — ${esc(rec.resolution_note)}` : ""}</div>` : ""}</div>`;
-    }).join("") : `<div class="muted">No issues reported yet.</div>`);
+    }).join("") : `<div class="muted">No issues in this category.</div>`);
+  $("issues-list").querySelectorAll(".icat").forEach((c) =>
+    c.addEventListener("click", () => { adminIssueCat = c.dataset.cat; renderAdminDashboard(); }));
 
   const pd = $("print-date");
   if (pd && !pd.textContent) pd.textContent = new Date().toLocaleDateString();
