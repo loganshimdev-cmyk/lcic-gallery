@@ -1,4 +1,4 @@
-import { listTasks, listMembers, createTask, moveTask } from "./team-data.js";
+import { listTasks, listMembers, createTask, moveTask, commentCounts } from "./team-data.js";
 import { bucketTasks, isOverdue, ymd, isNew } from "./team-util.js";
 import { openTaskDetail } from "./team-board-detail.js";
 import { getLastVisit } from "./team-summary.js";
@@ -7,7 +7,7 @@ const COLS = [["todo", "할 일"], ["doing", "진행중"], ["done", "완료"]];
 let state = { mineOnly: false, hideDone: false };
 
 export async function initBoard({ me, container, onChange }) {
-  const [tasks, members] = await Promise.all([listTasks(), listMembers()]);
+  const [tasks, members, counts] = await Promise.all([listTasks(), listMembers(), commentCounts()]);
   const memberById = Object.fromEntries(members.map((m) => [m.id, m]));
   const today = ymd(new Date());
   const lastVisit = getLastVisit();
@@ -28,7 +28,7 @@ export async function initBoard({ me, container, onChange }) {
           return `<div class="col"><h3>${label}</h3><div style="color:var(--text-faint);font-size:.75rem;padding:8px;">숨김</div></div>`;
         }
         return `<div class="col" data-col="${key}"><h3>${label} (${buckets[key].length})</h3>
-          ${buckets[key].map((t) => cardHtml(t, memberById, today, lastVisit)).join("")}
+          ${buckets[key].map((t) => cardHtml(t, memberById, today, lastVisit, counts)).join("")}
         </div>`;
       }).join("")}
     </div>`;
@@ -42,15 +42,17 @@ export async function initBoard({ me, container, onChange }) {
   });
 }
 
-function cardHtml(t, memberById, today, lastVisit) {
+function cardHtml(t, memberById, today, lastVisit, counts = {}) {
   const m = t.assignee_id ? memberById[t.assignee_id] : null;
   const overdue = isOverdue(t.due_date, today, t.status);
   const fresh = isNew(t.updated_at || t.created_at, lastVisit);
+  const cc = counts[t.id] || 0;
   return `<div class="card" data-id="${t.id}">
     <div style="font-weight:600; font-size:.9rem;">${escapeHtml(t.title)}${fresh ? '<span class="new-badge">NEW</span>' : ""}</div>
     <div class="meta">
       ${m ? `<span class="badge"><span class="swatch" style="background:${m.color}"></span>${escapeHtml(memberLabel(m))}</span>` : `<span class="badge" style="color:var(--text-faint)">미지정</span>`}
       ${t.due_date ? `<span class="${overdue ? "overdue" : ""}">예정 ${md(t.due_date)}${t.due_time ? " " + t.due_time.slice(0, 5) : ""}</span>` : ""}
+      ${cc ? `<span style="color:var(--accent); font-weight:600;">댓글 ${cc}</span>` : ""}
       <span style="color:var(--text-faint)">${md(t.created_at)} 기록</span>
     </div>
   </div>`;
