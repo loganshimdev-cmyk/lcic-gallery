@@ -46,6 +46,18 @@ export async function login(username, password) {
 
 export function logout() { localStorage.removeItem(SESSION_KEY); }
 
+// First-login: set the account's display name (so their work is credited).
+export async function setInspectorName(name) {
+  const me = myInspector();
+  if (!me) throw new Error("Please sign in first.");
+  const clean = name.trim();
+  const { error } = await db.rpc("set_inspector_name", { p_id: me.id, p_name: clean });
+  if (error) throw error;
+  const updated = { ...me, name: clean };
+  localStorage.setItem(SESSION_KEY, JSON.stringify(updated));
+  return updated;
+}
+
 export async function changePassword(oldPw, newPw) {
   const me = myInspector();
   if (!me) throw new Error("Please sign in first.");
@@ -63,7 +75,7 @@ export async function changePassword(oldPw, newPw) {
 // to them (dorm_rooms.assigned_username); admins (role 'admin') see every room.
 export async function listRooms(me) {
   let q = db.from("dorm_rooms").select("*").eq("active", true);
-  if (me && me.role !== "admin") q = q.eq("assigned_username", me.username);
+  if (me && me.role === "inspector") q = q.eq("assigned_username", me.username);
   const { data, error } = await q
     .order("building", { ascending: true })
     .order("sort", { ascending: true })
@@ -111,4 +123,24 @@ export async function saveInspection({ room_id, items, general_note, status = "i
   });
   if (error) throw error;
   return { has_issues, status };
+}
+
+// ---- issue resolution (handlers) --------------------------------------------
+
+// Mark an inspection's issues as resolved (handler fixed them).
+export async function resolveIssue(inspectionId, note) {
+  const me = myInspector();
+  if (!me) throw new Error("Please sign in first.");
+  const { data, error } = await db.rpc("resolve_issue", {
+    p_inspection_id: inspectionId, p_by: me.name || me.username, p_note: note || "",
+  });
+  if (error) throw error;
+  return data;
+}
+
+// Reopen a resolved issue.
+export async function reopenIssue(inspectionId) {
+  const { data, error } = await db.rpc("reopen_issue", { p_inspection_id: inspectionId });
+  if (error) throw error;
+  return data;
 }
