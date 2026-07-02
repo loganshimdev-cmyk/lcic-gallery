@@ -92,20 +92,23 @@ export function latestByRoom(inspections) {
   return map;
 }
 
-// Save one inspection. `items` is the full CHECK_ITEMS-shaped array with
-// { key, label, status, detail }. has_issues is derived from the items.
-export async function saveInspection({ room_id, items, general_note }) {
+// Save one inspection. status 'inspected' (normal) or 'occupied' (someone inside,
+// couldn't check). For 'occupied' the checklist is skipped. has_issues is derived
+// from the items when inspected.
+export async function saveInspection({ room_id, items, general_note, status = "inspected" }) {
   const me = myInspector();
   if (!me) throw new Error("Please sign in first.");
-  const has_issues = items.some((it) => it.status === "problem");
+  const occupied = status === "occupied";
+  const has_issues = !occupied && items.some((it) => it.status === "problem");
   const { error } = await db.from("dorm_inspections").insert({
     room_id,
     inspector_id: me.id,
     inspector_name: me.name,
-    items,
+    items: occupied ? [] : items,
     general_note: general_note || null,
     has_issues,
+    status,
   });
   if (error) throw error;
-  return has_issues;
+  return { has_issues, status };
 }
