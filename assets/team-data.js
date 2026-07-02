@@ -113,6 +113,15 @@ export async function listComments(taskId) {
   return data ?? [];
 }
 
+// 할 일별 댓글 수 { task_id: count }
+export async function commentCounts() {
+  const { data, error } = await db.from("team_comments").select("task_id");
+  if (error) throw error;
+  const map = {};
+  for (const c of data ?? []) map[c.task_id] = (map[c.task_id] || 0) + 1;
+  return map;
+}
+
 export async function addComment(taskId, body) {
   const me = await myMember();
   const { error } = await db.from("team_comments")
