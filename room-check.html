@@ -335,6 +335,8 @@ function renderHandlerView() {
     const rec = latest.get(r.id);
     if (rec && rec.has_issues) (rec.resolved ? done : open).push({ r, rec });
   }
+  open.sort((a, b) => roomKey(a.r) - roomKey(b.r));
+  done.sort((a, b) => roomKey(a.r) - roomKey(b.r));
   const cardHtml = ({ r, rec }, resolved) => {
     const probs = (rec.items || []).filter((i) => i.status === "problem");
     return `<div class="issue-card ${resolved ? "done" : ""}">
@@ -392,6 +394,11 @@ const SHORT = { aircon:"Aircon", electrical:"Electrical", openings:"Doors/Win/Sa
                 furniture:"Furniture", structure:"Walls/Floor", other:"Clean/Other" };
 const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 let adminIssueCat = "";  // "" = all; otherwise a CHECK_ITEMS key
+// numeric sort key for room numbers like "104-7" -> 10407 (ascending order)
+function roomKey(r) {
+  const [a, b] = String(r.room_number).split("-");
+  return (parseInt(a, 10) || 0) * 100 + (parseInt(b, 10) || 0);
+}
 
 function donutCard(title, inspected, occupied, total, issues, resolved) {
   const handled = inspected + occupied;
@@ -490,7 +497,7 @@ function renderAdminDashboard() {
   const list = (adminIssueCat
     ? issueRoomsAll.filter((r) => (latest.get(r.id).items || []).some((i) => i.status === "problem" && i.key === adminIssueCat))
     : issueRoomsAll)
-    .sort((a, b) => (latest.get(a.id).resolved ? 1 : 0) - (latest.get(b.id).resolved ? 1 : 0));
+    .sort((a, b) => roomKey(a) - roomKey(b));
 
   $("issues-list").innerHTML = `<h4>Issues found (${openIssues} open · ${resolvedIssues} resolved)</h4>` + chipsHtml +
     (list.length ? list.map((r) => { const rec = latest.get(r.id);
