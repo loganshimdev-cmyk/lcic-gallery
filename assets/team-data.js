@@ -113,6 +113,11 @@ export async function listComments(taskId) {
   return data ?? [];
 }
 
+export async function updateComment(id, body) {
+  const { error } = await db.from("team_comments").update({ body: body.trim() }).eq("id", id);
+  if (error) throw error;
+}
+
 // 할 일별 댓글 수 { task_id: count }
 export async function commentCounts() {
   const { data, error } = await db.from("team_comments").select("task_id");

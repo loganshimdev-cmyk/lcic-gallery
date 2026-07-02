@@ -1,4 +1,4 @@
-import { listTasks, listComments, addComment, updateTask, moveTask, deleteTask } from "./team-data.js";
+import { listTasks, listComments, addComment, updateComment, updateTask, moveTask, deleteTask } from "./team-data.js";
 import { escapeHtml, memberLabel } from "./team-board.js";
 
 export async function openTaskDetail({ taskId, me, members, onChange }) {
@@ -25,7 +25,7 @@ export async function openTaskDetail({ taskId, me, members, onChange }) {
     ${t.status === "done" && t.done_by ? `<div style="font-size:.75rem; color:var(--text-faint); margin-bottom:8px;">✓ ${escapeHtml(memberLabel(memberById[t.done_by]))} 완료</div>` : ""}
 
     <div style="font-size:.8rem; color:var(--text-dim); margin:10px 0 4px;">코멘트</div>
-    <div id="d-comments">${comments.map((c) => commentHtml(c, memberById)).join("") || '<div style="color:var(--text-faint);font-size:.8rem;">아직 없음</div>'}</div>
+    <div id="d-comments">${comments.map((c) => commentHtml(c, memberById, me)).join("") || '<div style="color:var(--text-faint);font-size:.8rem;">아직 없음</div>'}</div>
     <div style="display:flex; gap:6px; margin-top:8px;">
       <input id="d-comment" placeholder="한 줄 남기기…" style="flex:1; margin:0;" />
       <button id="d-add-comment" class="btn-primary">등록</button>
@@ -77,6 +77,31 @@ export async function openTaskDetail({ taskId, me, members, onChange }) {
       openTaskDetail({ taskId, me, members, onChange }); // 다시 그려 코멘트 갱신
     } catch (err) { window.__toast(err.message || "코멘트 등록 실패", "error"); }
   };
+
+  // 본인 코멘트 인라인 수정
+  root.querySelectorAll(".c-edit").forEach((b) => b.onclick = () => {
+    const cid = b.dataset.cid;
+    const c = comments.find((x) => x.id === cid);
+    if (!c) return;
+    const bodyEl = root.querySelector(`.comment[data-cid="${cid}"] .c-body`);
+    bodyEl.innerHTML = `<textarea class="c-edit-input" rows="2">${escapeHtml(c.body)}</textarea>
+      <div style="display:flex; gap:6px; justify-content:flex-end;">
+        <button class="c-edit-cancel btn-ghost" style="font-size:.72rem; padding:4px 12px;">취소</button>
+        <button class="c-edit-save btn-primary" style="font-size:.72rem; padding:4px 12px;">저장</button>
+      </div>`;
+    const input = bodyEl.querySelector(".c-edit-input");
+    input.focus();
+    bodyEl.querySelector(".c-edit-cancel").onclick = () => openTaskDetail({ taskId, me, members, onChange });
+    bodyEl.querySelector(".c-edit-save").onclick = async () => {
+      const nv = input.value.trim();
+      if (!nv) return window.__toast("내용을 입력하세요", "error");
+      try {
+        await updateComment(cid, nv);
+        window.__toast("코멘트 수정했어요", "success");
+        openTaskDetail({ taskId, me, members, onChange });
+      } catch (err) { window.__toast(err.message || "수정 실패", "error"); }
+    };
+  });
 }
 
 // ISO/날짜문자열 → "M/D"
@@ -86,8 +111,12 @@ function mdDot(iso) {
   return `${+m}/${+d}`;
 }
 
-function commentHtml(c, memberById) {
-  const who = c.author_id ? (memberById[c.author_id]?.name || "?") : "?";
+function commentHtml(c, memberById, me) {
+  const who = c.author_id ? (memberLabel(memberById[c.author_id]) || "?") : "?";
   const when = (c.created_at || "").slice(5, 16).replace("T", " ");
-  return `<div class="comment"><span class="who">${escapeHtml(who)}</span> · <span style="color:var(--text-faint);font-size:.72rem;">${when}</span><div>${escapeHtml(c.body)}</div></div>`;
+  const mine = me && c.author_id && c.author_id === me.id;
+  return `<div class="comment" data-cid="${c.id}">
+    <span class="who">${escapeHtml(who)}</span> · <span style="color:var(--text-faint);font-size:.72rem;">${when}</span>${mine ? ` <button class="c-edit" data-cid="${c.id}" style="border:none;background:none;color:var(--accent);font-size:.72rem;cursor:pointer;padding:0 4px;">수정</button>` : ""}
+    <div class="c-body">${escapeHtml(c.body)}</div>
+  </div>`;
 }
