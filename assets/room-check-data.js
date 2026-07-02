@@ -138,6 +138,17 @@ export async function resolveIssue(inspectionId, note) {
   return data;
 }
 
+// Set the fix stage: 'open' | 'ack' (acknowledged) | 'progress' | 'done' (resolved).
+export async function setFixStatus(inspectionId, status, note) {
+  const me = myInspector();
+  if (!me) throw new Error("Please sign in first.");
+  const { data, error } = await db.rpc("set_fix_status", {
+    p_inspection_id: inspectionId, p_status: status, p_by: me.name || me.username, p_note: note || "",
+  });
+  if (error) throw error;
+  return data;
+}
+
 // Reopen a resolved issue.
 export async function reopenIssue(inspectionId) {
   const { data, error } = await db.rpc("reopen_issue", { p_inspection_id: inspectionId });

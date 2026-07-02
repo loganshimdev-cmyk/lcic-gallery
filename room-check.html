@@ -59,6 +59,15 @@
   .issue-card.done { opacity:.7; }
   .resolved-line { margin-top:8px; font-size:.8rem; color:#0f766e; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
   .link-btn { border:none; background:none; color:var(--accent); cursor:pointer; font-size:.78rem; text-decoration:underline; padding:0; font-family:inherit; }
+  .stage-seg { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+  .stage-seg button { border:1px solid var(--hairline); background:var(--bg-elev); border-radius:10px; padding:8px 14px; font-size:.82rem; font-weight:600; cursor:pointer; color:var(--text-dim); font-family:inherit; }
+  .stage-seg button:hover { border-color:var(--accent); }
+  .stage-seg button.on { border-color:var(--accent); background:var(--accent-soft); color:var(--accent-deep); }
+  .stage-seg button.done-btn { border-color:rgba(13,148,136,.45); color:#0f766e; }
+  .stage-seg button.done-btn:hover { background:rgba(13,148,136,.08); border-color:#0d9488; }
+  .stage-badge { display:inline-block; margin-top:9px; font-size:.8rem; font-weight:700; }
+  .stage-badge.ack { color:#b45309; }
+  .stage-badge.progress { color:#1d4ed8; }
   .room .last { font-size:.72rem; color:var(--text-faint); margin-top:8px; }
   .room.issue { border-color:rgba(220,38,38,.35); }
   .empty { text-align:center; color:var(--text-faint); padding:60px 20px; }
@@ -251,8 +260,8 @@
 import {
   myInspector, login, logout, changePassword, setInspectorName,
   listRooms, listInspections, latestByRoom, saveInspection, CHECK_ITEMS,
-  resolveIssue, reopenIssue,
-} from "./assets/room-check-data.js?v=7";
+  resolveIssue, reopenIssue, setFixStatus,
+} from "./assets/room-check-data.js?v=8";
 import { formatDate } from "./assets/supabase.js?v=4";
 
 const $ = (id) => document.getElementById(id);
@@ -267,6 +276,9 @@ let me = null;
 let rooms = [];
 let latest = new Map();          // room_id -> latest inspection
 const filters = { q: "", building: "", gender: "", status: "", showResolved: false };
+let handlerFloor = "";  // "" = all floors
+const STAGE_LABEL = { ack: "Acknowledged", progress: "In progress" };
+const STAGE_ICON = { ack: "✔", progress: "🔧" };
 
 // ---- status helpers ---------------------------------------------------------
 function statusOf(room) {
@@ -329,45 +341,77 @@ function render() {
 }
 
 // ---- handler view (issue resolution) ----------------------------------------
+async function setStage(id, stage) {
+  try { await setFixStatus(id, stage); await loadData(); }
+  catch (err) { showToast(err.message || "Failed", "error"); }
+}
+
 function renderHandlerView() {
-  const open = [], done = [];
+  const openAll = [], doneAll = [];
   for (const r of rooms) {
     const rec = latest.get(r.id);
-    if (rec && rec.has_issues) (rec.resolved ? done : open).push({ r, rec });
+    if (rec && rec.has_issues) (rec.resolved ? doneAll : openAll).push({ r, rec });
   }
-  open.sort((a, b) => roomKey(a.r) - roomKey(b.r));
-  done.sort((a, b) => roomKey(a.r) - roomKey(b.r));
-  const cardHtml = ({ r, rec }, resolved) => {
+  openAll.sort((a, b) => roomKey(a.r) - roomKey(b.r));
+  doneAll.sort((a, b) => roomKey(a.r) - roomKey(b.r));
+
+  const floors = [...new Set([...openAll, ...doneAll].map((x) => x.r.floor).filter((f) => f != null))].sort((a, b) => a - b);
+  const inFloor = (x) => !handlerFloor || String(x.r.floor) === handlerFloor;
+  const open = openAll.filter(inFloor), done = doneAll.filter(inFloor);
+
+  const ftab = (key, label, n) => `<button class="icat ${handlerFloor === key ? "on" : ""}" data-floor="${key}">${esc(label)} <b>${n}</b></button>`;
+  const floorBar = `<div class="icat-bar">` + ftab("", "All", openAll.length) +
+    floors.map((f) => ftab(String(f), "Floor " + f, openAll.filter((x) => x.r.floor === f).length)).join("") + `</div>`;
+
+  const cardOpen = ({ r, rec }) => {
+    const st = rec.fix_status || "open";
     const probs = (rec.items || []).filter((i) => i.status === "problem");
-    return `<div class="issue-card ${resolved ? "done" : ""}">
+    return `<div class="issue-card">
       <div class="issue-head"><b>${esc(r.room_number)}</b>
         <span>${esc(r.building)}${r.floor ? " · Floor " + r.floor : ""} · found by ${esc(rec.inspector_name || "")} · ${formatDate(rec.inspected_at)}</span></div>
       ${probs.map((pp) => `<div class="issue-item">⚠️ <b>${esc(SHORT[pp.key] || pp.key)}</b>${pp.detail ? ` — ${esc(pp.detail)}` : ""}</div>`).join("")}
       ${rec.general_note ? `<div class="issue-item" style="color:var(--text-faint)">📝 ${esc(rec.general_note)}</div>` : ""}
-      ${resolved
-        ? `<div class="resolved-line">✅ Resolved by ${esc(rec.resolved_by || "")} · ${formatDate(rec.resolved_at)}${rec.resolution_note ? ` — ${esc(rec.resolution_note)}` : ""} <button class="link-btn" data-reopen="${rec.id}">Reopen</button></div>`
-        : `<div style="margin-top:9px;"><button class="btn-primary resolve-btn" data-id="${rec.id}" data-room="${esc(r.room_number)}">✅ Mark resolved</button></div>`}
+      ${(st === "ack" || st === "progress") ? `<div class="stage-badge ${st}">${STAGE_ICON[st]} ${STAGE_LABEL[st]}${rec.fix_by ? ` by ${esc(rec.fix_by)}` : ""}</div>` : ""}
+      <div class="stage-seg">
+        <button data-id="${rec.id}" data-stage="ack" class="${st === "ack" ? "on" : ""}">✔ Acknowledged</button>
+        <button data-id="${rec.id}" data-stage="progress" class="${st === "progress" ? "on" : ""}">🔧 In progress</button>
+        <button data-id="${rec.id}" data-stage="done" data-room="${esc(r.room_number)}" class="done-btn">✅ Resolved</button>
+      </div>
     </div>`;
   };
+  const cardDone = ({ r, rec }) => {
+    const probs = (rec.items || []).filter((i) => i.status === "problem");
+    return `<div class="issue-card done">
+      <div class="issue-head"><b>${esc(r.room_number)}</b>
+        <span>${esc(r.building)}${r.floor ? " · Floor " + r.floor : ""} · found by ${esc(rec.inspector_name || "")} · ${formatDate(rec.inspected_at)}</span></div>
+      ${probs.map((pp) => `<div class="issue-item">⚠️ <b>${esc(SHORT[pp.key] || pp.key)}</b>${pp.detail ? ` — ${esc(pp.detail)}` : ""}</div>`).join("")}
+      <div class="resolved-line">✅ Resolved by ${esc(rec.resolved_by || "")} · ${formatDate(rec.resolved_at)}${rec.resolution_note ? ` — ${esc(rec.resolution_note)}` : ""} <button class="link-btn" data-reopen="${rec.id}">Reopen</button></div>
+    </div>`;
+  };
+
   $("handler-view").innerHTML = `
     <div class="dash-head"><div><h3 class="dash-title">Issues to fix</h3></div>
       <label style="font-size:.82rem; color:var(--text-dim); display:flex; align-items:center; gap:6px;">
         <input type="checkbox" id="show-resolved" ${filters.showResolved ? "checked" : ""}> Show resolved</label></div>
+    ${floorBar}
     <div class="panel"><h4>Open (${open.length})</h4>
-      ${open.length ? open.map((x) => cardHtml(x, false)).join("") : `<div class="muted">No open issues 🎉</div>`}</div>
+      ${open.length ? open.map(cardOpen).join("") : `<div class="muted">No open issues 🎉</div>`}</div>
     ${filters.showResolved ? `<div class="panel"><h4>Resolved (${done.length})</h4>
-      ${done.length ? done.map((x) => cardHtml(x, true)).join("") : `<div class="muted">None yet.</div>`}</div>` : ""}`;
+      ${done.length ? done.map(cardDone).join("") : `<div class="muted">None yet.</div>`}</div>` : ""}`;
+
+  $("handler-view").querySelectorAll("[data-floor]").forEach((b) =>
+    b.addEventListener("click", () => { handlerFloor = b.dataset.floor; renderHandlerView(); }));
   $("show-resolved").addEventListener("change", (e) => { filters.showResolved = e.target.checked; renderHandlerView(); });
-  $("handler-view").querySelectorAll(".resolve-btn").forEach((b) =>
-    b.addEventListener("click", () => openResolve(b.dataset.id, b.dataset.room)));
-  $("handler-view").querySelectorAll("[data-reopen]").forEach((b) =>
-    b.addEventListener("click", async () => {
-      try { await reopenIssue(b.dataset.reopen); showToast("Reopened", "success"); await loadData(); }
-      catch (err) { showToast(err.message || "Failed", "error"); }
+  $("handler-view").querySelectorAll(".stage-seg button").forEach((b) =>
+    b.addEventListener("click", () => {
+      if (b.dataset.stage === "done") openDone(b.dataset.id, b.dataset.room);
+      else setStage(b.dataset.id, b.dataset.stage);
     }));
+  $("handler-view").querySelectorAll("[data-reopen]").forEach((b) =>
+    b.addEventListener("click", () => setStage(b.dataset.reopen, "open")));
 }
 
-function openResolve(inspectionId, roomNum) {
+function openDone(inspectionId, roomNum) {
   root.innerHTML = `<div class="modal-bg"><div class="modal" style="max-width:420px;">
     <h3 style="font-size:1.15rem;">Resolve — Room ${esc(roomNum)}</h3>
     <div class="sub">What did you fix? (optional)</div>
@@ -383,7 +427,7 @@ function openResolve(inspectionId, roomNum) {
   root.querySelector("#res-save").onclick = async () => {
     const btn = root.querySelector("#res-save"); btn.disabled = true;
     try {
-      await resolveIssue(inspectionId, root.querySelector("#res-note").value);
+      await setFixStatus(inspectionId, "done", root.querySelector("#res-note").value);
       close(); showToast("Issue resolved", "success"); await loadData();
     } catch (err) { btn.disabled = false; showToast(err.message || "Failed", "error"); }
   };
@@ -505,6 +549,7 @@ function renderAdminDashboard() {
       return `<div class="issue-card ${rec.resolved ? "done" : ""}"><div class="issue-head"><b>${esc(r.room_number)}</b>
         <span>${esc(r.building)} · ${esc(rec.inspector_name || "")} · ${formatDate(rec.inspected_at)}</span></div>
         ${probs.map((pp) => `<div class="issue-item">⚠️ ${esc(SHORT[pp.key] || pp.key)}${pp.detail ? ` — ${esc(pp.detail)}` : ""}</div>`).join("")}
+        ${!rec.resolved && (rec.fix_status === "ack" || rec.fix_status === "progress") ? `<div class="stage-badge ${rec.fix_status}">${STAGE_ICON[rec.fix_status]} ${STAGE_LABEL[rec.fix_status]}${rec.fix_by ? ` by ${esc(rec.fix_by)}` : ""}</div>` : ""}
         ${rec.resolved ? `<div class="resolved-line">✅ Resolved by ${esc(rec.resolved_by || "")} · ${formatDate(rec.resolved_at)}${rec.resolution_note ? ` — ${esc(rec.resolution_note)}` : ""}</div>` : ""}</div>`;
     }).join("") : `<div class="muted">No issues in this category.</div>`);
   $("issues-list").querySelectorAll(".icat").forEach((c) =>
