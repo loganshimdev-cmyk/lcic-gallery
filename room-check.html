@@ -387,17 +387,20 @@ const SHORT = { aircon:"Aircon", electrical:"Electrical", openings:"Doors/Win/Sa
                 furniture:"Furniture", structure:"Walls/Floor", other:"Clean/Other" };
 const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 
-function donutCard(title, done, total, issues, occupied, resolved) {
-  const deg = total ? Math.round(done / total * 360) : 0;
-  const pct = total ? Math.round(done / total * 100) : 0;
+function donutCard(title, inspected, occupied, total, issues, resolved) {
+  const handled = inspected + occupied;
+  const pct = total ? Math.round(handled / total * 100) : 0;
+  const dI = total ? inspected / total * 360 : 0;
+  const dO = total ? occupied / total * 360 : 0;
+  const g = `conic-gradient(var(--accent) 0 ${dI}deg, #d97706 ${dI}deg ${dI + dO}deg, var(--hairline) ${dI + dO}deg 360deg)`;
   return `<div class="chart-card"><div class="chart-title">${title}</div>
-    <div class="donut" style="background:conic-gradient(var(--accent) ${deg}deg, var(--hairline) ${deg}deg 360deg)">
-      <div class="donut-hole"><b>${pct}%</b><span>${done}/${total}</span></div>
+    <div class="donut" style="background:${g}">
+      <div class="donut-hole"><b>${pct}%</b><span>${handled}/${total}</span></div>
     </div>
     <div class="chart-legend">
-      <span><i class="dot" style="background:var(--accent)"></i>Inspected ${done}</span>
+      <span><i class="dot" style="background:var(--accent)"></i>Inspected ${inspected}</span>
       <span><i class="dot" style="background:#d97706"></i>Occupied ${occupied}</span>
-      <span><i class="dot" style="background:var(--hairline-strong)"></i>Remaining ${total - done - occupied}</span>
+      <span><i class="dot" style="background:var(--hairline-strong)"></i>Remaining ${total - handled}</span>
       <span><i class="dot" style="background:#dc2626"></i>Open issues ${issues}</span>
       <span><i class="dot" style="background:#0d9488"></i>Resolved ${resolved}</span>
     </div></div>`;
@@ -434,13 +437,13 @@ function renderAdminDashboard() {
   for (const r of rooms) {
     const rec = latest.get(r.id);
     const b = r.building || "—";
-    buildings[b] ??= { inspected: 0, total: 0 };
+    buildings[b] ??= { inspected: 0, occupied: 0, total: 0 };
     buildings[b].total++;
     const u = r.assigned_username;
     if (u) { insMap[u] ??= { assigned: 0, inspected: 0, issues: 0, occupied: 0 }; insMap[u].assigned++; }
     if (!rec) continue;
     if (rec.status === "occupied") {
-      occupied++; if (u) insMap[u].occupied++;
+      occupied++; buildings[b].occupied++; if (u) insMap[u].occupied++;
     } else {
       inspected++; buildings[b].inspected++;
       if (u) insMap[u].inspected++;
@@ -453,15 +456,15 @@ function renderAdminDashboard() {
   }
 
   $("charts").innerHTML =
-    donutCard("Overall progress", inspected, total, openIssues, occupied, resolvedIssues) +
-    barsCard("Progress by building", Object.entries(buildings).sort().map(([label, v]) => ({ label, inspected: v.inspected, total: v.total }))) +
+    donutCard("Overall progress", inspected, occupied, total, openIssues, resolvedIssues) +
+    barsCard("Progress by building", Object.entries(buildings).sort().map(([label, v]) => ({ label, inspected: v.inspected + v.occupied, total: v.total }))) +
     catCard("Issues by item", cats);
 
   const inspectors = Object.keys(insMap).sort();
   $("inspectors").innerHTML = `<h4>Per-inspector progress</h4>
     <div class="ins-table">
       <div class="ins-row head"><span>Inspector</span><span>Assigned</span><span>Done</span><span>Occ.</span><span>Left</span><span>Issues</span><span>Progress</span></div>
-      ${inspectors.map((u) => { const v = insMap[u]; const p = v.assigned ? Math.round(v.inspected / v.assigned * 100) : 0;
+      ${inspectors.map((u) => { const v = insMap[u]; const handled = v.inspected + (v.occupied || 0); const p = v.assigned ? Math.round(handled / v.assigned * 100) : 0;
         return `<div class="ins-row"><span class="uname">${esc(cap(u))}</span><span>${v.assigned}</span><span>${v.inspected}</span><span>${v.occupied || 0}</span><span>${v.assigned - v.inspected - (v.occupied || 0)}</span><span class="${v.issues ? "has" : ""}">${v.issues}</span>
           <span class="pbar"><span class="pbar-fill" style="width:${p}%"></span><em>${p}%</em></span></div>`; }).join("")}
     </div>`;
