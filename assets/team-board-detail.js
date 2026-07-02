@@ -73,6 +73,7 @@ export async function openTaskDetail({ taskId, me, members, onChange }) {
     if (!body) return;
     try {
       await addComment(taskId, body);
+      window.__toast("코멘트 등록했어요", "success");
       openTaskDetail({ taskId, me, members, onChange }); // 다시 그려 코멘트 갱신
     } catch (err) { window.__toast(err.message || "코멘트 등록 실패", "error"); }
   };
