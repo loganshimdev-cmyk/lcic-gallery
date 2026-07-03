@@ -621,7 +621,9 @@ function renderRooms() {
     const rec = latest.get(r.id);
     const typeShort = r.room_type === "quad" ? "4-person" : "Single";
     const meta = [r.building, typeShort].filter(Boolean).join(" · ");
-    const last = rec ? `Last: ${formatDate(rec.inspected_at)} · ${esc(rec.inspector_name || "")}` : "";
+    const last = !rec ? ""
+      : rec.resolved ? `Fixed by ${esc(rec.resolved_by || "")} · ${formatDate(rec.resolved_at)}`
+      : `Checked by ${esc(rec.inspector_name || "")} · ${formatDate(rec.inspected_at)}`;
     return `<div class="room ${s === "issue" ? "issue" : s === "occupied" ? "occupied" : s === "resolved" ? "resolved" : ""}" data-id="${r.id}">
       <div class="rnum">${esc(r.room_number)}</div>
       <div class="rmeta">${esc(meta) || "&nbsp;"}</div>
@@ -756,9 +758,11 @@ function openReport(room) {
         </div>
       </div>`).join("");
     const gnote = rec.general_note ? `<div class="rd" style="margin-top:14px;"><b>Note:</b> ${esc(rec.general_note)}</div>` : "";
+    const resolvedLine = rec.resolved
+      ? `<div class="resolved-line" style="margin-top:14px;">✅ Fixed by ${esc(rec.resolved_by || "")} · ${formatDate(rec.resolved_at)}${rec.resolution_note ? ` — ${esc(rec.resolution_note)}` : ""}</div>` : "";
     body = `<div style="font-size:.82rem; color:var(--text-faint); margin-bottom:6px;">
-        Inspected ${formatDate(rec.inspected_at)} by ${esc(rec.inspector_name || "")}
-      </div>${rows}${gnote}`;
+        Checked ${formatDate(rec.inspected_at)} by ${esc(rec.inspector_name || "")}
+      </div>${rows}${gnote}${resolvedLine}`;
   }
   root.innerHTML = `<div class="modal-bg"><div class="modal">
     <h3>Room ${esc(room.room_number)}</h3>
