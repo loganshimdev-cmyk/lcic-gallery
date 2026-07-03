@@ -619,17 +619,15 @@
       <div class="m road" style="left:0; top:718px; width:800px; height:74px;"></div>
       <div class="m curb" style="left:0; top:796px; width:800px; height:8px;"></div>
       <div class="m car drive" style="top:726px; background:#e2e8f0;"><span class="rooftag">TAXI</span></div>
-      <div class="m car" style="left:268px; top:756px; background:#16a34a;"><span class="rooftag">Grab</span></div>
+      <div class="m car" style="left:252px; top:756px; width:100px; background:#facc15;"><span class="rooftag" style="background:#1e3a8a; color:#fff; border-color:#1e3a8a;">LCIC 버스</span></div>
       <div class="m car" style="left:498px; top:756px; background:#f8fafc;"><span class="rooftag">TAXI</span></div>
       <div class="m car" style="left:668px; top:756px; background:#facc15;"><span class="rooftag">TAXI</span></div>
 
-      <!-- ══ 그랩 통로 + 유심 판매 ══ -->
-      <div class="m lbl redline" style="left:224px; top:816px;">그랩카 타는 곳</div>
+      <!-- ══ LCIC 버스 통로 ══ -->
+      <div class="m lbl" style="left:196px; top:816px; background:#facc15; border-color:#1e3a8a; color:#1e3a8a; font-weight:900;">🚌 LCIC 버스 타는 곳</div>
       <div class="m wall" style="left:206px; top:858px; width:6px; height:190px;"></div>
       <div class="m wall" style="left:398px; top:858px; width:6px; height:190px;"></div>
       <div class="m arrow" style="left:290px; top:864px;">⇧</div>
-      <div class="m simbooth" style="left:236px; top:900px;">📱 유심 판매</div>
-      <div class="m simbooth" style="left:236px; top:962px;">📱 유심 판매</div>
 
       <!-- ══ 택시 승강장 ══ -->
       <div class="m lbl" style="left:462px; top:850px;">🚕 화이트(White) 택시 타는 곳</div>
@@ -1090,7 +1088,7 @@
     walk(570, 1310),
     sayAt(570, 1300, "⚠️ 짐 다 챙겼나요?<br>나가면 재입장 불가!", 2400, "warnb"), pause(2400),
     walk(570, 1250), walk(570, 1150),
-    cap("💱 게이트 밖", "환전소(소액환전)·ATM·유심 판매·환복 가능한 화장실이 있어요"),
+    cap("💱 게이트 밖", "환전소(소액환전)·ATM·환복 가능한 화장실이 있어요"),
     pause(1400),
     cap("🙋 피켓 든 사람들", "이 중에서 노란 LCIC 피켓을 찾으세요!"),
     act(showHere),
@@ -1099,7 +1097,7 @@
       photoPop(src, "실제 공항 픽업 구역 — 피켓 든 사람들 중 노란 LCIC 피켓을 찾아 다가가세요!", 7000, true);
     }),
     walk(570, 1105), walk(548, 1098),
-    sayAt(540, 985, "환영합니다! LCIC로 모실게요 🚐", 2600, "gold"),
+    sayAt(540, 985, "환영합니다! LCIC 버스로 모실게요 🚌", 2600, "gold"),
     pause(800),
     act(function () { bubble(me.x, me.y - 26, "찾았다! 😆", 1600); }),
     pause(1400),
