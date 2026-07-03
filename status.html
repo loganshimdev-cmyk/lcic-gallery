@@ -160,6 +160,29 @@
   .flight-leg .leg-tag.back { background: rgba(22,163,74,0.12); color: #15803d; }
   .flight-leg .leg-note { margin-top: 10px; font-size: 0.82rem; color: var(--text-dim); line-height: 1.5; }
   .flight-leg .leg-note b { color: var(--text); font-weight: 700; }
+  /* 픽업 예정 시간 카드 */
+  .pickup-card { margin-top: 12px; padding: 16px 16px 14px; border-radius: 14px;
+    background: linear-gradient(120deg, rgba(37,99,235,0.10), rgba(59,130,246,0.05));
+    border: 1px solid rgba(37,99,235,0.28); }
+  .pickup-card .pk-top { display: flex; align-items: flex-start; gap: 18px; flex-wrap: wrap; }
+  .pickup-card .pk-when { display: flex; align-items: center; gap: 11px; }
+  .pickup-card .pk-when iconify-icon { font-size: 34px; color: var(--accent-deep); flex-shrink: 0; }
+  .pickup-card .pk-label { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.04em;
+    text-transform: uppercase; color: var(--text-faint); }
+  .pickup-card .pk-time { font-size: 1.9rem; font-weight: 800; letter-spacing: -0.02em;
+    color: var(--accent-deep); line-height: 1.05; font-variant-numeric: tabular-nums; }
+  .pickup-card .pk-day { font-size: 0.8rem; font-weight: 700; color: #b45309; vertical-align: middle; }
+  .pickup-card .pk-date { margin-left: auto; text-align: right; }
+  .pickup-card .pk-dval { font-size: 1.05rem; font-weight: 700; color: var(--text); margin-top: 2px; }
+  .pickup-card .pk-desc { margin-top: 12px; font-size: 0.87rem; line-height: 1.6; color: var(--text-dim); }
+  .pickup-card .pk-desc b { color: var(--accent-deep); font-weight: 800; }
+  .pickup-card .pk-meet { margin-top: 10px; padding: 11px 13px; border-radius: 11px;
+    background: rgba(255,255,255,0.65); border: 1px solid rgba(37,99,235,0.18);
+    font-size: 0.87rem; line-height: 1.6; color: var(--text); display: flex; gap: 9px; align-items: flex-start; }
+  .pickup-card .pk-meet iconify-icon { font-size: 20px; color: var(--accent); flex-shrink: 0; margin-top: 1px; }
+  .pickup-card .pk-meet span { word-break: keep-all; }
+  .pickup-card .pk-meet b { color: var(--accent-deep); font-weight: 800; }
+  .pickup-card .pk-desc { word-break: keep-all; }
   .stay-line { margin-top: 14px; font-size: 0.9rem; color: var(--text-dim); }
   .stay-line b { color: var(--text); font-weight: 700; }
   .fee-note { margin-top: 14px; padding: 13px 15px; border-radius: 12px;
@@ -388,6 +411,21 @@
   };
   const ORDER = ["passport", "flight", "leveltest", "emergency"];
 
+  // 픽업 예정 시간 = 세부 도착 시간 + 30분. 입력은 "HH:MM"(24시간). 자정 넘으면 익일 표시.
+  function pickupTime(hhmm) {
+    if (!hhmm) return null;
+    const m = String(hhmm).trim().match(/^(\d{1,2}):(\d{2})$/);
+    if (!m) return null;
+    let h = +m[1], min = +m[2];
+    if (h > 23 || min > 59) return null;
+    let total = h * 60 + min + 30;
+    const nextDay = total >= 24 * 60;
+    total %= 24 * 60;
+    const ph = String(Math.floor(total / 60)).padStart(2, "0");
+    const pm = String(total % 60).padStart(2, "0");
+    return { time: `${ph}:${pm}`, nextDay };
+  }
+
   // 학생 공통 운영 안내(여기에 한 줄씩 추가/수정하면 됨)
   // 잠시 숨김 — 아래 두 줄을 NOTICES 안으로 옮기면 안내 카드가 다시 보입니다.
   // { icon: "🤝", t: "<b>버디 세션 신청</b>은 <b>7월 1일까지</b> 꼭 해주세요." },
@@ -462,10 +500,23 @@
       const st = rec.stay || {};
       if (st.start || st.end) stay = `<div class="stay-line">체류 기간: <b>${escapeHtml(st.start || "—")}</b> ~ <b>${escapeHtml(st.end || "—")}</b></div>`;
       // 가는 편: 세부 도착 일자·시각만 표시(헷갈림 방지).
+      const pk = pickupTime(f.departureTime);
+      const pickupBox = pk
+        ? `<div class="pickup-card">
+            <div class="pk-top">
+              <div class="pk-when"><iconify-icon icon="solar:point-on-map-bold-duotone"></iconify-icon>
+                <div><div class="pk-label">담당자 대기 시작 · 예상 픽업</div>
+                <div class="pk-time">${escapeHtml(pk.time)}${pk.nextDay ? ' <span class="pk-day">(익일)</span>' : ""}</div></div></div>
+              ${f.departure ? `<div class="pk-date"><div class="pk-label">날짜</div><div class="pk-dval">${escapeHtml(f.departure)}</div></div>` : ""}
+            </div>
+            <div class="pk-desc">세부 도착 <b>${escapeHtml(f.departureTime)}</b> 기준 <b>약 30분 뒤</b> — 입국심사 · 짐 찾기 · 세관을 마치면 보통 이 시각쯤 나와요. <b>서두르지 않아도 돼요.</b> 짐 꼼꼼히 챙겨서 천천히 나오세요.</div>
+            <div class="pk-meet"><iconify-icon icon="solar:users-group-rounded-bold-duotone"></iconify-icon><span>담당자는 <b>이 시각부터</b> 출구(한 곳)에서 <b>파란 LCIC 팻말</b>을 들고 기다려요. 버스는 <b>학생들이 다 모이면 함께 출발</b>하니 시간에 쫓기지 않아도 돼요. 다만 <b>다른 학생들도 함께 기다리니</b> 너무 지체하진 말아 주세요. 나오면 담당자에게 <b>본인 이름</b>을 말해 주세요.</span></div>
+          </div>`
+        : `<div class="leg-note">공항 <b>픽업</b>은 <b>세부 도착</b> 일자·시각 기준이에요. <b>도착 시간</b>이 없으면 픽업 시간을 안내드릴 수 없어요.</div>`;
       const legGo =
         `<div class="flight-leg"><div class="leg-tag go"><iconify-icon icon="solar:plane-bold"></iconify-icon> 가는 편 (한국 → 세부)</div>
           <div class="flight-grid">${cell("항공편명", f.flightNo)}${cell("세부 도착 일자", f.departure)}${f.departureTime ? cell("세부 도착 시간", f.departureTime) : ""}</div>
-          <div class="leg-note">공항 <b>픽업</b>은 <b>세부 도착</b> 일자·시각 기준이에요.</div></div>`;
+          ${pickupBox}</div>`;
       const legBack = (rf.flightNo || rf.date)
         ? `<div class="flight-leg"><div class="leg-tag back"><iconify-icon icon="solar:plane-bold" style="transform:scaleX(-1)"></iconify-icon> 오는 편 (세부 → 한국)</div>
           <div class="flight-grid">${cell("항공편명", rf.flightNo)}${cell("세부 출발 일자", rf.date)}${rf.time ? cell("세부 출발 시간", rf.time) : ""}</div>
