@@ -308,7 +308,14 @@ async function boot() {
   $("me-badge").className = `gender-badge ${g}`;
   $("f-gender").classList.toggle("hidden", me.role !== "admin");
   $("pw-hint").classList.toggle("hidden", me.role === "admin" || !!localStorage.getItem("lcic-dorm-pw-hint"));
+  if (me.role === "admin" && location.hash.startsWith("#cat=")) {
+    const c = decodeURIComponent(location.hash.slice(5));
+    if (CHECK_ITEMS.some((ci) => ci.key === c)) adminIssueCat = c;
+  }
   await loadData();
+  if (me.role === "admin" && location.hash.startsWith("#cat=")) {
+    requestAnimationFrame(() => $("issues-list") && $("issues-list").scrollIntoView({ behavior: "smooth", block: "start" }));
+  }
 }
 
 async function loadData() {

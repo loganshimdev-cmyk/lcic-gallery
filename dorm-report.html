@@ -66,6 +66,9 @@
   .bar-track { flex:1; height:10px; background:var(--line); border-radius:6px; overflow:hidden; }
   .bar-fill { display:block; height:100%; border-radius:6px; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .bar-val { width:38px; text-align:right; flex-shrink:0; color:var(--faint); font-variant-numeric:tabular-nums; font-weight:600; }
+  .bar-row.clickable { cursor:pointer; border-radius:8px; padding:3px 6px; margin-left:-6px; margin-right:-6px; transition:background .15s; }
+  .bar-row.clickable:hover { background:var(--accent-tint); }
+  .drill-hint { font-size:.74rem; color:var(--faint); margin-top:14px; }
 
   .rfoot { margin-top:26px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; font-size:.78rem; color:var(--faint); }
 
@@ -118,7 +121,10 @@
 
   <div class="rfoot">
     <span id="foot-note"></span>
-    <button id="print-btn" class="btn-ghost" style="font-size:.8rem;">🖨 Print / Save PDF</button>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <button id="details-btn" class="btn-primary" style="font-size:.85rem;">View detailed dashboard →</button>
+      <button id="print-btn" class="btn-ghost" style="font-size:.8rem;">🖨 Print / Save PDF</button>
+    </div>
   </div>
 </main>
 
@@ -218,13 +224,16 @@ async function load(){
       <span><i style="background:var(--line)"></i>Not inspected ${notInspected}</span>
     </div>`;
 
-  // issues by category (sorted desc)
+  // issues by category (sorted desc) — click a row to drill into details
   const maxC = Math.max(1, ...top.map(c=>c.count));
-  $("c-cats").innerHTML = top.length
-    ? top.map(c=>`<div class="bar-row"><span class="bar-lab">${esc(c.short)}</span>
+  $("c-cats").innerHTML = (top.length
+    ? top.map(c=>`<div class="bar-row clickable" data-cat="${esc(c.key)}" title="View ${esc(c.short)} issues in detail"><span class="bar-lab">${esc(c.short)}</span>
         <span class="bar-track"><span class="bar-fill" style="width:${pct(c.count,maxC)}%; background:var(--crit)"></span></span>
         <span class="bar-val">${c.count}</span></div>`).join("")
-    : `<div style="color:var(--faint); font-size:.85rem;">No issues reported.</div>`;
+    : `<div style="color:var(--faint); font-size:.85rem;">No issues reported.</div>`)
+    + (top.length ? `<div class="drill-hint">Tap a category to see the rooms →</div>` : "");
+  $("c-cats").querySelectorAll("[data-cat]").forEach(el =>
+    el.addEventListener("click", () => openDetails(el.dataset.cat)));
 
   // coverage by building
   $("c-bldg").innerHTML = Object.entries(bldg).sort().map(([label,v])=>{
@@ -235,6 +244,13 @@ async function load(){
   }).join("");
 }
 
+// drill-down: open the full (read-only) admin dashboard, optionally filtered to a category
+function openDetails(cat) {
+  localStorage.setItem("lcic-dorm-inspector", JSON.stringify(
+    { id: "report-viewer", username: "report", name: "Report Viewer", gender: null, role: "admin" }));
+  location.href = "room-check.html" + (cat ? "#cat=" + encodeURIComponent(cat) : "");
+}
+$("details-btn").addEventListener("click", () => openDetails(""));
 $("print-btn").addEventListener("click", () => window.print());
 
 // keep it live while open: refresh on return-to-tab and every 60s
