@@ -645,13 +645,9 @@
       <div class="holder" style="left:650px; top:1062px;"><span class="h-sign">피켓</span><span class="h-stick"></span><span class="h-face">😊</span></div>
 
       <!-- ══ GATE 라인 (y≈1210) ══ -->
-      <div class="m wall" style="left:40px; top:1206px; width:150px; height:8px;"></div>
-      <div class="m wall" style="left:290px; top:1206px; width:220px; height:8px;"></div>
+      <div class="m wall" style="left:40px; top:1206px; width:470px; height:8px;"></div>
       <div class="m wall" style="left:640px; top:1206px; width:120px; height:8px;"></div>
-      <div class="m gatedoor" style="left:202px; top:1192px;"></div>
       <div class="m gatedoor" style="left:544px; top:1192px;"></div>
-      <div class="m lbl softfill" style="left:175px; top:1148px; font-size:20px; font-weight:800;">GATE</div>
-      <div class="m arrow" style="left:218px; top:1226px;">⇧</div>
       <div class="m lbl softfill" style="left:518px; top:1148px; font-size:20px; font-weight:800;">GATE</div>
       <div class="m arrow" style="left:562px; top:1226px;">⇧</div>
       <div class="m lbl redline" style="left:492px; top:1108px; font-size:13px; padding:2px 8px;">⚠️ 나가면 못 들어옴!</div>
@@ -864,7 +860,7 @@
   function npcPath() {
     var boothX = [112, 222, 332, 442, 552, 662][Math.floor(Math.random() * 6)];
     var carX = Math.random() < 0.5 ? 220 : 590;
-    var gateX = Math.random() < 0.5 ? 230 : 570;
+    var gateX = 570;
     var dest = Math.random() < 0.55
       ? { x: 460 + Math.random() * 260, y: 985 + Math.random() * 18 }   /* 택시 대기 */
       : { x: 240 + Math.random() * 220, y: 1052 + Math.random() * 40 }; /* 미팅 구역 */
