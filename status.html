@@ -183,6 +183,13 @@
   .pickup-card .pk-meet span { word-break: keep-all; }
   .pickup-card .pk-meet b { color: var(--accent-deep); font-weight: 800; }
   .pickup-card .pk-desc { word-break: keep-all; }
+  .pickup-card .pk-wait { margin-top: 9px; padding: 10px 13px; border-radius: 11px;
+    background: rgba(217,119,6,0.07); border: 1px solid rgba(217,119,6,0.22);
+    font-size: 0.85rem; line-height: 1.6; color: var(--text-dim);
+    display: flex; gap: 9px; align-items: flex-start; }
+  .pickup-card .pk-wait iconify-icon { font-size: 19px; color: #d97706; flex-shrink: 0; margin-top: 1px; }
+  .pickup-card .pk-wait span { word-break: keep-all; }
+  .pickup-card .pk-wait b { color: #b45309; font-weight: 800; }
   .stay-line { margin-top: 14px; font-size: 0.9rem; color: var(--text-dim); }
   .stay-line b { color: var(--text); font-weight: 700; }
   .fee-note { margin-top: 14px; padding: 13px 15px; border-radius: 12px;
@@ -510,7 +517,8 @@
               ${f.departure ? `<div class="pk-date"><div class="pk-label">날짜</div><div class="pk-dval">${escapeHtml(f.departure)}</div></div>` : ""}
             </div>
             <div class="pk-desc">세부 도착 <b>${escapeHtml(f.departureTime)}</b> 기준 <b>약 30분 뒤</b> — 입국심사 · 짐 찾기 · 세관을 마치면 보통 이 시각쯤 나와요. <b>서두르지 않아도 돼요.</b> 짐 꼼꼼히 챙겨서 천천히 나오세요.</div>
-            <div class="pk-meet"><iconify-icon icon="solar:users-group-rounded-bold-duotone"></iconify-icon><span>담당자는 <b>이 시각부터</b> 출구(한 곳)에서 <b>파란 LCIC 팻말</b>을 들고 기다려요. 버스는 <b>학생들이 다 모이면 함께 출발</b>하니 시간에 쫓기지 않아도 돼요. 다만 <b>다른 학생들도 함께 기다리니</b> 너무 지체하진 말아 주세요. 나오면 담당자에게 <b>본인 이름</b>을 말해 주세요.</span></div>
+            <div class="pk-meet"><iconify-icon icon="solar:users-group-rounded-bold-duotone"></iconify-icon><span>담당자는 <b>이 시각부터</b> 출구(한 곳)에서 <b>파란 LCIC 팻말</b>을 들고 기다려요. 버스는 <b>학생들이 다 모이면 함께 출발</b>해요. 나오면 담당자에게 <b>본인 이름</b>을 말해 주세요.</span></div>
+            <div class="pk-wait"><iconify-icon icon="solar:clock-circle-bold-duotone"></iconify-icon><span>사람이 몰리면 입국심사 · 짐 찾기에 <b>1~2시간</b>이 걸리기도 해요. 그럴 땐 <b>다들 함께 늦게 나오는 것</b>이니 시간에 쫓기지 말고 <b>천천히</b> 잘 챙겨서 나오세요. <b>기다리고 있을게요.</b></span></div>
           </div>`
         : `<div class="leg-note">공항 <b>픽업</b>은 <b>세부 도착</b> 일자·시각 기준이에요. <b>도착 시간</b>이 없으면 픽업 시간을 안내드릴 수 없어요.</div>`;
       const legGo =
