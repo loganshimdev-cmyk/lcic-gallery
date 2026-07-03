@@ -236,6 +236,12 @@ async function load(){
 }
 
 $("print-btn").addEventListener("click", () => window.print());
+
+// keep it live while open: refresh on return-to-tab and every 60s
+const isOpen = () => !$("report").classList.contains("hidden");
+document.addEventListener("visibilitychange", () => { if (!document.hidden && isOpen()) load(); });
+window.addEventListener("focus", () => { if (isOpen()) load(); });
+setInterval(() => { if (isOpen() && document.visibilityState === "visible") load(); }, 60000);
 </script>
 </body>
 </html>
