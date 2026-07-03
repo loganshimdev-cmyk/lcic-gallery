@@ -206,6 +206,7 @@
     <div class="who">
       <span id="me-name" style="font-size:.9rem; color:var(--text-dim);"></span>
       <span id="me-badge" class="gender-badge"></span>
+      <button id="back-report-btn" class="btn-ghost hidden" style="font-size:.78rem;">← Report</button>
       <button id="refresh-btn" class="btn-ghost" style="font-size:.78rem;">↻ Refresh</button>
       <button id="pw-btn" class="btn-ghost" style="font-size:.78rem;">Password</button>
       <button id="logout-btn" class="btn-ghost" style="font-size:.78rem;">Sign out</button>
@@ -307,6 +308,12 @@ async function boot() {
   $("me-badge").textContent = me.role === "admin" ? "Admin" : me.role === "handler" ? "Handler" : (me.gender || "");
   $("me-badge").className = `gender-badge ${g}`;
   $("f-gender").classList.toggle("hidden", me.role !== "admin");
+  // report viewer arrived from dorm-report.html (no real login): hide account
+  // controls, show a "back to report" button instead.
+  const isViewer = me.username === "report";
+  $("pw-btn").classList.toggle("hidden", isViewer);
+  $("logout-btn").classList.toggle("hidden", isViewer);
+  $("back-report-btn").classList.toggle("hidden", !isViewer);
   $("pw-hint").classList.toggle("hidden", me.role === "admin" || !!localStorage.getItem("lcic-dorm-pw-hint"));
   if (me.role === "admin" && location.hash.startsWith("#cat=")) {
     const c = decodeURIComponent(location.hash.slice(5));
@@ -806,6 +813,7 @@ $("register-form").addEventListener("submit", async (e) => {
   catch (err) { showToast(err.message || "Failed", "error"); }
 });
 $("logout-btn").addEventListener("click", () => { logout(); me = null; show("login"); });
+$("back-report-btn").addEventListener("click", () => { logout(); location.href = "dorm-report.html"; });
 $("pw-hint-x").addEventListener("click", () => {
   localStorage.setItem("lcic-dorm-pw-hint", "1");
   $("pw-hint").classList.add("hidden");
