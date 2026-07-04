@@ -82,9 +82,10 @@
   }
   .dash-notice .dn-title iconify-icon { font-size: 19px; color: #d97706; }
   .dash-notice .dn-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 11px; }
-  .dash-notice .dn-list li { display: flex; gap: 9px; font-size: 0.9rem; line-height: 1.55; color: #78350f; }
+  .dash-notice .dn-list li { display: flex; align-items: flex-start; gap: 9px; font-size: 0.9rem; line-height: 1.6; color: #78350f; }
   .dash-notice .dn-list li .dn-ic { flex-shrink: 0; }
   .dash-notice .dn-list li b { color: #92400e; font-weight: 800; }
+  .dash-notice .dn-list li .dn-tip { display: block; margin-top: 5px; font-size: 0.85rem; color: #9a5a12; background: rgba(255,255,255,0.5); border-radius: 9px; padding: 7px 9px; }
 
   /* 호핑 투어 참가 신청 */
   .hop-desc { font-size: 0.92rem; line-height: 1.6; color: var(--text-dim); margin-bottom: 14px; }
@@ -524,7 +525,10 @@
   // 잠시 숨김 — 아래 두 줄을 NOTICES 안으로 옮기면 안내 카드가 다시 보입니다.
   // { icon: "🤝", t: "<b>버디 세션 신청</b>은 <b>7월 1일까지</b> 꼭 해주세요." },
   // { icon: "💱", t: "<b>환전</b>은 오리엔테이션(어드민 건물 <b>3층</b>) 끝난 뒤, 같은 건물 <b>1층</b>에서 진행해요." },
-  const NOTICES = [];
+  const NOTICES = [
+    { icon: "📌", t: "<b>오리엔테이션</b><br>· 시간: <b>오전 8:50</b> (10분 여유 있게 참석해 주세요)<br>· 장소: Admin Building <b>3층 츠네이시 홀</b>" },
+    { icon: "💱", t: "<b>환전</b><br>· 시간: <b>오늘 11:00 ~ 13:00</b><br>· 장소: Admin Building <b>1층</b><span class=\"dn-tip\">💡 환전할 돈은 미리 챙기기보다 <b>금고에 보관</b>해 두었다가 <b>오리엔테이션 종료 후</b> 가져오시길 권장드립니다.</span>" },
+  ];
   (function renderNotices() {
     const el = document.getElementById("dn-list");
     if (!el) return;
