@@ -85,6 +85,25 @@
   .dash-notice .dn-list li { display: flex; gap: 9px; font-size: 0.9rem; line-height: 1.55; color: #78350f; }
   .dash-notice .dn-list li .dn-ic { flex-shrink: 0; }
   .dash-notice .dn-list li b { color: #92400e; font-weight: 800; }
+
+  /* 호핑 투어 참가 신청 */
+  .hop-desc { font-size: 0.92rem; line-height: 1.6; color: var(--text-dim); margin-bottom: 14px; }
+  .hop-desc b { color: var(--text); font-weight: 700; }
+  .hop-btn {
+    width: 100%; padding: 15px 16px; border: 2px solid var(--accent);
+    border-radius: 14px; background: var(--accent); color: #fff;
+    font-family: inherit; font-size: 1.02rem; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 9px;
+    transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.05s;
+  }
+  .hop-btn:hover { background: var(--accent-hover); }
+  .hop-btn:active { transform: translateY(1px); }
+  .hop-btn[disabled] { opacity: 0.6; cursor: not-allowed; }
+  .hop-btn.joined {
+    background: rgba(5,150,105,0.12); color: #047857; border-color: rgba(5,150,105,0.55);
+  }
+  .hop-btn.joined:hover { background: rgba(5,150,105,0.18); }
+  .hop-status { text-align: center; font-size: 0.84rem; margin-top: 11px; min-height: 18px; color: var(--text-faint); line-height: 1.5; }
   /* 본문(container-narrow=880px) 옆에 여유가 생기는 넓은 화면에서만 우측 고정.
      좁은 화면에선 위 기본 스타일대로 상단 인라인 카드로 보인다. */
   @media (min-width: 1400px) {
@@ -319,6 +338,17 @@
     <ul class="dn-list" id="dn-list"></ul>
   </aside>
 
+  <!-- 호핑 투어 참가 신청 (수요조사) -->
+  <section class="card fade-up" id="hop-card" style="display:none">
+    <div class="card-title">🚤 호핑 투어 참가 신청</div>
+    <p class="hop-desc">
+      <b>7월 12일(일)</b> 호핑 투어를 계획하고 있어요. 참가를 원하시면 아래 버튼을 눌러 신청해 주세요.<br>
+      신청 마감: <b>7월 5일(일)</b>
+    </p>
+    <button type="button" id="hop-btn" class="hop-btn"><span id="hop-btn-label">참가 신청하기</span></button>
+    <div class="hop-status" id="hop-status"></div>
+  </section>
+
   <!-- 완료율 · 잠깐 숨김 (복구하려면 style="display:none" 제거) -->
   <section class="card fade-up" style="display:none">
     <div class="prog-top">
@@ -451,6 +481,7 @@
     CUR = rec;
     $("d-name").textContent = rec.name || "학생";
     $("d-updated").textContent = rec.updatedAt || STATUS_UPDATED || "";
+    renderHopping(rec);   // 호핑 수요조사 카드
 
     const cl = rec.checklist || {};
     const total = ORDER.length;
@@ -681,6 +712,40 @@
     });
   }
 
+  // ── 호핑 투어 참가 신청 (수요조사) ──
+  // 로그인해서 본인(이메일)이 확인된 상태이므로 추가 입력 없이 토글만 한다.
+  // id = 이메일 sha256 앞16자(학생별 고정). 신청 명단은 team.html "🚤 호핑 수요조사"에서 조회.
+  async function renderHopping(rec) {
+    const card = $("hop-card"); if (!card) return;
+    card.style.display = "";
+    const hbtn = $("hop-btn"), label = $("hop-btn-label"), stat = $("hop-status");
+    if (!window.lcicHopping) { setTimeout(() => renderHopping(rec), 400); return; }   // 브리지 로드 대기
+    const id = (await sha256hex(CUR_EMAIL || "")).slice(0, 16);
+    let joined = false;
+    try { joined = await window.lcicHopping.get(id); } catch (_) {}
+    function paint(on) {
+      hbtn.classList.toggle("joined", on);
+      label.textContent = on ? "✓ 참가 신청 완료 — 취소하려면 클릭" : "참가 신청하기";
+    }
+    paint(joined);
+    hbtn.onclick = async () => {
+      hbtn.disabled = true;
+      const next = !joined;
+      const err = next
+        ? await window.lcicHopping.join(id, rec.name || "", rec.uni || "")
+        : await window.lcicHopping.cancel(id);
+      if (err) {
+        stat.style.color = "#dc2626"; stat.textContent = "저장 실패 — 잠시 후 다시 시도해 주세요.";
+      } else {
+        joined = next; paint(joined); stat.style.color = "";
+        stat.textContent = joined
+          ? "신청이 완료되었어요. 마음이 바뀌면 다시 눌러 취소할 수 있어요."
+          : "신청이 취소되었어요.";
+      }
+      hbtn.disabled = false;
+    };
+  }
+
   // ── 로그인 ──
   const errEl = $("login-err"), btn = $("login-btn"), btnLabel = $("login-btn-label");
   function showErr() {
@@ -772,6 +837,27 @@ window.lcicSubmitCourseReg = async (payload) => {
 // 본인 확인(로그인) 기록 → status_views INSERT (조용히, 실패해도 무시)
 window.lcicLogView = async (payload) => {
   try { await supabase.from("status_views").insert(payload); } catch (_) {}
+};
+// 호핑 투어 수요조사 → hopping_signups (id=이메일해시). 개인정보는 이름/대학만, team.html 명단용.
+window.lcicHopping = {
+  async get(id) {
+    const { data, error } = await supabase.from("hopping_signups").select("id").eq("id", id).maybeSingle();
+    if (error) throw error;
+    return !!data;
+  },
+  async join(id, name, university) {
+    try {
+      const { error } = await supabase.from("hopping_signups")
+        .upsert({ id, name, university, created_at: new Date().toISOString() });
+      return error ? (error.message || "오류") : null;
+    } catch (e) { return e && e.message ? e.message : "네트워크 오류"; }
+  },
+  async cancel(id) {
+    try {
+      const { error } = await supabase.from("hopping_signups").delete().eq("id", id);
+      return error ? (error.message || "오류") : null;
+    } catch (e) { return e && e.message ? e.message : "네트워크 오류"; }
+  },
 };
 </script>
 </body>

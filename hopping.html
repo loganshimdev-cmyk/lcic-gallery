@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>호핑 투어 수요조사 · LCIC</title>
+<link rel="icon" type="image/png" href="assets/brand/lcic-logo.png">
+<script src="assets/background.js?v=8"></script>
+<link rel="stylesheet" href="assets/shared.css?v=13">
+<script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+<style>
+  .gate { max-width: 400px; margin: 90px auto 0; padding: 36px 32px; background: var(--bg-elev);
+    border: 1px solid var(--hairline); border-radius: 24px; box-shadow: var(--shadow-lg); }
+  .gate h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 6px; }
+  .gate p { color: var(--text-dim); font-size: .85rem; margin-bottom: 20px; }
+  .gate input { width: 100%; margin-bottom: 12px; }
+
+  .wrap { max-width: 860px; margin: 0 auto; padding: 32px 20px 100px; }
+  .head h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -.02em; }
+  .head .meta { color: var(--text-dim); font-size: .84rem; margin-top: 3px; }
+
+  .count-bar { display: flex; gap: 10px; flex-wrap: wrap; margin: 16px 0 14px; }
+  .count-bar .cbx { display: inline-flex; align-items: center; gap: 7px; padding: 10px 16px; border-radius: 12px;
+    background: var(--bg-elev); border: 1px solid var(--hairline); font-size: .88rem; font-weight: 700; box-shadow: var(--shadow-sm); }
+  .count-bar .cbx .n { font-weight: 800; font-size: 1.15rem; color: var(--accent-deep); }
+  .hint { font-size: .78rem; color: var(--text-faint); margin: 0 0 18px; line-height: 1.5; }
+  .search { margin: 0 0 20px; }
+  .search input { max-width: 300px; }
+
+  .names { display: flex; flex-wrap: wrap; gap: 9px; }
+  .nm { display: inline-flex; align-items: baseline; gap: 6px; padding: 9px 14px; border-radius: 12px;
+    background: var(--accent-tint); border: 1px solid var(--accent-soft); font-size: .95rem; }
+  .nm b { font-weight: 700; color: var(--accent-deep); }
+  .nm .uni { font-size: .7rem; color: var(--text-faint); }
+  .nm.hit { box-shadow: 0 0 0 2px rgba(202,138,4,.75); }
+  .empty { color: var(--text-faint); text-align: center; padding: 48px 20px; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<div id="gate-view">
+  <div class="gate">
+    <h2>🚤 호핑 투어 수요조사</h2>
+    <p>담당자 전용입니다. 비밀번호를 입력하세요.</p>
+    <form id="gate-form">
+      <input class="input" id="pw" type="password" autocomplete="current-password" placeholder="비밀번호" required>
+      <button class="btn-primary" id="gate-btn" type="submit" style="width:100%;">열기</button>
+    </form>
+  </div>
+</div>
+
+<main id="app-view" class="wrap hidden">
+  <div class="head">
+    <h1>🚤 호핑 투어 참가 신청자</h1>
+    <div class="meta" id="meta">7월 12일(일) 호핑 예정 · 신청 마감 7월 5일(일)</div>
+  </div>
+  <div class="count-bar" id="counts"></div>
+  <div class="hint">학생이 <b>status.html(내 준비 현황)</b>에서 직접 신청/취소합니다. 15초마다 자동 갱신됩니다.</div>
+  <div class="search"><input class="input" id="q" type="search" placeholder="이름 검색"></div>
+  <div class="names" id="list"></div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { supabase } from "./assets/supabase.js?v=4";
+
+const $ = (id) => document.getElementById(id);
+const toast = $("toast");
+function showToast(m, t = "") { toast.textContent = m; toast.className = `toast show ${t}`; setTimeout(() => toast.classList.remove("show"), 2600); }
+const esc = (s) => (s == null ? "" : String(s)).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+const PW = "4692";
+const TABLE = "hopping_signups";
+let ROWS = [];
+let ready = false;
+
+$("gate-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if ($("pw").value !== PW) { showToast("비밀번호가 올바르지 않습니다.", "error"); return; }
+  $("gate-view").classList.add("hidden");
+  $("app-view").classList.remove("hidden");
+  await load();
+  render();
+  setInterval(sync, 15000);
+});
+
+async function load() {
+  try {
+    const { data, error } = await supabase.from(TABLE).select("id,name,university,created_at");
+    if (error) throw error;
+    ROWS = data || [];
+    ready = true;
+  } catch (_) {
+    ready = false; ROWS = [];
+    showToast("명단을 불러오지 못했습니다(관리자 SQL 필요).", "error");
+  }
+}
+async function sync() {
+  if (!ready) return;
+  try {
+    const { data, error } = await supabase.from(TABLE).select("id,name,university,created_at");
+    if (error) throw error;
+    ROWS = data || [];
+    render();
+  } catch (_) { /* 일시적 오류는 조용히 무시 */ }
+}
+
+$("q").addEventListener("input", render);
+
+function render() {
+  const q = ($("q").value || "").trim();
+  const sorted = [...ROWS].sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "ko"));
+  const shown = sorted.filter((r) => !q || String(r.name || "").includes(q));
+
+  $("counts").innerHTML =
+    `<span class="cbx">🚤 참가 신청 <span class="n">${ROWS.length}</span> 명</span>` +
+    (q ? `<span class="cbx" style="opacity:.7">검색 <span class="n">${shown.length}</span> 명</span>` : "");
+
+  if (!ROWS.length) {
+    $("list").innerHTML = `<div class="empty">아직 신청자가 없습니다.<br>학생이 준비현황 페이지에서 신청하면 여기에 표시됩니다.</div>`;
+    return;
+  }
+  if (!shown.length) { $("list").innerHTML = `<div class="empty">검색 결과가 없습니다.</div>`; return; }
+  $("list").innerHTML = shown.map((r) =>
+    `<span class="nm${q ? " hit" : ""}"><b>${esc(r.name)}</b>${r.university ? `<span class="uni">${esc(r.university)}</span>` : ""}</span>`
+  ).join("");
+}
+</script>
+</body>
+</html>
