@@ -104,6 +104,19 @@
   }
   .hop-btn.joined:hover { background: rgba(5,150,105,0.18); }
   .hop-status { text-align: center; font-size: 0.84rem; margin-top: 11px; min-height: 18px; color: var(--text-faint); line-height: 1.5; }
+  .hop-info { margin-top: 16px; border-top: 1px dashed var(--hairline-strong); padding-top: 15px; display: flex; flex-direction: column; gap: 14px; }
+  .hop-info .hi-sec { }
+  .hop-info .hi-h { display: flex; align-items: center; gap: 6px; font-size: 0.86rem; font-weight: 800; color: var(--accent-deep); margin-bottom: 7px; }
+  .hop-info .hi-flow { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 4px; font-size: 0.86rem; color: var(--text); }
+  .hop-info .hi-flow .step { background: var(--accent-tint); border: 1px solid var(--accent-soft); border-radius: 8px; padding: 3px 9px; font-weight: 600; }
+  .hop-info .hi-flow .arr { color: var(--text-faint); font-weight: 700; }
+  .hop-info .hi-time { font-size: 0.86rem; color: var(--text); margin-bottom: 9px; }
+  .hop-info .hi-time b { color: var(--accent-deep); font-weight: 800; }
+  .hop-info .hi-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .hop-info .hi-chips span { font-size: 0.82rem; padding: 4px 10px; border-radius: 999px; background: rgba(0,0,0,0.04); border: 1px solid var(--hairline); font-weight: 600; }
+  .hop-info .hi-prov span { background: rgba(5,150,105,0.1); border-color: rgba(5,150,105,0.3); color: #047857; }
+  .hop-info .hi-tip { font-size: 0.86rem; line-height: 1.6; color: #b45309; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.3); border-radius: 12px; padding: 11px 13px; }
+  .hop-info .hi-tip b { color: #92400e; font-weight: 800; }
   /* 본문(container-narrow=880px) 옆에 여유가 생기는 넓은 화면에서만 우측 고정.
      좁은 화면에선 위 기본 스타일대로 상단 인라인 카드로 보인다. */
   @media (min-width: 1400px) {
@@ -347,6 +360,35 @@
     </p>
     <button type="button" id="hop-btn" class="hop-btn"><span id="hop-btn-label">참가 신청하기</span></button>
     <div class="hop-status" id="hop-status"></div>
+
+    <div class="hop-info">
+      <div class="hi-sec">
+        <div class="hi-h">🗓 호핑 일정 (7월 12일 · 일)</div>
+        <div class="hi-time">오전 <b>9시 30분 미팅</b> · 오후 <b>2시경</b> 숙소 도착 예정</div>
+        <div class="hi-flow">
+          <span class="step">숙소</span><span class="arr">›</span>
+          <span class="step">선착장</span><span class="arr">›</span>
+          <span class="step">스노클링</span><span class="arr">›</span>
+          <span class="step">낚시</span><span class="arr">›</span>
+          <span class="step">중식</span><span class="arr">›</span>
+          <span class="step">선착장</span><span class="arr">›</span>
+          <span class="step">숙소</span>
+        </div>
+      </div>
+      <div class="hi-sec">
+        <div class="hi-h">🎒 개인 준비물</div>
+        <div class="hi-chips">
+          <span>수영복</span><span>젖어도 되는 신발</span><span>모자</span><span>선크림</span><span>매너팁</span>
+        </div>
+      </div>
+      <div class="hi-sec">
+        <div class="hi-h">✅ LCIC가 준비해요</div>
+        <div class="hi-chips hi-prov">
+          <span>스노클링 장비</span><span>물</span><span>음료</span><span>수건</span>
+        </div>
+      </div>
+      <div class="hi-tip">💡 <b>미팅 전 화장실 꼭</b> 다녀오세요! 우리 신나게 다녀와요 💙</div>
+    </div>
   </section>
 
   <!-- 완료율 · 잠깐 숨김 (복구하려면 style="display:none" 제거) -->
