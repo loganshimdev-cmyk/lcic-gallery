@@ -61,7 +61,11 @@
   .place:hover{ transform:translateX(2px); border-color:var(--brand); }
   .place:focus-visible{ outline:2px solid var(--brand); outline-offset:2px; }
   .place.active{ background:var(--brand); color:#fff; border-color:var(--brand); }
-  .place .ic{ font-size:1.05rem; flex:none; }
+  .place .ic{ font-size:1.15rem; flex:none; }
+  .place .txt{ display:flex; flex-direction:column; line-height:1.18; min-width:0; }
+  .place .txt .lb{ font-size:0.85rem; font-weight:800; }
+  .place .txt .lo{ font-size:0.67rem; font-weight:600; color:var(--ink-faint); }
+  .place.active .txt .lo{ color:rgba(255,255,255,0.82); }
   .place .fl{ margin-left:auto; font-size:0.62rem; font-weight:800; color:var(--brand); background:var(--brand-soft); border-radius:999px; padding:1px 7px; }
   .place.active .fl{ color:#fff; background:rgba(255,255,255,0.25); }
   .place.is-constr .fl{ color:#92610a; background:#fef3c7; }
@@ -117,7 +121,7 @@
   <header class="head">
     <span class="eyebrow"><span class="mk">LCIC</span> Campus 3D · Cebu</span>
     <h1>우리 캠퍼스, 어디서 뭘 할까?</h1>
-    <p>드래그하면 빙글빙글 돌려볼 수 있어요 · 오른쪽에서 장소를 누르면 기숙사에서 걸어갑니다</p>
+    <p>드래그하면 빙글빙글 돌려볼 수 있어요 · 오른쪽에서 하고 싶은 일을 누르면 그곳으로 걸어가요</p>
   </header>
 
   <div class="stage">
@@ -154,9 +158,9 @@
   // ---- world model (x east, y south; origin = campus center) ----
   var BUILD = [
     { id:"admin", name:"본관", en:"Administration + Tsuneishi Hall", ic:"🏛️", floors:4,
-      x:0, y:-7, w:8.4, d:2.2, door:3,
+      x:0, y:-7.7, w:3.6, d:2.6, door:3,
       blurb:"환전·행정을 보는 본관이에요. 3·4층은 오리엔테이션이 열리는 츠네이시홀(대강당)이에요.",
-      items:[["💱","환전 · 행정 (아래층)"],["🎤","츠네이시홀 — 오리엔테이션 대강당 (3·4층)"]] },
+      items:[["💱","환전 · 행정 (아래층)"],["🎓","오리엔테이션 — 츠네이시홀 (3·4층)"]] },
     { id:"basket", name:"농구장", en:"Basketball Court", ic:"🏀", tag:"야외", kind:"court",
       x:7.4, y:-7.0, w:3.2, d:1.9, door:16,
       blurb:"수업 외 시간에 농구를 즐길 수 있는 야외 코트예요.",
@@ -166,19 +170,19 @@
       blurb:"야외 배구 코트예요.",
       items:[["🏐","배구"],["🤸","체육 · 여가 활동"]] },
     { id:"newbld", name:"신축동", en:"New Building", ic:"🚧", floors:4, construction:true,
-      x:-6, y:-3, w:2.8, d:4.2, door:8,
+      x:-6, y:-3, w:2.8, d:4.4, door:8,
       blurb:"거의 다 지어졌어요. 마무리 공사가 끝나면 곧 문을 엽니다.",
       items:[["🚧","마무리 공사 진행 중"],["🔜","오픈 예정"]] },
     { id:"science", name:"과학관", en:"Health & Sciences", ic:"🍽️", floors:4,
-      x:6, y:-3, w:2.8, d:4.2, door:10,
+      x:6, y:-3, w:2.8, d:4.4, door:10,
       blurb:"학생식당과 현지 학생 강의동이 함께 있는 건물이에요.",
       items:[["🍚","학생식당 (전 학생 이용)"],["📚","필리핀 현지 학생 강의동"]] },
     { id:"lang", name:"어학건물", en:"International Building", ic:"🗣️", floors:4,
-      x:-6, y:3.6, w:2.8, d:4.2, door:12,
+      x:-6, y:3.6, w:2.8, d:4.4, door:12,
       blurb:"국제학생(한국 학생 포함)의 어학 수업이 열리는 강의동이에요.",
-      items:[["🗣️","어학 수업 (강의실)"],["🌏","국제학생 전용 강의동"]] },
+      items:[["🗣️","어학 수업 (강의실)"],["❓","수업·과목 질문 (3층)"],["💪","Gym · 헬스장 (1층)"]] },
     { id:"dorm", name:"기숙사", en:"Dormitory", ic:"🛏️", floors:5, big:true,
-      x:6, y:3.6, w:2.8, d:4.8, door:14,
+      x:6, y:3.6, w:2.8, d:4.5, door:14,
       blurb:"학생들이 생활하는 숙소예요. 캠퍼스 유일 5층 건물이며, 여기서 하루가 시작돼요.",
       items:[["🛏️","학생 숙소"],["🧖","사우나 · 노천탕 (5층)"]] }
   ];
@@ -186,15 +190,16 @@
   function flText(b){ return b.construction ? "공사중" : (b.tag ? b.tag : (b.floors+"층")); }
 
   // ---- path graph (node coords in world) ----
-  var NODE = [
-    [0,0],[0,-3],[0,-5.5],[0,-5.9],[0,3.6],[0,7],[0,9],
-    [-2.2,-3],[-4.4,-3],[2.2,-3],[4.4,-3],
-    [-2.2,3.6],[-4.4,3.6],[2.2,3.6],[4.4,3.6],
-    [4.8,-5.5],[7.4,-6.9],[7.4,-4.6]
-  ];
-  var EDGES = [[0,1],[1,2],[2,3],[1,7],[7,8],[1,9],[9,10],[0,4],[4,11],[11,12],[4,13],[13,14],[4,5],[5,6],[2,15],[15,16],[15,17]];
-  var ADJ = NODE.map(function(){return [];});
-  EDGES.forEach(function(e){ ADJ[e[0]].push(e[1]); ADJ[e[1]].push(e[0]); });
+  var RING_CX=0, RING_CY=-0.6, RING_RX=4.2, RING_RY=4.8, RING_N=18, RING_BW=0.72;
+  var NODE=[], ADJ=[];
+  function addNode(x,y){ NODE.push([x,y]); ADJ.push([]); return NODE.length-1; }
+  function link(a,b){ ADJ[a].push(b); ADJ[b].push(a); }
+  var ringIdx=[];
+  (function(){ var i; for(i=0;i<RING_N;i++){ var t=i/RING_N*Math.PI*2; ringIdx.push(addNode(RING_CX+RING_RX*Math.cos(t), RING_CY+RING_RY*Math.sin(t))); } for(i=0;i<RING_N;i++) link(ringIdx[i], ringIdx[(i+1)%RING_N]); })();
+  function nearestRing(x,y){ var bi=ringIdx[0],bd=1e9; for(var i=0;i<RING_N;i++){ var n=NODE[ringIdx[i]]; var d=(n[0]-x)*(n[0]-x)+(n[1]-y)*(n[1]-y); if(d<bd){bd=d;bi=ringIdx[i];} } return bi; }
+  var DOORS={ admin:[0,-6.3], newbld:[-4.5,-3], science:[4.5,-3], lang:[-4.5,3.6], dorm:[4.5,3.6], basket:[6.0,-6.9], volley:[6.0,-4.6] };
+  BUILD.forEach(function(b){ var d=DOORS[b.id]||[b.x,b.y]; var idx=addNode(d[0],d[1]); var rn=nearestRing(d[0],d[1]); link(idx,rn); b.door=idx; b._ring=rn; });
+  (function(){ var bb=byId("basket"),vb=byId("volley"); if(bb&&vb) link(bb.door,vb.door); })();
   function bfs(a,b){
     var prev={}, q=[a], seen={}; seen[a]=1;
     while(q.length){ var n=q.shift(); if(n===b) break;
@@ -202,7 +207,7 @@
     var path=[b], c=b; while(c!==a){ if(prev[c]===undefined) return [a,b]; c=prev[c]; path.unshift(c); }
     return path;
   }
-  var DORM_NODE = 14;
+  var DORM_NODE = byId("dorm").door;
 
   // ---- canvas / camera ----
   var cv=document.getElementById("cv"), ctx=cv.getContext("2d");
@@ -239,22 +244,23 @@
   function fillRectWorld(x0,y0,x1,y1,fill,stroke,lw){
     poly([project(x0,y0,0),project(x1,y0,0),project(x1,y1,0),project(x0,y1,0)], fill, stroke, lw);
   }
+  function ellipsePolyZ(cx,cy,rx,ry,n){ var a=[]; for(var i=0;i<n;i++){ var t=i/n*Math.PI*2; a.push(project(cx+rx*Math.cos(t),cy+ry*Math.sin(t),0)); } return a; }
+  function pathSeg(ax,ay,bx,by,w,col){ var dx=bx-ax,dy=by-ay,L=Math.hypot(dx,dy)||1,nx=-dy/L*w/2,ny=dx/L*w/2;
+    poly([project(ax+nx,ay+ny,0),project(bx+nx,by+ny,0),project(bx-nx,by-ny,0),project(ax-nx,ay-ny,0)],col,null); }
   function drawGround(){
     var dark = document.documentElement.getAttribute("data-theme")==="dark" || (window.matchMedia("(prefers-color-scheme: dark)").matches && document.documentElement.getAttribute("data-theme")!=="light");
-    var plaza = dark? "#243247":"#e7e0d2", plazaEdge= dark? "#2f4059":"#d3c9b4";
-    var grass = dark? "#3f7a34":"#84c457", grassE= dark? "#356b2b":"#6cae42";
-    var path = dark? "#33435c":"#efe9db", pathL= dark? "#3d4f6b":"#e0d8c6";
-    fillRectWorld(-9.2,-9.2,9.2,10.2, plaza, plazaEdge, 2);
-    fillRectWorld(-2.4,-5.6,2.4,7.2, grass, grassE, 2);           // courtyard
-    fillRectWorld(-0.45,-5.6,0.45,9, path);                        // vertical spine
-    fillRectWorld(-4.7,-3.4,4.7,-2.6, path);                       // north cross
-    fillRectWorld(-4.7,3.2,4.7,4.0, path);                         // south cross
-    // central medallion
-    var m=project(0,0,0); ctx.beginPath(); ctx.ellipse(m.x,m.y,20*cam.zoom,10*cam.zoom,0,0,7); ctx.fillStyle=path; ctx.fill();
-    ctx.strokeStyle=theme("--brand"); ctx.globalAlpha=0.5; ctx.lineWidth=1.5; ctx.stroke(); ctx.globalAlpha=1;
-    // path to courts
-    fillRectWorld(0,-5.9,5,-5.1, path);
-    fillRectWorld(4.4,-7.2,5.2,-4.4, path);
+    var lawn = dark? "#3f7a34":"#84c457", lawnE= dark? "#356b2b":"#6cae42";
+    var path = dark? "#39485f":"#ece4d2", pathL= dark? "#45566f":"#dacfb8";
+    fillRectWorld(-9.6,-9.8,9.6,10.6, lawn, lawnE, 2);                        // lawn base
+    poly(ellipsePolyZ(RING_CX,RING_CY,RING_RX+RING_BW,RING_RY+RING_BW,48), path, pathL, 1.5);   // ring outer (tan)
+    poly(ellipsePolyZ(RING_CX,RING_CY,RING_RX-RING_BW,RING_RY-RING_BW,48), lawn, null, 0);       // inner lawn (cut)
+    BUILD.forEach(function(b){ var d=NODE[b.door], r=NODE[b._ring]; pathSeg(d[0],d[1],r[0],r[1],0.9,path); }); // spokes
+    pathSeg(6.0,-6.9,6.0,-4.6,0.8,path);                                     // court connector
+    ctx.save(); ctx.setLineDash([3,5]); ctx.globalAlpha=0.55; ctx.strokeStyle=pathL; ctx.lineWidth=1.2;
+    var mid=ellipsePolyZ(RING_CX,RING_CY,RING_RX,RING_RY,48); ctx.beginPath(); ctx.moveTo(mid[0].x,mid[0].y);
+    for(var i=1;i<mid.length;i++) ctx.lineTo(mid[i].x,mid[i].y); ctx.closePath(); ctx.stroke(); ctx.restore();
+    var m=project(RING_CX,RING_CY,0.02); ctx.beginPath(); ctx.ellipse(m.x,m.y,17*cam.zoom,8.5*cam.zoom,0,0,7); ctx.fillStyle=path; ctx.fill();
+    ctx.strokeStyle=theme("--brand"); ctx.globalAlpha=0.45; ctx.lineWidth=1.5; ctx.stroke(); ctx.globalAlpha=1;
   }
 
   // ---- draw a person ----
@@ -515,16 +521,24 @@
 
   // ---- side panel ----
   var side=document.getElementById("side");
-  side.innerHTML='<div class="side-h">🧭 <b>기숙사에서 출발</b><br>가고 싶은 곳을 눌러요</div>' + BUILD.map(function(b){
-    if(b.id==="dorm") return '';
-    var cls="place"+(b.construction?" is-constr":"")+(b.kind==="court"?" is-sport":"");
-    return '<button class="'+cls+'" data-id="'+b.id+'"><span class="ic">'+b.ic+'</span>'+b.name+'<span class="fl">'+flText(b)+'</span></button>';
-  }).join("") + '<button class="place" data-id="dorm"><span class="ic">🛏️</span>기숙사<span class="fl">5층</span></button>';
+  var ACTS = [
+    {ic:"💱", label:"환전", loc:"본관", target:"admin"},
+    {ic:"🎓", label:"오리엔테이션", loc:"본관 3·4층 · 츠네이시홀", target:"admin"},
+    {ic:"🍚", label:"식당", loc:"과학관", target:"science"},
+    {ic:"❓", label:"수업·과목 질문", loc:"어학관 3층", target:"lang"},
+    {ic:"💪", label:"Gym · 헬스장", loc:"어학관 1층", target:"lang"},
+    {ic:"🏀", label:"농구", loc:"농구장", target:"basket"},
+    {ic:"🏐", label:"배구", loc:"배구장", target:"volley"},
+    {ic:"🛏️", label:"내 방 · 숙소", loc:"기숙사", target:"dorm"}
+  ];
+  side.innerHTML='<div class="side-h">🧭 <b>기숙사에서 출발</b><br>뭘 하고 싶어요?</div>' + ACTS.map(function(a){
+    return '<button class="place" data-target="'+a.target+'"><span class="ic">'+a.ic+'</span><span class="txt"><span class="lb">'+a.label+'</span><span class="lo">'+a.loc+'</span></span></button>';
+  }).join("");
   side.addEventListener("click",function(e){
     var t=e.target.closest(".place"); if(!t) return;
     Array.prototype.forEach.call(side.querySelectorAll(".place"),function(x){x.classList.remove("active");});
     t.classList.add("active");
-    setGuideTo(byId(t.getAttribute("data-id")));
+    setGuideTo(byId(t.getAttribute("data-target")));
   });
 
   // ---- detail modal ----
