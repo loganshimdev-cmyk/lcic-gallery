@@ -161,14 +161,10 @@
       x:0, y:-7.5, w:3.6, d:1.7, door:3,
       blurb:"환전·행정을 보는 본관이에요. 3·4층은 오리엔테이션이 열리는 츠네이시홀(대강당)이에요.",
       items:[["💱","환전 · 행정 (아래층)"],["🎓","오리엔테이션 — 츠네이시홀 (3·4층)"]] },
-    { id:"basket", name:"농구장", en:"Basketball Court", ic:"🏀", tag:"야외", kind:"court",
-      x:4.7, y:-8.3, w:2.8, d:1.4, door:16,
-      blurb:"수업 외 시간에 농구를 즐길 수 있는 야외 코트예요.",
-      items:[["🏀","농구"],["🤸","체육 · 여가 활동"]] },
-    { id:"volley", name:"배구장", en:"Volleyball Court", ic:"🏐", tag:"야외", kind:"court",
-      x:7.5, y:-8.3, w:2.8, d:1.4, door:17,
-      blurb:"야외 배구 코트예요.",
-      items:[["🏐","배구"],["🤸","체육 · 여가 활동"]] },
+    { id:"courts", name:"농구·배구장", en:"Sports Courts", ic:"🏀", tag:"야외", kind:"court", sport:"basket",
+      x:6.1, y:-8.3, w:4.8, d:1.7, door:16,
+      blurb:"수업 외 시간에 농구·배구를 즐길 수 있는 야외 코트예요.",
+      items:[["🏀","농구"],["🏐","배구"],["🤸","체육 · 여가 활동"]] },
     { id:"newbld", name:"신축동", en:"New Building", ic:"🚧", floors:4, construction:true,
       x:-6.8, y:-5.6, w:2.4, d:4.6, door:8,
       blurb:"거의 다 지어졌어요. 마무리 공사가 끝나면 곧 문을 엽니다.",
@@ -197,9 +193,8 @@
   var ringIdx=[];
   (function(){ var i; for(i=0;i<RING_N;i++){ var t=i/RING_N*Math.PI*2; ringIdx.push(addNode(RING_CX+RING_RX*Math.cos(t), RING_CY+RING_RY*Math.sin(t))); } for(i=0;i<RING_N;i++) link(ringIdx[i], ringIdx[(i+1)%RING_N]); })();
   function nearestRing(x,y){ var bi=ringIdx[0],bd=1e9; for(var i=0;i<RING_N;i++){ var n=NODE[ringIdx[i]]; var d=(n[0]-x)*(n[0]-x)+(n[1]-y)*(n[1]-y); if(d<bd){bd=d;bi=ringIdx[i];} } return bi; }
-  var DOORS={ admin:[0,-6.6], newbld:[-5.5,-3.9], science:[5.5,-3.9], lang:[-5.6,0.6], dorm:[5.6,0.6], basket:[4.8,-7.5], volley:[7.2,-7.5] };
-  BUILD.forEach(function(b){ var d=DOORS[b.id]||[b.x,b.y]; var idx=addNode(d[0],d[1]); b.door=idx; if(b.id==="volley"){ b._ring=null; return; } var rn=nearestRing(d[0],d[1]); link(idx,rn); b._ring=rn; });
-  (function(){ var bb=byId("basket"),vb=byId("volley"); if(bb&&vb) link(bb.door,vb.door); })();
+  var DOORS={ admin:[0,-6.6], newbld:[-5.5,-3.9], science:[5.5,-3.9], lang:[-5.6,0.6], dorm:[5.6,0.6], courts:[6.1,-7.4] };
+  BUILD.forEach(function(b){ var d=DOORS[b.id]||[b.x,b.y]; var idx=addNode(d[0],d[1]); var rn=nearestRing(d[0],d[1]); link(idx,rn); b.door=idx; b._ring=rn; });
   var CN=nearestRing(RING_CX,RING_CY-RING_RY-2), CS=nearestRing(RING_CX,RING_CY+RING_RY+2), CE=nearestRing(RING_CX+RING_RX+2,RING_CY), CW=nearestRing(RING_CX-RING_RX-2,RING_CY);
   var centerNode=addNode(RING_CX,RING_CY); [CN,CS].forEach(function(rn){ link(centerNode,rn); });
   function bfs(a,b){
@@ -258,7 +253,6 @@
     poly(ellipsePolyZ(RING_CX,RING_CY,RING_RX-RING_BW,RING_RY-RING_BW,48), lawn, null, 0);       // inner lawn (cut)
     pathSeg(0,-7.6,0,6.2,1.0,path);                                                             // 세로 축: ADMIN ↔ 경비 (중앙 관통)
     BUILD.forEach(function(b){ if(b._ring==null) return; var d=NODE[b.door], r=NODE[b._ring]; pathSeg(d[0],d[1],r[0],r[1],0.9,path); }); // spokes
-    pathSeg(4.8,-7.5,7.2,-7.5,0.8,path);                                     // court connector
     ctx.save(); ctx.setLineDash([3,5]); ctx.globalAlpha=0.55; ctx.strokeStyle=pathL; ctx.lineWidth=1.2;
     var mid=ellipsePolyZ(RING_CX,RING_CY,RING_RX,RING_RY,48); ctx.beginPath(); ctx.moveTo(mid[0].x,mid[0].y);
     for(var i=1;i<mid.length;i++) ctx.lineTo(mid[i].x,mid[i].y); ctx.closePath(); ctx.stroke(); ctx.restore();
@@ -530,8 +524,7 @@
     {ic:"🍚", label:"식당", loc:"과학관", target:"science"},
     {ic:"❓", label:"수업·과목 질문", loc:"어학관 3층", target:"lang"},
     {ic:"💪", label:"Gym · 헬스장", loc:"어학관 1층", target:"lang"},
-    {ic:"🏀", label:"농구", loc:"농구장", target:"basket"},
-    {ic:"🏐", label:"배구", loc:"배구장", target:"volley"},
+    {ic:"🏀", label:"농구 · 배구", loc:"농구·배구장", target:"courts"},
     {ic:"🛏️", label:"내 방 · 숙소", loc:"기숙사", target:"dorm"}
   ];
   side.innerHTML='<div class="side-h">🧭 <b>기숙사에서 출발</b><br>뭘 하고 싶어요?</div>' + ACTS.map(function(a){
