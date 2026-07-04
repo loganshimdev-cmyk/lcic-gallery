@@ -158,31 +158,31 @@
   // ---- world model (x east, y south; origin = campus center) ----
   var BUILD = [
     { id:"admin", name:"본관", en:"Administration + Tsuneishi Hall", ic:"🏛️", floors:4,
-      x:0, y:-7.6, w:3.0, d:1.9, door:3,
+      x:0, y:-7.5, w:3.6, d:1.7, door:3,
       blurb:"환전·행정을 보는 본관이에요. 3·4층은 오리엔테이션이 열리는 츠네이시홀(대강당)이에요.",
       items:[["💱","환전 · 행정 (아래층)"],["🎓","오리엔테이션 — 츠네이시홀 (3·4층)"]] },
     { id:"basket", name:"농구장", en:"Basketball Court", ic:"🏀", tag:"야외", kind:"court",
-      x:4.8, y:-8.4, w:2.6, d:1.8, door:16,
+      x:4.7, y:-8.3, w:2.8, d:1.4, door:16,
       blurb:"수업 외 시간에 농구를 즐길 수 있는 야외 코트예요.",
       items:[["🏀","농구"],["🤸","체육 · 여가 활동"]] },
     { id:"volley", name:"배구장", en:"Volleyball Court", ic:"🏐", tag:"야외", kind:"court",
-      x:7.2, y:-8.4, w:2.6, d:1.8, door:17,
+      x:7.5, y:-8.3, w:2.8, d:1.4, door:17,
       blurb:"야외 배구 코트예요.",
       items:[["🏐","배구"],["🤸","체육 · 여가 활동"]] },
     { id:"newbld", name:"신축동", en:"New Building", ic:"🚧", floors:4, construction:true,
-      x:-6.8, y:-5.8, w:1.9, d:5.2, door:8,
+      x:-6.8, y:-5.6, w:2.4, d:4.6, door:8,
       blurb:"거의 다 지어졌어요. 마무리 공사가 끝나면 곧 문을 엽니다.",
       items:[["🚧","마무리 공사 진행 중"],["🔜","오픈 예정"]] },
     { id:"science", name:"과학관", en:"Health & Sciences", ic:"🍽️", floors:4,
-      x:6.8, y:-5.8, w:1.9, d:5.2, door:10,
+      x:6.8, y:-5.6, w:2.4, d:4.6, door:10,
       blurb:"학생식당과 현지 학생 강의동이 함께 있는 건물이에요.",
       items:[["🍚","학생식당 (전 학생 이용)"],["📚","필리핀 현지 학생 강의동"]] },
     { id:"lang", name:"어학건물", en:"International Building", ic:"🗣️", floors:4,
-      x:-6.8, y:0.6, w:1.8, d:8.2, door:12,
+      x:-6.8, y:0.6, w:2.4, d:6.2, door:12,
       blurb:"국제학생(한국 학생 포함)의 어학 수업이 열리는 강의동이에요.",
       items:[["🗣️","어학 수업 (강의실)"],["❓","수업·과목 질문 (3층)"],["💪","Gym · 헬스장 (1층)"]] },
     { id:"dorm", name:"기숙사", en:"Dormitory", ic:"🛏️", floors:5, big:true,
-      x:6.8, y:0.6, w:1.8, d:8.2, door:14,
+      x:6.8, y:0.6, w:2.4, d:6.2, door:14,
       blurb:"학생들이 생활하는 숙소예요. 캠퍼스 유일 5층 건물이며, 여기서 하루가 시작돼요.",
       items:[["🛏️","학생 숙소"],["🧖","사우나 · 노천탕 (5층)"]] }
   ];
@@ -197,7 +197,7 @@
   var ringIdx=[];
   (function(){ var i; for(i=0;i<RING_N;i++){ var t=i/RING_N*Math.PI*2; ringIdx.push(addNode(RING_CX+RING_RX*Math.cos(t), RING_CY+RING_RY*Math.sin(t))); } for(i=0;i<RING_N;i++) link(ringIdx[i], ringIdx[(i+1)%RING_N]); })();
   function nearestRing(x,y){ var bi=ringIdx[0],bd=1e9; for(var i=0;i<RING_N;i++){ var n=NODE[ringIdx[i]]; var d=(n[0]-x)*(n[0]-x)+(n[1]-y)*(n[1]-y); if(d<bd){bd=d;bi=ringIdx[i];} } return bi; }
-  var DOORS={ admin:[0,-6.6], newbld:[-5.5,-3.9], science:[5.5,-3.9], lang:[-5.9,0.6], dorm:[5.9,0.6], basket:[4.8,-7.5], volley:[7.2,-7.5] };
+  var DOORS={ admin:[0,-6.6], newbld:[-5.5,-3.9], science:[5.5,-3.9], lang:[-5.6,0.6], dorm:[5.6,0.6], basket:[4.8,-7.5], volley:[7.2,-7.5] };
   BUILD.forEach(function(b){ var d=DOORS[b.id]||[b.x,b.y]; var idx=addNode(d[0],d[1]); var rn=nearestRing(d[0],d[1]); link(idx,rn); b.door=idx; b._ring=rn; });
   (function(){ var bb=byId("basket"),vb=byId("volley"); if(bb&&vb) link(bb.door,vb.door); })();
   var CN=nearestRing(RING_CX,RING_CY-RING_RY-2), CS=nearestRing(RING_CX,RING_CY+RING_RY+2), CE=nearestRing(RING_CX+RING_RX+2,RING_CY), CW=nearestRing(RING_CX-RING_RX-2,RING_CY);
@@ -215,7 +215,7 @@
   // ---- canvas / camera ----
   var cv=document.getElementById("cv"), ctx=cv.getContext("2d");
   var W=0,H=0,DPR=Math.min(2, window.devicePixelRatio||1);
-  var TW=22, TH=11, FH=14;
+  var TW=22, TH=11, FH=15;
   var cam={ rot:-0.62, zoom:1, ox:0, oy:0 };
   function resize(){
     var r=cv.parentElement.getBoundingClientRect();
@@ -385,7 +385,7 @@
     var rc=project(b.x,b.y,h+0.2); ctx.font=(9*cam.zoom)+"px sans-serif"; ctx.fillStyle="#1e3a8a"; ctx.textAlign="center"; ctx.fillText("🚌 LCIC",rc.x,rc.y);
   }
   function drawGate(){
-    var b={x:0,y:6.2,w:3.0,d:1.6}; var hw=b.w/2,hd=b.d/2,h=1.1;
+    var b={x:0,y:6.2,w:3.4,d:1.6}; var hw=b.w/2,hd=b.d/2,h=1.1;
     var corn=[[b.x-hw,b.y-hd],[b.x+hw,b.y-hd],[b.x+hw,b.y+hd],[b.x-hw,b.y+hd]];
     var bot=corn.map(function(p){return project(p[0],p[1],0);}), top=corn.map(function(p){return project(p[0],p[1],h);});
     for(var i=0;i<4;i++){ var j=(i+1)%4; var q=[bot[i],bot[j],top[j],top[i]]; if(signedArea(q)<0) continue; poly(q,(bot[j].x>=bot[i].x)?"#e7eefb":"#c7d2e2","rgba(30,50,90,0.25)",1); }
