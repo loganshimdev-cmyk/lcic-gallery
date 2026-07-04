@@ -200,6 +200,8 @@
   var DOORS={ admin:[0,-6.3], newbld:[-4.5,-3], science:[4.5,-3], lang:[-4.5,3.6], dorm:[4.5,3.6], basket:[6.0,-6.9], volley:[6.0,-4.6] };
   BUILD.forEach(function(b){ var d=DOORS[b.id]||[b.x,b.y]; var idx=addNode(d[0],d[1]); var rn=nearestRing(d[0],d[1]); link(idx,rn); b.door=idx; b._ring=rn; });
   (function(){ var bb=byId("basket"),vb=byId("volley"); if(bb&&vb) link(bb.door,vb.door); })();
+  var CN=nearestRing(RING_CX,RING_CY-RING_RY-2), CS=nearestRing(RING_CX,RING_CY+RING_RY+2), CE=nearestRing(RING_CX+RING_RX+2,RING_CY), CW=nearestRing(RING_CX-RING_RX-2,RING_CY);
+  var centerNode=addNode(RING_CX,RING_CY); [CN,CS,CE,CW].forEach(function(rn){ link(centerNode,rn); });
   function bfs(a,b){
     var prev={}, q=[a], seen={}; seen[a]=1;
     while(q.length){ var n=q.shift(); if(n===b) break;
@@ -254,6 +256,8 @@
     fillRectWorld(-9.6,-9.8,9.6,10.6, lawn, lawnE, 2);                        // lawn base
     poly(ellipsePolyZ(RING_CX,RING_CY,RING_RX+RING_BW,RING_RY+RING_BW,48), path, pathL, 1.5);   // ring outer (tan)
     poly(ellipsePolyZ(RING_CX,RING_CY,RING_RX-RING_BW,RING_RY-RING_BW,48), lawn, null, 0);       // inner lawn (cut)
+    pathSeg(NODE[CN][0],NODE[CN][1],NODE[CS][0],NODE[CS][1],0.95,path);                          // cross: N-S
+    pathSeg(NODE[CW][0],NODE[CW][1],NODE[CE][0],NODE[CE][1],0.95,path);                          // cross: E-W
     BUILD.forEach(function(b){ var d=NODE[b.door], r=NODE[b._ring]; pathSeg(d[0],d[1],r[0],r[1],0.9,path); }); // spokes
     pathSeg(6.0,-6.9,6.0,-4.6,0.8,path);                                     // court connector
     ctx.save(); ctx.setLineDash([3,5]); ctx.globalAlpha=0.55; ctx.strokeStyle=pathL; ctx.lineWidth=1.2;
