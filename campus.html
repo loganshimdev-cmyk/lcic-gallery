@@ -198,7 +198,7 @@
   (function(){ var i; for(i=0;i<RING_N;i++){ var t=i/RING_N*Math.PI*2; ringIdx.push(addNode(RING_CX+RING_RX*Math.cos(t), RING_CY+RING_RY*Math.sin(t))); } for(i=0;i<RING_N;i++) link(ringIdx[i], ringIdx[(i+1)%RING_N]); })();
   function nearestRing(x,y){ var bi=ringIdx[0],bd=1e9; for(var i=0;i<RING_N;i++){ var n=NODE[ringIdx[i]]; var d=(n[0]-x)*(n[0]-x)+(n[1]-y)*(n[1]-y); if(d<bd){bd=d;bi=ringIdx[i];} } return bi; }
   var DOORS={ admin:[0,-6.6], newbld:[-5.5,-3.9], science:[5.5,-3.9], lang:[-5.6,0.6], dorm:[5.6,0.6], basket:[4.8,-7.5], volley:[7.2,-7.5] };
-  BUILD.forEach(function(b){ var d=DOORS[b.id]||[b.x,b.y]; var idx=addNode(d[0],d[1]); var rn=nearestRing(d[0],d[1]); link(idx,rn); b.door=idx; b._ring=rn; });
+  BUILD.forEach(function(b){ var d=DOORS[b.id]||[b.x,b.y]; var idx=addNode(d[0],d[1]); b.door=idx; if(b.id==="volley"){ b._ring=null; return; } var rn=nearestRing(d[0],d[1]); link(idx,rn); b._ring=rn; });
   (function(){ var bb=byId("basket"),vb=byId("volley"); if(bb&&vb) link(bb.door,vb.door); })();
   var CN=nearestRing(RING_CX,RING_CY-RING_RY-2), CS=nearestRing(RING_CX,RING_CY+RING_RY+2), CE=nearestRing(RING_CX+RING_RX+2,RING_CY), CW=nearestRing(RING_CX-RING_RX-2,RING_CY);
   var centerNode=addNode(RING_CX,RING_CY); [CN,CS].forEach(function(rn){ link(centerNode,rn); });
@@ -257,7 +257,7 @@
     poly(ellipsePolyZ(RING_CX,RING_CY,RING_RX+RING_BW,RING_RY+RING_BW,48), path, pathL, 1.5);   // ring outer (tan)
     poly(ellipsePolyZ(RING_CX,RING_CY,RING_RX-RING_BW,RING_RY-RING_BW,48), lawn, null, 0);       // inner lawn (cut)
     pathSeg(0,-7.6,0,6.2,1.0,path);                                                             // 세로 축: ADMIN ↔ 경비 (중앙 관통)
-    BUILD.forEach(function(b){ var d=NODE[b.door], r=NODE[b._ring]; pathSeg(d[0],d[1],r[0],r[1],0.9,path); }); // spokes
+    BUILD.forEach(function(b){ if(b._ring==null) return; var d=NODE[b.door], r=NODE[b._ring]; pathSeg(d[0],d[1],r[0],r[1],0.9,path); }); // spokes
     pathSeg(4.8,-7.5,7.2,-7.5,0.8,path);                                     // court connector
     ctx.save(); ctx.setLineDash([3,5]); ctx.globalAlpha=0.55; ctx.strokeStyle=pathL; ctx.lineWidth=1.2;
     var mid=ellipsePolyZ(RING_CX,RING_CY,RING_RX,RING_RY,48); ctx.beginPath(); ctx.moveTo(mid[0].x,mid[0].y);
