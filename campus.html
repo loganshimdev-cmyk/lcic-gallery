@@ -202,7 +202,6 @@
   (function(){ var bb=byId("basket"),vb=byId("volley"); if(bb&&vb) link(bb.door,vb.door); })();
   var CN=nearestRing(RING_CX,RING_CY-RING_RY-2), CS=nearestRing(RING_CX,RING_CY+RING_RY+2), CE=nearestRing(RING_CX+RING_RX+2,RING_CY), CW=nearestRing(RING_CX-RING_RX-2,RING_CY);
   var centerNode=addNode(RING_CX,RING_CY); [CN,CS].forEach(function(rn){ link(centerNode,rn); });
-  (function(){ var a=byId("admin"),s=byId("science"); if(a&&s) link(a.door,s.door); })();
   function bfs(a,b){
     var prev={}, q=[a], seen={}; seen[a]=1;
     while(q.length){ var n=q.shift(); if(n===b) break;
@@ -258,7 +257,6 @@
     poly(ellipsePolyZ(RING_CX,RING_CY,RING_RX+RING_BW,RING_RY+RING_BW,48), path, pathL, 1.5);   // ring outer (tan)
     poly(ellipsePolyZ(RING_CX,RING_CY,RING_RX-RING_BW,RING_RY-RING_BW,48), lawn, null, 0);       // inner lawn (cut)
     pathSeg(0,-7.6,0,6.2,1.0,path);                                                             // 세로 축: ADMIN ↔ 경비 (중앙 관통)
-    pathSeg(0,-6.6,5.5,-6.6,0.9,path); pathSeg(5.5,-6.6,5.5,-3.9,0.9,path);                      // 오른쪽 분기: ADMIN → 과학관
     BUILD.forEach(function(b){ var d=NODE[b.door], r=NODE[b._ring]; pathSeg(d[0],d[1],r[0],r[1],0.9,path); }); // spokes
     pathSeg(4.8,-7.5,7.2,-7.5,0.8,path);                                     // court connector
     ctx.save(); ctx.setLineDash([3,5]); ctx.globalAlpha=0.55; ctx.strokeStyle=pathL; ctx.lineWidth=1.2;
