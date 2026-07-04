@@ -115,6 +115,10 @@
   .hop-info .hi-chips { display: flex; flex-wrap: wrap; gap: 6px; }
   .hop-info .hi-chips span { font-size: 0.82rem; padding: 4px 10px; border-radius: 999px; background: rgba(0,0,0,0.04); border: 1px solid var(--hairline); font-weight: 600; }
   .hop-info .hi-prov span { background: rgba(5,150,105,0.1); border-color: rgba(5,150,105,0.3); color: #047857; }
+  .hop-info .hi-cost { font-size: 0.95rem; color: var(--text); display: flex; align-items: center; flex-wrap: wrap; gap: 7px; }
+  .hop-info .hi-cost b { font-size: 1.2rem; font-weight: 800; color: var(--accent-deep); }
+  .hop-info .hi-cost s { color: var(--text-faint); font-size: 0.88rem; }
+  .hop-info .hi-cost .hi-cost-tag { font-size: 0.72rem; font-weight: 800; color: #b45309; background: rgba(245,158,11,0.15); border-radius: 999px; padding: 2px 9px; }
   .hop-info .hi-tip { font-size: 0.86rem; line-height: 1.6; color: #b45309; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.3); border-radius: 12px; padding: 11px 13px; }
   .hop-info .hi-tip b { color: #92400e; font-weight: 800; }
   /* 본문(container-narrow=880px) 옆에 여유가 생기는 넓은 화면에서만 우측 고정.
@@ -371,6 +375,10 @@
           <span class="step">선착장</span><span class="arr">›</span>
           <span class="step">숙소</span>
         </div>
+      </div>
+      <div class="hi-sec">
+        <div class="hi-h">💰 비용</div>
+        <div class="hi-cost"><b>₱2,500</b> <s>₱3,000</s> <span class="hi-cost-tag">할인</span></div>
       </div>
       <div class="hi-sec">
         <div class="hi-h">🎒 개인 준비물</div>
