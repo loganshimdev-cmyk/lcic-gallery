@@ -789,6 +789,20 @@
       hbtn.classList.toggle("joined", on);
       label.textContent = on ? "✓ 참가 신청 완료 — 취소하려면 클릭" : "참가 신청하기";
     }
+
+    // 신청 마감: 7월 5일(일)까지 — 세부(UTC+8) 자정이 지나면 더 이상 신청/취소 불가
+    const HOP_DEADLINE = new Date("2026-07-06T00:00:00+08:00");
+    if (new Date() >= HOP_DEADLINE) {
+      hbtn.disabled = true;
+      hbtn.classList.toggle("joined", joined);
+      label.textContent = joined ? "✓ 참가 신청 완료 (신청 마감됨)" : "신청이 마감되었습니다";
+      stat.style.color = "";
+      stat.textContent = joined
+        ? "호핑 참가 신청이 마감되었습니다. 이미 신청되어 있어요."
+        : "호핑 참가 신청이 마감되었습니다. (마감: 7월 5일)";
+      return;   // 클릭 핸들러를 걸지 않아 신청/취소 불가
+    }
+
     paint(joined);
     hbtn.onclick = async () => {
       hbtn.disabled = true;
