@@ -393,7 +393,7 @@
 
     <div class="hop-my none" id="hop-my"></div>
     <div class="hop-dates" id="hop-dates"></div>
-    <div class="hop-warn">⚠️ 이번 신청은 <b>실제 예약</b>이에요. 신청 후 취소 시 <b>위약금이 발생</b>할 수 있으니, 일정을 신중히 확인한 뒤 신청해 주세요.</div>
+    <div class="hop-warn">⚠️ 이번 신청은 <b>실제 예약</b>이에요. <b>마감일(7/8 오후 3시) 이후에는 취소 및 변경이 불가</b>하며, 취소/변경 시 <b>패널티가 부여</b>될 수 있습니다. 일정을 신중히 확인한 뒤 신청해 주세요.</div>
     <div class="hop-status" id="hop-status"></div>
 
     <div class="hop-info">
@@ -548,11 +548,11 @@
   // 잠시 숨김 — 아래 두 줄을 NOTICES 안으로 옮기면 안내 카드가 다시 보입니다.
   // { icon: "🤝", t: "<b>버디 세션 신청</b>은 <b>7월 1일까지</b> 꼭 해주세요." },
   // { icon: "💱", t: "<b>환전</b>은 오리엔테이션(어드민 건물 <b>3층</b>) 끝난 뒤, 같은 건물 <b>1층</b>에서 진행해요." },
-  const NOTICES = [
-    { icon: "📌", t: "<b>오리엔테이션</b> · <b>7월 6일(월)</b><br>· 시간: <b>오전 8:50</b> (10분 여유 있게 참석해 주세요)<br>· 장소: Admin Building <b>3층 츠네이시 홀</b>" },
-    { icon: "💱", t: "<b>환전</b> · <b>7월 6일(월)</b><br>· 시간: <b>11:00 ~ 13:00</b><br>· 장소: Admin Building <b>1층</b><span class=\"dn-tip\">💡 환전할 돈은 미리 챙기기보다 <b>금고에 보관</b>해 두었다가 <b>오리엔테이션 종료 후</b> 가져오시길 권장드립니다.</span>" },
-    { icon: "🤸", t: "<b>액티비티 신청</b> (주짓수 · 요가 · 줌바) · <b>7월 6일(월)</b><br>· 신청 오픈: <b>낮 12:00</b> 예정<br>· 장소: <b>기숙사 카운터</b><span class=\"dn-tip\">⚡ <b>선착순</b>이에요. <b>11:55 전까지</b> 도착해서 기다려 주세요.</span>" },
-  ];
+  // 잠깐 숨김(7/6 일정 종료) — 다시 띄우려면 아래 항목을 NOTICES 안으로 옮기세요.
+  //   { icon: "📌", t: "<b>오리엔테이션</b> · <b>7월 6일(월)</b><br>· 시간: <b>오전 8:50</b> (10분 여유 있게 참석해 주세요)<br>· 장소: Admin Building <b>3층 츠네이시 홀</b>" },
+  //   { icon: "💱", t: "<b>환전</b> · <b>7월 6일(월)</b><br>· 시간: <b>11:00 ~ 13:00</b><br>· 장소: Admin Building <b>1층</b><span class=\"dn-tip\">💡 환전할 돈은 미리 챙기기보다 <b>금고에 보관</b>해 두었다가 <b>오리엔테이션 종료 후</b> 가져오시길 권장드립니다.</span>" },
+  //   { icon: "🤸", t: "<b>액티비티 신청</b> (주짓수 · 요가 · 줌바) · <b>7월 6일(월)</b><br>· 신청 오픈: <b>낮 12:00</b> 예정<br>· 장소: <b>기숙사 카운터</b><span class=\"dn-tip\">⚡ <b>선착순</b>이에요. <b>11:55 전까지</b> 도착해서 기다려 주세요.</span>" },
+  const NOTICES = [];
   (function renderNotices() {
     const el = document.getElementById("dn-list");
     if (!el) return;
@@ -818,7 +818,7 @@
       if (new Date() >= HOP_REG_DEADLINE) return;   // 마감 후 차단
       const stat = $("hop-status");
       if (b.dataset.act === "cancel") {
-        if (!confirm("정말 예약을 취소하시겠어요?\n취소 시 위약금이 발생할 수 있어요.")) return;
+        if (!confirm("정말 예약을 취소하시겠어요?")) return;
         b.disabled = true;
         const err = await window.lcicHopReg.cancel(hopId);
         stat.style.color = err ? "#dc2626" : "";
@@ -826,6 +826,10 @@
         await paintHopReg(rec);
       } else if (b.dataset.act === "reg") {
         const date = b.dataset.date, t = HOP_TOURS.find((x) => x.date === date);
+        const isChange = b.classList.contains("change");   // 이미 예약 있음 → 날짜 변경
+        if (!isChange && !confirm(
+          "마감일(7월 8일 오후 3시) 이후에는 취소 및 변경이 불가하며, 취소/변경 시 패널티가 부여될 수 있습니다.\n\n이 날짜로 신청할까요?"
+        )) return;
         b.disabled = true;
         const s = await window.lcicHopReg.state(hopId);   // 정원 재확인(경합 최소화)
         if (s.mine !== date && (s.counts[date] || 0) >= t.cap) {
