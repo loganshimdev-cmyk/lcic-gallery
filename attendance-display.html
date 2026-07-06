@@ -105,7 +105,7 @@ setInterval(() => {   // 1초 카운트다운(표시용)
 
 async function refreshCount() {
   try {
-    const { count } = await supabase.from("orientation_attendance").select("id", { count: "exact", head: true });
+    const { count } = await supabase.from("attendance").select("id", { count: "exact", head: true });
     if (typeof count === "number") $("cnt").textContent = count;
   } catch (_) {}
 }
