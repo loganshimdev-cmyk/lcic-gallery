@@ -993,8 +993,9 @@ window.lcicHopReg = {
   async state(id) {   // { counts: {date: n}, mine: date|null }
     const { data, error } = await supabase.from("hopping_registrations").select("id,tour_date");
     if (error) throw error;
+    const norm = (d) => (d === "2026-07-17" ? "2026-07-18" : d);   // 옛 날짜(캐시된 페이지) 흡수
     const counts = {}; let mine = null;
-    for (const r of (data || [])) { counts[r.tour_date] = (counts[r.tour_date] || 0) + 1; if (r.id === id) mine = r.tour_date; }
+    for (const r of (data || [])) { const td = norm(r.tour_date); counts[td] = (counts[td] || 0) + 1; if (r.id === id) mine = td; }
     return { counts, mine };
   },
   async register(id, name, university, tour_date) {

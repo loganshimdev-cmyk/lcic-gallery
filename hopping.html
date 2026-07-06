@@ -84,6 +84,7 @@ const TOURS = [
   { date: "2026-07-12", label: "7월 12일 (일)", cap: 90 },
   { date: "2026-07-18", label: "7월 18일 (토)", cap: 60 },
 ];
+const normDate = (d) => (d === "2026-07-17" ? "2026-07-18" : d);   // 옛 날짜(캐시된 페이지) 흡수
 let ROWS = [];
 let ready = false;
 
@@ -101,7 +102,7 @@ async function load() {
   try {
     const { data, error } = await supabase.from(TABLE).select("id,name,university,tour_date,created_at");
     if (error) throw error;
-    ROWS = data || [];
+    ROWS = (data || []).map((r) => ({ ...r, tour_date: normDate(r.tour_date) }));
     ready = true;
   } catch (_) {
     ready = false; ROWS = [];
@@ -113,7 +114,7 @@ async function sync() {
   try {
     const { data, error } = await supabase.from(TABLE).select("id,name,university,tour_date,created_at");
     if (error) throw error;
-    ROWS = data || [];
+    ROWS = (data || []).map((r) => ({ ...r, tour_date: normDate(r.tour_date) }));
     render();
   } catch (_) { /* 일시적 오류는 조용히 무시 */ }
 }
