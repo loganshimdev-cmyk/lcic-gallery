@@ -34,6 +34,13 @@
   .nm b { font-weight: 700; color: var(--accent-deep); }
   .nm .uni { font-size: .7rem; color: var(--text-faint); }
   .nm.hit { box-shadow: 0 0 0 2px rgba(202,138,4,.75); }
+  .sec { margin-bottom: 26px; }
+  .sec-head { display: flex; align-items: center; gap: 10px; font-size: 1.1rem; font-weight: 800; padding: 11px 15px;
+    border-radius: 13px; background: var(--accent-tint); color: var(--accent-deep); border: 1px solid var(--accent-soft); margin-bottom: 13px; }
+  .sec-head .cnt { margin-left: auto; font-size: .92rem; font-weight: 800; }
+  .sec-head .cnt .cap { color: var(--text-faint); font-weight: 600; }
+  .sec-head .cnt .full { color: #b91c1c; }
+  .sec .empty-sec { color: var(--text-faint); font-size: .88rem; padding: 6px 2px; }
   .empty { color: var(--text-faint); text-align: center; padding: 48px 20px; line-height: 1.6; }
 </style>
 </head>
@@ -52,13 +59,13 @@
 
 <main id="app-view" class="wrap hidden">
   <div class="head">
-    <h1>🚤 호핑 투어 참가 신청자</h1>
-    <div class="meta" id="meta">7월 12일(일) 호핑 예정 · 신청 마감 7월 5일(일)</div>
+    <h1>🚤 호핑 투어 예약자</h1>
+    <div class="meta" id="meta">날짜별 예약 현황 · 신청 마감 7월 8일(화) 오후 3시</div>
   </div>
   <div class="count-bar" id="counts"></div>
-  <div class="hint">학생이 <b>status.html(내 준비 현황)</b>에서 직접 신청/취소합니다. 15초마다 자동 갱신됩니다.</div>
+  <div class="hint">학생이 <b>status.html(내 준비 현황)</b>에서 날짜를 선택해 예약/취소합니다. 15초마다 자동 갱신됩니다.</div>
   <div class="search"><input class="input" id="q" type="search" placeholder="이름 검색"></div>
-  <div class="names" id="list"></div>
+  <div id="list"></div>
 </main>
 
 <div class="toast" id="toast"></div>
@@ -72,7 +79,11 @@ function showToast(m, t = "") { toast.textContent = m; toast.className = `toast 
 const esc = (s) => (s == null ? "" : String(s)).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 const PW = "4692";
-const TABLE = "hopping_signups";
+const TABLE = "hopping_registrations";
+const TOURS = [
+  { date: "2026-07-12", label: "7월 12일 (일)", cap: 90 },
+  { date: "2026-07-17", label: "7월 17일 (토)", cap: 60 },
+];
 let ROWS = [];
 let ready = false;
 
@@ -88,7 +99,7 @@ $("gate-form").addEventListener("submit", async (e) => {
 
 async function load() {
   try {
-    const { data, error } = await supabase.from(TABLE).select("id,name,university,created_at");
+    const { data, error } = await supabase.from(TABLE).select("id,name,university,tour_date,created_at");
     if (error) throw error;
     ROWS = data || [];
     ready = true;
@@ -100,7 +111,7 @@ async function load() {
 async function sync() {
   if (!ready) return;
   try {
-    const { data, error } = await supabase.from(TABLE).select("id,name,university,created_at");
+    const { data, error } = await supabase.from(TABLE).select("id,name,university,tour_date,created_at");
     if (error) throw error;
     ROWS = data || [];
     render();
@@ -111,21 +122,35 @@ $("q").addEventListener("input", render);
 
 function render() {
   const q = ($("q").value || "").trim();
-  const sorted = [...ROWS].sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "ko"));
-  const shown = sorted.filter((r) => !q || String(r.name || "").includes(q));
+  const total = ROWS.length;
 
   $("counts").innerHTML =
-    `<span class="cbx">🚤 참가 신청 <span class="n">${ROWS.length}</span> 명</span>` +
-    (q ? `<span class="cbx" style="opacity:.7">검색 <span class="n">${shown.length}</span> 명</span>` : "");
+    TOURS.map((t) => {
+      const n = ROWS.filter((r) => r.tour_date === t.date).length;
+      return `<span class="cbx">${t.label} <span class="n">${n}</span>/${t.cap}명</span>`;
+    }).join("") +
+    `<span class="cbx" style="opacity:.75">전체 <span class="n">${total}</span>명</span>`;
 
-  if (!ROWS.length) {
-    $("list").innerHTML = `<div class="empty">아직 신청자가 없습니다.<br>학생이 준비현황 페이지에서 신청하면 여기에 표시됩니다.</div>`;
+  if (!total) {
+    $("list").innerHTML = `<div class="empty">아직 예약자가 없습니다.<br>학생이 준비현황 페이지에서 예약하면 여기에 표시됩니다.</div>`;
     return;
   }
-  if (!shown.length) { $("list").innerHTML = `<div class="empty">검색 결과가 없습니다.</div>`; return; }
-  $("list").innerHTML = shown.map((r) =>
-    `<span class="nm${q ? " hit" : ""}"><b>${esc(r.name)}</b>${r.university ? `<span class="uni">${esc(r.university)}</span>` : ""}</span>`
-  ).join("");
+
+  let html = "";
+  for (const t of TOURS) {
+    const rows = ROWS.filter((r) => r.tour_date === t.date)
+      .sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "ko"));
+    const shown = rows.filter((r) => !q || String(r.name || "").includes(q));
+    const full = rows.length >= t.cap;
+    html += `<div class="sec">
+      <div class="sec-head"><iconify-icon icon="solar:calendar-mark-bold-duotone"></iconify-icon> ${t.label}
+        <span class="cnt"><span class="${full ? "full" : ""}">${rows.length}</span> <span class="cap">/ ${t.cap}명${q ? " · 검색 " + shown.length : ""}</span></span></div>
+      ${shown.length
+        ? `<div class="names">${shown.map((r) => `<span class="nm${q ? " hit" : ""}"><b>${esc(r.name)}</b>${r.university ? `<span class="uni">${esc(r.university)}</span>` : ""}</span>`).join("")}</div>`
+        : `<div class="empty-sec">${q ? "검색 결과가 없습니다." : "아직 이 날짜 예약자가 없습니다."}</div>`}
+    </div>`;
+  }
+  $("list").innerHTML = html;
 }
 </script>
 </body>

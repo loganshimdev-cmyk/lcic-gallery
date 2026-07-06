@@ -122,6 +122,32 @@
   .hop-info .hi-cost .hi-cost-tag { font-size: 0.72rem; font-weight: 800; color: #b45309; background: rgba(245,158,11,0.15); border-radius: 999px; padding: 2px 9px; }
   .hop-info .hi-cost-note { font-size: 0.88rem; color: var(--text-dim); line-height: 1.5; }
   .hop-info .hi-cost-note b { color: var(--accent-deep); font-weight: 800; }
+
+  /* 호핑 예약 — 날짜 선택 + 실시간 인원 */
+  .hop-my { margin-bottom: 14px; padding: 13px 16px; border-radius: 14px; font-size: 0.95rem; font-weight: 700;
+    background: rgba(5,150,105,0.12); border: 1px solid rgba(5,150,105,0.42); color: #047857; }
+  .hop-my.none { display: none; }
+  .hop-my b { font-weight: 800; }
+  .hop-dates { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  @media (max-width: 480px) { .hop-dates { grid-template-columns: 1fr; } }
+  .hop-date { border: 2px solid var(--hairline); border-radius: 16px; padding: 15px; display: flex; flex-direction: column; gap: 10px;
+    background: var(--bg-elev); transition: border-color 0.15s, background 0.15s; }
+  .hop-date.mine { border-color: rgba(5,150,105,0.6); background: rgba(5,150,105,0.06); }
+  .hop-date.full { opacity: 0.9; }
+  .hop-date .hd-title { font-size: 1.05rem; font-weight: 800; }
+  .hop-date .hd-count { font-size: 0.9rem; color: var(--text-dim); }
+  .hop-date .hd-count b { color: var(--accent-deep); font-weight: 800; font-size: 1.05rem; }
+  .hop-date .hd-count .rest { color: #047857; font-weight: 700; }
+  .hop-date .hd-count .rest.zero { color: #b91c1c; }
+  .hop-date .hd-btn { margin-top: auto; padding: 11px; border-radius: 12px; border: none; font-family: inherit;
+    font-size: 0.95rem; font-weight: 700; cursor: pointer; background: var(--accent); color: #fff; transition: background 0.15s; }
+  .hop-date .hd-btn:hover { background: var(--accent-hover); }
+  .hop-date .hd-btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+  .hop-date .hd-btn.cancel { background: rgba(220,38,38,0.1); color: #b91c1c; border: 1px solid rgba(220,38,38,0.35); }
+  .hop-date .hd-btn.change { background: var(--bg-elev); color: var(--accent-deep); border: 1px solid var(--accent); }
+  .hop-warn { font-size: 0.86rem; line-height: 1.55; color: #b45309; background: rgba(245,158,11,0.09);
+    border: 1px solid rgba(245,158,11,0.32); border-radius: 12px; padding: 11px 13px; margin-bottom: 10px; }
+  .hop-warn b { color: #92400e; font-weight: 800; }
   .hop-info .hi-tip { font-size: 0.86rem; line-height: 1.6; color: #b45309; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.3); border-radius: 12px; padding: 11px 13px; }
   .hop-info .hi-tip b { color: #92400e; font-weight: 800; }
   /* 본문(container-narrow=880px) 옆에 여유가 생기는 넓은 화면에서만 우측 고정.
@@ -359,15 +385,24 @@
 
   <!-- 호핑 투어 참가 신청 (수요조사) -->
   <section class="card fade-up" id="hop-card" style="display:none">
-    <div class="card-title">🚤 호핑 투어 참가 신청</div>
+    <div class="card-title">🚤 호핑 투어 예약</div>
     <p class="hop-desc">
-      <b>7월 12일(일)</b> 호핑 투어를 계획하고 있어요. 아래 일정을 확인하고 참가를 원하시면 <b>맨 아래 버튼</b>으로 신청해 주세요.<br>
-      신청 마감: <b>7월 5일(일)</b>
+      호핑 수요조사에 참여해 주셔서 감사합니다. 예상보다 많은 분이 신청해 주셔서, 안전하고 원활한 진행을 위해 <b>날짜를 나누어</b> 예약을 받아요.<br>
+      원하는 날짜를 선택해 신청해 주세요. 신청 마감: <b>7월 8일(화) 오후 3시</b>
     </p>
+
+    <div class="hop-my none" id="hop-my"></div>
+    <div class="hop-dates" id="hop-dates"></div>
+    <div class="hop-warn">⚠️ 이번 신청은 <b>실제 예약</b>이에요. 신청 후 취소 시 <b>위약금이 발생</b>할 수 있으니, 일정을 신중히 확인한 뒤 신청해 주세요.</div>
+    <div class="hop-status" id="hop-status"></div>
 
     <div class="hop-info">
       <div class="hi-sec">
-        <div class="hi-h">🗓 호핑 일정 (7월 12일 · 일)</div>
+        <div class="hi-h">💰 비용</div>
+        <div class="hi-cost"><b>₱2,500</b> <s>₱3,000</s> <span class="hi-cost-tag">LCIC 특별 할인</span></div>
+      </div>
+      <div class="hi-sec">
+        <div class="hi-h">🗓 호핑 일정</div>
         <div class="hi-time">오전 <b>9시 30분 미팅</b> · 오후 <b>2시경</b> 숙소 도착 예정</div>
         <div class="hi-flow">
           <span class="step">숙소</span><span class="arr">›</span>
@@ -378,15 +413,6 @@
           <span class="step">선착장</span><span class="arr">›</span>
           <span class="step">숙소</span>
         </div>
-      </div>
-      <!-- 비용: 잠깐 숨김 (복구하려면 style="display:none" 제거) -->
-      <div class="hi-sec" style="display:none">
-        <div class="hi-h">💰 비용</div>
-        <div class="hi-cost"><b>₱2,500</b> <s>₱3,000</s> <span class="hi-cost-tag">할인</span></div>
-      </div>
-      <div class="hi-sec">
-        <div class="hi-h">💰 비용</div>
-        <div class="hi-cost-note">참가 인원에 따라 <b>곧 확정</b>해 안내드릴게요.</div>
       </div>
       <div class="hi-sec">
         <div class="hi-h">🎒 개인 준비물</div>
@@ -402,9 +428,6 @@
       </div>
       <div class="hi-tip">💡 <b>미팅 전 화장실 꼭</b> 다녀오세요! 우리 신나게 다녀와요 💙</div>
     </div>
-
-    <button type="button" id="hop-btn" class="hop-btn" style="margin-top:18px;"><span id="hop-btn-label">참가 신청하기</span></button>
-    <div class="hop-status" id="hop-status"></div>
   </section>
 
   <!-- 완료율 · 잠깐 숨김 (복구하려면 style="display:none" 제거) -->
@@ -777,49 +800,72 @@
   // ── 호핑 투어 참가 신청 (수요조사) ──
   // 로그인해서 본인(이메일)이 확인된 상태이므로 추가 입력 없이 토글만 한다.
   // id = 이메일 sha256 앞16자(학생별 고정). 신청 명단은 team.html "🚤 호핑 수요조사"에서 조회.
+  const HOP_TOURS = [
+    { date: "2026-07-12", label: "7월 12일 (일)", cap: 90 },
+    { date: "2026-07-17", label: "7월 17일 (토)", cap: 60 },
+  ];
+  const HOP_REG_DEADLINE = new Date("2026-07-08T15:00:00+08:00");   // 7/8(화) 오후 3시 (세부 UTC+8)
+  let hopId = null;
+
   async function renderHopping(rec) {
     const card = $("hop-card"); if (!card) return;
     card.style.display = "";
-    const hbtn = $("hop-btn"), label = $("hop-btn-label"), stat = $("hop-status");
-    if (!window.lcicHopping) { setTimeout(() => renderHopping(rec), 400); return; }   // 브리지 로드 대기
-    const id = (await sha256hex(CUR_EMAIL || "")).slice(0, 16);
-    let joined = false;
-    try { joined = await window.lcicHopping.get(id); } catch (_) {}
-    function paint(on) {
-      hbtn.classList.toggle("joined", on);
-      label.textContent = on ? "✓ 참가 신청 완료 — 취소하려면 클릭" : "참가 신청하기";
-    }
+    if (!window.lcicHopReg) { setTimeout(() => renderHopping(rec), 400); return; }   // 브리지 로드 대기
+    hopId = (await sha256hex(CUR_EMAIL || "")).slice(0, 16);
 
-    // 신청 마감: 7월 5일(일)까지 — 세부(UTC+8) 자정이 지나면 더 이상 신청/취소 불가
-    const HOP_DEADLINE = new Date("2026-07-06T00:00:00+08:00");
-    if (new Date() >= HOP_DEADLINE) {
-      hbtn.disabled = true;
-      hbtn.classList.toggle("joined", joined);
-      label.textContent = joined ? "✓ 참가 신청 완료 (신청 마감됨)" : "신청이 마감되었습니다";
-      stat.style.color = "";
-      stat.textContent = joined
-        ? "호핑 참가 신청이 마감되었습니다. 이미 신청되어 있어요."
-        : "호핑 참가 신청이 마감되었습니다. (마감: 7월 5일)";
-      return;   // 클릭 핸들러를 걸지 않아 신청/취소 불가
-    }
-
-    paint(joined);
-    hbtn.onclick = async () => {
-      hbtn.disabled = true;
-      const next = !joined;
-      const err = next
-        ? await window.lcicHopping.join(id, rec.name || "", rec.uni || "")
-        : await window.lcicHopping.cancel(id);
-      if (err) {
-        stat.style.color = "#dc2626"; stat.textContent = "저장 실패 — 잠시 후 다시 시도해 주세요.";
-      } else {
-        joined = next; paint(joined); stat.style.color = "";
-        stat.textContent = joined
-          ? "신청이 완료되었어요. 마음이 바뀌면 다시 눌러 취소할 수 있어요."
-          : "신청이 취소되었어요.";
+    $("hop-dates").onclick = async (e) => {
+      const b = e.target.closest(".hd-btn[data-act]"); if (!b) return;
+      if (new Date() >= HOP_REG_DEADLINE) return;   // 마감 후 차단
+      const stat = $("hop-status");
+      if (b.dataset.act === "cancel") {
+        if (!confirm("정말 예약을 취소하시겠어요?\n취소 시 위약금이 발생할 수 있어요.")) return;
+        b.disabled = true;
+        const err = await window.lcicHopReg.cancel(hopId);
+        stat.style.color = err ? "#dc2626" : "";
+        stat.textContent = err ? "취소 실패 — 다시 시도해 주세요." : "예약이 취소되었어요.";
+        await paintHopReg(rec);
+      } else if (b.dataset.act === "reg") {
+        const date = b.dataset.date, t = HOP_TOURS.find((x) => x.date === date);
+        b.disabled = true;
+        const s = await window.lcicHopReg.state(hopId);   // 정원 재확인(경합 최소화)
+        if (s.mine !== date && (s.counts[date] || 0) >= t.cap) {
+          stat.style.color = "#dc2626"; stat.textContent = "죄송해요, 방금 자리가 찼어요. 다른 날짜를 선택해 주세요.";
+          await paintHopReg(rec); return;
+        }
+        const err = await window.lcicHopReg.register(hopId, rec.name || "", rec.uni || "", date);
+        stat.style.color = err ? "#dc2626" : "";
+        stat.textContent = err ? "신청 실패 — 다시 시도해 주세요." : `${t.label} 예약이 완료되었어요!`;
+        await paintHopReg(rec);
       }
-      hbtn.disabled = false;
     };
+
+    await paintHopReg(rec);
+    if (!renderHopping._poll) renderHopping._poll = setInterval(() => paintHopReg(rec, true), 15000);   // 실시간 인원
+  }
+
+  async function paintHopReg(rec) {
+    let counts = {}, mine = null;
+    try { const s = await window.lcicHopReg.state(hopId); counts = s.counts; mine = s.mine; } catch (_) { /* 읽기 실패해도 날짜 카드는 표시 */ }
+    const closed = new Date() >= HOP_REG_DEADLINE;
+    const mineTour = HOP_TOURS.find((t) => t.date === mine);
+    const my = $("hop-my");
+    if (mine && mineTour) {
+      my.className = "hop-my";
+      my.innerHTML = `✅ <b>${mineTour.label}</b> 호핑에 예약되었습니다.` + (closed ? " (예약 마감됨)" : "");
+    } else { my.className = "hop-my none"; my.innerHTML = ""; }
+
+    $("hop-dates").innerHTML = HOP_TOURS.map((t) => {
+      const n = counts[t.date] || 0, rest = Math.max(0, t.cap - n), isMine = mine === t.date, full = rest <= 0 && !isMine;
+      let btn;
+      if (closed) btn = `<button class="hd-btn" disabled>${isMine ? "예약됨" : "마감"}</button>`;
+      else if (isMine) btn = `<button class="hd-btn cancel" data-act="cancel">예약 취소</button>`;
+      else if (full) btn = `<button class="hd-btn" disabled>자리 마감</button>`;
+      else btn = `<button class="hd-btn ${mine ? "change" : ""}" data-act="reg" data-date="${t.date}">${mine ? "이 날짜로 변경" : "이 날짜로 신청"}</button>`;
+      return `<div class="hop-date ${isMine ? "mine" : ""} ${full ? "full" : ""}">
+        <div class="hd-title">${isMine ? "✅ " : ""}${t.label}</div>
+        <div class="hd-count">신청 <b>${n}</b> / ${t.cap}명 · 남은 자리 <span class="rest ${rest === 0 ? "zero" : ""}">${rest}</span></div>
+        ${btn}</div>`;
+    }).join("");
   }
 
   // ── 로그인 ──
@@ -931,6 +977,29 @@ window.lcicHopping = {
   async cancel(id) {
     try {
       const { error } = await supabase.from("hopping_signups").delete().eq("id", id);
+      return error ? (error.message || "오류") : null;
+    } catch (e) { return e && e.message ? e.message : "네트워크 오류"; }
+  },
+};
+// 호핑 투어 실제 예약 → hopping_registrations (id·이름·대학·tour_date). 수요조사(hopping_signups)와 별개.
+window.lcicHopReg = {
+  async state(id) {   // { counts: {date: n}, mine: date|null }
+    const { data, error } = await supabase.from("hopping_registrations").select("id,tour_date");
+    if (error) throw error;
+    const counts = {}; let mine = null;
+    for (const r of (data || [])) { counts[r.tour_date] = (counts[r.tour_date] || 0) + 1; if (r.id === id) mine = r.tour_date; }
+    return { counts, mine };
+  },
+  async register(id, name, university, tour_date) {
+    try {
+      const { error } = await supabase.from("hopping_registrations")
+        .upsert({ id, name, university, tour_date, created_at: new Date().toISOString() });
+      return error ? (error.message || "오류") : null;
+    } catch (e) { return e && e.message ? e.message : "네트워크 오류"; }
+  },
+  async cancel(id) {
+    try {
+      const { error } = await supabase.from("hopping_registrations").delete().eq("id", id);
       return error ? (error.message || "오류") : null;
     } catch (e) { return e && e.message ? e.message : "네트워크 오류"; }
   },
