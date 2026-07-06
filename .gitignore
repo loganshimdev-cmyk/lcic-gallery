@@ -13,6 +13,7 @@ scripts/_*.csv
 scripts/encrypt-status.cjs
 scripts/encrypt-buddy.cjs
 scripts/encrypt-arrivals.cjs
+scripts/encrypt-attendance.cjs
 .gstack/
 scripts/sheet-to-report.cjs
 scripts/make-agency-page.cjs
