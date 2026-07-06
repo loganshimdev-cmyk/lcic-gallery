@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>출석 QR · LCIC</title>
+<link rel="icon" type="image/png" href="assets/brand/lcic-logo.png">
+<link rel="stylesheet" href="assets/shared.css?v=13">
+<style>
+  body { min-height:100dvh; }
+  .gate { max-width: 400px; margin: 90px auto 0; padding: 36px 32px; background: var(--bg-elev);
+    border: 1px solid var(--hairline); border-radius: 24px; box-shadow: var(--shadow-lg); }
+  .gate h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 6px; }
+  .gate p { color: var(--text-dim); font-size: .85rem; margin-bottom: 20px; }
+  .gate input { width: 100%; margin-bottom: 12px; }
+
+  .stage { min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; padding: 4vh 20px; }
+  .stage h1 { font-size: clamp(1.6rem, 4vw, 2.6rem); font-weight: 900; letter-spacing: -.02em; text-align: center; }
+  .stage .sub { color: var(--text-dim); font-size: clamp(1rem, 2.2vw, 1.5rem); text-align: center; margin-top: -6px; }
+  .qr-box { width: min(62vh, 84vw); aspect-ratio: 1; background: #fff; border-radius: 24px; padding: 4%;
+    box-shadow: 0 12px 40px rgba(0,0,0,.14); border: 1px solid var(--hairline); display: flex; align-items: center; justify-content: center; }
+  .qr-box svg { width: 100%; height: 100%; display: block; }
+  .meta-row { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; justify-content: center; }
+  .pill { display: inline-flex; align-items: center; gap: 9px; padding: 12px 22px; border-radius: 999px;
+    background: var(--bg-elev); border: 1px solid var(--hairline); box-shadow: var(--shadow-sm);
+    font-size: clamp(1rem, 2vw, 1.4rem); font-weight: 800; }
+  .pill .n { color: var(--accent-deep); font-size: 1.25em; }
+  .pill.cd .n { color: #b45309; }
+  .pill.cnt .n { color: #047857; }
+  .foot { color: var(--text-faint); font-size: .95rem; text-align: center; }
+  .err { color: #dc2626; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<div id="gate-view">
+  <div class="gate">
+    <h2>✅ 출석 QR 화면</h2>
+    <p>강당 스크린용입니다. 담당자 비밀번호를 입력하세요.</p>
+    <form id="gate-form">
+      <input class="input" id="pw" type="password" autocomplete="current-password" placeholder="비밀번호" required>
+      <button class="btn-primary" id="gate-btn" type="submit" style="width:100%;">시작</button>
+    </form>
+  </div>
+</div>
+
+<main id="stage" class="stage hidden">
+  <h1>📷 휴대폰으로 QR을 스캔하세요</h1>
+  <div class="sub">스캔 → 로그인 → 출석 완료! · QR은 20초마다 바뀝니다</div>
+  <div class="qr-box"><div id="qr"></div></div>
+  <div class="meta-row">
+    <span class="pill cd">🔄 <span class="n" id="cd">20</span>초 후 갱신</span>
+    <span class="pill cnt">✅ 출석 <span class="n" id="cnt">0</span>명</span>
+  </div>
+  <div class="foot" id="foot"></div>
+</main>
+
+<!-- QR Code Generator for JavaScript (c) 2009 Kazuhiko Arase, MIT License -->
+<script src="assets/qrcode.js?v=1"></script>
+
+<script type="module">
+import { supabase } from "./assets/supabase.js?v=4";
+const $ = (id) => document.getElementById(id);
+
+let PW = "";
+let curToken = null;
+
+function makeQR(text) {
+  const qr = qrcode(0, "M");
+  qr.addData(text);
+  qr.make();
+  return qr.createSvgTag({ cellSize: 8, margin: 2, scalable: true });
+}
+function renderQR(token) {
+  const url = location.origin + "/status.html?att=" + encodeURIComponent(token);
+  $("qr").innerHTML = makeQR(url);
+}
+
+async function refreshToken() {
+  try {
+    const { data, error } = await supabase.rpc("att_token", { p_pw: PW });
+    if (error || !data || !data.ok) {
+      $("foot").innerHTML = '<span class="err">토큰을 받지 못했습니다. 비밀번호/서버 설정(RPC)을 확인하세요.</span>';
+      setTimeout(refreshToken, 5000);
+      return;
+    }
+    curToken = data.token;
+    renderQR(curToken);
+    const ttl = Math.max(1, data.ttl | 0);
+    $("cd").textContent = ttl;
+    $("foot").textContent = "";
+    setTimeout(refreshToken, ttl * 1000 + 250);   // 다음 버킷 직후 새 토큰
+  } catch (_) {
+    $("foot").innerHTML = '<span class="err">네트워크 오류 — 재시도 중…</span>';
+    setTimeout(refreshToken, 5000);
+  }
+}
+
+setInterval(() => {   // 1초 카운트다운(표시용)
+  const el = $("cd"); if (!el) return;
+  const n = parseInt(el.textContent, 10);
+  if (!isNaN(n) && n > 0) el.textContent = n - 1;
+}, 1000);
+
+async function refreshCount() {
+  try {
+    const { count } = await supabase.from("attendance").select("id", { count: "exact", head: true });
+    if (typeof count === "number") $("cnt").textContent = count;
+  } catch (_) {}
+}
+
+$("gate-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  PW = $("pw").value;
+  const { data, error } = await supabase.rpc("att_token", { p_pw: PW });
+  if (error || !data || !data.ok) {
+    alert("비밀번호가 올바르지 않거나 서버 설정(RPC)이 아직입니다.");
+    return;
+  }
+  $("gate-view").classList.add("hidden");
+  $("stage").classList.remove("hidden");
+  curToken = data.token; renderQR(curToken);
+  const ttl = Math.max(1, data.ttl | 0);
+  $("cd").textContent = ttl;
+  setTimeout(refreshToken, ttl * 1000 + 250);
+  refreshCount();
+  setInterval(refreshCount, 10000);
+});
+</script>
+</body>
+</html>

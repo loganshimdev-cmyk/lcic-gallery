@@ -68,6 +68,12 @@
   .dash-head { text-align: center; margin-bottom: 26px; }
   .dash-greet { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
   .dash-greet .nm { color: var(--accent-deep); }
+
+  /* QR 스캔 출석 결과 배너 */
+  .att-banner { margin: 0 0 16px; padding: 15px 18px; border-radius: 16px; font-size: 0.98rem; line-height: 1.55; box-shadow: var(--shadow-sm); }
+  .att-banner.ok { background: rgba(5,150,105,0.12); border: 1px solid rgba(5,150,105,0.45); color: #047857; }
+  .att-banner.bad { background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.38); color: #b91c1c; }
+  .att-banner b { font-weight: 800; }
   .dash-sub { color: var(--text-dim); font-size: 0.95rem; margin-top: 6px; }
 
   /* 운영 안내 (기본=인라인 카드 / 데스크탑=우측 고정) */
@@ -544,6 +550,7 @@
     $("d-name").textContent = rec.name || "학생";
     $("d-updated").textContent = rec.updatedAt || STATUS_UPDATED || "";
     renderHopping(rec);   // 호핑 수요조사 카드
+    maybeAttCheckin();    // QR 스캔 출석(?att=토큰)
 
     const cl = rec.checklist || {};
     const total = ORDER.length;
@@ -774,6 +781,40 @@
     });
   }
 
+  // ── QR 스캔 출석 (?att=토큰) ──
+  // 강당 스크린 QR(attendance-display.html)을 스캔하면 status.html?att=<토큰>으로 열린다.
+  // 로그인(본인 확인) 후 서버(att_checkin RPC)가 토큰 유효성 검증 → 출석 기록.
+  let attDone = false;
+  async function maybeAttCheckin() {
+    if (attDone) return;
+    const token = new URLSearchParams(location.search).get("att");
+    if (!token) return;
+    if (!window.lcicAtt) { setTimeout(maybeAttCheckin, 400); return; }   // 브리지 로드 대기
+    attDone = true;
+    const id = (await sha256hex(CUR_EMAIL || "")).slice(0, 16);
+    let res;
+    try { res = await window.lcicAtt.checkin(id, token); } catch (_) { res = { ok: false, reason: "error" }; }
+    showAttBanner(res);
+    try { const u = new URL(location.href); u.searchParams.delete("att"); history.replaceState(null, "", u); } catch (_) {}
+  }
+  function showAttBanner(res) {
+    const ok = res && res.ok;
+    let el = document.getElementById("att-banner");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "att-banner";
+      const dash = document.getElementById("dash");
+      dash.insertBefore(el, dash.firstChild);
+    }
+    el.className = "att-banner " + (ok ? "ok" : "bad");
+    el.innerHTML = ok
+      ? "✅ <b>출석 완료!</b> 오리엔테이션 출석이 기록되었어요."
+      : (res && res.reason === "expired")
+        ? "⏰ <b>QR이 만료됐어요.</b> 강당 화면의 <b>최신 QR</b>을 다시 스캔해 주세요."
+        : "⚠️ <b>출석 처리에 실패했어요.</b> 잠시 후 최신 QR을 다시 스캔해 주세요.";
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
   // ── 호핑 투어 참가 신청 (수요조사) ──
   // 로그인해서 본인(이메일)이 확인된 상태이므로 추가 입력 없이 토글만 한다.
   // id = 이메일 sha256 앞16자(학생별 고정). 신청 명단은 team.html "🚤 호핑 수요조사"에서 조회.
@@ -913,6 +954,16 @@ window.lcicSubmitCourseReg = async (payload) => {
 // 본인 확인(로그인) 기록 → status_views INSERT (조용히, 실패해도 무시)
 window.lcicLogView = async (payload) => {
   try { await supabase.from("status_views").insert(payload); } catch (_) {}
+};
+// QR 스캔 출석 → att_checkin RPC(서버가 토큰 유효성 검증 후 attendance 기록)
+window.lcicAtt = {
+  async checkin(id, token) {
+    try {
+      const { data, error } = await supabase.rpc("att_checkin", { p_id: id, p_token: token });
+      if (error) return { ok: false, reason: "error" };
+      return data || { ok: false, reason: "error" };
+    } catch (e) { return { ok: false, reason: "error" }; }
+  },
 };
 // 호핑 투어 수요조사 → hopping_signups (id=이메일해시). 개인정보는 이름/대학만, team.html 명단용.
 window.lcicHopping = {
