@@ -5,19 +5,19 @@
 -- 이름↔id 매핑은 attendance.html 안 암호화 blob(비번 4692)에만 존재.
 -- 페이지가 비번 게이트라 anon 읽기/쓰기를 허용(행에 개인정보가 없어 안전).
 
-create table if not exists public.orientation_attendance (
+create table if not exists public.attendance (
   id         text primary key,
   updated_at timestamptz not null default now()
 );
 
-alter table public.orientation_attendance enable row level security;
+alter table public.attendance enable row level security;
 
-drop policy if exists "anon read attendance"   on public.orientation_attendance;
-drop policy if exists "anon insert attendance" on public.orientation_attendance;
-drop policy if exists "anon delete attendance" on public.orientation_attendance;
+drop policy if exists "anon read attendance"   on public.attendance;
+drop policy if exists "anon insert attendance" on public.attendance;
+drop policy if exists "anon delete attendance" on public.attendance;
 
-create policy "anon read attendance"   on public.orientation_attendance for select using (true);
-create policy "anon insert attendance" on public.orientation_attendance for insert with check (true);
-create policy "anon delete attendance" on public.orientation_attendance for delete using (true);
+create policy "anon read attendance"   on public.attendance for select using (true);
+create policy "anon insert attendance" on public.attendance for insert with check (true);
+create policy "anon delete attendance" on public.attendance for delete using (true);
 
-grant select, insert, delete on public.orientation_attendance to anon, authenticated;
+grant select, insert, delete on public.attendance to anon, authenticated;

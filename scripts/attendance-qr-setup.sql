@@ -38,7 +38,7 @@ begin
   if p_token is null or (p_token <> public.att_hmac(b) and p_token <> public.att_hmac(b - 1)) then
     return json_build_object('ok', false, 'reason', 'expired');
   end if;
-  insert into public.orientation_attendance(id) values (p_id) on conflict (id) do nothing;
+  insert into public.attendance(id) values (p_id) on conflict (id) do nothing;
   return json_build_object('ok', true);
 end $$;
 grant execute on function public.att_checkin(text, text) to anon, authenticated;
