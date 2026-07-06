@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>학생 모임 · LCIC</title>
+<link rel="icon" type="image/png" href="assets/brand/lcic-logo.png">
+<script src="assets/background.js?v=8"></script>
+<link rel="stylesheet" href="assets/shared.css?v=13">
+<script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+<style>
+  .wrap { max-width: 760px; margin: 0 auto; padding: 26px 18px 100px; }
+  .head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 6px; }
+  .head h1 { font-size: 1.45rem; font-weight: 800; letter-spacing: -.02em; }
+  .head .sub { color: var(--text-dim); font-size: .86rem; margin-top: 3px; }
+  .newbtn { border: none; border-radius: 14px; background: var(--accent); color: #fff; font-family: inherit;
+    font-size: .95rem; font-weight: 800; padding: 12px 18px; cursor: pointer; white-space: nowrap; box-shadow: var(--shadow-accent); }
+  .newbtn:hover { background: var(--accent-hover); }
+
+  .gate { max-width: 420px; margin: 80px auto 0; padding: 34px 30px; background: var(--bg-elev);
+    border: 1px solid var(--hairline); border-radius: 24px; box-shadow: var(--shadow-lg); text-align: center; }
+  .gate h2 { font-size: 1.2rem; font-weight: 800; margin-bottom: 8px; }
+  .gate p { color: var(--text-dim); font-size: .9rem; line-height: 1.6; margin-bottom: 20px; }
+
+  .sec-label { font-size: .8rem; font-weight: 800; color: var(--text-faint); margin: 24px 2px 10px; letter-spacing: .02em; }
+
+  .room { border: 1px solid var(--hairline); border-radius: 18px; background: var(--bg-elev); box-shadow: var(--shadow-sm);
+    padding: 16px 17px; margin-bottom: 13px; }
+  .room.closed, .room.past { opacity: .72; }
+  .room-top { display: flex; align-items: flex-start; gap: 10px; }
+  .room-title { font-size: 1.1rem; font-weight: 800; line-height: 1.35; flex: 1; }
+  .room-badge { font-size: .7rem; font-weight: 800; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+  .room-badge.open { background: var(--accent-soft); color: var(--accent-deep); }
+  .room-badge.closed { background: rgba(0,0,0,.06); color: var(--text-dim); }
+  .room-badge.full { background: rgba(217,119,6,.14); color: #b45309; }
+  .room-meta { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 10px 0 0; font-size: .88rem; color: var(--text); }
+  .room-meta span { display: inline-flex; align-items: center; gap: 5px; }
+  .room-meta iconify-icon { color: var(--accent); font-size: 16px; }
+  .room-note { font-size: .88rem; color: var(--text-dim); margin-top: 9px; line-height: 1.5; white-space: pre-wrap; }
+  .room-host { font-size: .78rem; color: var(--text-faint); margin-top: 9px; }
+  .room-people { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 11px; }
+  .chip { font-size: .82rem; padding: 5px 10px; border-radius: 9px; background: rgba(0,0,0,.04); border: 1px solid var(--hairline); }
+  .chip.host { background: var(--accent-tint); border-color: var(--accent-soft); color: var(--accent-deep); font-weight: 700; }
+  .room-count { font-weight: 800; color: var(--accent-deep); }
+  .room-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+  .btn { border: none; border-radius: 11px; font-family: inherit; font-size: .9rem; font-weight: 700; padding: 10px 16px; cursor: pointer; }
+  .btn.join { background: var(--accent); color: #fff; } .btn.join:hover { background: var(--accent-hover); }
+  .btn.leave { background: rgba(0,0,0,.05); color: var(--text); border: 1px solid var(--hairline); }
+  .btn.ghost { background: var(--bg-elev); color: var(--text-dim); border: 1px solid var(--hairline); }
+  .btn.danger { background: rgba(220,38,38,.09); color: #b91c1c; border: 1px solid rgba(220,38,38,.3); }
+  .btn[disabled] { opacity: .5; cursor: not-allowed; }
+
+  .empty { color: var(--text-faint); text-align: center; padding: 46px 20px; line-height: 1.7; }
+
+  .modal-bg { position: fixed; inset: 0; background: rgba(15,23,42,.45); backdrop-filter: blur(3px);
+    display: flex; align-items: center; justify-content: center; z-index: 9000; padding: 18px; }
+  .modal { background: var(--bg-elev); border-radius: 22px; padding: 24px; max-width: 460px; width: 100%; max-height: 90vh; overflow: auto;
+    box-shadow: 0 24px 60px rgba(15,23,42,.28); }
+  .modal h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 16px; }
+  .fld { margin-bottom: 13px; }
+  .fld label { display: block; font-size: .8rem; font-weight: 700; color: var(--text-dim); margin-bottom: 6px; }
+  .fld input, .fld textarea { width: 100%; padding: 11px 13px; font-size: .95rem; font-family: inherit; color: var(--text);
+    border: 1px solid var(--hairline-strong); border-radius: 12px; background: var(--bg); box-sizing: border-box; }
+  .fld input:focus, .fld textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .fld textarea { resize: vertical; min-height: 56px; }
+  .fld .row { display: flex; gap: 10px; } .fld .row > * { flex: 1; }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<!-- 로그인 안내 게이트 (학생 신원 없음) -->
+<div id="gate" class="hidden">
+  <div class="gate">
+    <h2>🏀 학생 모임</h2>
+    <p>모임을 보고 참여하려면 먼저 <b>학생 안내 페이지</b>에서 로그인해 주세요.<br>(이메일 · 생년월일 · 휴대폰 뒤 4자리)</p>
+    <a class="newbtn" href="status.html" style="display:inline-block; text-decoration:none;">학생 안내 페이지로 이동</a>
+  </div>
+</div>
+
+<main id="app" class="wrap hidden">
+  <div class="head">
+    <div>
+      <h1>🏀 학생 모임</h1>
+      <div class="sub" id="sub">같이 놀 사람 찾기 — 농구, 그랩 같이 타기, 쇼핑 등 자유롭게!</div>
+    </div>
+    <button class="newbtn" id="new-btn">+ 새 모임 만들기</button>
+  </div>
+  <div id="list"></div>
+</main>
+
+<div id="modal-root"></div>
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { supabase } from "./assets/supabase.js?v=4";
+
+const $ = (id) => document.getElementById(id);
+const toast = $("toast");
+const showToast = (m, t = "") => { toast.textContent = m; toast.className = `toast show ${t}`; setTimeout(() => toast.classList.remove("show"), 2600); };
+const esc = (s) => (s == null ? "" : String(s)).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const ADMIN = new URLSearchParams(location.search).get("admin") === "1";
+
+async function sha256hex(str) {
+  const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+  return [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, "0")).join("");
+}
+function todayStr() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; }
+const WD = ["일", "월", "화", "수", "목", "금", "토"];
+function fmtDate(iso) { if (!iso) return ""; const [y, m, d] = iso.split("-").map(Number); const wd = WD[new Date(y, m - 1, d).getDay()]; return `${m}/${d}(${wd})`; }
+
+let ME = null;               // { n, e, id }
+let ROOMS = [], JOINS = [];
+
+async function initIdentity() {
+  if (ADMIN) return true;
+  let me = null; try { me = JSON.parse(localStorage.getItem("lcic.me") || "null"); } catch (_) {}
+  if (!me || !me.e) return false;
+  ME = { n: me.n || "학생", e: me.e, id: (await sha256hex(String(me.e).trim().toLowerCase())).slice(0, 16) };
+  return true;
+}
+
+async function load() {
+  const [r1, r2] = await Promise.all([
+    supabase.from("rooms").select("*"),
+    supabase.from("room_joins").select("room_id,student_id,name"),
+  ]);
+  if (r1.error || r2.error) throw (r1.error || r2.error);
+  ROOMS = r1.data || []; JOINS = r2.data || [];
+}
+const joinsOf = (rid) => JOINS.filter((j) => j.room_id === rid);
+
+function roomCard(r) {
+  const joins = joinsOf(r.id);
+  const n = joins.length;
+  const cap = r.capacity || 0;
+  const mine = ME && joins.some((j) => j.student_id === ME.id);
+  const isHost = ME && r.host_id === ME.id;
+  const closed = r.status === "closed";
+  const full = cap > 0 && n >= cap && !mine;
+  const past = r.event_date && r.event_date < todayStr();
+
+  const badge = closed ? `<span class="room-badge closed">모집 마감</span>`
+    : full ? `<span class="room-badge full">정원 마감</span>`
+    : `<span class="room-badge open">모집중</span>`;
+  const capText = cap > 0 ? `<span class="room-count">${n}</span> / ${cap}명` : `<span class="room-count">${n}</span>명`;
+
+  const meta = [];
+  if (r.place) meta.push(`<span><iconify-icon icon="solar:map-point-bold-duotone"></iconify-icon>${esc(r.place)}</span>`);
+  if (r.event_date) meta.push(`<span><iconify-icon icon="solar:calendar-bold-duotone"></iconify-icon>${fmtDate(r.event_date)}</span>`);
+  if (r.event_time) meta.push(`<span><iconify-icon icon="solar:clock-circle-bold-duotone"></iconify-icon>${esc(r.event_time)}</span>`);
+  meta.push(`<span><iconify-icon icon="solar:users-group-rounded-bold-duotone"></iconify-icon>${capText}</span>`);
+
+  const people = joins
+    .sort((a, b) => (a.student_id === r.host_id ? -1 : b.student_id === r.host_id ? 1 : 0))
+    .map((j) => `<span class="chip ${j.student_id === r.host_id ? "host" : ""}">${esc(j.name)}${j.student_id === r.host_id ? " (주최)" : ""}</span>`).join("");
+
+  let actions = "";
+  if (ADMIN) {
+    actions = `<button class="btn danger" data-act="del" data-id="${r.id}">삭제</button>`;
+  } else {
+    if (closed) actions = `<button class="btn ghost" disabled>모집 마감됨</button>`;
+    else if (mine) actions = `<button class="btn leave" data-act="leave" data-id="${r.id}">나가기</button>`;
+    else if (full) actions = `<button class="btn ghost" disabled>정원 마감</button>`;
+    else actions = `<button class="btn join" data-act="join" data-id="${r.id}">참여하기</button>`;
+    if (isHost) {
+      actions += closed
+        ? `<button class="btn ghost" data-act="reopen" data-id="${r.id}">다시 열기</button>`
+        : `<button class="btn ghost" data-act="close" data-id="${r.id}">모집 마감</button>`;
+      actions += `<button class="btn danger" data-act="del" data-id="${r.id}">삭제</button>`;
+    }
+  }
+
+  return `<div class="room ${closed ? "closed" : ""} ${past ? "past" : ""}">
+    <div class="room-top"><div class="room-title">${esc(r.title)}</div>${badge}</div>
+    <div class="room-meta">${meta.join("")}</div>
+    ${r.note ? `<div class="room-note">${esc(r.note)}</div>` : ""}
+    <div class="room-host">주최: ${esc(r.host_name)}</div>
+    ${people ? `<div class="room-people">${people}</div>` : ""}
+    <div class="room-actions">${actions}</div>
+  </div>`;
+}
+
+function render() {
+  let rooms = ROOMS.slice();
+  if (!ADMIN) rooms = rooms.filter((r) => r.status !== "cancelled");
+  rooms.sort((a, b) => ((a.event_date || "9999-99-99") + (a.event_time || "99:99")).localeCompare((b.event_date || "9999-99-99") + (b.event_time || "99:99")));
+  const today = todayStr();
+  const upcoming = rooms.filter((r) => !r.event_date || r.event_date >= today);
+  const past = rooms.filter((r) => r.event_date && r.event_date < today);
+
+  let html = "";
+  if (!rooms.length) {
+    html = `<div class="empty">아직 만들어진 모임이 없어요.<br>${ADMIN ? "" : "위 <b>+ 새 모임 만들기</b>로 첫 모임을 열어보세요!"}</div>`;
+  } else {
+    if (upcoming.length) html += upcoming.map(roomCard).join("");
+    else if (!ADMIN) html += `<div class="empty">예정된 모임이 없어요. 새 모임을 만들어보세요!</div>`;
+    if (past.length) html += `<div class="sec-label">지난 모임</div>` + past.map(roomCard).join("");
+  }
+  $("list").innerHTML = html;
+}
+
+// ── 액션 ──
+$("list").addEventListener("click", async (e) => {
+  const b = e.target.closest("[data-act]"); if (!b) return;
+  const id = b.dataset.id, act = b.dataset.act;
+  const room = ROOMS.find((r) => r.id === id); if (!room) return;
+  b.disabled = true;
+  try {
+    if (act === "join") {
+      const cap = room.capacity || 0, n = joinsOf(id).length;
+      if (cap > 0 && n >= cap) { showToast("정원이 찼어요.", "error"); await refresh(); return; }
+      const { error } = await supabase.from("room_joins").upsert({ room_id: id, student_id: ME.id, name: ME.n });
+      if (error) throw error;
+    } else if (act === "leave") {
+      const { error } = await supabase.from("room_joins").delete().eq("room_id", id).eq("student_id", ME.id);
+      if (error) throw error;
+    } else if (act === "close" || act === "reopen") {
+      const { error } = await supabase.from("rooms").update({ status: act === "close" ? "closed" : "open" }).eq("id", id);
+      if (error) throw error;
+    } else if (act === "del") {
+      if (!confirm("이 모임을 삭제할까요? 참여자 정보도 함께 삭제됩니다.")) { b.disabled = false; return; }
+      const { error } = await supabase.from("rooms").delete().eq("id", id);
+      if (error) throw error;
+    }
+    await refresh();
+  } catch (_) { showToast("처리 실패 — 다시 시도해 주세요.", "error"); b.disabled = false; }
+});
+
+// ── 새 모임 만들기 ──
+$("new-btn").addEventListener("click", () => {
+  const root = $("modal-root");
+  root.innerHTML = `<div class="modal-bg"><div class="modal">
+    <h3>새 모임 만들기</h3>
+    <div class="fld"><label>제목 *</label><input id="f-title" maxlength="60" placeholder="예: 농구하자 / 그랩 같이 타실 분 / 쇼핑 가요"></div>
+    <div class="fld"><label>장소</label><input id="f-place" maxlength="60" placeholder="예: LCIC 농구장, SM몰 등"></div>
+    <div class="fld"><div class="row">
+      <div><label>날짜</label><input id="f-date" type="date"></div>
+      <div><label>시간</label><input id="f-time" type="time"></div>
+    </div></div>
+    <div class="fld"><label>정원 (비우면 제한 없음)</label><input id="f-cap" type="number" min="1" max="999" placeholder="예: 10"></div>
+    <div class="fld"><label>한줄 설명 (선택)</label><textarea id="f-note" maxlength="200" placeholder="자유롭게 남겨주세요"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn ghost" id="m-cancel">취소</button>
+      <button class="btn join" id="m-create">만들기</button>
+    </div>
+  </div></div>`;
+  const close = () => (root.innerHTML = "");
+  root.querySelector(".modal-bg").onclick = (ev) => { if (ev.target.classList.contains("modal-bg")) close(); };
+  $("m-cancel").onclick = close;
+  $("m-create").onclick = async () => {
+    const title = $("f-title").value.trim();
+    if (!title) { showToast("제목을 입력해 주세요.", "error"); return; }
+    const capRaw = parseInt($("f-cap").value, 10);
+    const room = {
+      id: (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2)),
+      host_id: ME.id, host_name: ME.n, title,
+      place: $("f-place").value.trim() || null,
+      event_date: $("f-date").value || null,
+      event_time: $("f-time").value || null,
+      capacity: isNaN(capRaw) || capRaw <= 0 ? null : capRaw,
+      note: $("f-note").value.trim() || null,
+      status: "open",
+    };
+    $("m-create").disabled = true;
+    try {
+      const r1 = await supabase.from("rooms").insert(room);
+      if (r1.error) throw r1.error;
+      await supabase.from("room_joins").upsert({ room_id: room.id, student_id: ME.id, name: ME.n });   // 주최자 자동 참여
+      close(); showToast("모임을 만들었어요!", "success"); await refresh();
+    } catch (_) { $("m-create").disabled = false; showToast("생성 실패 — 다시 시도해 주세요.", "error"); }
+  };
+  setTimeout(() => $("f-title").focus(), 60);
+});
+
+async function refresh() { try { await load(); render(); } catch (_) { showToast("불러오기 실패(관리자 SQL 필요).", "error"); } }
+
+(async function () {
+  const ok = await initIdentity();
+  if (!ok) { $("gate").classList.remove("hidden"); return; }
+  $("app").classList.remove("hidden");
+  if (ADMIN) $("sub").textContent = "관리자 보기 — 전체 모임 조회 및 삭제";
+  if (ADMIN) $("new-btn").style.display = "none";
+  await refresh();
+  setInterval(refresh, 15000);
+})();
+</script>
+</body>
+</html>

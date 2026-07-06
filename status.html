@@ -430,6 +430,15 @@
     </div>
   </section>
 
+  <!-- 학생 모임 진입 -->
+  <section class="card fade-up" style="text-align:center;">
+    <div class="card-title" style="justify-content:center;">🏀 학생 모임</div>
+    <p style="color:var(--text-dim); font-size:0.92rem; line-height:1.6; margin:2px 0 15px;">
+      농구·그랩 같이 타기·쇼핑 등 <b>같이 놀 사람</b>을 찾아보세요. 직접 모임을 만들 수도 있어요!
+    </p>
+    <a href="rooms.html" class="hop-btn" style="text-decoration:none;">🏀 학생 모임 열기</a>
+  </section>
+
   <!-- 완료율 · 잠깐 숨김 (복구하려면 style="display:none" 제거) -->
   <section class="card fade-up" style="display:none">
     <div class="prog-top">
@@ -569,6 +578,8 @@
     CUR = rec;
     $("d-name").textContent = rec.name || "학생";
     $("d-updated").textContent = rec.updatedAt || STATUS_UPDATED || "";
+    // 학생 모임(rooms.html)에서 쓸 신원 저장 (검증된 로그인 후에만)
+    try { localStorage.setItem("lcic.me", JSON.stringify({ n: rec.name || "", e: CUR_EMAIL || "" })); } catch (_) {}
     renderHopping(rec);   // 호핑 수요조사 카드
 
     const cl = rec.checklist || {};
