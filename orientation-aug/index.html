@@ -4917,6 +4917,39 @@ body {
     else if (e.deltaY < -30) go(cur-1);
   }, {passive:true});
 
+  // ===== Presenter sync (activates only with ?screen) =====
+  var SCREEN = /[?&]screen\b/.test(location.search);
+  if (SCREEN) {
+    document.documentElement.setAttribute('data-screen','1');
+    // 즉시 이동 (CSS scroll-behavior:smooth 무시 → 발표 중 애니메이션 없이 딱딱 넘김)
+    document.documentElement.style.scrollBehavior = 'auto';
+    // 게이트 제거 (발표자가 로컬에서 여는 창)
+    var g = document.getElementById('ot-gate');
+    if (g) g.remove();
+    document.body.classList.remove('ot-locked');
+    // 크롬 숨김
+    ['progress','nav-dots','slide-counter'].forEach(function(id){
+      var el = document.getElementById(id); if (el) el.style.display = 'none';
+    });
+    // 자체 네비 무력화: 발표자 콘솔의 지시(go)만 유효, 사용자 입력은 무시
+    window.addEventListener('keydown', function(e){ e.stopImmediatePropagation(); }, true);
+    window.addEventListener('wheel', function(e){ e.stopImmediatePropagation(); }, true);
+    // 발표자 콘솔의 지시 수신
+    window.addEventListener('message', function(e){
+      var d = e.data;
+      if (!d || d.source !== 'lcic-ot' || d.action !== 'goto') return;
+      var i = d.index|0;
+      if (i < 0) i = 0; if (i >= TOTAL) i = TOTAL - 1;
+      slides[i].scrollIntoView({ behavior: 'instant', block: 'start' });
+      cur = i;
+    });
+    // 준비 완료 신호 (관객 창이 열린 뒤 콘솔이 현재 인덱스를 재전송하도록)
+    try {
+      var host = window.opener || window.parent;
+      if (host && host !== window) host.postMessage({source:'lcic-ot-screen', action:'ready'}, '*');
+    } catch(_){}
+  }
+
   update();
 })();
 </script>
