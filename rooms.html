@@ -107,6 +107,7 @@ async function sha256hex(str) {
   return [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, "0")).join("");
 }
 function todayStr() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; }
+function nowHM() { const d = new Date(); return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`; }
 const WD = ["일", "월", "화", "수", "목", "금", "토"];
 function fmtDate(iso) { if (!iso) return ""; const [y, m, d] = iso.split("-").map(Number); const wd = WD[new Date(y, m - 1, d).getDay()]; return `${m}/${d}(${wd})`; }
 
@@ -246,6 +247,8 @@ $("new-btn").addEventListener("click", () => {
       <button class="btn join" id="m-create">만들기</button>
     </div>
   </div></div>`;
+  $("f-date").value = todayStr();   // 기본값: 현재 날짜·시간
+  $("f-time").value = nowHM();
   const close = () => (root.innerHTML = "");
   root.querySelector(".modal-bg").onclick = (ev) => { if (ev.target.classList.contains("modal-bg")) close(); };
   $("m-cancel").onclick = close;
