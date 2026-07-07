@@ -4931,6 +4931,11 @@ body {
     ['progress','nav-dots','slide-counter'].forEach(function(id){
       var el = document.getElementById(id); if (el) el.style.display = 'none';
     });
+    // 발표용 커버 발표자명 교체 (학생용 기본 모드는 그대로 유지)
+    document.querySelectorAll('.meta-row .col').forEach(function(col){
+      var lbl = col.querySelector('.lbl'), val = col.querySelector('.val');
+      if (lbl && val && /Presenter/i.test(lbl.textContent)) val.textContent = 'Miguel Shim · 심상현';
+    });
     // 자체 네비 무력화: 발표자 콘솔의 지시(go)만 유효, 사용자 입력은 무시
     window.addEventListener('keydown', function(e){ e.stopImmediatePropagation(); }, true);
     window.addEventListener('wheel', function(e){ e.stopImmediatePropagation(); }, true);
