@@ -4957,11 +4957,21 @@ body {
     // 발표자 콘솔의 지시 수신
     window.addEventListener('message', function(e){
       var d = e.data;
-      if (!d || d.source !== 'lcic-ot' || d.action !== 'goto') return;
-      var i = d.index|0;
-      if (i < 0) i = 0; if (i >= TOTAL) i = TOTAL - 1;
-      slides[i].scrollIntoView({ behavior: 'instant', block: 'start' });
-      cur = i;
+      if (!d || d.source !== 'lcic-ot') return;
+      if (d.action === 'goto') {
+        var i = d.index|0;
+        if (i < 0) i = 0; if (i >= TOTAL) i = TOTAL - 1;
+        slides[i].scrollIntoView({ behavior: 'instant', block: 'start' });
+        cur = i;
+      } else if (d.action === 'video') {
+        var v = slides[cur] && slides[cur].querySelector('video');
+        if (!v) return;
+        if (!PREVIEW) { v.muted = false; v.volume = 1; }   // 관객 창만 소리 켬 (미리보기는 계속 음소거)
+        if (d.cmd === 'play')       { v.play().catch(function(){}); }
+        else if (d.cmd === 'pause') { v.pause(); }
+        else if (d.cmd === 'restart'){ try{ v.currentTime = 0; }catch(_){}; v.play().catch(function(){}); }
+        else if (d.cmd === 'toggle'){ if (v.paused || v.ended) v.play().catch(function(){}); else v.pause(); }
+      }
     });
     // 준비 완료 신호 (관객 창이 열린 뒤 콘솔이 현재 인덱스를 재전송하도록)
     try {
