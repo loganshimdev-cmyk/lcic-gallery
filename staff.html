@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>직원 허브 · LCIC</title>
+<link rel="stylesheet" href="assets/shared.css" />
+<style>
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 20px; }
+  .gate { max-width: 340px; margin: 16vh auto; text-align: center; }
+  .gate h2 { margin: 0 0 4px; }
+  .gate p { color: #64748b; font-size: .9rem; margin: 0 0 16px; }
+  .gate input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 1rem; }
+  .gate button { margin-top: 10px; width: 100%; padding: 12px; border: 0; border-radius: 10px; background: #2563eb; color: #fff; font-size: 1rem; cursor: pointer; }
+  .gate .err { color: #dc2626; font-size: .85rem; min-height: 1.2em; margin-top: 8px; }
+  .hub { display: none; padding: 40px 0 60px; }
+  .hub h1 { margin: 0 0 4px; }
+  .hub .sub { color: #64748b; margin: 0 0 28px; }
+  .cards { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+  .card { display: block; text-decoration: none; color: inherit; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px; background: #fff; transition: box-shadow .15s, transform .15s, border-color .15s; }
+  .card:hover { box-shadow: 0 8px 24px rgba(15,23,42,.08); transform: translateY(-2px); border-color: #bfdbfe; }
+  .card .title { font-weight: 700; font-size: 1.05rem; display: flex; align-items: center; gap: 8px; }
+  .card .badge { font-size: .68rem; font-weight: 700; color: #fff; background: #2563eb; border-radius: 999px; padding: 2px 8px; letter-spacing: .3px; }
+  .card .desc { color: #475569; font-size: .9rem; margin-top: 8px; line-height: 1.5; }
+  .card .go { color: #2563eb; font-size: .85rem; font-weight: 600; margin-top: 12px; }
+  .foot { color: #94a3b8; font-size: .8rem; margin-top: 32px; }
+</style>
+</head>
+<body>
+
+<div id="gate" class="gate">
+  <h2>직원 허브</h2>
+  <p>LCIC 내부 직원 전용 · 비밀번호를 입력하세요</p>
+  <input id="pw" type="password" placeholder="비밀번호" autocomplete="off" />
+  <button id="go">열기</button>
+  <div id="err" class="err"></div>
+</div>
+
+<div id="hub" class="hub">
+  <div class="wrap">
+    <h1>직원 허브</h1>
+    <p class="sub">LCIC 내부 도구 모음 (한국·대만·일본 공통)</p>
+    <div id="cards" class="cards"></div>
+    <p class="foot">이 페이지는 검색에 노출되지 않으며, 각 도구는 자체 로그인/비밀번호로 별도 보호됩니다.</p>
+  </div>
+</div>
+
+<script>
+const PBKDF2_ITER = 100000;
+const BLOB = "8iDm3SmqV/8G23+grHINt90DNptl8gERtCxvyRbTjQ3z8GhgL+jCZO0sKM1lnrBZh1nXJ7KnEKRJhbc4s5uoG2JQG05IcQDzDnhJHZhATztMYIddlNkzqar78V/h+Danzmcjj7by5wP6Iv51tjws8DvAdDsF+zL/7L++w2hKWykT9RzEnA+mTj2hP92d5ByyIyAR+XeWa+Lpe1VXDT5SHcFaoYs2Kcifk2MO6ydEPmmM4tk1f4fbIg0yyBF91NNvCp1MzYxu20TFj00u/dRmB/QoQOjM27/qvCB7XC+2gtF24o/ZCH6h6/xvd4mBRilJqBvwG7npZRUskijUwoE=";
+
+function b64ToBytes(b64){ const bin=atob(b64); const a=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i); return a; }
+async function decrypt(blobB64, password){
+  const raw=b64ToBytes(blobB64);
+  const salt=raw.slice(0,16), iv=raw.slice(16,28), tag=raw.slice(28,44), ct=raw.slice(44);
+  const ctWithTag=new Uint8Array(ct.length+tag.length); ctWithTag.set(ct); ctWithTag.set(tag,ct.length);
+  const pwKey=await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveKey"]);
+  const key=await crypto.subtle.deriveKey({name:"PBKDF2",salt,iterations:PBKDF2_ITER,hash:"SHA-256"}, pwKey, {name:"AES-GCM",length:256}, false, ["decrypt"]);
+  const plain=await crypto.subtle.decrypt({name:"AES-GCM",iv}, key, ctWithTag);
+  return JSON.parse(new TextDecoder().decode(plain));
+}
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+
+function render(data){
+  const html = data.tools.map((t) => `
+    <a class="card" href="${esc(t.url)}" target="_blank" rel="noopener">
+      <div class="title">${esc(t.title)}${t.badge ? `<span class="badge">${esc(t.badge)}</span>` : ""}</div>
+      <div class="desc">${esc(t.desc)}</div>
+      <div class="go">열기 →</div>
+    </a>`).join("");
+  $("cards").innerHTML = html;
+  $("gate").style.display = "none";
+  $("hub").style.display = "block";
+}
+
+async function unlock(){
+  $("err").textContent = "";
+  const pw = $("pw").value;
+  if (!pw) return;
+  try {
+    const data = await decrypt(BLOB, pw);
+    try { sessionStorage.setItem("staff_pw", pw); } catch {}
+    render(data);
+  } catch {
+    $("err").textContent = "비밀번호가 올바르지 않습니다.";
+  }
+}
+
+$("go").addEventListener("click", unlock);
+$("pw").addEventListener("keydown", (e) => { if (e.key === "Enter") unlock(); });
+
+// 세션 내 재방문 시 자동 해제
+(async () => {
+  let pw = null;
+  try { pw = sessionStorage.getItem("staff_pw"); } catch {}
+  if (!pw) return;
+  try { render(await decrypt(BLOB, pw)); } catch {}
+})();
+</script>
+</body>
+</html>
