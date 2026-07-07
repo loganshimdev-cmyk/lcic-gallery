@@ -4936,6 +4936,14 @@ body {
       var lbl = col.querySelector('.lbl'), val = col.querySelector('.val');
       if (lbl && val && /Presenter/i.test(lbl.textContent)) val.textContent = 'Miguel Shim · 심상현';
     });
+    // 즉시 표시: 리빌 애니메이션(.r opacity:0)을 기다리지 않고 바로 그림
+    // (라이브에서 이미지·영상 로딩으로 observer가 늦으면 흰 화면 되는 문제 방지)
+    var scst = document.createElement('style');
+    scst.textContent = '.r{opacity:1 !important; transform:none !important; filter:none !important; animation:none !important;}';
+    document.head.appendChild(scst);
+    slides.forEach(function(s){ s.classList.add('visible'); });
+    // 무거운 영상은 초기 프리로드 끔 (해당 슬라이드 도달 시 로드) → 창 열림 속도 개선
+    document.querySelectorAll('video').forEach(function(v){ try { v.preload = 'none'; } catch(_){} });
     // 자체 네비 무력화: 발표자 콘솔의 지시(go)만 유효, 사용자 입력은 무시
     window.addEventListener('keydown', function(e){ e.stopImmediatePropagation(); }, true);
     window.addEventListener('wheel', function(e){ e.stopImmediatePropagation(); }, true);
