@@ -21,3 +21,5 @@ scripts/agencies.json
 scripts/_*.html
 _*.html
 _*.png
+scripts/encrypt-staff.cjs
+scripts/staff-tools.json
