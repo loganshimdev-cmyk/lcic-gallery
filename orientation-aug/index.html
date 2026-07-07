@@ -4943,7 +4943,14 @@ body {
     document.head.appendChild(scst);
     slides.forEach(function(s){ s.classList.add('visible'); });
     // 무거운 영상은 초기 프리로드 끔 (해당 슬라이드 도달 시 로드) → 창 열림 속도 개선
-    document.querySelectorAll('video').forEach(function(v){ try { v.preload = 'none'; } catch(_){} });
+    // preview 모드(발표자 콘솔 미리보기 iframe)는 영상 음소거 강제 → 관객 창 소리와 겹침 원천 차단
+    var PREVIEW = /[?&]preview\b/.test(location.search);
+    document.querySelectorAll('video').forEach(function(v){
+      try {
+        v.preload = 'none';
+        if (PREVIEW) { v.muted = true; v.volume = 0; v.addEventListener('volumechange', function(){ if(!v.muted){ v.muted = true; } }); }
+      } catch(_){}
+    });
     // 자체 네비 무력화: 발표자 콘솔의 지시(go)만 유효, 사용자 입력은 무시
     window.addEventListener('keydown', function(e){ e.stopImmediatePropagation(); }, true);
     window.addEventListener('wheel', function(e){ e.stopImmediatePropagation(); }, true);
