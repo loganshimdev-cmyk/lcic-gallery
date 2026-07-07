@@ -7,7 +7,7 @@ const subtle = webcrypto.subtle;
 
 const SRC = path.resolve(__dirname, "../../lcic-invoice/index.html");
 const OUT = path.resolve(__dirname, "../invoice.html");
-const PASSWORD = "lcic!4692";
+const PASSWORD = "lcic!8686";
 const ITER = 100000;
 
 (async () => {
