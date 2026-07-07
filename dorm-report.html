@@ -146,7 +146,7 @@ const KEY = "lcic-dorm-report-ok";
 function unlock(){ $("gate").classList.add("hidden"); $("report").classList.remove("hidden"); load(); }
 $("gate-form").addEventListener("submit", (e) => {
   e.preventDefault();
-  if ($("gate-pw").value === "lcic4692") { sessionStorage.setItem(KEY, "1"); unlock(); }
+  if ($("gate-pw").value === "lcic8686") { sessionStorage.setItem(KEY, "1"); unlock(); }
   else showToast("Incorrect password", "error");
 });
 if (sessionStorage.getItem(KEY)) unlock();
