@@ -352,8 +352,9 @@
             placeholder="example@email.com" autocomplete="email" required>
         </div>
         <div class="gate-field">
-          <label class="gate-label" for="in-birth">생년월일</label>
-          <input id="in-birth" class="gate-input" type="date" required>
+          <label class="gate-label" for="in-birth">생년월일 (숫자 8자리)</label>
+          <input id="in-birth" class="gate-input" type="text" inputmode="numeric" maxlength="8"
+            placeholder="예: 20050317" autocomplete="off" required>
         </div>
         <div class="gate-field">
           <label class="gate-label" for="in-phone">휴대폰 번호 끝 4자리</label>
@@ -518,7 +519,7 @@
 
   // ── normalizers (encrypt-status.cjs와 반드시 일치) ──
   const normEmail = (e) => String(e || "").trim().toLowerCase();
-  const birth8 = (d) => String(d || "").replace(/-/g, "");           // date input "YYYY-MM-DD" → "YYYYMMDD"
+  const birth8 = (d) => String(d || "").replace(/\D/g, "");          // "20050317" 또는 옛 "2005-03-17" → "20050317"
   const phone4 = (p) => String(p || "").replace(/\D/g, "").slice(-4);
 
   function escapeHtml(s) {
