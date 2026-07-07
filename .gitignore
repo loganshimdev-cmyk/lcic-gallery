@@ -23,3 +23,7 @@ _*.html
 _*.png
 scripts/encrypt-staff.cjs
 scripts/staff-tools.json
+
+# 발표자 콘솔은 로컬 전용 (온라인 미배포)
+orientation-aug/present.html
+orientation-aug/present-scripts.js
