@@ -961,8 +961,12 @@
           await paintMsm(rec); return;
         }
         const err = await window.lcicMsm.register(msmId, rec.name || "", rec.uni || "");
-        stat.style.color = err ? "#dc2626" : "";
-        stat.textContent = err ? "신청 실패 — 다시 시도해 주세요." : "신청이 완료되었어요! 🍭";
+        if (err && /FULL/i.test(err)) {          // 서버 정원 잠금(51번째부터 거부)
+          stat.style.color = "#dc2626"; stat.textContent = "죄송해요, 방금 정원(50명)이 찼어요.";
+        } else {
+          stat.style.color = err ? "#dc2626" : "";
+          stat.textContent = err ? "신청 실패 — 다시 시도해 주세요." : "신청이 완료되었어요! 🍭";
+        }
         await paintMsm(rec);
       }
     };
