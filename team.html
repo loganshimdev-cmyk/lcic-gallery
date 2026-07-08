@@ -114,6 +114,7 @@
           </div>
         </div>
         <button data-tab="arrivals">🛬 도착/입소</button>
+        <button data-tab="pay" id="tab-btn-pay" class="hidden">💰 납부현황</button>
         <div class="tab-group">
           <button type="button" class="tab-parent">🎉 액티비티 ▾</button>
           <div class="tab-menu">
@@ -149,6 +150,9 @@
     <section id="tab-marshmallow" class="hidden">
       <iframe id="marshmallow-frame" title="마시멜로우 챌린지 신청자" style="width:100%; height:calc(100vh - 200px); border:1px solid var(--hairline); border-radius:16px; background:#fff;"></iframe>
     </section>
+    <section id="tab-pay" class="hidden">
+      <iframe id="pay-frame" title="납부현황" style="width:100%; height:calc(100vh - 200px); border:1px solid var(--hairline); border-radius:16px; background:#fff;"></iframe>
+    </section>
   </div>
 
 </main>
@@ -178,6 +182,8 @@ async function refresh() {
   if (!me.name) { show("register"); return; }
   show("app");
   $("me-name").textContent = me.name;
+  // 관리자 전용 탭 표시 (admin = miguel·MK). SE 등 일반 계정에겐 숨김.
+  $("tab-btn-pay").classList.toggle("hidden", me.role !== "admin");
   await renderAll();
 }
 
@@ -255,6 +261,7 @@ function switchTab(tab, btn) {
   $("tab-hopping").classList.toggle("hidden", tab !== "hopping");
   $("tab-rooms").classList.toggle("hidden", tab !== "rooms");
   $("tab-marshmallow").classList.toggle("hidden", tab !== "marshmallow");
+  $("tab-pay").classList.toggle("hidden", tab !== "pay");
   if (tab === "arrivals") { const f = $("arrivals-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "arrivals.html"); }
   if (tab === "hopping") { const f = $("hopping-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "hopping.html"); }
   if (tab === "rooms") { const f = $("rooms-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "rooms.html?admin=1"); }
@@ -268,6 +275,16 @@ function switchTab(tab, btn) {
       if (p && !p.endsWith("summer-2026.html")) drifted = true;
     } catch (e) { /* 접근 불가 시 그대로 둠 */ }
     if (!f.getAttribute("src") || drifted) f.setAttribute("src", "summer-2026.html");
+  }
+  // 납부현황(관리자 전용): invoice.html 임베드. 안에서 벗어나면 복귀.
+  if (tab === "pay") {
+    const f = $("pay-frame");
+    let drifted = false;
+    try {
+      const p = f.contentWindow && f.contentWindow.location && f.contentWindow.location.pathname;
+      if (p && !p.endsWith("invoice.html")) drifted = true;
+    } catch (e) { /* 접근 불가 시 그대로 둠 */ }
+    if (!f.getAttribute("src") || drifted) f.setAttribute("src", "invoice.html");
   }
   document.querySelectorAll(".tab-menu.open").forEach((m) => m.classList.remove("open"));   // 하위탭 선택 시 메뉴 닫기
 }
