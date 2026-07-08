@@ -238,7 +238,7 @@ $("new-btn").addEventListener("click", () => {
     <div class="fld"><label>장소</label><input id="f-place" maxlength="60" placeholder="예: LCIC 농구장, SM몰 등"></div>
     <div class="fld"><div class="row">
       <div><label>날짜</label><input id="f-date" type="date"></div>
-      <div><label>시간</label><input id="f-time" type="time"></div>
+      <div><label>시간 (선택)</label><input id="f-time" type="time"></div>
     </div></div>
     <div class="fld"><label>정원 (비우면 제한 없음)</label><input id="f-cap" type="number" min="1" max="999" placeholder="예: 10"></div>
     <div class="fld"><label>한줄 설명 (선택)</label><textarea id="f-note" maxlength="200" placeholder="자유롭게 남겨주세요"></textarea></div>
@@ -247,8 +247,7 @@ $("new-btn").addEventListener("click", () => {
       <button class="btn join" id="m-create">만들기</button>
     </div>
   </div></div>`;
-  $("f-date").value = todayStr();   // 기본값: 현재 날짜·시간
-  $("f-time").value = nowHM();
+  $("f-date").value = todayStr();   // 날짜 기본값: 오늘 (시간은 자동입력 안 함 — 약속 시간은 직접 선택)
   const close = () => (root.innerHTML = "");
   root.querySelector(".modal-bg").onclick = (ev) => { if (ev.target.classList.contains("modal-bg")) close(); };
   $("m-cancel").onclick = close;
