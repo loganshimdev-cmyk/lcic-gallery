@@ -460,6 +460,7 @@
       <div class="mi"><span class="mi-k">📅 일시</span><span class="mi-v">7월 14일 (화) · 오후 4시</span></div>
       <div class="mi"><span class="mi-k">📍 장소</span><span class="mi-v">어학관 2층</span></div>
       <div class="mi"><span class="mi-k">👥 정원</span><span class="mi-v">선착순 50명</span></div>
+      <div class="mi"><span class="mi-k">⏰ 마감</span><span class="mi-v">7월 9일 (수) 낮 12시</span></div>
     </div>
 
     <div class="msm-my none" id="msm-my"></div>
@@ -929,6 +930,7 @@
   // ── 🍭 마시멜로우 챌린지 신청 (단일 이벤트, 선착순 50명) ──
   // id = 이메일 sha256 앞16자(학생별 고정). 명단은 team.html "🍭 마시멜로우"에서 조회.
   const MSM_CAP = 50;
+  const MSM_DEADLINE = new Date("2026-07-09T12:00:00+08:00");   // 7/9(수) 낮 12시 (세부 UTC+8)
   let msmId = null;
 
   async function renderMarshmallow(rec) {
@@ -939,6 +941,7 @@
 
     $("msm-actions").onclick = async (e) => {
       const b = e.target.closest(".msm-btn[data-act]"); if (!b) return;
+      if (new Date() >= MSM_DEADLINE) return;   // 마감 후 차단
       const stat = $("msm-status");
       if (b.dataset.act === "leave") {
         if (!confirm("마시멜로우 챌린지 신청을 취소하시겠어요?")) return;
@@ -968,15 +971,18 @@
   async function paintMsm(rec) {
     let count = 0, mine = false;
     try { const s = await window.lcicMsm.state(msmId); count = s.count; mine = s.mine; } catch (_) { /* 읽기 실패해도 카드는 표시 */ }
+    const closed = new Date() >= MSM_DEADLINE;
     const rest = Math.max(0, MSM_CAP - count), full = rest <= 0 && !mine;
     $("msm-fill").style.width = Math.min(100, Math.round(count / MSM_CAP * 100)) + "%";
     $("msm-count").innerHTML = `신청 <b>${count}</b> / ${MSM_CAP}명 · ` +
-      (full ? "<span style='color:#dc2626;font-weight:700'>정원 마감</span>" : `남은 자리 <b>${rest}</b>`);
+      (closed ? "<span style='color:#dc2626;font-weight:700'>신청 마감</span>"
+              : full ? "<span style='color:#dc2626;font-weight:700'>정원 마감</span>" : `남은 자리 <b>${rest}</b>`);
     const my = $("msm-my");
-    if (mine) { my.className = "msm-my"; my.innerHTML = "✅ 마시멜로우 챌린지에 신청되었습니다."; }
+    if (mine) { my.className = "msm-my"; my.innerHTML = "✅ 마시멜로우 챌린지에 신청되었습니다." + (closed ? " (신청 마감됨)" : ""); }
     else { my.className = "msm-my none"; my.innerHTML = ""; }
     let btn;
-    if (mine) btn = `<button class="msm-btn leave" data-act="leave">신청 취소</button>`;
+    if (closed) btn = `<button class="msm-btn join" disabled>${mine ? "신청 완료" : "신청 마감"}</button>`;
+    else if (mine) btn = `<button class="msm-btn leave" data-act="leave">신청 취소</button>`;
     else if (full) btn = `<button class="msm-btn join" disabled>정원 마감</button>`;
     else btn = `<button class="msm-btn join" data-act="join">신청하기</button>`;
     $("msm-actions").innerHTML = btn;
