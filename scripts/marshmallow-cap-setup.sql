@@ -12,12 +12,15 @@ language plpgsql
 as $$
 declare
   cur int;
-  cap constant int := 50;   -- ⚠️ status.html 의 MSM_CAP 과 동일해야 함
+  cap int;
 begin
   -- 이미 존재하는 id(같은 학생의 재신청/upsert 갱신)는 자리 차지 안 함 → 통과
   if exists (select 1 from public.marshmallow_signups where id = NEW.id) then
     return NEW;
   end if;
+
+  -- 정원: 7/8 낮 12시(PH, UTC+8) 이후 100명, 그 전까지는 1차 50명
+  cap := case when now() >= timestamptz '2026-07-08 12:00:00+08' then 100 else 50 end;
 
   -- 이 테이블 전용 키로 동시 삽입을 직렬화(트랜잭션 종료 시 자동 해제)
   perform pg_advisory_xact_lock(778601);
