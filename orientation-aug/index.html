@@ -4938,7 +4938,7 @@ body {
     // 발표용 커버 발표자명 교체 (학생용 기본 모드는 그대로 유지)
     document.querySelectorAll('.meta-row .col').forEach(function(col){
       var lbl = col.querySelector('.lbl'), val = col.querySelector('.val');
-      if (lbl && val && /Presenter/i.test(lbl.textContent)) val.textContent = 'Miguel Shim · 심상현';
+      if (lbl && val && /Presenter/i.test(lbl.textContent)) val.textContent = 'Miguel Shim · 심상현 대리';
     });
     // 즉시 표시: 리빌 애니메이션(.r opacity:0)을 기다리지 않고 바로 그림
     // (라이브에서 이미지·영상 로딩으로 observer가 늦으면 흰 화면 되는 문제 방지)
