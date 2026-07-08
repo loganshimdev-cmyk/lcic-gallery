@@ -19,6 +19,15 @@
   .tabs { display:inline-flex; padding:5px; background:rgba(0,0,0,.04); border:1px solid var(--hairline); border-radius:999px; }
   .tabs button { border:none; background:none; padding:8px 18px; border-radius:999px; cursor:pointer; font-weight:600; color:var(--text-dim); }
   .tabs button.active { background:var(--accent); color:#fff; }
+  .tab-group { position:relative; display:inline-flex; }
+  .tab-parent { border:none; background:none; padding:8px 18px; border-radius:999px; cursor:pointer; font-weight:600; color:var(--text-dim); }
+  .tab-menu { position:absolute; top:calc(100% + 6px); left:0; background:var(--bg-elev); border:1px solid var(--hairline);
+    border-radius:12px; box-shadow:var(--shadow-lg); padding:5px; display:none; flex-direction:column; gap:2px; z-index:100; min-width:172px; }
+  .tab-menu.open { display:flex; }
+  .tab-menu button { border:none; background:none; padding:9px 14px; border-radius:9px; cursor:pointer; font-weight:600;
+    color:var(--text-dim); text-align:left; white-space:nowrap; width:100%; }
+  .tab-menu button:hover { background:var(--accent-tint); color:var(--accent-deep); }
+  .tab-menu button.active { background:var(--accent); color:#fff; }
   .summary-bar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px; }
   .chip { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:999px; background:rgba(0,0,0,.04); border:1px solid var(--hairline); font-size:.85rem; cursor:pointer; }
   .chip .dot { width:8px; height:8px; border-radius:50%; background:var(--accent); }
@@ -96,13 +105,23 @@
   <div id="app-view" class="hidden">
     <div class="topbar">
       <div class="tabs">
-        <button data-tab="board" class="active">🗂 할일판</button>
+        <button data-tab="board" class="active">🗂 ToDolist</button>
         <button data-tab="calendar">📅 캘린더</button>
-        <button data-tab="summer">🏫 여름 배정현황</button>
+        <div class="tab-group">
+          <button type="button" class="tab-parent">🏫 배정현황 ▾</button>
+          <div class="tab-menu">
+            <button data-tab="summer">2026 여름 (7·8월)</button>
+          </div>
+        </div>
         <button data-tab="arrivals">🛬 도착/입소</button>
-        <button data-tab="hopping">🚤 호핑 수요조사</button>
-        <button data-tab="rooms">🏀 학생 모임</button>
-        <button data-tab="marshmallow">🍭 마시멜로우</button>
+        <div class="tab-group">
+          <button type="button" class="tab-parent">🎉 액티비티 ▾</button>
+          <div class="tab-menu">
+            <button data-tab="hopping">🚤 호핑 수요조사</button>
+            <button data-tab="rooms">🏀 학생 모임</button>
+            <button data-tab="marshmallow">🍭 마시멜로우</button>
+          </div>
+        </div>
       </div>
       <div style="display:flex; align-items:center; gap:12px;">
         <span id="me-name" style="font-size:.85rem; color:var(--text-dim);"></span>
@@ -222,10 +241,13 @@ $("register-form").addEventListener("submit", async (e) => {
 
 $("logout-btn").addEventListener("click", () => { logout(); refresh(); });
 
-document.querySelectorAll(".tabs button").forEach((b) => b.addEventListener("click", () => {
+function switchTab(tab, btn) {
   document.querySelectorAll(".tabs button").forEach((x) => x.classList.remove("active"));
-  b.classList.add("active");
-  const tab = b.dataset.tab;
+  if (btn) {
+    btn.classList.add("active");
+    const grp = btn.closest(".tab-group");
+    if (grp) grp.querySelector(".tab-parent").classList.add("active");   // 그룹 내 하위탭 → 부모도 활성 표시
+  }
   $("tab-board").classList.toggle("hidden", tab !== "board");
   $("tab-calendar").classList.toggle("hidden", tab !== "calendar");
   $("tab-summer").classList.toggle("hidden", tab !== "summer");
@@ -233,23 +255,11 @@ document.querySelectorAll(".tabs button").forEach((b) => b.addEventListener("cli
   $("tab-hopping").classList.toggle("hidden", tab !== "hopping");
   $("tab-rooms").classList.toggle("hidden", tab !== "rooms");
   $("tab-marshmallow").classList.toggle("hidden", tab !== "marshmallow");
-  if (tab === "arrivals") {
-    const f = $("arrivals-frame");
-    if (!f.getAttribute("src")) f.setAttribute("src", "arrivals.html");
-  }
-  if (tab === "hopping") {
-    const f = $("hopping-frame");
-    if (!f.getAttribute("src")) f.setAttribute("src", "hopping.html");
-  }
-  if (tab === "rooms") {
-    const f = $("rooms-frame");
-    if (!f.getAttribute("src")) f.setAttribute("src", "rooms.html?admin=1");
-  }
-  if (tab === "marshmallow") {
-    const f = $("marshmallow-frame");
-    if (!f.getAttribute("src")) f.setAttribute("src", "marshmallow.html");
-  }
-  // 여름 배정현황: 처음이면 로드. 안에서 다른 페이지로 이동했으면 다시 배정현황으로 복귀.
+  if (tab === "arrivals") { const f = $("arrivals-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "arrivals.html"); }
+  if (tab === "hopping") { const f = $("hopping-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "hopping.html"); }
+  if (tab === "rooms") { const f = $("rooms-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "rooms.html?admin=1"); }
+  if (tab === "marshmallow") { const f = $("marshmallow-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "marshmallow.html"); }
+  // 배정현황: 처음이면 로드. 안에서 다른 페이지로 이동했으면 다시 배정현황으로 복귀.
   if (tab === "summer") {
     const f = $("summer-frame");
     let drifted = false;
@@ -259,7 +269,21 @@ document.querySelectorAll(".tabs button").forEach((b) => b.addEventListener("cli
     } catch (e) { /* 접근 불가 시 그대로 둠 */ }
     if (!f.getAttribute("src") || drifted) f.setAttribute("src", "summer-2026.html");
   }
+  document.querySelectorAll(".tab-menu.open").forEach((m) => m.classList.remove("open"));   // 하위탭 선택 시 메뉴 닫기
+}
+
+// 하위탭(data-tab) 클릭 → 전환
+document.querySelectorAll(".tabs [data-tab]").forEach((b) => b.addEventListener("click", () => switchTab(b.dataset.tab, b)));
+// 부모(배정현황/액티비티) 클릭 → 드롭다운 토글
+document.querySelectorAll(".tab-parent").forEach((p) => p.addEventListener("click", (e) => {
+  e.stopPropagation();
+  const menu = p.nextElementSibling;
+  const willOpen = !menu.classList.contains("open");
+  document.querySelectorAll(".tab-menu.open").forEach((m) => m.classList.remove("open"));
+  if (willOpen) menu.classList.add("open");
 }));
+// 바깥 클릭 시 열린 드롭다운 닫기
+document.addEventListener("click", (e) => { if (!e.target.closest(".tab-group")) document.querySelectorAll(".tab-menu.open").forEach((m) => m.classList.remove("open")); });
 
 refresh();
 </script>
