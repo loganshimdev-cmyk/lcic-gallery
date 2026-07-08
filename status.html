@@ -123,6 +123,23 @@
   .hop-info .hi-cost-note { font-size: 0.88rem; color: var(--text-dim); line-height: 1.5; }
   .hop-info .hi-cost-note b { color: var(--accent-deep); font-weight: 800; }
 
+  /* 마시멜로우 챌린지 — 단일 이벤트 신청 + 실시간 인원 */
+  .msm-info { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 4px 0 16px; }
+  .msm-info .mi { display: flex; align-items: baseline; gap: 8px; font-size: 0.9rem; }
+  .msm-info .mi-k { color: var(--text-dim); font-weight: 600; }
+  .msm-info .mi-v { font-weight: 700; }
+  .msm-my { margin-bottom: 12px; padding: 12px 15px; border-radius: 13px; font-size: 0.93rem; font-weight: 700;
+    background: rgba(219,39,119,0.10); border: 1px solid rgba(219,39,119,0.38); color: #be185d; }
+  .msm-my.none { display: none; }
+  .msm-bar { height: 10px; border-radius: 99px; background: var(--hairline); overflow: hidden; margin-bottom: 7px; }
+  .msm-fill { height: 100%; width: 0; background: linear-gradient(90deg,#f472b6,#ec4899); transition: width 0.4s ease; }
+  .msm-count { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 14px; }
+  .msm-count b { color: #be185d; font-weight: 800; }
+  .msm-btn { width: 100%; padding: 14px; border-radius: 13px; border: none; font-weight: 800; font-size: 0.98rem; cursor: pointer; }
+  .msm-btn.join { background: #ec4899; color: #fff; }
+  .msm-btn.leave { background: var(--bg-elev); color: #dc2626; border: 1.5px solid var(--hairline); }
+  .msm-btn:disabled { opacity: 0.55; cursor: default; }
+
   /* 호핑 예약 — 날짜 선택 + 실시간 인원 */
   .hop-my { margin-bottom: 14px; padding: 13px 16px; border-radius: 14px; font-size: 0.95rem; font-weight: 700;
     background: rgba(5,150,105,0.12); border: 1px solid rgba(5,150,105,0.42); color: #047857; }
@@ -431,6 +448,27 @@
     </div>
   </section>
 
+  <!-- 마시멜로우 챌린지 신청 -->
+  <section class="card fade-up" id="msm-card" style="display:none">
+    <div class="card-title">🍭 마시멜로우 챌린지</div>
+    <p class="hop-desc">
+      팀원들과 함께 협업하며 창의력과 커뮤니케이션을 직접 경험하는 팀 활동이에요.
+      스파게티로 구조물을 만들며 <b>팀워크·문제 해결력·리더십</b>을 자연스럽게 배웁니다. 함께 즐겨요! 💙
+    </p>
+
+    <div class="msm-info">
+      <div class="mi"><span class="mi-k">📅 일시</span><span class="mi-v">7월 14일 (화) · 오후 4시</span></div>
+      <div class="mi"><span class="mi-k">📍 장소</span><span class="mi-v">어학관 2층</span></div>
+      <div class="mi"><span class="mi-k">👥 정원</span><span class="mi-v">선착순 50명</span></div>
+    </div>
+
+    <div class="msm-my none" id="msm-my"></div>
+    <div class="msm-bar"><div class="msm-fill" id="msm-fill"></div></div>
+    <div class="msm-count" id="msm-count">신청 인원 불러오는 중…</div>
+    <div class="msm-actions" id="msm-actions"></div>
+    <div class="hop-status" id="msm-status"></div>
+  </section>
+
   <!-- 학생 모임 진입 -->
   <section class="card fade-up" style="text-align:center;">
     <div class="card-title" style="justify-content:center;">🏀 학생 모임</div>
@@ -582,6 +620,7 @@
     // 학생 모임(rooms.html)에서 쓸 신원 저장 (검증된 로그인 후에만)
     try { localStorage.setItem("lcic.me", JSON.stringify({ n: rec.name || "", e: CUR_EMAIL || "" })); } catch (_) {}
     renderHopping(rec);   // 호핑 수요조사 카드
+    renderMarshmallow(rec);   // 🍭 마시멜로우 챌린지 신청 카드
 
     const cl = rec.checklist || {};
     const total = ORDER.length;
@@ -887,6 +926,62 @@
     }).join("");
   }
 
+  // ── 🍭 마시멜로우 챌린지 신청 (단일 이벤트, 선착순 50명) ──
+  // id = 이메일 sha256 앞16자(학생별 고정). 명단은 team.html "🍭 마시멜로우"에서 조회.
+  const MSM_CAP = 50;
+  let msmId = null;
+
+  async function renderMarshmallow(rec) {
+    const card = $("msm-card"); if (!card) return;
+    card.style.display = "";
+    if (!window.lcicMsm) { setTimeout(() => renderMarshmallow(rec), 400); return; }   // 브리지 로드 대기
+    msmId = (await sha256hex(CUR_EMAIL || "")).slice(0, 16);
+
+    $("msm-actions").onclick = async (e) => {
+      const b = e.target.closest(".msm-btn[data-act]"); if (!b) return;
+      const stat = $("msm-status");
+      if (b.dataset.act === "leave") {
+        if (!confirm("마시멜로우 챌린지 신청을 취소하시겠어요?")) return;
+        b.disabled = true;
+        const err = await window.lcicMsm.cancel(msmId);
+        stat.style.color = err ? "#dc2626" : "";
+        stat.textContent = err ? "취소 실패 — 다시 시도해 주세요." : "신청이 취소되었어요.";
+        await paintMsm(rec);
+      } else if (b.dataset.act === "join") {
+        b.disabled = true;
+        const s = await window.lcicMsm.state(msmId);   // 정원 재확인(경합 최소화)
+        if (!s.mine && s.count >= MSM_CAP) {
+          stat.style.color = "#dc2626"; stat.textContent = "죄송해요, 방금 정원이 찼어요.";
+          await paintMsm(rec); return;
+        }
+        const err = await window.lcicMsm.register(msmId, rec.name || "", rec.uni || "");
+        stat.style.color = err ? "#dc2626" : "";
+        stat.textContent = err ? "신청 실패 — 다시 시도해 주세요." : "신청이 완료되었어요! 🍭";
+        await paintMsm(rec);
+      }
+    };
+
+    await paintMsm(rec);
+    if (!renderMarshmallow._poll) renderMarshmallow._poll = setInterval(() => paintMsm(rec), 15000);   // 실시간 인원
+  }
+
+  async function paintMsm(rec) {
+    let count = 0, mine = false;
+    try { const s = await window.lcicMsm.state(msmId); count = s.count; mine = s.mine; } catch (_) { /* 읽기 실패해도 카드는 표시 */ }
+    const rest = Math.max(0, MSM_CAP - count), full = rest <= 0 && !mine;
+    $("msm-fill").style.width = Math.min(100, Math.round(count / MSM_CAP * 100)) + "%";
+    $("msm-count").innerHTML = `신청 <b>${count}</b> / ${MSM_CAP}명 · ` +
+      (full ? "<span style='color:#dc2626;font-weight:700'>정원 마감</span>" : `남은 자리 <b>${rest}</b>`);
+    const my = $("msm-my");
+    if (mine) { my.className = "msm-my"; my.innerHTML = "✅ 마시멜로우 챌린지에 신청되었습니다."; }
+    else { my.className = "msm-my none"; my.innerHTML = ""; }
+    let btn;
+    if (mine) btn = `<button class="msm-btn leave" data-act="leave">신청 취소</button>`;
+    else if (full) btn = `<button class="msm-btn join" disabled>정원 마감</button>`;
+    else btn = `<button class="msm-btn join" data-act="join">신청하기</button>`;
+    $("msm-actions").innerHTML = btn;
+  }
+
   // ── 로그인 ──
   const errEl = $("login-err"), btn = $("login-btn"), btnLabel = $("login-btn-label");
   function showErr() {
@@ -1020,6 +1115,28 @@ window.lcicHopReg = {
   async cancel(id) {
     try {
       const { error } = await supabase.from("hopping_registrations").delete().eq("id", id);
+      return error ? (error.message || "오류") : null;
+    } catch (e) { return e && e.message ? e.message : "네트워크 오류"; }
+  },
+};
+
+// 🍭 마시멜로우 챌린지 신청 → marshmallow_signups (id·이름·대학). 선착순 50명.
+window.lcicMsm = {
+  async state(id) {   // { count, mine:bool }
+    const { data, error } = await supabase.from("marshmallow_signups").select("id");
+    if (error) throw error;
+    return { count: (data || []).length, mine: (data || []).some((r) => r.id === id) };
+  },
+  async register(id, name, university) {
+    try {
+      const { error } = await supabase.from("marshmallow_signups")
+        .upsert({ id, name, university, created_at: new Date().toISOString() });
+      return error ? (error.message || "오류") : null;
+    } catch (e) { return e && e.message ? e.message : "네트워크 오류"; }
+  },
+  async cancel(id) {
+    try {
+      const { error } = await supabase.from("marshmallow_signups").delete().eq("id", id);
       return error ? (error.message || "오류") : null;
     } catch (e) { return e && e.message ? e.message : "네트워크 오류"; }
   },
