@@ -34,6 +34,7 @@
   .room-badge.open { background: var(--accent-soft); color: var(--accent-deep); }
   .room-badge.closed { background: rgba(0,0,0,.06); color: var(--text-dim); }
   .room-badge.full { background: rgba(217,119,6,.14); color: #b45309; }
+  .room-badge.past { background: rgba(0,0,0,.06); color: var(--text-faint); }
   .room-meta { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 10px 0 0; font-size: .88rem; color: var(--text); }
   .room-meta span { display: inline-flex; align-items: center; gap: 5px; }
   .room-meta iconify-icon { color: var(--accent); font-size: 16px; }
@@ -142,7 +143,8 @@ function roomCard(r) {
   const full = cap > 0 && n >= cap && !mine;
   const past = r.event_date && r.event_date < todayStr();
 
-  const badge = closed ? `<span class="room-badge closed">모집 마감</span>`
+  const badge = past ? `<span class="room-badge past">지난 모임</span>`
+    : closed ? `<span class="room-badge closed">모집 마감</span>`
     : full ? `<span class="room-badge full">정원 마감</span>`
     : `<span class="room-badge open">모집중</span>`;
   const capText = cap > 0 ? `<span class="room-count">${n}</span> / ${cap}명` : `<span class="room-count">${n}</span>명`;
@@ -161,12 +163,13 @@ function roomCard(r) {
   if (ADMIN) {
     actions = `<button class="btn danger" data-act="del" data-id="${r.id}">삭제</button>`;
   } else {
-    if (closed) actions = `<button class="btn ghost" disabled>모집 마감됨</button>`;
+    if (past) actions = `<button class="btn ghost" disabled>종료된 모임</button>`;
+    else if (closed) actions = `<button class="btn ghost" disabled>모집 마감됨</button>`;
     else if (mine) actions = `<button class="btn leave" data-act="leave" data-id="${r.id}">나가기</button>`;
     else if (full) actions = `<button class="btn ghost" disabled>정원 마감</button>`;
     else actions = `<button class="btn join" data-act="join" data-id="${r.id}">참여하기</button>`;
     if (isHost) {
-      actions += closed
+      if (!past) actions += closed
         ? `<button class="btn ghost" data-act="reopen" data-id="${r.id}">다시 열기</button>`
         : `<button class="btn ghost" data-act="close" data-id="${r.id}">모집 마감</button>`;
       actions += `<button class="btn danger" data-act="del" data-id="${r.id}">삭제</button>`;
