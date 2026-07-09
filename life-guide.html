@@ -237,6 +237,16 @@
     justify-content: center;
   }
 
+  /* Screenshot gallery */
+  .lg-shots { display: grid; gap: 16px; margin: 16px 0 4px; }
+  @media (min-width: 640px) { .lg-shots { grid-template-columns: 1fr 1fr; } }
+  .lg-shot { margin: 0; border: 1px solid var(--hairline); border-radius: 14px; overflow: hidden;
+    background: var(--bg-elev); box-shadow: var(--shadow-sm); }
+  .lg-shot img { display: block; width: 100%; height: auto; }
+  .lg-shot figcaption { padding: 9px 13px; font-size: 0.85rem; font-weight: 600; color: var(--text-dim);
+    border-top: 1px solid var(--hairline); background: var(--bg); }
+  .lg-shot figcaption b { color: var(--accent-deep); }
+
   /* Weekly grid */
   .week-grid {
     margin: 14px 0;
@@ -907,6 +917,13 @@
             <li data-i18n-en="After filling everything in, press <b>Submit</b>." data-i18n-zh="全部填好後,按 <b>Submit</b> 送出。" data-i18n-ja="すべて入力したら <b>Submit</b> を押して提出します。">모두 입력한 뒤 <b>Submit</b>을 눌러 제출합니다.</li>
             <li data-i18n-en="It is added to <b>Travel List</b> with a <b>PENDING</b> status. Use the <b>view / edit / delete</b> buttons on the right to check or change it." data-i18n-zh="會以 <b>PENDING</b>(待核准)狀態顯示在 <b>Travel List</b>。可用右側的<b>檢視 / 編輯 / 刪除</b>按鈕查看或修改。" data-i18n-ja="<b>Travel List</b> に <b>PENDING</b>(承認待ち)の状態で登録されます。右側の<b>表示 / 編集 / 削除</b>ボタンで確認・修正できます。"><b>Travel List</b>에 <b>PENDING</b>(승인 대기) 상태로 등록됩니다. 항목 오른쪽의 <b>보기 / 수정 / 삭제</b> 버튼으로 확인·수정할 수 있습니다.</li>
           </ol>
+
+          <div class="lg-shots">
+            <figure class="lg-shot"><img src="assets/life-guide/tw-1-login.png" alt="Student system login screen" loading="lazy"><figcaption data-i18n-en="① Log in to the student system" data-i18n-zh="① 登入學生系統" data-i18n-ja="① 学生システムにログイン"><b>①</b> 학생 시스템 로그인</figcaption></figure>
+            <figure class="lg-shot"><img src="assets/life-guide/tw-2-create.png" alt="Travel Waiver list with Create New button" loading="lazy"><figcaption data-i18n-en="② Travel Waiver &rarr; Create New" data-i18n-zh="② Travel Waiver &rarr; Create New" data-i18n-ja="② Travel Waiver &rarr; Create New"><b>②</b> Travel Waiver → Create New</figcaption></figure>
+            <figure class="lg-shot"><img src="assets/life-guide/tw-3-form.png" alt="Add Travel form fields" loading="lazy"><figcaption data-i18n-en="③ Fill in the Add Travel form" data-i18n-zh="③ 填寫 Add Travel 表單" data-i18n-ja="③ Add Travel フォームを記入"><b>③</b> Add Travel 작성</figcaption></figure>
+            <figure class="lg-shot"><img src="assets/life-guide/tw-4-result.png" alt="Submitted request showing PENDING status" loading="lazy"><figcaption data-i18n-en="④ Submitted &mdash; shows PENDING" data-i18n-zh="④ 送出後顯示 PENDING" data-i18n-ja="④ 提出後 PENDING と表示"><b>④</b> 신청 완료 (PENDING)</figcaption></figure>
+          </div>
 
           <h4 style="margin: 22px 0 8px; color: var(--text); font-weight: 700;">
             <iconify-icon icon="solar:clipboard-list-bold-duotone"></iconify-icon> <span data-i18n-en="Fields (Add Travel)" data-i18n-zh="填寫欄位 (Add Travel)" data-i18n-ja="入力項目 (Add Travel)">입력 항목 (Add Travel)</span>
