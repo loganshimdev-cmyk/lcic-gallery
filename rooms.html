@@ -140,10 +140,12 @@ function roomCard(r) {
   const mine = ME && joins.some((j) => j.student_id === ME.id);
   const isHost = ME && r.host_id === ME.id;
   const closed = r.status === "closed";
+  const deleted = r.status === "deleted";
   const full = cap > 0 && n >= cap && !mine;
   const past = r.event_date && r.event_date < todayStr();
 
-  const badge = past ? `<span class="room-badge past">지난 모임</span>`
+  const badge = deleted ? `<span class="room-badge past">삭제됨</span>`
+    : past ? `<span class="room-badge past">지난 모임</span>`
     : closed ? `<span class="room-badge closed">모집 마감</span>`
     : full ? `<span class="room-badge full">정원 마감</span>`
     : `<span class="room-badge open">모집중</span>`;
@@ -161,7 +163,9 @@ function roomCard(r) {
 
   let actions = "";
   if (ADMIN) {
-    actions = `<button class="btn danger" data-act="del" data-id="${r.id}">삭제</button>`;
+    actions = deleted
+      ? `<button class="btn join" data-act="restore" data-id="${r.id}">복구</button><button class="btn danger" data-act="purge" data-id="${r.id}">완전삭제</button>`
+      : `<button class="btn danger" data-act="del" data-id="${r.id}">삭제</button>`;
   } else {
     if (past) actions = `<button class="btn ghost" disabled>종료된 모임</button>`;
     else if (closed) actions = `<button class="btn ghost" disabled>모집 마감됨</button>`;
@@ -176,7 +180,7 @@ function roomCard(r) {
     }
   }
 
-  return `<div class="room ${closed ? "closed" : ""} ${past ? "past" : ""}">
+  return `<div class="room ${closed ? "closed" : ""} ${past || deleted ? "past" : ""}">
     <div class="room-top"><div class="room-title">${esc(r.title)}</div>${badge}</div>
     <div class="room-meta">${meta.join("")}</div>
     ${r.note ? `<div class="room-note">${esc(r.note)}</div>` : ""}
@@ -187,20 +191,22 @@ function roomCard(r) {
 }
 
 function render() {
-  let rooms = ROOMS.slice();
-  if (!ADMIN) rooms = rooms.filter((r) => r.status !== "cancelled");
-  rooms.sort((a, b) => ((a.event_date || "9999-99-99") + (a.event_time || "99:99")).localeCompare((b.event_date || "9999-99-99") + (b.event_time || "99:99")));
+  let rooms = ROOMS.slice()
+    .sort((a, b) => ((a.event_date || "9999-99-99") + (a.event_time || "99:99")).localeCompare((b.event_date || "9999-99-99") + (b.event_time || "99:99")));
+  const deleted = ADMIN ? rooms.filter((r) => r.status === "deleted") : [];
+  rooms = rooms.filter((r) => r.status !== "cancelled" && r.status !== "deleted");
   const today = todayStr();
   const upcoming = rooms.filter((r) => !r.event_date || r.event_date >= today);
   const past = rooms.filter((r) => r.event_date && r.event_date < today);
 
   let html = "";
-  if (!rooms.length) {
+  if (!rooms.length && !deleted.length) {
     html = `<div class="empty">아직 만들어진 모임이 없어요.<br>${ADMIN ? "" : "위 <b>+ 새 모임 만들기</b>로 첫 모임을 열어보세요!"}</div>`;
   } else {
     if (upcoming.length) html += upcoming.map(roomCard).join("");
     else if (!ADMIN) html += `<div class="empty">예정된 모임이 없어요. 새 모임을 만들어보세요!</div>`;
     if (past.length) html += `<div class="sec-label">지난 모임</div>` + past.map(roomCard).join("");
+    if (deleted.length) html += `<div class="sec-label">🗑️ 삭제된 모임 (복구 가능 · 관리자 전용)</div>` + deleted.map(roomCard).join("");
   }
   $("list").innerHTML = html;
 }
@@ -224,9 +230,17 @@ $("list").addEventListener("click", async (e) => {
       const { error } = await supabase.from("rooms").update({ status: act === "close" ? "closed" : "open" }).eq("id", id);
       if (error) throw error;
     } else if (act === "del") {
-      if (!confirm("이 모임을 삭제할까요? 참여자 정보도 함께 삭제됩니다.")) { b.disabled = false; return; }
+      if (!confirm("이 모임을 삭제할까요? (관리자가 다시 복구할 수 있어요)")) { b.disabled = false; return; }
+      const { error } = await supabase.from("rooms").update({ status: "deleted" }).eq("id", id);
+      if (error) throw error;
+    } else if (act === "restore") {
+      const { error } = await supabase.from("rooms").update({ status: "open" }).eq("id", id);
+      if (error) throw error;
+    } else if (act === "purge") {
+      if (!confirm("이 모임을 영구 삭제할까요? 참여자 정보까지 완전히 사라지며 되돌릴 수 없습니다.")) { b.disabled = false; return; }
       const { error } = await supabase.from("rooms").delete().eq("id", id);
       if (error) throw error;
+      await supabase.from("room_joins").delete().eq("room_id", id);
     }
     await refresh();
   } catch (_) { showToast("처리 실패 — 다시 시도해 주세요.", "error"); b.disabled = false; }

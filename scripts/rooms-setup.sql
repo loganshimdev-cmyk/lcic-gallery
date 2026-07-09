@@ -13,7 +13,7 @@ create table if not exists public.rooms (
   event_time  text,                   -- HH:MM
   capacity    int,                    -- null/0 = 인원 제한 없음
   note        text,                   -- 한줄 설명(선택)
-  status      text not null default 'open',   -- open | closed | cancelled
+  status      text not null default 'open',   -- open | closed | cancelled | deleted(소프트 삭제, ?admin=1에서 복구 가능)
   created_at  timestamptz not null default now()
 );
 
