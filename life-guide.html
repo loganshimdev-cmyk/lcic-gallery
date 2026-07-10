@@ -1088,7 +1088,29 @@
     <!-- =========== TAB 4: 세부 생활 정보 =========== -->
     <div class="lg-panel" data-panel="lg-city">
 
-      <details class="lg-section" open>
+      <details class="lg-section" id="nustar" open>
+        <summary>
+          <span class="ic"><iconify-icon icon="solar:map-arrow-square-bold-duotone"></iconify-icon></span>
+          <span data-i18n-en="NUSTAR food event &mdash; getting to the venue" data-i18n-zh="NUSTAR 美食活動 — 前往會場路線" data-i18n-ja="NUSTAR フードイベント — 会場への行き方">NUSTAR 푸드 이벤트 — 행사장 가는 길</span>
+          <span class="chevron"><iconify-icon icon="solar:alt-arrow-down-linear"></iconify-icon></span>
+        </summary>
+        <div class="body">
+          <p data-i18n-en="This short video shows how to reach the event venue at NUSTAR." data-i18n-zh="以下短片說明如何抵達 NUSTAR 的活動會場。" data-i18n-ja="NUSTAR の会場までの行き方を短い動画でご案内します。">NUSTAR 행사장까지 가는 길을 짧은 영상으로 안내합니다.</p>
+          <div style="text-align:center; margin:12px 0 6px;">
+            <video controls playsinline preload="metadata" poster="assets/city/nustar-poster.jpg"
+              style="width:100%; max-width:320px; border-radius:16px; box-shadow:0 10px 28px rgba(15,23,42,.22); background:#000;">
+              <source src="assets/city/nustar.mp4" type="video/mp4">
+            </video>
+          </div>
+          <ol class="step-list">
+            <li data-i18n-en="If you take a Grab, set the destination to <b>NUSTAR Resort and Casino</b>. There are two entrances &mdash; get off at the <b>lower one (Fili Hotel Lobby)</b>." data-i18n-zh="搭 Grab 時目的地設為 <b>NUSTAR Resort and Casino</b>。入口有兩個,請在<b>下方入口(Fili Hotel Lobby)</b>下車。" data-i18n-ja="Grab を利用する場合、目的地は <b>NUSTAR Resort and Casino</b>。入口が 2 つあるので<b>下側(Fili Hotel Lobby)</b>で降りてください。">Grab로 갈 때 목적지는 <b>NUSTAR Resort and Casino</b>. 입구가 2개인데 <b>아래쪽(Fili Hotel Lobby)</b>에서 내리세요.</li>
+            <li data-i18n-en="Go into the lobby and follow it to the <b>event venue entrance</b>." data-i18n-zh="進入大廳後,依指示前往<b>活動會場入口</b>。" data-i18n-ja="ロビーに入り、案内に沿って<b>会場入口</b>へ進みます。">로비로 들어가 안내를 따라 <b>행사장 입구</b>로 이동합니다.</li>
+            <li data-i18n-en="At the desk, say <b>LCIC</b>, sign your name on the list, and receive your <b>entry wristband</b>." data-i18n-zh="在櫃台說 <b>LCIC</b>,在名單上簽名後領取<b>入場手環</b>。" data-i18n-ja="受付で <b>LCIC</b> と伝え、名簿に署名して<b>入場リストバンド</b>を受け取ります。">데스크에서 <b>LCIC</b>라고 말하고, 본인 이름을 명단에 사인한 뒤 <b>입장 팔찌</b>를 받으세요.</li>
+          </ol>
+        </div>
+      </details>
+
+      <details class="lg-section">
         <summary>
           <span class="ic"><iconify-icon icon="solar:dollar-bold-duotone"></iconify-icon></span>
           <span data-i18n-en="Currency exchange" data-i18n-zh="兌換現金" data-i18n-ja="両替">환전 안내</span>
@@ -1270,6 +1292,24 @@ document.querySelectorAll('.lg-tab-root').forEach(root => {
     });
   });
 });
+
+// Deep-link: open the right tab + section when the URL has a #hash (e.g. #nustar)
+function openHashTarget() {
+  const id = decodeURIComponent(location.hash.slice(1));
+  if (!id) return;
+  const el = document.getElementById(id);
+  if (!el) return;
+  const panel = el.closest('.lg-panel');
+  if (panel) {
+    const target = panel.dataset.panel;
+    document.querySelectorAll('.lg-tab').forEach(b => b.classList.toggle('active', b.dataset.target === target));
+    document.querySelectorAll('.lg-panel').forEach(p => p.classList.toggle('active', p.dataset.panel === target));
+  }
+  if (el.tagName === 'DETAILS') el.open = true;
+  setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+}
+window.addEventListener('hashchange', openHashTarget);
+openHashTarget();
 </script>
 
 <script src="assets/back-to-top.js?v=1"></script>
