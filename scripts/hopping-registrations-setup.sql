@@ -6,12 +6,16 @@
 -- 이름/대학만 저장(명단 표시용), 페이지가 비번 게이트라 anon 읽기/쓰기 허용.
 
 create table if not exists public.hopping_registrations (
-  id         text primary key,
-  name       text not null,
-  university text,
-  tour_date  text not null,
-  created_at timestamptz not null default now()
+  id           text primary key,
+  name         text not null,
+  university   text,
+  tour_date    text not null,
+  check_status text,                              -- null | 'done'(완료) | 'change'(잔돈) : hopping.html 현장 체크
+  created_at   timestamptz not null default now()
 );
+
+-- 기존 테이블에 이미 만들어져 있으면 아래 한 줄만 실행(현장 체크 컬럼 추가)
+alter table public.hopping_registrations add column if not exists check_status text;
 
 alter table public.hopping_registrations enable row level security;
 

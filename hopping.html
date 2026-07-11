@@ -42,6 +42,22 @@
   .sec-head .cnt .full { color: #b91c1c; }
   .sec .empty-sec { color: var(--text-faint); font-size: .88rem; padding: 6px 2px; }
   .empty { color: var(--text-faint); text-align: center; padding: 48px 20px; line-height: 1.6; }
+
+  /* 체크: 이름 누르면 없음 → 완료(초록) → 잔돈(주황) → 없음 */
+  .nm { cursor: pointer; user-select: none; transition: background .12s, border-color .12s; }
+  .nm .mark { font-size: .66rem; font-weight: 800; color: #fff; padding: 1px 6px; border-radius: 6px; align-self: center; }
+  .nm[data-st="done"]   { background: #dcfce7; border-color: #86efac; }
+  .nm[data-st="done"] b { color: #15803d; }
+  .nm[data-st="done"] .mark { background: #16a34a; }
+  .nm[data-st="change"]   { background: #fef3c7; border-color: #fcd34d; }
+  .nm[data-st="change"] b { color: #b45309; }
+  .nm[data-st="change"] .mark { background: #f59e0b; }
+  .sec-head .cnt .st { font-weight: 800; margin-left: 8px; font-size: .82rem; }
+  .sec-head .cnt .st.d { color: #15803d; } .sec-head .cnt .st.c { color: #b45309; }
+  .legend { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; font-size: .78rem; color: var(--text-dim); margin: 0 0 16px; }
+  .legend .lp { display: inline-flex; align-items: center; gap: 6px; }
+  .legend .dot { width: 13px; height: 13px; border-radius: 4px; display: inline-block; }
+  .legend .dot.d { background: #16a34a; } .legend .dot.c { background: #f59e0b; }
 </style>
 </head>
 <body>
@@ -63,7 +79,11 @@
     <div class="meta" id="meta">날짜별 예약 현황 · 신청 마감 7월 8일(화) 오후 3시</div>
   </div>
   <div class="count-bar" id="counts"></div>
-  <div class="hint">학생이 <b>status.html(내 준비 현황)</b>에서 날짜를 선택해 예약/취소합니다. 15초마다 자동 갱신됩니다.</div>
+  <div class="hint"><b>이름을 누르면</b> 완료 → 잔돈 → 해제 순으로 체크됩니다. 저장되어 <b>모든 담당자에게 공유</b>되며 15초마다 자동 갱신됩니다.</div>
+  <div class="legend">
+    <span class="lp"><span class="dot d"></span> <b>완료</b> 참여 확인</span>
+    <span class="lp"><span class="dot c"></span> <b>잔돈</b> 잔돈 지급 대상</span>
+  </div>
   <div class="search"><input class="input" id="q" type="search" placeholder="이름 검색"></div>
   <div id="list"></div>
 </main>
@@ -100,7 +120,7 @@ $("gate-form").addEventListener("submit", async (e) => {
 
 async function load() {
   try {
-    const { data, error } = await supabase.from(TABLE).select("id,name,university,tour_date,created_at");
+    const { data, error } = await supabase.from(TABLE).select("*");
     if (error) throw error;
     ROWS = (data || []).map((r) => ({ ...r, tour_date: normDate(r.tour_date) }));
     ready = true;
@@ -112,7 +132,7 @@ async function load() {
 async function sync() {
   if (!ready) return;
   try {
-    const { data, error } = await supabase.from(TABLE).select("id,name,university,tour_date,created_at");
+    const { data, error } = await supabase.from(TABLE).select("*");
     if (error) throw error;
     ROWS = (data || []).map((r) => ({ ...r, tour_date: normDate(r.tour_date) }));
     render();
@@ -120,6 +140,26 @@ async function sync() {
 }
 
 $("q").addEventListener("input", render);
+
+// 이름 클릭 → 없음 → 완료 → 잔돈 → 없음 (DB 저장, 담당자 공유)
+$("list").addEventListener("click", async (e) => {
+  const chip = e.target.closest(".nm"); if (!chip) return;
+  const id = chip.dataset.id;
+  const row = ROWS.find((r) => r.id === id); if (!row) return;
+  const CYCLE = [null, "done", "change"];
+  const cur = (row.check_status === "done" || row.check_status === "change") ? row.check_status : null;
+  const next = CYCLE[(CYCLE.indexOf(cur) + 1) % 3];
+  const prev = row.check_status;
+  row.check_status = next;      // 낙관적 업데이트
+  render();
+  try {
+    const { error } = await supabase.from(TABLE).update({ check_status: next }).eq("id", id);
+    if (error) throw error;
+  } catch (_) {
+    row.check_status = prev; render();
+    showToast("저장 실패 — check_status 컬럼이 없거나 네트워크 오류입니다.", "error");
+  }
+});
 
 function render() {
   const q = ($("q").value || "").trim();
@@ -143,11 +183,17 @@ function render() {
       .sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "ko"));
     const shown = rows.filter((r) => !q || String(r.name || "").includes(q));
     const full = rows.length >= t.cap;
+    const done = rows.filter((r) => r.check_status === "done").length;
+    const chg = rows.filter((r) => r.check_status === "change").length;
     html += `<div class="sec">
       <div class="sec-head"><iconify-icon icon="solar:calendar-mark-bold-duotone"></iconify-icon> ${t.label}
-        <span class="cnt"><span class="${full ? "full" : ""}">${rows.length}</span> <span class="cap">/ ${t.cap}명${q ? " · 검색 " + shown.length : ""}</span></span></div>
+        <span class="cnt"><span class="${full ? "full" : ""}">${rows.length}</span> <span class="cap">/ ${t.cap}명${q ? " · 검색 " + shown.length : ""}</span><span class="st d">완료 ${done}</span><span class="st c">잔돈 ${chg}</span></span></div>
       ${shown.length
-        ? `<div class="names">${shown.map((r) => `<span class="nm${q ? " hit" : ""}"><b>${esc(r.name)}</b>${r.university ? `<span class="uni">${esc(r.university)}</span>` : ""}</span>`).join("")}</div>`
+        ? `<div class="names">${shown.map((r) => {
+            const st = (r.check_status === "done" || r.check_status === "change") ? r.check_status : "";
+            const mark = st === "done" ? `<span class="mark">완료</span>` : st === "change" ? `<span class="mark">잔돈</span>` : "";
+            return `<span class="nm${q ? " hit" : ""}" data-id="${esc(r.id)}" data-st="${st}">${mark}<b>${esc(r.name)}</b>${r.university ? `<span class="uni">${esc(r.university)}</span>` : ""}</span>`;
+          }).join("")}</div>`
         : `<div class="empty-sec">${q ? "검색 결과가 없습니다." : "아직 이 날짜 예약자가 없습니다."}</div>`}
     </div>`;
   }
