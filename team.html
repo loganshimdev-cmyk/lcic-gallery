@@ -121,6 +121,7 @@
             <button data-tab="hopping">🚤 호핑 수요조사</button>
             <button data-tab="rooms">🏀 학생 모임</button>
             <button data-tab="marshmallow">🍭 마시멜로우</button>
+            <button data-tab="peakday">🏝 피크데이 호핑</button>
           </div>
         </div>
       </div>
@@ -149,6 +150,9 @@
     </section>
     <section id="tab-marshmallow" class="hidden">
       <iframe id="marshmallow-frame" title="마시멜로우 챌린지 신청자" style="width:100%; height:calc(100vh - 200px); border:1px solid var(--hairline); border-radius:16px; background:#fff;"></iframe>
+    </section>
+    <section id="tab-peakday" class="hidden">
+      <iframe id="peakday-frame" title="피크데이 호핑투어 신청자" style="width:100%; height:calc(100vh - 200px); border:1px solid var(--hairline); border-radius:16px; background:#fff;"></iframe>
     </section>
     <section id="tab-pay" class="hidden">
       <iframe id="pay-frame" title="납부현황" style="width:100%; height:calc(100vh - 200px); border:1px solid var(--hairline); border-radius:16px; background:#fff;"></iframe>
@@ -261,11 +265,13 @@ function switchTab(tab, btn) {
   $("tab-hopping").classList.toggle("hidden", tab !== "hopping");
   $("tab-rooms").classList.toggle("hidden", tab !== "rooms");
   $("tab-marshmallow").classList.toggle("hidden", tab !== "marshmallow");
+  $("tab-peakday").classList.toggle("hidden", tab !== "peakday");
   $("tab-pay").classList.toggle("hidden", tab !== "pay");
   if (tab === "arrivals") { const f = $("arrivals-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "arrivals.html"); }
   if (tab === "hopping") { const f = $("hopping-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "hopping.html"); }
   if (tab === "rooms") { const f = $("rooms-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "rooms.html?admin=1"); }
   if (tab === "marshmallow") { const f = $("marshmallow-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "marshmallow.html"); }
+  if (tab === "peakday") { const f = $("peakday-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "peakday.html"); }
   // 배정현황: 처음이면 로드. 안에서 다른 페이지로 이동했으면 다시 배정현황으로 복귀.
   if (tab === "summer") {
     const f = $("summer-frame");
