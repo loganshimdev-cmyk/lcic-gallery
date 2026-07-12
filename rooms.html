@@ -54,6 +54,16 @@
 
   .empty { color: var(--text-faint); text-align: center; padding: 46px 20px; line-height: 1.7; }
 
+  /* 📢 상단 고정 공지 배너 */
+  .pin-notice { border: 1px solid rgba(2,132,199,0.32); border-radius: 18px; box-shadow: var(--shadow-sm);
+    background: linear-gradient(135deg, rgba(14,165,233,0.08), rgba(59,130,246,0.06)); padding: 16px 17px; margin: 14px 0 18px; }
+  .pin-notice .pn-title { font-size: 1.05rem; font-weight: 800; color: #0369a1; margin-bottom: 8px; }
+  .pin-notice .pn-body { font-size: .9rem; color: var(--text); line-height: 1.65; }
+  .pin-notice .pn-body b { color: #0369a1; }
+  .pin-notice .pn-btn { display: inline-block; margin-top: 12px; padding: 11px 18px; border-radius: 12px;
+    background: #0284c7; color: #fff; font-weight: 800; font-size: .92rem; text-decoration: none; }
+  .pin-notice .pn-btn:hover { background: #0369a1; }
+
   .modal-bg { position: fixed; inset: 0; background: rgba(15,23,42,.45); backdrop-filter: blur(3px);
     display: flex; align-items: center; justify-content: center; z-index: 9000; padding: 18px; }
   .modal { background: var(--bg-elev); border-radius: 22px; padding: 24px; max-width: 460px; width: 100%; max-height: 90vh; overflow: auto;
@@ -88,6 +98,7 @@
     </div>
     <button class="newbtn" id="new-btn">+ 새 모임 만들기</button>
   </div>
+  <div id="pin-notice" style="display:none"></div>
   <div id="list"></div>
 </main>
 
@@ -114,6 +125,28 @@ function fmtDate(iso) { if (!iso) return ""; const [y, m, d] = iso.split("-").ma
 
 let ME = null;               // { n, e, id }
 let ROOMS = [], JOINS = [];
+
+// 📢 상단 고정 공지 — show:true 로 바꾸면 노출됩니다.
+const PIN_NOTICE = {
+  show: false,
+  title: "🏝 피크데이 호핑투어 · 7월 19일 (일) · 선착순 28명",
+  body: `클럽보다 즐거운 <b>피크데이 호핑투어</b>를 학교 단체 특가로 준비했어요!<br>
+<b>₱3,300</b> (실제 판매가 ₱4,000 상당 — 인터넷에 없는 우리 학생 전용가)<br>
+씨뷰 레스토랑 점심 · 제트스키 · 고프로 수중촬영·사진 제공 · 라면/과일/스낵/음료/맥주 · 섬 입장료까지 <b>전부 포함</b>, 몸만 오세요!<br>
+<b>체험다이빙 추가 옵션 ₱1,100</b> (네이버 가격 ₱2,500 이상 · 선착순 8명 · 따로 카톡 주세요)`,
+  btnText: "신청하러 가기 (학생 안내 페이지)",
+  btnHref: "status.html",
+};
+(function renderPinNotice() {
+  if (!PIN_NOTICE.show) return;
+  const el = $("pin-notice"); if (!el) return;
+  el.innerHTML = `<div class="pin-notice">
+    <div class="pn-title">${PIN_NOTICE.title}</div>
+    <div class="pn-body">${PIN_NOTICE.body}</div>
+    ${PIN_NOTICE.btnHref ? `<a class="pn-btn" href="${PIN_NOTICE.btnHref}">${PIN_NOTICE.btnText}</a>` : ""}
+  </div>`;
+  el.style.display = "";
+})();
 
 async function initIdentity() {
   if (ADMIN) return true;
