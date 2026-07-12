@@ -217,7 +217,7 @@ function roomCard(r) {
     <div class="room-top"><div class="room-title">${esc(r.title)}</div>${badge}</div>
     <div class="room-meta">${meta.join("")}</div>
     ${r.note ? `<div class="room-note">${esc(r.note)}</div>` : ""}
-    <div class="room-host">주최: ${esc(r.host_name)}</div>
+    ${r.host_name ? `<div class="room-host">주최: ${esc(r.host_name)}</div>` : ""}
     ${people ? `<div class="room-people">${people}</div>` : ""}
     <div class="room-actions">${actions}</div>
   </div>`;
