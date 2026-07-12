@@ -162,16 +162,6 @@
   .msm-prize .mp2 { background: #e5e7eb; color: #374151; }
   .msm-prize .mp3 { background: #fecaca; color: #7f1d1d; }
 
-  /* 🏝 피크데이 호핑 — 마시멜로우 구조 재사용, 바다색 테마 */
-  .pkd .msm-my { background: rgba(2,132,199,0.10); border-color: rgba(2,132,199,0.38); color: #0369a1; }
-  .pkd .msm-fill { background: linear-gradient(90deg,#38bdf8,#0284c7); }
-  .pkd .msm-count b { color: #0369a1; }
-  .pkd .msm-btn.join { background: #0284c7; }
-  .pkd-deal { margin: 2px 0 14px; padding: 12px 14px; border-radius: 13px; font-size: 0.9rem; line-height: 1.55;
-    background: linear-gradient(135deg, rgba(14,165,233,0.10), rgba(59,130,246,0.08)); border: 1px solid rgba(2,132,199,0.28); }
-  .pkd-deal b { color: #0369a1; font-weight: 800; }
-  .pkd-link { font-size: 0.84rem; margin: 10px 0 14px; color: var(--text-dim); }
-  .pkd-link a { color: #0369a1; font-weight: 700; }
 
   /* 🗂 지난 공지 (마감된 신청 접이식 보관함) */
   .past-box { margin-bottom: 16px; }
@@ -469,68 +459,6 @@
     <div class="deal-list" id="deal-list"></div>
   </section>
 
-  <!-- 🏝 피크데이 호핑투어 신청 (선착순 28명) -->
-  <section class="card fade-up pkd" id="pkd-card" style="display:none">
-    <div class="card-title">🏝 피크데이 호핑투어 · 선착순 28명</div>
-    <p class="hop-desc">
-      클럽보다 즐거운 <b>피크데이 호핑투어</b>를 학교 단체 특가로 준비했어요!
-      학교가 <b>업체와 직접 협의해 받아낸, 인터넷 어디에도 없는 가격</b>입니다. 🎉
-    </p>
-
-    <div class="pkd-deal">
-      💰 <b>₱3,300</b> <s style="color:var(--text-faint)">₱4,000 상당</s>
-      <span class="hi-cost-tag" style="font-size:0.72rem;font-weight:800;color:#b45309;background:rgba(245,158,11,0.15);border-radius:999px;padding:2px 9px;">LCIC 단독 특가</span>
-    </div>
-
-    <div class="msm-info">
-      <div class="mi"><span class="mi-k">🗓 투어 날짜</span><span class="mi-v">7월 19일 (일)</span></div>
-      <div class="mi"><span class="mi-k">🔓 신청 오픈</span><span class="mi-v">7월 12일 (일) 오후 8시</span></div>
-      <div class="mi"><span class="mi-k">👥 정원</span><span class="mi-v">선착순 28명</span></div>
-    </div>
-
-    <div class="hop-info" style="margin-top:0;border-top:none;padding-top:0;">
-      <div class="hi-sec">
-        <div class="hi-h">✅ 전부 포함 — 몸만 오세요!</div>
-        <div class="hi-chips hi-prov">
-          <span>씨뷰 레스토랑 점심</span><span>🚤 제트스키 체험</span><span>스노클링 장비 · 수건</span>
-          <span>고프로 수중촬영 · 사진 제공</span><span>라면 · 과일 · 스낵 · 음료 · 맥주</span>
-          <span>레크리에이션 · 댄스파티</span><span>섬 입장료 · 환경세</span>
-        </div>
-      </div>
-      <div class="hi-sec">
-        <div class="hi-h">🗓 간단 일정</div>
-        <div class="hi-time" style="line-height:2;">
-          <b>10:00</b> 숙소 픽업<br>
-          <b>11:00</b> 씨뷰 레스토랑 점심<br>
-          <b>13:00</b> 날루수안 섬 입도 · 카약 체험 · 포토타임<br>
-          <b>13:50</b> 1차 스노클링 (날루수안)<br>
-          <b>14:50</b> 2차 스노클링 (힐루뚱안) · 제트스키 · 체험다이빙(신청자)<br>
-          <b>15:50</b> 줄낚시 체험 · 선상 라면<br>
-          <b>17:00</b> 선상 럼콕파티 · 선착장 복귀
-        </div>
-        <div style="font-size:0.78rem;color:var(--text-faint);margin-top:4px;">* 현지 날씨·투어 상황에 따라 시간이 변동될 수 있어요.</div>
-      </div>
-      <div class="hi-sec">
-        <div class="hi-h">🎒 개인 준비물</div>
-        <div class="hi-chips">
-          <span>수영복</span><span>선크림</span><span>모자 · 선글라스</span><span>매너팁(선택)</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="pkd-deal" style="margin-top:2px;">
-      🤿 <b>체험다이빙 추가 옵션</b> · <b>₱1,100</b> <s style="color:var(--text-faint)">네이버 가격 ₱2,500 이상</s><br>
-      <span style="font-size:0.86em;color:var(--text-dim);">원하시는 분은 <b>따로 카카오톡으로 신청</b>해 주세요 · <b>선착순 8명</b></span>
-    </div>
-
-    <div class="pkd-link">📸 투어 상세 후기·사진 보기 →
-      <a href="https://cafe.naver.com/kil2481/98" target="_blank" rel="noopener">피크데이 호핑투어 소개</a></div>
-    <div class="msm-my none" id="pkd-my"></div>
-    <div class="msm-bar"><div class="msm-fill" id="pkd-fill"></div></div>
-    <div class="msm-count" id="pkd-count">신청 인원 불러오는 중…</div>
-    <div class="msm-actions" id="pkd-actions"></div>
-    <div class="hop-status" id="pkd-status"></div>
-  </section>
 
   <!-- 🗂 지난 공지 (마감된 신청 모음 — 새로 마감되는 카드는 이 안으로 옮기면 됨) -->
 
@@ -781,7 +709,6 @@
     try { localStorage.setItem("lcic.me", JSON.stringify({ n: rec.name || "", e: CUR_EMAIL || "" })); } catch (_) {}
     renderHopping(rec);   // 호핑 수요조사 카드
     renderMarshmallow(rec);   // 🍭 마시멜로우 챌린지 신청 카드
-    renderPeakday(rec);       // 🏝 피크데이 호핑투어 신청 카드
 
     const cl = rec.checklist || {};
     const total = ORDER.length;
@@ -1166,75 +1093,6 @@
     $("msm-actions").innerHTML = btn;
   }
 
-  // ── 🏝 피크데이 호핑투어 신청 (선착순 28명) ──
-  // 마시멜로우와 동일 구조. 마감 시각 없이 정원(28명) 차면 마감.
-  const PKD_SHOW = false;   // 공지 내림 — 다시 올리려면 true 로
-  const PKD_OPEN = new Date("2026-07-12T20:00:00+08:00");   // 신청 오픈 (세부 UTC+8)
-  const PKD_CAP  = 28;
-  let pkdId = null;
-
-  async function renderPeakday(rec) {
-    if (!PKD_SHOW) return;   // 카드 숨김 상태
-    const card = $("pkd-card"); if (!card) return;
-    card.style.display = "";
-    if (!window.lcicPkd) { setTimeout(() => renderPeakday(rec), 400); return; }   // 브리지 로드 대기
-    pkdId = (await sha256hex(CUR_EMAIL || "")).slice(0, 16);
-
-    $("pkd-actions").onclick = async (e) => {
-      const b = e.target.closest(".msm-btn[data-act]"); if (!b) return;
-      if (new Date() < PKD_OPEN) return;   // 오픈 전 차단
-      const stat = $("pkd-status");
-      if (b.dataset.act === "leave") {
-        if (!confirm("피크데이 호핑투어 신청을 취소하시겠어요?")) return;
-        b.disabled = true;
-        const err = await window.lcicPkd.cancel(pkdId);
-        stat.style.color = err ? "#dc2626" : "";
-        stat.textContent = err ? "취소 실패 — 다시 시도해 주세요." : "신청이 취소되었어요.";
-        await paintPkd(rec);
-      } else if (b.dataset.act === "join") {
-        b.disabled = true;
-        const s = await window.lcicPkd.state(pkdId);   // 정원 재확인(경합 최소화)
-        if (!s.mine && s.count >= PKD_CAP) {
-          stat.style.color = "#dc2626"; stat.textContent = "죄송해요, 방금 정원이 찼어요.";
-          await paintPkd(rec); return;
-        }
-        const err = await window.lcicPkd.register(pkdId, rec.name || "", rec.uni || "");
-        if (err && /FULL/i.test(err)) {          // 서버 정원 잠금(29번째부터 거부)
-          stat.style.color = "#dc2626"; stat.textContent = "죄송해요, 방금 정원(28명)이 찼어요.";
-        } else {
-          stat.style.color = err ? "#dc2626" : "";
-          stat.textContent = err ? "신청 실패 — 다시 시도해 주세요." : "신청이 완료되었어요! 🏝";
-        }
-        await paintPkd(rec);
-      }
-    };
-
-    await paintPkd(rec);
-    if (!renderPeakday._poll) renderPeakday._poll = setInterval(() => paintPkd(rec), 15000);   // 실시간 인원
-  }
-
-  async function paintPkd(rec) {
-    let count = 0, mine = false;
-    try { const s = await window.lcicPkd.state(pkdId); count = s.count; mine = s.mine; } catch (_) { /* 읽기 실패해도 카드는 표시 */ }
-    const preopen = new Date() < PKD_OPEN;
-    const rest = Math.max(0, PKD_CAP - count), full = rest <= 0 && !mine;
-    $("pkd-fill").style.width = Math.min(100, Math.round(count / PKD_CAP * 100)) + "%";
-    let ctxt;
-    if (preopen) ctxt = "🔓 신청은 <b>7월 12일(일) 오후 8시</b>에 열립니다.";
-    else if (full) ctxt = `신청 <b>${count}</b> / ${PKD_CAP}명 · <span style='color:#dc2626;font-weight:700'>정원 마감</span>`;
-    else ctxt = `신청 <b>${count}</b> / ${PKD_CAP}명 · 남은 자리 <b>${rest}</b>`;
-    $("pkd-count").innerHTML = ctxt;
-    const my = $("pkd-my");
-    if (mine && !preopen) { my.className = "msm-my"; my.innerHTML = "✅ 피크데이 호핑투어에 신청되었습니다."; }
-    else { my.className = "msm-my none"; my.innerHTML = ""; }
-    let btn;
-    if (preopen) btn = `<button class="msm-btn join" disabled>오후 8시 오픈</button>`;
-    else if (mine) btn = `<button class="msm-btn leave" data-act="leave">신청 취소</button>`;
-    else if (full) btn = `<button class="msm-btn join" disabled>정원 마감</button>`;
-    else btn = `<button class="msm-btn join" data-act="join">신청하기</button>`;
-    $("pkd-actions").innerHTML = btn;
-  }
-
   // ── 로그인 ──
   const errEl = $("login-err"), btn = $("login-btn"), btnLabel = $("login-btn-label");
   function showErr() {
@@ -1395,27 +1253,6 @@ window.lcicMsm = {
   },
 };
 
-// 🏝 피크데이 호핑투어 신청 → peakday_signups (id·이름·대학). 선착순 28명.
-window.lcicPkd = {
-  async state(id) {   // { count, mine:bool }
-    const { data, error } = await supabase.from("peakday_signups").select("id");
-    if (error) throw error;
-    return { count: (data || []).length, mine: (data || []).some((r) => r.id === id) };
-  },
-  async register(id, name, university) {
-    try {
-      const { error } = await supabase.from("peakday_signups")
-        .upsert({ id, name, university, created_at: new Date().toISOString() });
-      return error ? (error.message || "오류") : null;
-    } catch (e) { return e && e.message ? e.message : "네트워크 오류"; }
-  },
-  async cancel(id) {
-    try {
-      const { error } = await supabase.from("peakday_signups").delete().eq("id", id);
-      return error ? (error.message || "오류") : null;
-    } catch (e) { return e && e.message ? e.message : "네트워크 오류"; }
-  },
-};
 </script>
 </body>
 </html>
