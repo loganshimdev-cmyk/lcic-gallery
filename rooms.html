@@ -38,7 +38,8 @@
   .room-meta { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 10px 0 0; font-size: .88rem; color: var(--text); }
   .room-meta span { display: inline-flex; align-items: center; gap: 5px; }
   .room-meta iconify-icon { color: var(--accent); font-size: 16px; }
-  .room-note { font-size: .88rem; color: var(--text-dim); margin-top: 9px; line-height: 1.5; white-space: pre-wrap; }
+  .room-note { font-size: .88rem; color: var(--text-dim); margin-top: 9px; line-height: 1.5; white-space: pre-wrap; word-break: break-all; }
+  .room-note a { color: var(--accent-deep); font-weight: 700; }
   .room-host { font-size: .78rem; color: var(--text-faint); margin-top: 9px; }
   .room-people { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 11px; }
   .chip { font-size: .82rem; padding: 5px 10px; border-radius: 9px; background: rgba(0,0,0,.04); border: 1px solid var(--hairline); }
@@ -112,6 +113,7 @@ const $ = (id) => document.getElementById(id);
 const toast = $("toast");
 const showToast = (m, t = "") => { toast.textContent = m; toast.className = `toast show ${t}`; setTimeout(() => toast.classList.remove("show"), 2600); };
 const esc = (s) => (s == null ? "" : String(s)).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const linkify = (s) => esc(s).replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');   // 설명 속 URL 클릭 가능
 const ADMIN = new URLSearchParams(location.search).get("admin") === "1";
 
 async function sha256hex(str) {
@@ -216,7 +218,7 @@ function roomCard(r) {
   return `<div class="room ${closed ? "closed" : ""} ${past || deleted ? "past" : ""}">
     <div class="room-top"><div class="room-title">${esc(r.title)}</div>${badge}</div>
     <div class="room-meta">${meta.join("")}</div>
-    ${r.note ? `<div class="room-note">${esc(r.note)}</div>` : ""}
+    ${r.note ? `<div class="room-note">${linkify(r.note)}</div>` : ""}
     ${r.host_name ? `<div class="room-host">주최: ${esc(r.host_name)}</div>` : ""}
     ${people ? `<div class="room-people">${people}</div>` : ""}
     <div class="room-actions">${actions}</div>
