@@ -1168,11 +1168,13 @@
 
   // ── 🏝 피크데이 호핑투어 신청 (선착순 28명) ──
   // 마시멜로우와 동일 구조. 마감 시각 없이 정원(28명) 차면 마감.
+  const PKD_SHOW = false;   // 공지 내림 — 다시 올리려면 true 로
   const PKD_OPEN = new Date("2026-07-12T20:00:00+08:00");   // 신청 오픈 (세부 UTC+8)
   const PKD_CAP  = 28;
   let pkdId = null;
 
   async function renderPeakday(rec) {
+    if (!PKD_SHOW) return;   // 카드 숨김 상태
     const card = $("pkd-card"); if (!card) return;
     card.style.display = "";
     if (!window.lcicPkd) { setTimeout(() => renderPeakday(rec), 400); return; }   // 브리지 로드 대기
