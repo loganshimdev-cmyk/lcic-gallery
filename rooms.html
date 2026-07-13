@@ -130,17 +130,14 @@ let ROOMS = [], JOINS = [];
 
 // 📢 상단 고정 공지 — show:true 로 바꾸면 노출됩니다.
 const PIN_NOTICE = {
-  show: true,
+  show: false,
   title: "🏝 피크데이 호핑투어 · 7월 19일 (일) · 선착순 28명",
-  body: `클럽보다 재밌는 <b>피크데이 호핑투어</b>를 학교 단체 특가로 준비했어요!<br>
+  body: `클럽보다 즐거운 <b>피크데이 호핑투어</b>를 학교 단체 특가로 준비했어요!<br>
 <b>₱3,300</b> (실제 판매가 ₱4,000 상당 — 인터넷에 없는 우리 학생 전용가)<br>
 씨뷰 레스토랑 점심 · 제트스키 · 고프로 수중촬영·사진 제공 · 라면/과일/스낵/음료/맥주 · 섬 입장료까지 <b>전부 포함</b>, 몸만 오세요!<br>
-<b>체험다이빙 추가 옵션 ₱1,100</b> (네이버 가격 ₱2,500 이상 · 선착순 8명 · 따로 카톡 주세요)<br>
-<br>👉 <b>① 먼저 신청</b>한 뒤, <b>② 단톡방에 입장</b>해 주세요!`,
-  btnText: "① 신청하러 가기",
+<b>체험다이빙 추가 옵션 ₱1,100</b> (네이버 가격 ₱2,500 이상 · 선착순 8명 · 따로 카톡 주세요)`,
+  btnText: "신청하러 가기 (학생 안내 페이지)",
   btnHref: "status.html",
-  btn2Text: "② 단톡방 입장",
-  btn2Href: "https://open.kakao.com/o/g36brODi",
 };
 (function renderPinNotice() {
   if (!PIN_NOTICE.show) return;
@@ -149,7 +146,6 @@ const PIN_NOTICE = {
     <div class="pn-title">${PIN_NOTICE.title}</div>
     <div class="pn-body">${PIN_NOTICE.body}</div>
     ${PIN_NOTICE.btnHref ? `<a class="pn-btn" href="${PIN_NOTICE.btnHref}">${PIN_NOTICE.btnText}</a>` : ""}
-    ${PIN_NOTICE.btn2Href ? `<a class="pn-btn" href="${PIN_NOTICE.btn2Href}" target="_blank" rel="noopener" style="margin-left:8px; background:#FEE500; color:#191600;">${PIN_NOTICE.btn2Text}</a>` : ""}
   </div>`;
   el.style.display = "";
 })();
