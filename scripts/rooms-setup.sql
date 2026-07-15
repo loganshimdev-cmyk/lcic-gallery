@@ -13,9 +13,28 @@ create table if not exists public.rooms (
   event_time  text,                   -- HH:MM
   capacity    int,                    -- null/0 = 인원 제한 없음
   note        text,                   -- 한줄 설명(선택)
+  chat_url    text,                   -- 오픈채팅방 링크(선택)
+  official    boolean default false,  -- 운영진 공식(씨앗) 모임 → 배지·상단 정렬
   status      text not null default 'open',   -- open | closed | cancelled | deleted(소프트 삭제, ?admin=1에서 복구 가능)
   created_at  timestamptz not null default now()
 );
+
+-- 기존 rooms 테이블에 컬럼 추가(이미 있으면 아래 두 줄만)
+alter table public.rooms add column if not exists chat_url text;
+alter table public.rooms add column if not exists official boolean default false;
+
+-- 관심있어요(참여와 별개의 저부담 반응)
+create table if not exists public.room_interests (
+  room_id    text not null,
+  student_id text not null,
+  name       text not null,
+  created_at timestamptz not null default now(),
+  primary key (room_id, student_id)
+);
+alter table public.room_interests enable row level security;
+drop policy if exists "anon all room_interests" on public.room_interests;
+create policy "anon all room_interests" on public.room_interests for all using (true) with check (true);
+grant select, insert, update, delete on public.room_interests to anon, authenticated;
 
 create table if not exists public.room_joins (
   room_id    text not null references public.rooms(id) on delete cascade,

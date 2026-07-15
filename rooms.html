@@ -68,6 +68,18 @@
   .room-body { display: none; margin-top: 13px; padding-top: 13px; border-top: 1px solid var(--hairline); }
   .room.open .room-body { display: block; }
 
+  /* 관심·공식·오픈채팅·안내 */
+  .room-badge.official { background: rgba(37,99,235,.12); color: #1d4ed8; }
+  .room-sub .sub-interest iconify-icon { color: #e11d48; }
+  .room-sub .sub-interest b { color: #e11d48; font-weight: 800; }
+  .btn.chat { background: #FEE500; color: #191600; text-decoration: none; display: inline-flex; align-items: center; }
+  .btn.chat:hover { background: #f4dc00; }
+  .room-hint { margin-top: 9px; font-size: .82rem; color: var(--text-faint); }
+  .list-hint { font-size: .86rem; color: var(--accent-deep); background: var(--accent-tint);
+    border: 1px solid var(--accent-soft); border-radius: 12px; padding: 10px 14px; margin-bottom: 14px; line-height: 1.55; }
+  .chk-label { display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 700; }
+  .chk-label input { width: auto; }
+
   .empty { color: var(--text-faint); text-align: center; padding: 46px 20px; line-height: 1.7; }
 
   /* 📢 상단 고정 공지 배너 */
@@ -142,7 +154,7 @@ const WD = ["일", "월", "화", "수", "목", "금", "토"];
 function fmtDate(iso) { if (!iso) return ""; const [y, m, d] = iso.split("-").map(Number); const wd = WD[new Date(y, m - 1, d).getDay()]; return `${m}/${d}(${wd})`; }
 
 let ME = null;               // { n, e, id }
-let ROOMS = [], JOINS = [];
+let ROOMS = [], JOINS = [], INTERESTS = [];
 
 // 📢 상단 고정 공지 — show:true 로 바꾸면 노출됩니다.
 const PIN_NOTICE = {
@@ -175,14 +187,16 @@ async function initIdentity() {
 }
 
 async function load() {
-  const [r1, r2] = await Promise.all([
+  const [r1, r2, r3] = await Promise.all([
     supabase.from("rooms").select("*"),
     supabase.from("room_joins").select("room_id,student_id,name"),
+    supabase.from("room_interests").select("room_id,student_id,name"),
   ]);
   if (r1.error || r2.error) throw (r1.error || r2.error);
-  ROOMS = r1.data || []; JOINS = r2.data || [];
+  ROOMS = r1.data || []; JOINS = r2.data || []; INTERESTS = r3.error ? [] : (r3.data || []);
 }
 const joinsOf = (rid) => JOINS.filter((j) => j.room_id === rid);
+const interestsOf = (rid) => INTERESTS.filter((x) => x.room_id === rid);
 
 function roomCard(r) {
   const joins = joinsOf(r.id);
@@ -194,6 +208,10 @@ function roomCard(r) {
   const deleted = r.status === "deleted";
   const full = cap > 0 && n >= cap && !mine;
   const past = r.event_date && r.event_date < todayStr();
+  const interests = interestsOf(r.id);
+  const iCount = interests.length;
+  const myInterest = ME && interests.some((x) => x.student_id === ME.id);
+  const officialBadge = r.official ? `<span class="room-badge official">🏫 공식</span>` : "";
 
   const badge = deleted ? `<span class="room-badge past">삭제됨</span>`
     : past ? `<span class="room-badge past">지난 모임</span>`
@@ -207,6 +225,7 @@ function roomCard(r) {
   if (r.event_date) sum.push(`<span><iconify-icon icon="solar:calendar-bold-duotone"></iconify-icon>${fmtDate(r.event_date)}</span>`);
   if (r.event_time) sum.push(`<span><iconify-icon icon="solar:clock-circle-bold-duotone"></iconify-icon>${esc(r.event_time)}</span>`);
   sum.push(`<span><iconify-icon icon="solar:users-group-rounded-bold-duotone"></iconify-icon>${capText}</span>`);
+  if (iCount) sum.push(`<span class="sub-interest"><iconify-icon icon="solar:heart-bold-duotone"></iconify-icon>관심 <b>${iCount}</b></span>`);
   // 펼쳤을 때 장소
   const placeMeta = r.place ? `<div class="room-meta"><span><iconify-icon icon="solar:map-point-bold-duotone"></iconify-icon>${esc(r.place)}</span></div>` : "";
 
@@ -231,13 +250,20 @@ function roomCard(r) {
         : `<button class="btn ghost" data-act="close" data-id="${r.id}">모집 마감</button>`;
       actions += `<button class="btn danger" data-act="del" data-id="${r.id}">삭제</button>`;
     }
+    if (!past && !deleted) {
+      actions += myInterest
+        ? `<button class="btn ghost" data-act="uninterest" data-id="${r.id}">관심 취소</button>`
+        : `<button class="btn ghost" data-act="interest" data-id="${r.id}">👀 관심있어요</button>`;
+    }
   }
+  const chatBtn = (r.chat_url && !deleted) ? `<a class="btn chat" href="${esc(r.chat_url)}" target="_blank" rel="noopener">💬 단톡방 입장</a>` : "";
+  const joinable = !ADMIN && !past && !deleted && !closed && !full && !mine;
 
   const isOpen = OPEN.has(r.id);
   return `<div class="room ${closed ? "closed" : ""} ${past || deleted ? "past" : ""} ${isOpen ? "open" : ""}" data-id="${esc(r.id)}">
     <button type="button" class="room-head" aria-expanded="${isOpen ? "true" : "false"}">
       <div class="room-head-main">
-        <div class="room-title-row"><span class="room-title">${esc(r.title)}</span>${badge}</div>
+        <div class="room-title-row"><span class="room-title">${esc(r.title)}</span>${officialBadge}${badge}</div>
         <div class="room-sub">${sum.join("")}</div>
       </div>
       <iconify-icon class="room-chevron" icon="solar:alt-arrow-down-linear"></iconify-icon>
@@ -247,7 +273,8 @@ function roomCard(r) {
       ${r.note ? `<div class="room-note">${linkify(r.note)}</div>` : ""}
       ${r.host_name ? `<div class="room-host">주최: ${esc(r.host_name)}</div>` : ""}
       ${people ? `<div class="room-people">${people}</div>` : ""}
-      <div class="room-actions">${actions}</div>
+      <div class="room-actions">${actions}${chatBtn}</div>
+      ${joinable ? `<div class="room-hint">부담되면 <b>관심있어요</b>만 눌러도 돼요 🙂</div>` : ""}
     </div>
   </div>`;
 }
@@ -259,9 +286,11 @@ function render() {
   rooms = rooms.filter((r) => r.status !== "cancelled" && r.status !== "deleted");
   const today = todayStr();
   const upcoming = rooms.filter((r) => !r.event_date || r.event_date >= today);
+  upcoming.sort((a, b) => (b.official ? 1 : 0) - (a.official ? 1 : 0));   // 공식(운영진) 모임 상단
   const past = rooms.filter((r) => r.event_date && r.event_date < today);
 
   let html = "";
+  if (!ADMIN) html += `<div class="list-hint">💛 <b>1~2명이어도 좋아요!</b> 부담 없이 모임을 올리거나 <b>관심있어요</b>로 가볍게 참여해 보세요.</div>`;
   if (!rooms.length && !deleted.length) {
     html = `<div class="empty">아직 만들어진 모임이 없어요.<br>${ADMIN ? "" : "위 <b>+ 새 모임 만들기</b>로 첫 모임을 열어보세요!"}</div>`;
   } else {
@@ -298,6 +327,12 @@ $("list").addEventListener("click", async (e) => {
     } else if (act === "leave") {
       const { error } = await supabase.from("room_joins").delete().eq("room_id", id).eq("student_id", ME.id);
       if (error) throw error;
+    } else if (act === "interest") {
+      const { error } = await supabase.from("room_interests").upsert({ room_id: id, student_id: ME.id, name: ME.n });
+      if (error) throw error;
+    } else if (act === "uninterest") {
+      const { error } = await supabase.from("room_interests").delete().eq("room_id", id).eq("student_id", ME.id);
+      if (error) throw error;
     } else if (act === "close" || act === "reopen") {
       const { error } = await supabase.from("rooms").update({ status: act === "close" ? "closed" : "open" }).eq("id", id);
       if (error) throw error;
@@ -313,6 +348,7 @@ $("list").addEventListener("click", async (e) => {
       const { error } = await supabase.from("rooms").delete().eq("id", id);
       if (error) throw error;
       await supabase.from("room_joins").delete().eq("room_id", id);
+      await supabase.from("room_interests").delete().eq("room_id", id);
     }
     await refresh();
   } catch (_) { showToast("처리 실패 — 다시 시도해 주세요.", "error"); b.disabled = false; }
@@ -331,6 +367,8 @@ $("new-btn").addEventListener("click", () => {
     </div></div>
     <div class="fld"><label>정원 (비우면 제한 없음)</label><input id="f-cap" type="number" min="1" max="999" placeholder="예: 10"></div>
     <div class="fld"><label>한줄 설명 (선택)</label><textarea id="f-note" maxlength="200" placeholder="자유롭게 남겨주세요"></textarea></div>
+    <div class="fld"><label>오픈채팅방 링크 (선택)</label><input id="f-chat" maxlength="200" placeholder="https://open.kakao.com/o/..."></div>
+    ${ADMIN ? `<div class="fld"><label class="chk-label"><input type="checkbox" id="f-official" checked> 🏫 운영진 공식 모임으로 등록</label></div>` : ""}
     <div class="modal-actions">
       <button class="btn ghost" id="m-cancel">취소</button>
       <button class="btn join" id="m-create">만들기</button>
@@ -344,21 +382,24 @@ $("new-btn").addEventListener("click", () => {
     const title = $("f-title").value.trim();
     if (!title) { showToast("제목을 입력해 주세요.", "error"); return; }
     const capRaw = parseInt($("f-cap").value, 10);
+    const official = ADMIN && $("f-official") ? $("f-official").checked : false;
     const room = {
       id: (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2)),
-      host_id: ME.id, host_name: ME.n, title,
+      host_id: ME ? ME.id : "official", host_name: ME ? ME.n : "LCIC 운영진", title,
       place: $("f-place").value.trim() || null,
       event_date: $("f-date").value || null,
       event_time: $("f-time").value || null,
       capacity: isNaN(capRaw) || capRaw <= 0 ? null : capRaw,
       note: $("f-note").value.trim() || null,
+      chat_url: $("f-chat").value.trim() || null,
+      official,
       status: "open",
     };
     $("m-create").disabled = true;
     try {
       const r1 = await supabase.from("rooms").insert(room);
       if (r1.error) throw r1.error;
-      await supabase.from("room_joins").upsert({ room_id: room.id, student_id: ME.id, name: ME.n });   // 주최자 자동 참여
+      if (ME) await supabase.from("room_joins").upsert({ room_id: room.id, student_id: ME.id, name: ME.n });   // 주최자 자동 참여(학생만)
       close(); showToast("모임을 만들었어요!", "success"); await refresh();
     } catch (_) { $("m-create").disabled = false; showToast("생성 실패 — 다시 시도해 주세요.", "error"); }
   };
@@ -371,8 +412,7 @@ async function refresh() { try { await load(); render(); } catch (_) { showToast
   const ok = await initIdentity();
   if (!ok) { $("gate").classList.remove("hidden"); return; }
   $("app").classList.remove("hidden");
-  if (ADMIN) $("sub").textContent = "관리자 보기 — 전체 모임 조회 및 삭제";
-  if (ADMIN) $("new-btn").style.display = "none";
+  if (ADMIN) $("sub").textContent = "관리자 보기 — 조회·삭제·운영진 공식 모임 개설";
   await refresh();
   setInterval(refresh, 15000);
 })();
