@@ -103,6 +103,31 @@
   .chat-send:hover { background: var(--accent-hover); }
   .chat-send[disabled] { opacity: .5; cursor: not-allowed; }
 
+  /* 🗨️ 전체 자유 수다방 위젯 */
+  .campus-fab { position: fixed; right: 20px; bottom: 20px; z-index: 9500; width: 56px; height: 56px; border-radius: 50%;
+    border: none; background: var(--accent); color: #fff; font-size: 24px; cursor: pointer; box-shadow: 0 10px 28px rgba(15,23,42,.28); }
+  .campus-fab:hover { background: var(--accent-hover); }
+  .campus-fab .campus-dot { position: absolute; top: 10px; right: 11px; width: 12px; height: 12px; border-radius: 50%;
+    background: #ef4444; border: 2px solid #fff; }
+  .campus-panel { position: fixed; right: 20px; bottom: 88px; z-index: 9500; width: 340px; max-width: calc(100vw - 32px);
+    height: min(460px, 68vh); display: flex; flex-direction: column; background: var(--bg-elev);
+    border: 1px solid var(--hairline); border-radius: 20px; box-shadow: 0 24px 60px rgba(15,23,42,.3); overflow: hidden; }
+  .campus-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 10px;
+    font-size: 1.05rem; font-weight: 800; color: var(--accent-deep); }
+  .campus-x { border: none; background: none; font-size: 16px; color: var(--text-faint); cursor: pointer; }
+  .campus-note { font-size: .76rem; color: var(--text-faint); padding: 0 16px 8px; }
+  .campus-msgs { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding: 8px 14px; }
+  .campus-form { display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--hairline); }
+  .campus-in { flex: 1; padding: 10px 13px; font-size: .92rem; font-family: inherit; color: var(--text);
+    border: 1px solid var(--hairline-strong); border-radius: 12px; background: var(--bg); box-sizing: border-box; }
+  .campus-in:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .campus-send { border: none; border-radius: 12px; background: var(--accent); color: #fff; font-family: inherit; font-weight: 700; padding: 0 15px; cursor: pointer; }
+  .campus-msgs .cmx { border: none; background: none; color: #c0392b; cursor: pointer; font-size: 11px; margin-left: 6px; }
+  @media (max-width: 560px) {
+    .campus-panel { right: 12px; left: 12px; width: auto; bottom: 84px; height: min(70vh, 520px); }
+    .campus-fab { right: 16px; bottom: 16px; }
+  }
+
   .empty { color: var(--text-faint); text-align: center; padding: 46px 20px; line-height: 1.7; }
 
   /* 📢 상단 고정 공지 배너 */
@@ -155,6 +180,18 @@
 
 <div id="modal-root"></div>
 <div class="toast" id="toast"></div>
+
+<!-- 🗨️ 전체 자유 수다방 (우측 하단 위젯) -->
+<button id="campus-fab" class="campus-fab" aria-label="자유 수다방 열기">🗨️<span class="campus-dot" id="campus-dot" hidden></span></button>
+<section id="campus-panel" class="campus-panel" hidden aria-label="자유 수다방">
+  <div class="campus-head"><span>🗨️ 자유 수다방</span><button id="campus-close" class="campus-x" aria-label="닫기">✕</button></div>
+  <div class="campus-note">분실물·질문·잡담 편하게 남겨요! (실명으로 표시돼요)</div>
+  <div class="campus-msgs" id="campus-msgs"></div>
+  <form class="campus-form" id="campus-form">
+    <input class="campus-in" id="campus-in" maxlength="300" placeholder="메시지 보내기…" autocomplete="off">
+    <button class="campus-send" type="submit">전송</button>
+  </form>
+</section>
 
 <script type="module">
 import { supabase } from "./assets/supabase.js?v=4";
@@ -404,6 +441,59 @@ setInterval(async () => {
   await fetchMessages(openChats);
   openChats.forEach(renderMessages);
 }, 4000);
+
+// ── 🗨️ 전체 자유 수다방 ──
+const CAMPUS_TABLE = "campus_messages";
+let CAMPUS = [], campusOpen = false, campusTimer = null;
+const campusSeen = () => { try { return +(localStorage.getItem("lcic.campus.seen") || 0); } catch (_) { return 0; } };
+const setCampusSeen = (id) => { try { localStorage.setItem("lcic.campus.seen", String(id)); } catch (_) {} };
+async function loadCampus() {
+  const { data, error } = await supabase.from(CAMPUS_TABLE).select("id,student_id,name,body,created_at").order("id", { ascending: false }).limit(200);
+  if (error) return;
+  CAMPUS = (data || []).slice().reverse();
+}
+function renderCampus() {
+  const el = $("campus-msgs"); if (!el) return;
+  const meId = ME ? ME.id : "official";
+  el.innerHTML = CAMPUS.length
+    ? CAMPUS.map((m) => `<div class="msg ${m.student_id === meId ? "me" : ""}"><div class="msg-name">${esc(m.name)}${ADMIN ? ` <button class="cmx" data-cmid="${m.id}">삭제</button>` : ""}</div><div class="msg-body">${linkify(m.body)}</div></div>`).join("")
+    : `<div class="chat-empty">첫 메시지를 남겨보세요 👋<br>분실물·질문·잡담 환영이에요!</div>`;
+  el.scrollTop = el.scrollHeight;
+  if (CAMPUS.length) setCampusSeen(CAMPUS[CAMPUS.length - 1].id);
+}
+async function checkCampusUnread() {
+  const { data } = await supabase.from(CAMPUS_TABLE).select("id").order("id", { ascending: false }).limit(1);
+  const newest = data && data[0] ? data[0].id : 0;
+  const dot = $("campus-dot"); if (dot) dot.hidden = !(newest > campusSeen() && !campusOpen);
+}
+function openCampus() {
+  campusOpen = true; $("campus-panel").hidden = false; $("campus-dot").hidden = true;
+  loadCampus().then(renderCampus);
+  campusTimer = setInterval(() => loadCampus().then(renderCampus), 5000);
+  setTimeout(() => $("campus-in").focus(), 60);
+}
+function closeCampus() { campusOpen = false; $("campus-panel").hidden = true; clearInterval(campusTimer); campusTimer = null; checkCampusUnread(); }
+$("campus-fab").addEventListener("click", () => (campusOpen ? closeCampus() : openCampus()));
+$("campus-close").addEventListener("click", closeCampus);
+$("campus-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const inp = $("campus-in"); const body = (inp.value || "").trim(); if (!body) return;
+  const btn = e.target.querySelector(".campus-send"); btn.disabled = true;
+  try {
+    const { error } = await supabase.from(CAMPUS_TABLE).insert({ student_id: ME ? ME.id : "official", name: ME ? ME.n : "LCIC 운영진", body });
+    if (error) throw error;
+    inp.value = ""; await loadCampus(); renderCampus();
+  } catch (_) { showToast("전송 실패 — 다시 시도해 주세요.", "error"); }
+  btn.disabled = false; inp.focus();
+});
+$("campus-msgs").addEventListener("click", async (e) => {
+  const x = e.target.closest(".cmx"); if (!x || !ADMIN) return;
+  if (!confirm("이 메시지를 삭제할까요?")) return;
+  await supabase.from(CAMPUS_TABLE).delete().eq("id", x.dataset.cmid);
+  await loadCampus(); renderCampus();
+});
+setInterval(() => { if (!campusOpen) checkCampusUnread(); }, 20000);
+checkCampusUnread();
 
 // ── 액션 ──
 $("list").addEventListener("click", async (e) => {
