@@ -51,6 +51,19 @@ drop policy if exists "anon all room_messages" on public.room_messages;
 create policy "anon all room_messages" on public.room_messages for all using (true) with check (true);
 grant select, insert, update, delete on public.room_messages to anon, authenticated;
 
+-- 전체 자유 수다방(campus 전역 채팅, 우측 하단 위젯)
+create table if not exists public.campus_messages (
+  id bigint generated always as identity primary key,
+  student_id text not null,
+  name text not null,
+  body text not null,
+  created_at timestamptz not null default now()
+);
+alter table public.campus_messages enable row level security;
+drop policy if exists "anon all campus_messages" on public.campus_messages;
+create policy "anon all campus_messages" on public.campus_messages for all using (true) with check (true);
+grant select, insert, update, delete on public.campus_messages to anon, authenticated;
+
 create table if not exists public.room_joins (
   room_id    text not null references public.rooms(id) on delete cascade,
   student_id text not null,           -- 참여 학생 이메일 sha256 앞16
