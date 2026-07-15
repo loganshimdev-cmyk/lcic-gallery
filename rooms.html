@@ -53,6 +53,21 @@
   .btn.danger { background: rgba(220,38,38,.09); color: #b91c1c; border: 1px solid rgba(220,38,38,.3); }
   .btn[disabled] { opacity: .5; cursor: not-allowed; }
 
+  /* 아코디언(제목 클릭 시 상세 펼침) */
+  .room-head { display: flex; align-items: flex-start; gap: 10px; width: 100%; text-align: left;
+    background: none; border: none; padding: 0; margin: 0; cursor: pointer; font-family: inherit; color: inherit; }
+  .room-head-main { flex: 1; min-width: 0; }
+  .room-title-row { display: flex; align-items: flex-start; gap: 10px; }
+  .room-head:hover .room-title { color: var(--accent-deep); }
+  .room-sub { display: flex; flex-wrap: wrap; gap: 5px 14px; margin-top: 8px; font-size: .86rem; color: var(--text-dim); }
+  .room-sub span { display: inline-flex; align-items: center; gap: 5px; }
+  .room-sub iconify-icon { color: var(--accent); font-size: 15px; }
+  .room-sub .room-count { color: var(--accent-deep); font-weight: 800; }
+  .room-chevron { color: var(--text-faint); font-size: 20px; flex-shrink: 0; margin-top: 2px; transition: transform .2s; }
+  .room.open .room-chevron { transform: rotate(180deg); }
+  .room-body { display: none; margin-top: 13px; padding-top: 13px; border-top: 1px solid var(--hairline); }
+  .room.open .room-body { display: block; }
+
   .empty { color: var(--text-faint); text-align: center; padding: 46px 20px; line-height: 1.7; }
 
   /* 📢 상단 고정 공지 배너 */
@@ -115,6 +130,7 @@ const showToast = (m, t = "") => { toast.textContent = m; toast.className = `toa
 const esc = (s) => (s == null ? "" : String(s)).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const linkify = (s) => esc(s).replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');   // 설명 속 URL 클릭 가능
 const ADMIN = new URLSearchParams(location.search).get("admin") === "1";
+const OPEN = new Set();   // 펼쳐진 모임 id (자동갱신에도 유지)
 
 async function sha256hex(str) {
   const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
@@ -186,11 +202,13 @@ function roomCard(r) {
     : `<span class="room-badge open">모집중</span>`;
   const capText = cap > 0 ? `<span class="room-count">${n}</span> / ${cap}명` : `<span class="room-count">${n}</span>명`;
 
-  const meta = [];
-  if (r.place) meta.push(`<span><iconify-icon icon="solar:map-point-bold-duotone"></iconify-icon>${esc(r.place)}</span>`);
-  if (r.event_date) meta.push(`<span><iconify-icon icon="solar:calendar-bold-duotone"></iconify-icon>${fmtDate(r.event_date)}</span>`);
-  if (r.event_time) meta.push(`<span><iconify-icon icon="solar:clock-circle-bold-duotone"></iconify-icon>${esc(r.event_time)}</span>`);
-  meta.push(`<span><iconify-icon icon="solar:users-group-rounded-bold-duotone"></iconify-icon>${capText}</span>`);
+  // 접힌 요약(제목 밑 한 줄): 날짜 · 시간 · 인원
+  const sum = [];
+  if (r.event_date) sum.push(`<span><iconify-icon icon="solar:calendar-bold-duotone"></iconify-icon>${fmtDate(r.event_date)}</span>`);
+  if (r.event_time) sum.push(`<span><iconify-icon icon="solar:clock-circle-bold-duotone"></iconify-icon>${esc(r.event_time)}</span>`);
+  sum.push(`<span><iconify-icon icon="solar:users-group-rounded-bold-duotone"></iconify-icon>${capText}</span>`);
+  // 펼쳤을 때 장소
+  const placeMeta = r.place ? `<div class="room-meta"><span><iconify-icon icon="solar:map-point-bold-duotone"></iconify-icon>${esc(r.place)}</span></div>` : "";
 
   const people = joins
     .sort((a, b) => (a.student_id === r.host_id ? -1 : b.student_id === r.host_id ? 1 : 0))
@@ -215,13 +233,22 @@ function roomCard(r) {
     }
   }
 
-  return `<div class="room ${closed ? "closed" : ""} ${past || deleted ? "past" : ""}">
-    <div class="room-top"><div class="room-title">${esc(r.title)}</div>${badge}</div>
-    <div class="room-meta">${meta.join("")}</div>
-    ${r.note ? `<div class="room-note">${linkify(r.note)}</div>` : ""}
-    ${r.host_name ? `<div class="room-host">주최: ${esc(r.host_name)}</div>` : ""}
-    ${people ? `<div class="room-people">${people}</div>` : ""}
-    <div class="room-actions">${actions}</div>
+  const isOpen = OPEN.has(r.id);
+  return `<div class="room ${closed ? "closed" : ""} ${past || deleted ? "past" : ""} ${isOpen ? "open" : ""}" data-id="${esc(r.id)}">
+    <button type="button" class="room-head" aria-expanded="${isOpen ? "true" : "false"}">
+      <div class="room-head-main">
+        <div class="room-title-row"><span class="room-title">${esc(r.title)}</span>${badge}</div>
+        <div class="room-sub">${sum.join("")}</div>
+      </div>
+      <iconify-icon class="room-chevron" icon="solar:alt-arrow-down-linear"></iconify-icon>
+    </button>
+    <div class="room-body">
+      ${placeMeta}
+      ${r.note ? `<div class="room-note">${linkify(r.note)}</div>` : ""}
+      ${r.host_name ? `<div class="room-host">주최: ${esc(r.host_name)}</div>` : ""}
+      ${people ? `<div class="room-people">${people}</div>` : ""}
+      <div class="room-actions">${actions}</div>
+    </div>
   </div>`;
 }
 
@@ -245,6 +272,16 @@ function render() {
   }
   $("list").innerHTML = html;
 }
+
+// ── 아코디언 토글(제목 클릭) ──
+$("list").addEventListener("click", (e) => {
+  const head = e.target.closest(".room-head"); if (!head) return;
+  const room = head.closest(".room"); const id = room.dataset.id;
+  if (OPEN.has(id)) OPEN.delete(id); else OPEN.add(id);
+  const open = OPEN.has(id);
+  room.classList.toggle("open", open);
+  head.setAttribute("aria-expanded", open ? "true" : "false");
+});
 
 // ── 액션 ──
 $("list").addEventListener("click", async (e) => {
