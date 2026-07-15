@@ -36,6 +36,21 @@ drop policy if exists "anon all room_interests" on public.room_interests;
 create policy "anon all room_interests" on public.room_interests for all using (true) with check (true);
 grant select, insert, update, delete on public.room_interests to anon, authenticated;
 
+-- 모임 채팅(앱 내 채팅 스레드, 열린 방만 4초 폴링)
+create table if not exists public.room_messages (
+  id bigint generated always as identity primary key,
+  room_id text not null,
+  student_id text not null,
+  name text not null,
+  body text not null,
+  created_at timestamptz not null default now()
+);
+create index if not exists room_messages_room_idx on public.room_messages (room_id, created_at);
+alter table public.room_messages enable row level security;
+drop policy if exists "anon all room_messages" on public.room_messages;
+create policy "anon all room_messages" on public.room_messages for all using (true) with check (true);
+grant select, insert, update, delete on public.room_messages to anon, authenticated;
+
 create table if not exists public.room_joins (
   room_id    text not null references public.rooms(id) on delete cascade,
   student_id text not null,           -- 참여 학생 이메일 sha256 앞16
