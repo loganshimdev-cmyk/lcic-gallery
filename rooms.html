@@ -80,6 +80,29 @@
   .chk-label { display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 700; }
   .chk-label input { width: auto; }
 
+  /* 모임 채팅 */
+  .chat { margin-top: 14px; border-top: 1px dashed var(--hairline); padding-top: 12px; }
+  .chat-label { font-size: .8rem; font-weight: 800; color: var(--text-faint); margin-bottom: 8px; }
+  .chat-msgs { max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding: 2px; }
+  .chat-empty { color: var(--text-faint); font-size: .85rem; text-align: center; padding: 14px 0; }
+  .msg { max-width: 82%; align-self: flex-start; }
+  .msg.me { align-self: flex-end; }
+  .msg-name { font-size: .7rem; color: var(--text-faint); margin: 0 6px 2px; }
+  .msg.me .msg-name { text-align: right; }
+  .msg-body { display: inline-block; font-size: .9rem; line-height: 1.45; padding: 8px 12px; border-radius: 14px;
+    background: rgba(0,0,0,.05); word-break: break-word; white-space: pre-wrap; }
+  .msg.me .msg-body { background: var(--accent); color: #fff; }
+  .msg-body a { color: var(--accent-deep); font-weight: 700; }
+  .msg.me .msg-body a { color: #fff; text-decoration: underline; }
+  .chat-form { display: flex; gap: 8px; margin-top: 10px; }
+  .chat-in { flex: 1; padding: 10px 13px; font-size: .92rem; font-family: inherit; color: var(--text);
+    border: 1px solid var(--hairline-strong); border-radius: 12px; background: var(--bg); box-sizing: border-box; }
+  .chat-in:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .chat-send { border: none; border-radius: 12px; background: var(--accent); color: #fff; font-family: inherit;
+    font-weight: 700; padding: 0 16px; cursor: pointer; white-space: nowrap; }
+  .chat-send:hover { background: var(--accent-hover); }
+  .chat-send[disabled] { opacity: .5; cursor: not-allowed; }
+
   .empty { color: var(--text-faint); text-align: center; padding: 46px 20px; line-height: 1.7; }
 
   /* 📢 상단 고정 공지 배너 */
@@ -143,6 +166,8 @@ const esc = (s) => (s == null ? "" : String(s)).replace(/&/g, "&amp;").replace(/
 const linkify = (s) => esc(s).replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');   // 설명 속 URL 클릭 가능
 const ADMIN = new URLSearchParams(location.search).get("admin") === "1";
 const OPEN = new Set();   // 펼쳐진 모임 id (자동갱신에도 유지)
+const MSGS = {};          // room_id → 메시지 배열(캐시)
+const DRAFTS = {};        // room_id → 입력 중인 초안(재렌더에도 유지)
 
 async function sha256hex(str) {
   const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
@@ -197,6 +222,29 @@ async function load() {
 }
 const joinsOf = (rid) => JOINS.filter((j) => j.room_id === rid);
 const interestsOf = (rid) => INTERESTS.filter((x) => x.room_id === rid);
+
+// ── 모임 채팅 (열린 방만 폴링) ──
+async function fetchMessages(roomIds) {
+  if (!roomIds || !roomIds.length) return;
+  const { data, error } = await supabase.from("room_messages")
+    .select("room_id,student_id,name,body,created_at")
+    .in("room_id", roomIds)
+    .order("created_at", { ascending: false })
+    .limit(300);
+  if (error) return;   // 테이블 없거나 일시 오류는 조용히 무시
+  const g = {};
+  (data || []).forEach((m) => { (g[m.room_id] = g[m.room_id] || []).unshift(m); });   // unshift → 오름차순
+  roomIds.forEach((rid) => { MSGS[rid] = g[rid] || []; });
+}
+function renderMessages(roomId) {
+  const el = document.getElementById("cm-" + roomId); if (!el) return;
+  const msgs = MSGS[roomId] || [];
+  const meId = ME ? ME.id : "official";
+  el.innerHTML = msgs.length
+    ? msgs.map((m) => `<div class="msg ${m.student_id === meId ? "me" : ""}"><div class="msg-name">${esc(m.name)}</div><div class="msg-body">${linkify(m.body)}</div></div>`).join("")
+    : `<div class="chat-empty">아직 대화가 없어요. 먼저 인사해 보세요 👋</div>`;
+  el.scrollTop = el.scrollHeight;
+}
 
 function roomCard(r) {
   const joins = joinsOf(r.id);
@@ -275,6 +323,14 @@ function roomCard(r) {
       ${people ? `<div class="room-people">${people}</div>` : ""}
       <div class="room-actions">${actions}${chatBtn}</div>
       ${joinable ? `<div class="room-hint">부담되면 <b>관심있어요</b>만 눌러도 돼요 🙂</div>` : ""}
+      ${!deleted ? `<div class="chat">
+        <div class="chat-label">💬 모임 채팅</div>
+        <div class="chat-msgs" id="cm-${esc(r.id)}"></div>
+        <form class="chat-form" data-room="${esc(r.id)}">
+          <input class="chat-in" maxlength="300" placeholder="메시지 보내기…" autocomplete="off">
+          <button class="chat-send" type="submit">전송</button>
+        </form>
+      </div>` : ""}
     </div>
   </div>`;
 }
@@ -300,6 +356,11 @@ function render() {
     if (deleted.length) html += `<div class="sec-label">🗑️ 삭제된 모임 (복구 가능 · 관리자 전용)</div>` + deleted.map(roomCard).join("");
   }
   $("list").innerHTML = html;
+  // 열린 방 채팅: 캐시로 즉시 렌더 + 초안 복원 + 최신 조회
+  const openChats = [...OPEN].filter((rid) => document.getElementById("cm-" + rid));
+  openChats.forEach(renderMessages);
+  openChats.forEach((rid) => { const inp = document.querySelector(`.chat-form[data-room="${rid}"] .chat-in`); if (inp && DRAFTS[rid]) inp.value = DRAFTS[rid]; });
+  if (openChats.length) fetchMessages(openChats).then(() => openChats.forEach(renderMessages));
 }
 
 // ── 아코디언 토글(제목 클릭) ──
@@ -310,7 +371,39 @@ $("list").addEventListener("click", (e) => {
   const open = OPEN.has(id);
   room.classList.toggle("open", open);
   head.setAttribute("aria-expanded", open ? "true" : "false");
+  if (open) { renderMessages(id); fetchMessages([id]).then(() => renderMessages(id)); }   // 채팅 로드
 });
+
+// ── 채팅 전송 ──
+$("list").addEventListener("submit", async (e) => {
+  const form = e.target.closest(".chat-form"); if (!form) return;
+  e.preventDefault();
+  const roomId = form.dataset.room;
+  const input = form.querySelector(".chat-in");
+  const body = (input.value || "").trim(); if (!body) return;
+  const btn = form.querySelector(".chat-send"); btn.disabled = true;
+  try {
+    const { error } = await supabase.from("room_messages").insert({
+      room_id: roomId, student_id: ME ? ME.id : "official", name: ME ? ME.n : "LCIC 운영진", body,
+    });
+    if (error) throw error;
+    input.value = ""; DRAFTS[roomId] = "";
+    await fetchMessages([roomId]); renderMessages(roomId);
+  } catch (_) { showToast("전송 실패 — 다시 시도해 주세요.", "error"); }
+  btn.disabled = false; input.focus();
+});
+// 입력 중 초안 보존(재렌더에도 유지)
+$("list").addEventListener("input", (e) => {
+  const input = e.target.closest(".chat-in"); if (!input) return;
+  const form = input.closest(".chat-form"); if (form) DRAFTS[form.dataset.room] = input.value;
+});
+// 열린 방 채팅 폴링(4초)
+setInterval(async () => {
+  const openChats = [...OPEN].filter((rid) => document.getElementById("cm-" + rid));
+  if (!openChats.length) return;
+  await fetchMessages(openChats);
+  openChats.forEach(renderMessages);
+}, 4000);
 
 // ── 액션 ──
 $("list").addEventListener("click", async (e) => {
