@@ -102,6 +102,9 @@
     font-weight: 700; padding: 0 16px; cursor: pointer; white-space: nowrap; }
   .chat-send:hover { background: var(--accent-hover); }
   .chat-send[disabled] { opacity: .5; cursor: not-allowed; }
+  .chat-locked { margin-top: 10px; font-size: .82rem; line-height: 1.6; color: var(--text-faint); text-align: center;
+    background: rgba(0,0,0,.03); border: 1px dashed var(--hairline); border-radius: 12px; padding: 11px 12px; }
+  .chat-locked b { color: var(--accent-deep); }
 
   /* 🗨️ 전체 자유 수다방 위젯 */
   .campus-fab { position: fixed; right: 20px; bottom: 20px; z-index: 9500; width: 56px; height: 56px; border-radius: 50%;
@@ -343,6 +346,7 @@ function roomCard(r) {
   }
   const chatBtn = (r.chat_url && !deleted) ? `<a class="btn chat" href="${esc(r.chat_url)}" target="_blank" rel="noopener">💬 단톡방 입장</a>` : "";
   const joinable = !ADMIN && !past && !deleted && !closed && !full && !mine;
+  const canChat = ADMIN || mine || myInterest;   // 쓰기=참여자·관심자(운영진 포함), 읽기는 누구나
 
   const isOpen = OPEN.has(r.id);
   return `<div class="room ${closed ? "closed" : ""} ${past || deleted ? "past" : ""} ${isOpen ? "open" : ""}" data-id="${esc(r.id)}">
@@ -363,10 +367,12 @@ function roomCard(r) {
       ${!deleted ? `<div class="chat">
         <div class="chat-label">💬 모임 채팅</div>
         <div class="chat-msgs" id="cm-${esc(r.id)}"></div>
-        <form class="chat-form" data-room="${esc(r.id)}">
+        ${canChat
+          ? `<form class="chat-form" data-room="${esc(r.id)}">
           <input class="chat-in" maxlength="300" placeholder="메시지 보내기…" autocomplete="off">
           <button class="chat-send" type="submit">전송</button>
-        </form>
+        </form>`
+          : `<div class="chat-locked">💬 <b>참여하기</b> 또는 <b>👀 관심있어요</b>를 누르면 채팅을 쓸 수 있어요<br>(읽기는 자유롭게!)</div>`}
       </div>` : ""}
     </div>
   </div>`;
