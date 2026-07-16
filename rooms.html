@@ -115,6 +115,7 @@
   .campus-panel { position: fixed; right: 20px; bottom: 88px; z-index: 9500; width: 340px; max-width: calc(100vw - 32px);
     height: min(460px, 68vh); display: flex; flex-direction: column; background: var(--bg-elev);
     border: 1px solid var(--hairline); border-radius: 20px; box-shadow: 0 24px 60px rgba(15,23,42,.3); overflow: hidden; }
+  .campus-panel[hidden] { display: none; }   /* display:flex 가 [hidden]을 덮어쓰지 않도록 */
   .campus-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 10px;
     font-size: 1.05rem; font-weight: 800; color: var(--accent-deep); }
   .campus-x { border: none; background: none; font-size: 16px; color: var(--text-faint); cursor: pointer; }
