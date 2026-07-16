@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>이벤트 신청자 (망고·주청사) · LCIC</title>
+<link rel="icon" type="image/png" href="assets/brand/lcic-logo.png">
+<script src="assets/background.js?v=8"></script>
+<link rel="stylesheet" href="assets/shared.css?v=13">
+<style>
+  .gate { max-width: 400px; margin: 90px auto 0; padding: 36px 32px; background: var(--bg-elev);
+    border: 1px solid var(--hairline); border-radius: 24px; box-shadow: var(--shadow-lg); }
+  .gate h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 6px; }
+  .gate p { color: var(--text-dim); font-size: .85rem; margin-bottom: 20px; }
+  .gate input { width: 100%; margin-bottom: 12px; }
+
+  .wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 100px; }
+  .head h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -.02em; }
+  .head .meta { color: var(--text-dim); font-size: .84rem; margin-top: 3px; }
+  .hint { font-size: .78rem; color: var(--text-faint); margin: 14px 0 8px; line-height: 1.5; }
+  .search { margin: 0 0 22px; }
+  .search input { max-width: 300px; }
+
+  .ev { margin: 0 0 30px; }
+  .ev-title { font-size: 1.14rem; font-weight: 800; margin: 0 0 4px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .ev-title .tot { font-size: .82rem; font-weight: 700; color: var(--text-dim); }
+  .ev-sub { font-size: .8rem; color: var(--text-faint); margin: 0 0 14px; }
+
+  .date-block { border: 1px solid var(--hairline); border-radius: 16px; padding: 15px 16px; margin: 0 0 12px; background: var(--bg-elev); box-shadow: var(--shadow-sm); }
+  .date-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin: 0 0 11px; }
+  .date-head .d { font-size: 1rem; font-weight: 800; }
+  .date-head .c { font-size: .84rem; font-weight: 700; }
+  .date-head .c .n { font-size: 1.1rem; font-weight: 800; color: var(--accent-deep); }
+  .date-head .c.zero .n { color: #b91c1c; }
+  .bar { height: 8px; border-radius: 99px; background: var(--hairline); overflow: hidden; margin: 0 0 12px; }
+  .bar .fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), var(--accent-deep)); transition: width .4s; }
+
+  .names { display: flex; flex-wrap: wrap; gap: 8px; }
+  .nm { display: inline-flex; align-items: baseline; gap: 6px; padding: 8px 13px; border-radius: 11px;
+    background: var(--accent-tint); border: 1px solid var(--hairline); font-size: .93rem; }
+  .nm .no { font-size: .7rem; color: var(--text-faint); font-weight: 700; }
+  .nm b { font-weight: 700; color: var(--accent-deep); }
+  .nm .uni { font-size: .68rem; color: var(--text-faint); }
+  .nm.hit { box-shadow: 0 0 0 2px var(--accent); }
+  .none { color: var(--text-faint); font-size: .86rem; padding: 4px 2px; }
+  .empty { color: var(--text-faint); text-align: center; padding: 40px 20px; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<div id="gate-view">
+  <div class="gate">
+    <h2>🎟 이벤트 신청자 (망고·주청사)</h2>
+    <p>담당자 전용입니다. 비밀번호를 입력하세요.</p>
+    <form id="gate-form">
+      <input class="input" id="pw" type="password" autocomplete="current-password" placeholder="비밀번호" required>
+      <button class="btn-primary" id="gate-btn" type="submit" style="width:100%;">열기</button>
+    </form>
+  </div>
+</div>
+
+<main id="app-view" class="wrap hidden">
+  <div class="head">
+    <h1>🎟 이벤트 신청자</h1>
+    <div class="meta">학생이 status.html(학생 안내)에서 신청/취소합니다. 신청 순으로 정렬 · 15초마다 자동 갱신.</div>
+  </div>
+  <div class="search"><input class="input" id="q" type="search" placeholder="이름 검색"></div>
+  <div id="list"></div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { supabase } from "./assets/supabase.js?v=4";
+
+const $ = (id) => document.getElementById(id);
+const toast = $("toast");
+function showToast(m, t = "") { toast.textContent = m; toast.className = `toast show ${t}`; setTimeout(() => toast.classList.remove("show"), 2600); }
+const esc = (s) => (s == null ? "" : String(s)).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+const PW = "8686";
+// 표시 정의(라벨·정원). status.html EVENTS 와 동일하게 유지.
+const EVENTS = [
+  { key: "mango", icon: "🥭", title: "망고 공장 견학", sub: "출발 오후 12:30 · 약 3시간 30분 · ₱200",
+    slots: [
+      { date: "2026-07-22", label: "7월 22일 (수)", cap: 25 },
+      { date: "2026-07-23", label: "7월 23일 (목)", cap: 25 },
+      { date: "2026-07-24", label: "7월 24일 (금)", cap: 25 },
+    ] },
+  { key: "capitol", icon: "🏛", title: "세부 주청사(Capitol) 방문", sub: "7/21(화) · 12:30 정문 출발 · 약 2시간 · 국제방문관 포함",
+    slots: [
+      { date: "2026-07-21", label: "7월 21일 (화)", cap: 25 },
+    ] },
+];
+
+let ROWS = [];
+let ready = false;
+
+$("gate-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if ($("pw").value !== PW) { showToast("비밀번호가 올바르지 않습니다.", "error"); return; }
+  $("gate-view").classList.add("hidden");
+  $("app-view").classList.remove("hidden");
+  await load();
+  render();
+  setInterval(sync, 15000);
+});
+
+async function fetchRows() {
+  const { data, error } = await supabase.from("event_signups").select("event_key,slot_date,name,university,created_at");
+  if (error) throw error;
+  return data || [];
+}
+async function load() {
+  try { ROWS = await fetchRows(); ready = true; }
+  catch (_) { ready = false; ROWS = []; showToast("명단을 불러오지 못했습니다.", "error"); }
+}
+async function sync() {
+  if (!ready) return;
+  try { ROWS = await fetchRows(); render(); } catch (_) { /* 일시적 오류 무시 */ }
+}
+
+$("q").addEventListener("input", render);
+
+function render() {
+  const q = ($("q").value || "").trim();
+
+  const html = EVENTS.map((ev) => {
+    const evRows = ROWS.filter((r) => r.event_key === ev.key);
+    const evTotal = evRows.length;
+    const evCap = ev.slots.reduce((s, x) => s + x.cap, 0);
+
+    const blocks = ev.slots.map((slot) => {
+      const rows = evRows
+        .filter((r) => r.slot_date === slot.date)
+        .sort((a, b) => String(a.created_at || "").localeCompare(String(b.created_at || "")));   // 신청 순
+      const n = rows.length, rest = Math.max(0, slot.cap - n);
+      const shown = rows.filter((r) => !q || String(r.name || "").includes(q));
+      const names = n === 0
+        ? `<div class="none">아직 신청자가 없습니다.</div>`
+        : (shown.length
+            ? `<div class="names">${shown.map((r, i) => {
+                const idx = rows.indexOf(r) + 1;
+                return `<span class="nm${q ? " hit" : ""}"><span class="no">${idx}</span><b>${esc(r.name)}</b>${r.university ? `<span class="uni">${esc(shortUni(r.university))}</span>` : ""}</span>`;
+              }).join("")}</div>`
+            : `<div class="none">검색 결과 없음</div>`);
+      return `<div class="date-block">
+        <div class="date-head">
+          <span class="d">${esc(slot.label)}</span>
+          <span class="c ${n === 0 ? "zero" : ""}">신청 <span class="n">${n}</span> / ${slot.cap}명 · 남은 자리 ${rest}</span>
+        </div>
+        <div class="bar"><div class="fill" style="width:${Math.min(100, Math.round(n / slot.cap * 100))}%"></div></div>
+        ${names}
+      </div>`;
+    }).join("");
+
+    return `<section class="ev">
+      <div class="ev-title">${ev.icon} ${esc(ev.title)} <span class="tot">합계 ${evTotal} / ${evCap}명</span></div>
+      <div class="ev-sub">${esc(ev.sub)}</div>
+      ${blocks}
+    </section>`;
+  }).join("");
+
+  $("list").innerHTML = html;
+}
+
+function shortUni(u) {
+  return String(u || "").replace(/\s*\(.*$/, "")
+    .replace("전북대학교", "전북대").replace("국민대학교", "국민대").replace("인제대학교", "인제대")
+    .replace("호남대학교", "호남대").replace("백석문화대학교", "백석문화대").replace("구미대학교", "구미대")
+    .replace("백석대학교", "백석대").replace("원광대학교", "원광대").trim();
+}
+</script>
+</body>
+</html>

@@ -119,6 +119,7 @@
           <button type="button" class="tab-parent">🎉 액티비티 ▾</button>
           <div class="tab-menu">
             <button data-tab="rooms">🏀 학생 모임</button>
+            <button data-tab="events">🎟 망고·주청사 신청자</button>
             <button data-tab="marshmallow">🍭 마시멜로우</button>
           </div>
         </div>
@@ -151,6 +152,9 @@
     </section>
     <section id="tab-rooms" class="hidden">
       <iframe id="rooms-frame" title="학생 모임" style="width:100%; height:calc(100vh - 200px); border:1px solid var(--hairline); border-radius:16px; background:#fff;"></iframe>
+    </section>
+    <section id="tab-events" class="hidden">
+      <iframe id="events-frame" title="망고·주청사 신청자" style="width:100%; height:calc(100vh - 200px); border:1px solid var(--hairline); border-radius:16px; background:#fff;"></iframe>
     </section>
     <section id="tab-marshmallow" class="hidden">
       <iframe id="marshmallow-frame" title="마시멜로우 챌린지 신청자" style="width:100%; height:calc(100vh - 200px); border:1px solid var(--hairline); border-radius:16px; background:#fff;"></iframe>
@@ -268,12 +272,14 @@ function switchTab(tab, btn) {
   $("tab-arrivals").classList.toggle("hidden", tab !== "arrivals");
   $("tab-hopping").classList.toggle("hidden", tab !== "hopping");
   $("tab-rooms").classList.toggle("hidden", tab !== "rooms");
+  $("tab-events").classList.toggle("hidden", tab !== "events");
   $("tab-marshmallow").classList.toggle("hidden", tab !== "marshmallow");
   $("tab-peakday").classList.toggle("hidden", tab !== "peakday");
   $("tab-pay").classList.toggle("hidden", tab !== "pay");
   if (tab === "arrivals") { const f = $("arrivals-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "arrivals.html"); }
   if (tab === "hopping") { const f = $("hopping-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "hopping.html"); }
   if (tab === "rooms") { const f = $("rooms-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "rooms.html?admin=1"); }
+  if (tab === "events") { const f = $("events-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "events.html"); }
   if (tab === "marshmallow") { const f = $("marshmallow-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "marshmallow.html"); }
   if (tab === "peakday") { const f = $("peakday-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "peakday.html"); }
   // 배정현황: 처음이면 로드. 안에서 다른 페이지로 이동했으면 다시 배정현황으로 복귀.
