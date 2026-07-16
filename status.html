@@ -203,6 +203,13 @@
   .hop-warn b { color: #92400e; font-weight: 800; }
   .hop-info .hi-tip { font-size: 0.86rem; line-height: 1.6; color: #b45309; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.3); border-radius: 12px; padding: 11px 13px; }
   .hop-info .hi-tip b { color: #92400e; font-weight: 800; }
+  /* 🥭 망고 공장 · 🏛 주청사 — 선착순 이벤트(event_signups). 호핑 날짜 카드 스타일 재사용. */
+  #mango-dates { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 620px) { #mango-dates { grid-template-columns: 1fr; } }
+  #cap-dates { grid-template-columns: 1fr; }
+  .ev-note { font-size: 0.86rem; line-height: 1.6; color: var(--text-dim); background: var(--bg-elev);
+    border: 1px solid var(--hairline); border-radius: 12px; padding: 11px 13px; margin-bottom: 10px; }
+  .ev-note b { color: var(--text); font-weight: 800; }
   /* 본문(container-narrow=880px) 옆에 여유가 생기는 넓은 화면에서만 우측 고정.
      좁은 화면에선 위 기본 스타일대로 상단 인라인 카드로 보인다.
      .dash-side = 학생 모임 + 공지 묶음(학생 모임이 항상 공지 위). */
@@ -460,6 +467,54 @@
   </section>
 
 
+  <!-- 🥭 7D 망고 공장 견학 신청 (날짜별 선착순 25명) -->
+  <section class="card fade-up" id="mango-card" style="display:none">
+    <div class="card-title">🥭 7D 망고 공장 견학</div>
+    <p class="hop-desc">
+      망고로 유명한 <b>7D 망고 공장</b>을 직접 방문해 생산 과정을 견학하고, <b>시식과 구매</b>도 할 수 있는 특별 프로그램이에요.
+      원하는 날짜 하나를 골라 신청해 주세요. 💙
+    </p>
+
+    <div class="msm-info">
+      <div class="mi"><span class="mi-k">📅 일시</span><span class="mi-v">7월 22일(수) · 23일(목) · 24일(금) 중 택 1</span></div>
+      <div class="mi"><span class="mi-k">🕧 출발</span><span class="mi-v">오후 12시 30분</span></div>
+      <div class="mi"><span class="mi-k">📍 장소</span><span class="mi-v">7D Mango Factory (Cebu City)</span></div>
+      <div class="mi"><span class="mi-k">⏱ 소요 시간</span><span class="mi-v">약 3시간 30분</span></div>
+      <div class="mi"><span class="mi-k">👥 정원</span><span class="mi-v">날짜별 선착순 25명</span></div>
+      <div class="mi"><span class="mi-k">💰 비용</span><span class="mi-v">₱200 (현금)</span></div>
+      <div class="mi"><span class="mi-k">🔓 신청 오픈</span><span class="mi-v">7월 16일 (목) 오후 8시</span></div>
+    </div>
+
+    <div class="hop-my none" id="mango-my"></div>
+    <div class="hop-dates" id="mango-dates"></div>
+    <div class="ev-note">💳 <b>여기서 먼저 자리를 잡으시면 됩니다.</b> 비용 <b>₱200</b>은 <b>7월 20일(월) 기숙사 1층</b>에서 받을 예정이에요. 아직 안 내셨어도 신청한 자리는 그대로 유지됩니다.</div>
+    <div class="hop-warn">📸 공장 내부는 <b>촬영이 제한</b>될 수 있어요. 견학 당일 <b>학생증과 마스크</b>를 꼭 챙겨 주세요.</div>
+    <div class="hop-status" id="mango-status"></div>
+  </section>
+
+  <!-- 🏛 세부 주청사(Capitol) 방문 신청 (선착순 25명) -->
+  <section class="card fade-up" id="cap-card" style="display:none">
+    <div class="card-title">🏛 세부 주청사(Capitol) 방문</div>
+    <p class="hop-desc">
+      세부의 행정 중심지인 <b>세부 주청사(Cebu Provincial Capitol)</b>를 직접 방문해 견학하는 프로그램이에요.
+      관심 있는 학생은 신청해 주세요. 💙
+    </p>
+
+    <div class="msm-info">
+      <div class="mi"><span class="mi-k">📅 일시</span><span class="mi-v">7월 21일 (화)</span></div>
+      <div class="mi"><span class="mi-k">🕧 출발</span><span class="mi-v">오후 12시 30분 · <b>정문</b></span></div>
+      <div class="mi"><span class="mi-k">📍 장소</span><span class="mi-v">Cebu Provincial Capitol</span></div>
+      <div class="mi"><span class="mi-k">👥 정원</span><span class="mi-v">선착순 25명</span></div>
+      <div class="mi"><span class="mi-k">🔓 신청 오픈</span><span class="mi-v">7월 16일 (목) 오후 8시</span></div>
+    </div>
+
+    <div class="hop-my none" id="cap-my"></div>
+    <div class="hop-dates" id="cap-dates"></div>
+    <div class="ev-note">🕧 <b>오후 12시 30분에 정문에서 출발</b>합니다. 늦지 않게 미리 모여 주세요!</div>
+    <div class="hop-status" id="cap-status"></div>
+  </section>
+
+
   <!-- 🗂 지난 공지 (마감된 신청 모음 — 새로 마감되는 카드는 이 안으로 옮기면 됨) -->
 
   <details class="past-box fade-up" id="past-box">
@@ -709,6 +764,7 @@
     try { localStorage.setItem("lcic.me", JSON.stringify({ n: rec.name || "", e: CUR_EMAIL || "" })); } catch (_) {}
     renderHopping(rec);   // 호핑 수요조사 카드
     renderMarshmallow(rec);   // 🍭 마시멜로우 챌린지 신청 카드
+    renderEvents(rec);   // 🥭 망고 공장 · 🏛 주청사 선착순 신청 카드
 
     const cl = rec.checklist || {};
     const total = ORDER.length;
@@ -1093,6 +1149,112 @@
     $("msm-actions").innerHTML = btn;
   }
 
+  // ── 🎟 선착순 이벤트 신청 (🥭 망고 공장 · 🏛 주청사) ──
+  // 정원·오픈시각은 DB(event_slots)가 정답이고 서버 트리거가 강제한다. 아래 값은 표시용 기본값·폴백.
+  // 새 이벤트 추가: event_slots 에 행을 넣고 EVENTS 에 항목 하나만 추가하면 끝(SQL 재실행 불필요).
+  const EV_OPEN = new Date("2026-07-16T20:00:00+08:00");   // 7/16(목) 오후 8시 (세부 UTC+8)
+  const EVENTS = [
+    {
+      key: "mango", card: "mango-card", grid: "mango-dates", my: "mango-my", stat: "mango-status",
+      what: "🥭 망고 공장 견학", cap: 25,
+      slots: [
+        { date: "2026-07-22", label: "7월 22일 (수)" },
+        { date: "2026-07-23", label: "7월 23일 (목)" },
+        { date: "2026-07-24", label: "7월 24일 (금)" },
+      ],
+      confirm: "🥭 망고 공장 견학\n\n· 출발: 오후 12시 30분\n· 비용: ₱200 (7월 20일 월요일, 기숙사 1층에서 납부)\n\n이 날짜로 신청할까요?",
+    },
+    {
+      key: "capitol", card: "cap-card", grid: "cap-dates", my: "cap-my", stat: "cap-status",
+      what: "🏛 주청사 방문", cap: 25,
+      slots: [{ date: "2026-07-21", label: "7월 21일 (화)" }],
+      confirm: "🏛 세부 주청사(Capitol) 방문\n\n· 출발: 오후 12시 30분 · 정문\n\n신청할까요?",
+    },
+  ];
+  const evIds = {};
+
+  async function renderEvents(rec) {
+    if (!window.lcicEvents) { setTimeout(() => renderEvents(rec), 400); return; }   // 브리지 로드 대기
+    const sid = (await sha256hex(CUR_EMAIL || "")).slice(0, 16);
+    for (const ev of EVENTS) {
+      const card = $(ev.card); if (!card) continue;
+      card.style.display = "";
+      evIds[ev.key] = sid;
+      $(ev.grid).onclick = (e) => onEventClick(e, ev, rec);
+      await paintEvent(ev, rec);
+    }
+    if (!renderEvents._poll) {
+      renderEvents._poll = setInterval(() => { EVENTS.forEach((ev) => paintEvent(ev, rec)); }, 15000);   // 실시간 인원
+    }
+  }
+
+  // 서버 예외 → 학생이 읽을 문장
+  function evErrText(err, ev) {
+    if (!err) return null;
+    if (/EVENT_FULL/i.test(err))     return "죄송해요, 방금 자리가 찼어요. 다른 날짜를 선택해 주세요.";
+    if (/EVENT_NOT_OPEN/i.test(err)) return "아직 신청 오픈 전이에요. 오후 8시에 다시 눌러 주세요.";
+    if (/EVENT_CLOSED/i.test(err))   return "신청이 마감되었어요.";
+    return "신청 실패 — 다시 시도해 주세요.";
+  }
+
+  async function onEventClick(e, ev, rec) {
+    const b = e.target.closest(".hd-btn[data-act]"); if (!b) return;
+    if (new Date() < EV_OPEN) return;   // 오픈 전 차단(서버도 막지만 UI에서 먼저)
+    const stat = $(ev.stat);
+    if (b.dataset.act === "cancel") {
+      if (!confirm(`${ev.what} 신청을 취소하시겠어요?`)) return;
+      b.disabled = true;
+      const err = await window.lcicEvents.cancel(ev.key, evIds[ev.key]);
+      stat.style.color = err ? "#dc2626" : "";
+      stat.textContent = err ? "취소 실패 — 다시 시도해 주세요." : "신청이 취소되었어요.";
+      await paintEvent(ev, rec);
+    } else if (b.dataset.act === "reg") {
+      const date = b.dataset.date, slot = ev.slots.find((s) => s.date === date);
+      const isChange = b.classList.contains("change");   // 이미 신청 있음 → 날짜 변경
+      if (!isChange && !confirm(ev.confirm)) return;
+      b.disabled = true;
+      const err = await window.lcicEvents.register(ev.key, evIds[ev.key], rec.name || "", rec.uni || "", date);
+      const msg = evErrText(err, ev);
+      stat.style.color = err ? "#dc2626" : "";
+      stat.textContent = err ? msg : `${slot.label} 신청이 완료되었어요!`;
+      await paintEvent(ev, rec);
+    }
+  }
+
+  async function paintEvent(ev, rec) {
+    let counts = {}, mine = null, caps = {};
+    try {
+      const s = await window.lcicEvents.state(ev.key, evIds[ev.key]);
+      counts = s.counts; mine = s.mine; caps = s.caps;
+    } catch (_) { /* 읽기 실패해도 카드는 표시 */ }
+    const preopen = new Date() < EV_OPEN;
+    const mineSlot = ev.slots.find((s) => s.date === mine);
+
+    const my = $(ev.my);
+    if (mine && mineSlot && !preopen) {
+      my.className = "hop-my";
+      my.innerHTML = `✅ <b>${mineSlot.label}</b> 신청되었습니다.`;
+    } else { my.className = "hop-my none"; my.innerHTML = ""; }
+
+    $(ev.grid).innerHTML = ev.slots.map((s) => {
+      const cap = caps[s.date] || ev.cap;
+      const n = counts[s.date] || 0, rest = Math.max(0, cap - n);
+      const isMine = mine === s.date, full = rest <= 0 && !isMine;
+      let btn;
+      if (preopen) btn = `<button class="hd-btn" disabled>오후 8시 오픈</button>`;
+      else if (isMine) btn = `<button class="hd-btn cancel" data-act="cancel">신청 취소</button>`;
+      else if (full) btn = `<button class="hd-btn" disabled>자리 마감</button>`;
+      else btn = `<button class="hd-btn ${mine ? "change" : ""}" data-act="reg" data-date="${s.date}">${mine ? "이 날짜로 변경" : (ev.slots.length > 1 ? "이 날짜로 신청" : "신청하기")}</button>`;
+      const cnt = preopen
+        ? `정원 ${cap}명 · 🔓 오후 8시 오픈`
+        : `신청 <b>${n}</b> / ${cap}명 · 남은 자리 <span class="rest ${rest === 0 ? "zero" : ""}">${rest}</span>`;
+      return `<div class="hop-date ${isMine ? "mine" : ""} ${full ? "full" : ""}">
+        <div class="hd-title">${isMine ? "✅ " : ""}${s.label}</div>
+        <div class="hd-count">${cnt}</div>
+        ${btn}</div>`;
+    }).join("");
+  }
+
   // ── 로그인 ──
   const errEl = $("login-err"), btn = $("login-btn"), btnLabel = $("login-btn-label");
   function showErr() {
@@ -1248,6 +1410,40 @@ window.lcicMsm = {
   async cancel(id) {
     try {
       const { error } = await supabase.from("marshmallow_signups").delete().eq("id", id);
+      return error ? (error.message || "오류") : null;
+    } catch (e) { return e && e.message ? e.message : "네트워크 오류"; }
+  },
+};
+
+// 🎟 선착순 이벤트(🥭 망고 공장 · 🏛 주청사) → event_signups + event_slots.
+// 정원·오픈시각은 event_slots 의 값을 DB 트리거가 강제 → 클라이언트를 우회해도 초과/조기신청 불가.
+window.lcicEvents = {
+  async state(eventKey, id) {   // { counts: {date: n}, mine: date|null, caps: {date: cap} }
+    const [sig, slots] = await Promise.all([
+      supabase.from("event_signups").select("id,slot_date").eq("event_key", eventKey),
+      supabase.from("event_slots").select("slot_date,cap").eq("event_key", eventKey),
+    ]);
+    if (sig.error) throw sig.error;
+    const counts = {}; let mine = null;
+    for (const r of (sig.data || [])) {
+      counts[r.slot_date] = (counts[r.slot_date] || 0) + 1;
+      if (r.id === id) mine = r.slot_date;
+    }
+    const caps = {};
+    for (const s of (slots.data || [])) caps[s.slot_date] = s.cap;   // 슬롯 조회 실패해도 카드는 표시(폴백 정원 사용)
+    return { counts, mine, caps };
+  },
+  async register(eventKey, id, name, university, slot_date) {
+    try {
+      const { error } = await supabase.from("event_signups")
+        .upsert({ event_key: eventKey, id, name, university, slot_date, created_at: new Date().toISOString() },
+                { onConflict: "event_key,id" });
+      return error ? (error.message || "오류") : null;
+    } catch (e) { return e && e.message ? e.message : "네트워크 오류"; }
+  },
+  async cancel(eventKey, id) {
+    try {
+      const { error } = await supabase.from("event_signups").delete().eq("event_key", eventKey).eq("id", id);
       return error ? (error.message || "오류") : null;
     } catch (e) { return e && e.message ? e.message : "네트워크 오류"; }
   },
