@@ -44,6 +44,10 @@
   .room-people { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 11px; }
   .chip { font-size: .82rem; padding: 5px 10px; border-radius: 9px; background: rgba(0,0,0,.04); border: 1px solid var(--hairline); }
   .chip.host { background: var(--accent-tint); border-color: var(--accent-soft); color: var(--accent-deep); font-weight: 700; }
+  /* 동명이인 구분 꼬리표(학교 · 학과) — 이름보다 약하게, 이름을 밀어내지 않게 */
+  .who { margin-left: 4px; font-size: .84em; font-weight: 400; color: var(--text-faint); word-break: keep-all; }
+  .chip.host .who { color: var(--accent-deep); opacity: .72; font-weight: 500; }
+  .msg-name .who { margin-left: 3px; }
   .room-count { font-weight: 800; color: var(--accent-deep); }
   .room-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
   .btn { border: none; border-radius: 11px; font-family: inherit; font-size: .9rem; font-weight: 700; padding: 10px 16px; cursor: pointer; }
@@ -221,6 +225,13 @@ function fmtDate(iso) { if (!iso) return ""; const [y, m, d] = iso.split("-").ma
 
 let ME = null;               // { n, e, id }
 let ROOMS = [], JOINS = [], INTERESTS = [];
+// 동명이인 구분표: student id → "전북대 · 정치외교학과" 같은 꼬리표.
+// 학교로 구분되면 학교만, 같은 학교에 동명이인이 또 있으면 학과까지(DB에서 미리 계산).
+// 동명이인이 아닌 학생은 표에 없으므로 아무것도 안 붙는다.
+let DIRS = {};
+const tagOf = (sid) => DIRS[sid] || "";
+// 이름 옆에 붙일 꼬리표 HTML (없으면 빈 문자열)
+const nameTag = (sid) => { const t = tagOf(sid); return t ? `<span class="who">${esc(t)}</span>` : ""; };
 
 // 📢 상단 고정 공지 — show:true 로 바꾸면 노출됩니다.
 const PIN_NOTICE = {
@@ -253,13 +264,17 @@ async function initIdentity() {
 }
 
 async function load() {
-  const [r1, r2, r3] = await Promise.all([
+  const [r1, r2, r3, r4] = await Promise.all([
     supabase.from("rooms").select("*"),
     supabase.from("room_joins").select("room_id,student_id,name"),
     supabase.from("room_interests").select("room_id,student_id,name"),
+    supabase.from("student_dirs").select("id,tag"),
   ]);
   if (r1.error || r2.error) throw (r1.error || r2.error);
   ROOMS = r1.data || []; JOINS = r2.data || []; INTERESTS = r3.error ? [] : (r3.data || []);
+  // 구분표는 없어도(테이블 미생성) 페이지는 그대로 동작해야 한다 → 실패 시 빈 표
+  DIRS = {};
+  if (!r4.error) for (const d of (r4.data || [])) DIRS[d.id] = d.tag;
 }
 const joinsOf = (rid) => JOINS.filter((j) => j.room_id === rid);
 const interestsOf = (rid) => INTERESTS.filter((x) => x.room_id === rid);
@@ -282,7 +297,7 @@ function renderMessages(roomId) {
   const msgs = MSGS[roomId] || [];
   const meId = ME ? ME.id : "official";
   el.innerHTML = msgs.length
-    ? msgs.map((m) => `<div class="msg ${m.student_id === meId ? "me" : ""}"><div class="msg-name">${esc(m.name)}</div><div class="msg-body">${linkify(m.body)}</div></div>`).join("")
+    ? msgs.map((m) => `<div class="msg ${m.student_id === meId ? "me" : ""}"><div class="msg-name">${esc(m.name)}${nameTag(m.student_id)}</div><div class="msg-body">${linkify(m.body)}</div></div>`).join("")
     : `<div class="chat-empty">아직 대화가 없어요. 먼저 인사해 보세요 👋</div>`;
   el.scrollTop = el.scrollHeight;
 }
@@ -320,7 +335,7 @@ function roomCard(r) {
 
   const people = joins
     .sort((a, b) => (a.student_id === r.host_id ? -1 : b.student_id === r.host_id ? 1 : 0))
-    .map((j) => `<span class="chip ${j.student_id === r.host_id ? "host" : ""}">${esc(j.name)}${j.student_id === r.host_id ? " (주최)" : ""}</span>`).join("");
+    .map((j) => `<span class="chip ${j.student_id === r.host_id ? "host" : ""}">${esc(j.name)}${nameTag(j.student_id)}${j.student_id === r.host_id ? " (주최)" : ""}</span>`).join("");
 
   let actions = "";
   if (ADMIN) {
@@ -361,7 +376,7 @@ function roomCard(r) {
     <div class="room-body">
       ${placeMeta}
       ${r.note ? `<div class="room-note">${linkify(r.note)}</div>` : ""}
-      ${r.host_name ? `<div class="room-host">주최: ${esc(r.host_name)}</div>` : ""}
+      ${r.host_name ? `<div class="room-host">주최: ${esc(r.host_name)}${nameTag(r.host_id)}</div>` : ""}
       ${people ? `<div class="room-people">${people}</div>` : ""}
       <div class="room-actions">${actions}${chatBtn}</div>
       ${joinable ? `<div class="room-hint">부담되면 <b>관심있어요</b>만 눌러도 돼요 🙂</div>` : ""}
@@ -463,7 +478,7 @@ function renderCampus() {
   const el = $("campus-msgs"); if (!el) return;
   const meId = ME ? ME.id : "official";
   el.innerHTML = CAMPUS.length
-    ? CAMPUS.map((m) => `<div class="msg ${m.student_id === meId ? "me" : ""}"><div class="msg-name">${esc(m.name)}${ADMIN ? ` <button class="cmx" data-cmid="${m.id}">삭제</button>` : ""}</div><div class="msg-body">${linkify(m.body)}</div></div>`).join("")
+    ? CAMPUS.map((m) => `<div class="msg ${m.student_id === meId ? "me" : ""}"><div class="msg-name">${esc(m.name)}${nameTag(m.student_id)}${ADMIN ? ` <button class="cmx" data-cmid="${m.id}">삭제</button>` : ""}</div><div class="msg-body">${linkify(m.body)}</div></div>`).join("")
     : `<div class="chat-empty">첫 메시지를 남겨보세요 👋<br>분실물·질문·잡담 환영이에요!</div>`;
   el.scrollTop = el.scrollHeight;
   if (CAMPUS.length) setCampusSeen(CAMPUS[CAMPUS.length - 1].id);
