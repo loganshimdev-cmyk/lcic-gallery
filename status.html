@@ -480,13 +480,14 @@
       <div class="mi"><span class="mi-k">🕧 출발</span><span class="mi-v">오후 12시 30분</span></div>
       <div class="mi"><span class="mi-k">📍 장소</span><span class="mi-v">7D Mango Factory (Cebu City)</span></div>
       <div class="mi"><span class="mi-k">⏱ 소요 시간</span><span class="mi-v">약 3시간 30분</span></div>
-      <div class="mi"><span class="mi-k">👥 정원</span><span class="mi-v">날짜별 선착순 25명</span></div>
+      <div class="mi"><span class="mi-k">👥 정원</span><span class="mi-v">날짜별 선착순 35명</span></div>
       <div class="mi"><span class="mi-k">💰 비용</span><span class="mi-v">₱200 (현금)</span></div>
-      <div class="mi"><span class="mi-k">🔓 신청 오픈</span><span class="mi-v">7월 16일 (목) 오후 8시</span></div>
+      <div class="mi"><span class="mi-k">🔓 추가 오픈</span><span class="mi-v">7월 17일 (금) 오후 8시 · 날짜별 10자리</span></div>
     </div>
 
     <div class="hop-my none" id="mango-my"></div>
     <div class="hop-dates" id="mango-dates"></div>
+    <div class="ev-note">🔓 <b>추가 좌석이 열립니다!</b> 1차 신청(25명)이 모두 마감되어 <b>날짜별 10자리씩</b> 더 준비했어요. <b>7월 17일(금) 오후 8시</b>에 열리며, 역시 <b>선착순</b>입니다. (1차에 신청하신 분은 그대로 유지돼요)</div>
     <div class="ev-note">🙋 <b>한 사람당 한 날짜만</b> 신청할 수 있어요. 다른 날짜를 누르면 <b>기존 신청이 그 날짜로 옮겨집니다</b> (두 날짜를 같이 신청할 수는 없어요).</div>
     <div class="ev-note">💳 <b>지금은 결제 없이 신청만 하시면 돼요.</b> 비용 <b>₱200</b>은 <b>7월 20일(월) 기숙사 1층</b>에서 받을 예정이에요.</div>
     <div class="hop-warn">📸 공장 내부는 <b>촬영이 제한</b>될 수 있어요. 견학 당일 <b>학생증과 마스크</b>를 꼭 챙겨 주세요.</div>
@@ -1155,11 +1156,13 @@
   // ── 🎟 선착순 이벤트 신청 (🥭 망고 공장 · 🏛 주청사) ──
   // 정원·오픈시각은 DB(event_slots)가 정답이고 서버 트리거가 강제한다. 아래 값은 표시용 기본값·폴백.
   // 새 이벤트 추가: event_slots 에 행을 넣고 EVENTS 에 항목 하나만 추가하면 끝(SQL 재실행 불필요).
-  const EV_OPEN = new Date("2026-07-16T20:00:00+08:00");   // 7/16(목) 오후 8시 (세부 UTC+8)
+  // 오픈 시각은 슬롯마다 다를 수 있다(예: 추가 좌석을 나중에 여는 경우).
+  // 항상 DB(event_slots.opens_at)를 우선 쓰고, 조회 실패 시에만 아래 폴백을 쓴다.
+  const EV_OPEN_FALLBACK = new Date("2026-07-16T20:00:00+08:00");   // 1차 오픈 (세부 UTC+8)
   const EVENTS = [
     {
       key: "mango", card: "mango-card", grid: "mango-dates", my: "mango-my", stat: "mango-status",
-      what: "🥭 망고 공장 견학", cap: 25,
+      what: "🥭 망고 공장 견학", cap: 35,
       slots: [
         { date: "2026-07-22", label: "7월 22일 (수)" },
         { date: "2026-07-23", label: "7월 23일 (목)" },
@@ -1200,9 +1203,21 @@
     return "신청 실패 — 다시 시도해 주세요.";
   }
 
+  // 슬롯 오픈 시각 표기: 오늘이면 "오후 8시", 다른 날이면 "7/17 오후 8시"
+  function fmtOpenTime(d) {
+    const h = d.getHours(), m = d.getMinutes();
+    const ap = h < 12 ? "오전" : "오후";
+    const h12 = h % 12 === 0 ? 12 : h % 12;
+    const sameDay = d.toDateString() === new Date().toDateString();
+    return `${sameDay ? "" : `${d.getMonth() + 1}/${d.getDate()} `}${ap} ${h12}시${m ? ` ${m}분` : ""}`;
+  }
+  const openOf = (opens, date) => {
+    const v = opens && opens[date];
+    return v ? new Date(v) : EV_OPEN_FALLBACK;
+  };
+
   async function onEventClick(e, ev, rec) {
     const b = e.target.closest(".hd-btn[data-act]"); if (!b) return;
-    if (new Date() < EV_OPEN) return;   // 오픈 전 차단(서버도 막지만 UI에서 먼저)
     const stat = $(ev.stat);
     if (b.dataset.act === "cancel") {
       if (!confirm(`${ev.what} 신청을 취소하시겠어요?`)) return;
@@ -1213,6 +1228,7 @@
       await paintEvent(ev, rec);
     } else if (b.dataset.act === "reg") {
       const date = b.dataset.date, slot = ev.slots.find((s) => s.date === date);
+      if (b.disabled) return;   // 오픈 전 슬롯은 버튼이 비활성(서버도 EVENT_NOT_OPEN 으로 막음)
       const isChange = b.classList.contains("change");   // 이미 신청 있음 → 날짜 변경
       if (!isChange && !confirm(ev.confirm)) return;
       b.disabled = true;
@@ -1225,31 +1241,34 @@
   }
 
   async function paintEvent(ev, rec) {
-    let counts = {}, mine = null, caps = {};
+    let counts = {}, mine = null, caps = {}, opens = {};
     try {
       const s = await window.lcicEvents.state(ev.key, evIds[ev.key]);
-      counts = s.counts; mine = s.mine; caps = s.caps;
+      counts = s.counts; mine = s.mine; caps = s.caps; opens = s.opens;
     } catch (_) { /* 읽기 실패해도 카드는 표시 */ }
-    const preopen = new Date() < EV_OPEN;
     const mineSlot = ev.slots.find((s) => s.date === mine);
 
+    // 이미 신청한 학생은 오픈 대기 중에도 본인 신청 상태가 보여야 한다(1차 신청자 보호)
     const my = $(ev.my);
-    if (mine && mineSlot && !preopen) {
+    if (mine && mineSlot) {
       my.className = "hop-my";
       my.innerHTML = `✅ <b>${mineSlot.label}</b> 신청되었습니다.`;
     } else { my.className = "hop-my none"; my.innerHTML = ""; }
 
     $(ev.grid).innerHTML = ev.slots.map((s) => {
       const cap = caps[s.date] || ev.cap;
+      const openAt = openOf(opens, s.date);
+      const preopen = new Date() < openAt;          // 슬롯마다 오픈 시각이 다를 수 있음
       const n = counts[s.date] || 0, rest = Math.max(0, cap - n);
       const isMine = mine === s.date, full = rest <= 0 && !isMine;
       let btn;
-      if (preopen) btn = `<button class="hd-btn" disabled>오후 8시 오픈</button>`;
-      else if (isMine) btn = `<button class="hd-btn cancel" data-act="cancel">신청 취소</button>`;
+      // 취소는 오픈 대기와 무관하게 항상 가능(서버도 삭제는 막지 않음)
+      if (isMine) btn = `<button class="hd-btn cancel" data-act="cancel">신청 취소</button>`;
+      else if (preopen) btn = `<button class="hd-btn" disabled>${fmtOpenTime(openAt)} 오픈</button>`;
       else if (full) btn = `<button class="hd-btn" disabled>자리 마감</button>`;
       else btn = `<button class="hd-btn ${mine ? "change" : ""}" data-act="reg" data-date="${s.date}">${mine ? "이 날짜로 변경" : (ev.slots.length > 1 ? "이 날짜로 신청" : "신청하기")}</button>`;
       const cnt = preopen
-        ? `정원 ${cap}명 · 🔓 오후 8시 오픈`
+        ? `신청 <b>${n}</b> / ${cap}명 · 🔓 ${fmtOpenTime(openAt)} 오픈`
         : `신청 <b>${n}</b> / ${cap}명 · 남은 자리 <span class="rest ${rest === 0 ? "zero" : ""}">${rest}</span>`;
       return `<div class="hop-date ${isMine ? "mine" : ""} ${full ? "full" : ""}">
         <div class="hd-title">${isMine ? "✅ " : ""}${s.label}</div>
@@ -1421,10 +1440,10 @@ window.lcicMsm = {
 // 🎟 선착순 이벤트(🥭 망고 공장 · 🏛 주청사) → event_signups + event_slots.
 // 정원·오픈시각은 event_slots 의 값을 DB 트리거가 강제 → 클라이언트를 우회해도 초과/조기신청 불가.
 window.lcicEvents = {
-  async state(eventKey, id) {   // { counts: {date: n}, mine: date|null, caps: {date: cap} }
+  async state(eventKey, id) {   // { counts: {date:n}, mine: date|null, caps: {date:cap}, opens: {date:opens_at} }
     const [sig, slots] = await Promise.all([
       supabase.from("event_signups").select("id,slot_date").eq("event_key", eventKey),
-      supabase.from("event_slots").select("slot_date,cap").eq("event_key", eventKey),
+      supabase.from("event_slots").select("slot_date,cap,opens_at").eq("event_key", eventKey),
     ]);
     if (sig.error) throw sig.error;
     const counts = {}; let mine = null;
@@ -1432,9 +1451,12 @@ window.lcicEvents = {
       counts[r.slot_date] = (counts[r.slot_date] || 0) + 1;
       if (r.id === id) mine = r.slot_date;
     }
-    const caps = {};
-    for (const s of (slots.data || [])) caps[s.slot_date] = s.cap;   // 슬롯 조회 실패해도 카드는 표시(폴백 정원 사용)
-    return { counts, mine, caps };
+    const caps = {}, opens = {};
+    for (const s of (slots.data || [])) {   // 슬롯 조회 실패해도 카드는 표시(폴백 정원·오픈시각 사용)
+      caps[s.slot_date] = s.cap;
+      opens[s.slot_date] = s.opens_at;
+    }
+    return { counts, mine, caps, opens };
   },
   async register(eventKey, id, name, university, slot_date) {
     try {
