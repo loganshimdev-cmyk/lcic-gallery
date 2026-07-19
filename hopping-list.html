@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>호핑 명단 · LCIC</title>
+<link rel="icon" type="image/png" href="assets/brand/lcic-logo.png">
+<script src="assets/background.js?v=8"></script>
+<link rel="stylesheet" href="assets/shared.css?v=13">
+<style>
+  .gate { max-width: 400px; margin: 90px auto 0; padding: 36px 32px; background: var(--bg-elev);
+    border: 1px solid var(--hairline); border-radius: 24px; box-shadow: var(--shadow-lg); }
+  .gate h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 6px; }
+  .gate p { color: var(--text-dim); font-size: .85rem; margin-bottom: 20px; }
+  .gate input { width: 100%; margin-bottom: 12px; }
+
+  .wrap { max-width: 640px; margin: 0 auto; padding: 24px 14px 100px; }
+  .head h1 { font-size: 1.35rem; font-weight: 800; letter-spacing: -.02em; }
+  .head .meta { color: var(--text-dim); font-size: .82rem; margin-top: 3px; }
+
+  .count-bar { display: flex; gap: 8px; flex-wrap: wrap; margin: 14px 0 10px; }
+  .count-bar .cbx { display: inline-flex; align-items: center; gap: 6px; padding: 8px 13px; border-radius: 12px;
+    background: var(--bg-elev); border: 1px solid var(--hairline); font-size: .84rem; font-weight: 700; box-shadow: var(--shadow-sm); }
+  .count-bar .cbx .n { font-weight: 800; font-size: 1.08rem; color: var(--accent-deep); }
+  .count-bar .cbx.d .n { color: #15803d; }
+  .count-bar .cbx.c .n { color: #b45309; }
+  .hint { font-size: .78rem; color: var(--text-faint); margin: 0 0 14px; line-height: 1.5; }
+  .search { margin: 0 0 14px; }
+  .search input { width: 100%; max-width: 300px; }
+
+  .rows { display: flex; flex-direction: column; gap: 8px; }
+  .stu { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px;
+    background: var(--bg-elev); border: 1px solid var(--hairline); box-shadow: var(--shadow-sm);
+    cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent;
+    transition: background .12s, border-color .12s; }
+  .stu .no { width: 22px; text-align: right; font-size: .72rem; font-weight: 700; color: var(--text-faint); flex: none; }
+  .stu .info { flex: 1; min-width: 0; }
+  .stu .kr { font-size: 1.02rem; font-weight: 800; color: var(--text); }
+  .stu .kr .uni { font-size: .68rem; font-weight: 700; color: var(--text-faint); margin-left: 5px; }
+  .stu .sub { font-size: .76rem; color: var(--text-dim); margin-top: 2px; letter-spacing: .01em; }
+  .stu .sub b { font-weight: 700; color: var(--text-dim); }
+  .stu .mark { flex: none; font-size: .72rem; font-weight: 800; color: #fff; padding: 3px 9px; border-radius: 8px; display: none; }
+
+  .stu[data-st="paid"] { background: #dcfce7; border-color: #86efac; }
+  .stu[data-st="paid"] .kr { color: #15803d; }
+  .stu[data-st="paid"] .mark { display: inline-block; background: #16a34a; }
+  .stu[data-st="change"] { background: #fef3c7; border-color: #fcd34d; }
+  .stu[data-st="change"] .kr { color: #b45309; }
+  .stu[data-st="change"] .mark { display: inline-block; background: #f59e0b; }
+
+  .stu .amt-box { display: none; flex: none; align-items: center; gap: 4px; }
+  .stu[data-st="change"] .amt-box { display: inline-flex; }
+  .stu .amt { width: 84px; padding: 7px 9px; border: 1px solid #fcd34d; border-radius: 9px;
+    font-size: .88rem; font-weight: 700; color: #b45309; background: #fffbeb; text-align: right;
+    font-family: inherit; }
+  .stu .amt:focus { outline: 2px solid #f59e0b; outline-offset: 0; }
+  .stu .amt::placeholder { color: #d8b25c; font-weight: 500; }
+
+  .legend { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; font-size: .76rem; color: var(--text-dim); margin: 0 0 14px; }
+  .legend .lp { display: inline-flex; align-items: center; gap: 6px; }
+  .legend .dot { width: 12px; height: 12px; border-radius: 4px; display: inline-block; }
+  .legend .dot.d { background: #16a34a; } .legend .dot.c { background: #f59e0b; }
+  .empty { color: var(--text-faint); text-align: center; padding: 40px 20px; }
+</style>
+</head>
+<body>
+
+<div id="gate-view">
+  <div class="gate">
+    <h2>🚤 호핑 명단</h2>
+    <p>담당자 전용입니다. 비밀번호를 입력하세요.</p>
+    <form id="gate-form">
+      <input class="input" id="pw" type="password" autocomplete="current-password" placeholder="비밀번호" required>
+      <button class="btn-primary" id="gate-btn" type="submit" style="width:100%;">열기</button>
+    </form>
+  </div>
+</div>
+
+<main id="app-view" class="wrap hidden">
+  <div class="head">
+    <h1>🚤 호핑 명단</h1>
+    <div class="meta">한국이름 · 영어이름 · 생년월일 · 납부 체크</div>
+  </div>
+  <div class="count-bar" id="counts"></div>
+  <div class="hint"><b>이름을 누르면</b> 납부완료 → 잔돈(금액 입력) → 해제 순으로 바뀝니다. 체크 상태는 이 기기에 저장됩니다.</div>
+  <div class="legend">
+    <span class="lp"><span class="dot d"></span> <b>납부완료</b></span>
+    <span class="lp"><span class="dot c"></span> <b>잔돈</b> 금액 입력</span>
+  </div>
+  <div class="search"><input class="input" id="q" type="search" placeholder="이름 검색"></div>
+  <div class="rows" id="list"></div>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+const PW = "8686";
+const LS_KEY = "hopping-list-check-v1";
+
+// id는 저장 키 — 이름을 바꾸더라도 id는 유지할 것
+const STUDENTS = [
+  { id: "kimdoha",      kr: "김도하",   en: "KIM DOHA",           bd: "2005-04-20" },
+  { id: "hongsujeong",  kr: "홍수정",   en: "HONG SUJEONG",       bd: "2006-10-31" },
+  { id: "leejiyoon",    kr: "이지윤",   en: "LEE JIYOON",         bd: "2004-10-28" },
+  { id: "kimsoo",       kr: "김수",     en: "KIM SOO",            bd: "2006-12-03" },
+  { id: "kimjeonghui",  kr: "김정희",   en: "KIM JEONGHUI",       bd: "2007-04-03" },
+  { id: "parkkyungmin", kr: "박경민",   en: "PARK KYUNGMIN",      bd: "2007-11-09" },
+  { id: "parkjihoo",    kr: "박지후",   en: "PARK JIHOO",         bd: "2007-07-06" },
+  { id: "wiyouna",      kr: "위유나",   en: "WI YOUNA",           bd: "2004-04-14" },
+  { id: "kanghansaem",  kr: "강한샘",   en: "KANG HANSAEM",       bd: "2007-05-27" },
+  { id: "kimyongsung",  kr: "김용성",   en: "KIM YONGSUNG",       bd: "2007-02-03" },
+  { id: "jeongjiu",     kr: "정지우",   en: "JEONG JIU",          bd: "2008-03-18" },
+  { id: "kimyeeun",     kr: "김예은",   en: "KIM YEEUN",          bd: "2007-10-14" },
+  { id: "kimyongkyung", kr: "김용경",   en: "KIM YONGKYUNG",      bd: "2007-04-06" },
+  { id: "moonchaeeun",  kr: "문채은",   en: "MOON CHAEEUN",       bd: "2007-06-13" },
+  { id: "leechangyu",   kr: "이찬규",   en: "LEE CHANGYU",        bd: "2007-10-07" },
+  { id: "kimjoonsung",  kr: "김준성",   en: "KIM JOONSUNG",       bd: "2006-05-04" },
+  { id: "hanseunghoon", kr: "한승훈",   en: "HAN SEUNGHOON",      bd: "2002-09-12" },
+  { id: "kimtaekyung",  kr: "김태경",   en: "KIM TAEKYUNG",       bd: "2006-04-17", uni: "국민대" },
+  { id: "dulguun",      kr: "출룬바트둘궁", en: "CHULUUNBAT DULGUUN", bd: "2004-10-05", uni: "국민대" },
+  { id: "kimminseong",  kr: "김민성",   en: "KIM MINSEONG",       bd: "2006-01-02", uni: "국민대" },
+  { id: "hwangseungmin",kr: "황승민",   en: "HWANG SEUNGMIN",     bd: "2007-07-24" },
+  { id: "kimminseo-km", kr: "김민서",   en: "KIM MINSEO",         bd: "2003-09-22", uni: "국민대" },
+  { id: "moonhuiwon",   kr: "문희원",   en: "MOON HUIWON",        bd: "2004-06-11" },
+  { id: "leeara",       kr: "이아라",   en: "LEE ARA",            bd: "2003-02-25" },
+  { id: "hamyujeong",   kr: "함유정",   en: "HAM YUJEONG",        bd: "2000-05-16", uni: "호남대" },
+];
+
+let STATE = {};
+try { STATE = JSON.parse(localStorage.getItem(LS_KEY) || "{}"); } catch (_) { STATE = {}; }
+function save() { localStorage.setItem(LS_KEY, JSON.stringify(STATE)); }
+
+$("gate-form").addEventListener("submit", (e) => {
+  e.preventDefault();
+  if ($("pw").value !== PW) { $("pw").value = ""; $("pw").placeholder = "비밀번호가 올바르지 않습니다"; return; }
+  sessionStorage.setItem("hopping-list-ok", "1");
+  open_();
+});
+if (sessionStorage.getItem("hopping-list-ok") === "1") open_();
+function open_() {
+  $("gate-view").classList.add("hidden");
+  $("app-view").classList.remove("hidden");
+  render();
+}
+
+$("q").addEventListener("input", render);
+
+// 이름 클릭 → 없음 → 납부완료 → 잔돈(금액 입력) → 없음
+$("list").addEventListener("click", (e) => {
+  if (e.target.closest(".amt")) return;              // 금액 입력칸 클릭은 상태 유지
+  const row = e.target.closest(".stu"); if (!row) return;
+  const id = row.dataset.id;
+  const cur = (STATE[id] && STATE[id].st) || null;
+  const CYCLE = [null, "paid", "change"];
+  const next = CYCLE[(CYCLE.indexOf(cur) + 1) % 3];
+  if (next === null) { delete STATE[id]; }           // 해제 시 금액도 초기화
+  else {
+    STATE[id] = STATE[id] || {};
+    STATE[id].st = next;
+    if (next === "paid") delete STATE[id].amt;
+  }
+  save();
+  render();
+  if (next === "change") {
+    const inp = $("list").querySelector(`.stu[data-id="${id}"] .amt`);
+    if (inp) inp.focus();
+  }
+});
+
+$("list").addEventListener("input", (e) => {
+  const inp = e.target.closest(".amt"); if (!inp) return;
+  const row = inp.closest(".stu"); if (!row) return;
+  const id = row.dataset.id;
+  STATE[id] = STATE[id] || { st: "change" };
+  STATE[id].amt = inp.value;
+  save();
+  renderCounts();
+});
+
+function renderCounts() {
+  const total = STUDENTS.length;
+  const paid = STUDENTS.filter((s) => STATE[s.id] && STATE[s.id].st === "paid").length;
+  const chg = STUDENTS.filter((s) => STATE[s.id] && STATE[s.id].st === "change").length;
+  $("counts").innerHTML =
+    `<span class="cbx">전체 <span class="n">${total}</span>명</span>` +
+    `<span class="cbx d">납부완료 <span class="n">${paid}</span></span>` +
+    `<span class="cbx c">잔돈 <span class="n">${chg}</span></span>` +
+    `<span class="cbx">미체크 <span class="n" style="color:var(--text-dim)">${total - paid - chg}</span></span>`;
+}
+
+function render() {
+  renderCounts();
+  const q = ($("q").value || "").trim().toLowerCase();
+  const shown = STUDENTS.filter((s) =>
+    !q || s.kr.includes(q) || s.en.toLowerCase().includes(q) || s.bd.includes(q));
+  if (!shown.length) { $("list").innerHTML = `<div class="empty">검색 결과가 없습니다.</div>`; return; }
+  $("list").innerHTML = shown.map((s) => {
+    const st = (STATE[s.id] && STATE[s.id].st) || "";
+    const amt = (STATE[s.id] && STATE[s.id].amt) || "";
+    const idx = STUDENTS.indexOf(s) + 1;
+    const mark = st === "paid" ? "납부완료" : st === "change" ? "잔돈" : "";
+    return `<div class="stu" data-id="${esc(s.id)}" data-st="${st}">
+      <span class="no">${idx}</span>
+      <span class="info">
+        <span class="kr">${esc(s.kr)}${s.uni ? `<span class="uni">${esc(s.uni)}</span>` : ""}</span>
+        <div class="sub">${esc(s.en)} · <b>${esc(s.bd)}</b></div>
+      </span>
+      <span class="amt-box"><input class="amt" type="text" inputmode="decimal" placeholder="잔돈 금액" value="${esc(amt)}"></span>
+      <span class="mark">${mark}</span>
+    </div>`;
+  }).join("");
+}
+</script>
+</body>
+</html>
