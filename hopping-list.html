@@ -40,6 +40,9 @@
   .stu .kr .uni { font-size: .68rem; font-weight: 700; color: var(--text-faint); margin-left: 5px; }
   .stu .sub { font-size: .76rem; color: var(--text-dim); margin-top: 2px; letter-spacing: .01em; }
   .stu .sub b { font-weight: 700; color: var(--text-dim); }
+  .stu .sub .fee { color: #0369a1; }
+  .stu .kr .dive { font-size: .64rem; font-weight: 800; color: #0369a1; background: #e0f2fe;
+    border: 1px solid #bae6fd; padding: 1px 6px; border-radius: 6px; margin-left: 5px; vertical-align: 2px; }
   .stu .mark { flex: none; font-size: .72rem; font-weight: 800; color: #fff; padding: 3px 9px; border-radius: 8px; display: none; }
 
   .stu[data-st="paid"] { background: #dcfce7; border-color: #86efac; }
@@ -80,7 +83,7 @@
 <main id="app-view" class="wrap hidden">
   <div class="head">
     <h1>🚤 호핑 명단</h1>
-    <div class="meta">한국이름 · 영어이름 · 생년월일 · 납부 체크</div>
+    <div class="meta">기본 3,300 · 다이빙 +1,100 · 이름 탭으로 납부 체크</div>
   </div>
   <div class="count-bar" id="counts"></div>
   <div class="hint"><b>이름을 누르면</b> 납부완료 → 잔돈(금액 입력) → 해제 순으로 바뀝니다. 체크 상태는 이 기기에 저장됩니다.</div>
@@ -98,6 +101,10 @@ const esc = (s) => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</
 
 const PW = "8686";
 const LS_KEY = "hopping-list-check-v1";
+const FEE_BASE = 3300;   // 전원 공통
+const FEE_DIVE = 1100;   // 다이빙 참가자 추가
+const fee = (s) => FEE_BASE + (s.dive ? FEE_DIVE : 0);
+const fmt = (n) => n.toLocaleString("en-US");
 
 // id는 저장 키 — 이름을 바꾸더라도 id는 유지할 것
 const STUDENTS = [
@@ -106,25 +113,25 @@ const STUDENTS = [
   { id: "leejiyoon",    kr: "이지윤",   en: "LEE JIYOON",         bd: "2004-10-28" },
   { id: "kimsoo",       kr: "김수",     en: "KIM SOO",            bd: "2006-12-03" },
   { id: "kimjeonghui",  kr: "김정희",   en: "KIM JEONGHUI",       bd: "2007-04-03" },
-  { id: "parkkyungmin", kr: "박경민",   en: "PARK KYUNGMIN",      bd: "2007-11-09" },
+  { id: "parkkyungmin", kr: "박경민",   en: "PARK KYUNGMIN",      bd: "2007-11-09", dive: true },
   { id: "parkjihoo",    kr: "박지후",   en: "PARK JIHOO",         bd: "2007-07-06" },
-  { id: "wiyouna",      kr: "위유나",   en: "WI YOUNA",           bd: "2004-04-14" },
-  { id: "kanghansaem",  kr: "강한샘",   en: "KANG HANSAEM",       bd: "2007-05-27" },
-  { id: "kimyongsung",  kr: "김용성",   en: "KIM YONGSUNG",       bd: "2007-02-03" },
+  { id: "wiyouna",      kr: "위유나",   en: "WI YOUNA",           bd: "2004-04-14", dive: true },
+  { id: "kanghansaem",  kr: "강한샘",   en: "KANG HANSAEM",       bd: "2007-05-27", dive: true },
+  { id: "kimyongsung",  kr: "김용성",   en: "KIM YONGSUNG",       bd: "2007-02-03", dive: true },
   { id: "jeongjiu",     kr: "정지우",   en: "JEONG JIU",          bd: "2008-03-18" },
   { id: "kimyeeun",     kr: "김예은",   en: "KIM YEEUN",          bd: "2007-10-14" },
   { id: "kimyongkyung", kr: "김용경",   en: "KIM YONGKYUNG",      bd: "2007-04-06" },
   { id: "moonchaeeun",  kr: "문채은",   en: "MOON CHAEEUN",       bd: "2007-06-13" },
   { id: "leechangyu",   kr: "이찬규",   en: "LEE CHANGYU",        bd: "2007-10-07" },
   { id: "kimjoonsung",  kr: "김준성",   en: "KIM JOONSUNG",       bd: "2006-05-04" },
-  { id: "hanseunghoon", kr: "한승훈",   en: "HAN SEUNGHOON",      bd: "2002-09-12" },
-  { id: "kimtaekyung",  kr: "김태경",   en: "KIM TAEKYUNG",       bd: "2006-04-17", uni: "국민대" },
+  { id: "hanseunghoon", kr: "한승훈",   en: "HAN SEUNGHOON",      bd: "2002-09-12", dive: true },
+  { id: "kimtaekyung",  kr: "김태경",   en: "KIM TAEKYUNG",       bd: "2006-04-17", uni: "국민대", dive: true },
   { id: "dulguun",      kr: "출룬바트둘궁", en: "CHULUUNBAT DULGUUN", bd: "2004-10-05", uni: "국민대" },
   { id: "kimminseong",  kr: "김민성",   en: "KIM MINSEONG",       bd: "2006-01-02", uni: "국민대" },
-  { id: "hwangseungmin",kr: "황승민",   en: "HWANG SEUNGMIN",     bd: "2007-07-24" },
+  { id: "hwangseungmin",kr: "황승민",   en: "HWANG SEUNGMIN",     bd: "2007-07-24", dive: true },
   { id: "kimminseo-km", kr: "김민서",   en: "KIM MINSEO",         bd: "2003-09-22", uni: "국민대" },
   { id: "moonhuiwon",   kr: "문희원",   en: "MOON HUIWON",        bd: "2004-06-11" },
-  { id: "leeara",       kr: "이아라",   en: "LEE ARA",            bd: "2003-02-25" },
+  { id: "leeara",       kr: "이아라",   en: "LEE ARA",            bd: "2003-02-25", dive: true },
   { id: "hamyujeong",   kr: "함유정",   en: "HAM YUJEONG",        bd: "2000-05-16", uni: "호남대" },
 ];
 
@@ -181,13 +188,20 @@ $("list").addEventListener("input", (e) => {
 
 function renderCounts() {
   const total = STUDENTS.length;
+  const dive = STUDENTS.filter((s) => s.dive).length;
   const paid = STUDENTS.filter((s) => STATE[s.id] && STATE[s.id].st === "paid").length;
   const chg = STUDENTS.filter((s) => STATE[s.id] && STATE[s.id].st === "change").length;
+  const totalAmt = STUDENTS.reduce((a, s) => a + fee(s), 0);
+  const paidAmt = STUDENTS.filter((s) => STATE[s.id] && (STATE[s.id].st === "paid" || STATE[s.id].st === "change"))
+    .reduce((a, s) => a + fee(s), 0);
   $("counts").innerHTML =
     `<span class="cbx">전체 <span class="n">${total}</span>명</span>` +
+    `<span class="cbx">다이빙 <span class="n" style="color:#0369a1">${dive}</span>명</span>` +
     `<span class="cbx d">납부완료 <span class="n">${paid}</span></span>` +
     `<span class="cbx c">잔돈 <span class="n">${chg}</span></span>` +
-    `<span class="cbx">미체크 <span class="n" style="color:var(--text-dim)">${total - paid - chg}</span></span>`;
+    `<span class="cbx">미체크 <span class="n" style="color:var(--text-dim)">${total - paid - chg}</span></span>` +
+    `<span class="cbx">총 금액 <span class="n">${fmt(totalAmt)}</span></span>` +
+    `<span class="cbx d">걷은 금액 <span class="n">${fmt(paidAmt)}</span></span>`;
 }
 
 function render() {
@@ -204,8 +218,8 @@ function render() {
     return `<div class="stu" data-id="${esc(s.id)}" data-st="${st}">
       <span class="no">${idx}</span>
       <span class="info">
-        <span class="kr">${esc(s.kr)}${s.uni ? `<span class="uni">${esc(s.uni)}</span>` : ""}</span>
-        <div class="sub">${esc(s.en)} · <b>${esc(s.bd)}</b></div>
+        <span class="kr">${esc(s.kr)}${s.uni ? `<span class="uni">${esc(s.uni)}</span>` : ""}${s.dive ? `<span class="dive">다이빙</span>` : ""}</span>
+        <div class="sub">${esc(s.en)} · <b>${esc(s.bd)}</b> · <b class="fee">${fmt(fee(s))}</b></div>
       </span>
       <span class="amt-box"><input class="amt" type="text" inputmode="decimal" placeholder="잔돈 금액" value="${esc(amt)}"></span>
       <span class="mark">${mark}</span>
