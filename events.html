@@ -38,11 +38,18 @@
 
   .names { display: flex; flex-wrap: wrap; gap: 8px; }
   .nm { display: inline-flex; align-items: baseline; gap: 6px; padding: 8px 13px; border-radius: 11px;
-    background: var(--accent-tint); border: 1px solid var(--hairline); font-size: .93rem; }
+    background: var(--accent-tint); border: 1px solid var(--hairline); font-size: .93rem;
+    cursor: pointer; user-select: none; transition: background .15s, border-color .15s; }
+  .nm:hover { border-color: var(--accent); }
   .nm .no { font-size: .7rem; color: var(--text-faint); font-weight: 700; }
   .nm b { font-weight: 700; color: var(--accent-deep); }
   .nm .uni { font-size: .68rem; color: var(--text-faint); }
   .nm.hit { box-shadow: 0 0 0 2px var(--accent); }
+  .nm .ck { display: none; font-size: .8rem; font-weight: 800; color: #059669; }
+  .nm.att { background: rgba(5, 150, 105, .12); border-color: rgba(5, 150, 105, .45); }
+  .nm.att b { color: #047857; }
+  .nm.att .ck { display: inline; }
+  .att-count { font-size: .84rem; font-weight: 700; color: #047857; }
   .none { color: var(--text-faint); font-size: .86rem; padding: 4px 2px; }
   .empty { color: var(--text-faint); text-align: center; padding: 40px 20px; line-height: 1.6; }
 </style>
@@ -63,7 +70,8 @@
 <main id="app-view" class="wrap hidden">
   <div class="head">
     <h1>🎟 이벤트 신청자</h1>
-    <div class="meta">학생이 status.html(학생 안내)에서 신청/취소합니다. 신청 순으로 정렬 · 15초마다 자동 갱신.</div>
+    <div class="meta">학생이 status.html(학생 안내)에서 신청/취소합니다. 신청 순으로 정렬 · 15초마다 자동 갱신.<br>
+      이름을 클릭하면 <b style="color:#047857;">출석 ✓</b> 체크됩니다(다시 클릭하면 해제 · 모든 담당자에게 공유).</div>
   </div>
   <div class="search"><input class="input" id="q" type="search" placeholder="이름 검색"></div>
   <div id="list"></div>
@@ -107,8 +115,16 @@ $("gate-form").addEventListener("submit", async (e) => {
   setInterval(sync, 15000);
 });
 
+// attended 컬럼(scripts/event-attended-setup.sql)이 아직 없어도 명단은 뜨도록 폴백
+let HAS_ATT = true;
 async function fetchRows() {
-  const { data, error } = await supabase.from("event_signups").select("event_key,slot_date,name,university,created_at");
+  if (HAS_ATT) {
+    const { data, error } = await supabase.from("event_signups").select("event_key,slot_date,id,name,university,created_at,attended");
+    if (!error) return data || [];
+    if (/attended/i.test(error.message || "")) HAS_ATT = false;
+    else throw error;
+  }
+  const { data, error } = await supabase.from("event_signups").select("event_key,slot_date,id,name,university,created_at");
   if (error) throw error;
   return data || [];
 }
@@ -136,19 +152,21 @@ function render() {
         .filter((r) => r.slot_date === slot.date)
         .sort((a, b) => String(a.created_at || "").localeCompare(String(b.created_at || "")));   // 신청 순
       const n = rows.length, rest = Math.max(0, slot.cap - n);
+      const att = rows.filter((r) => r.attended).length;
       const shown = rows.filter((r) => !q || String(r.name || "").includes(q));
       const names = n === 0
         ? `<div class="none">아직 신청자가 없습니다.</div>`
         : (shown.length
             ? `<div class="names">${shown.map((r, i) => {
                 const idx = rows.indexOf(r) + 1;
-                return `<span class="nm${q ? " hit" : ""}"><span class="no">${idx}</span><b>${esc(r.name)}</b>${r.university ? `<span class="uni">${esc(shortUni(r.university))}</span>` : ""}</span>`;
+                return `<span class="nm${q ? " hit" : ""}${r.attended ? " att" : ""}" data-key="${esc(r.event_key)}" data-id="${esc(r.id)}" title="클릭하여 출석 체크"><span class="no">${idx}</span><b>${esc(r.name)}</b>${r.university ? `<span class="uni">${esc(shortUni(r.university))}</span>` : ""}<span class="ck">✓</span></span>`;
               }).join("")}</div>`
             : `<div class="none">검색 결과 없음</div>`);
       return `<div class="date-block">
         <div class="date-head">
           <span class="d">${esc(slot.label)}</span>
           <span class="c ${n === 0 ? "zero" : ""}">신청 <span class="n">${n}</span> / ${slot.cap}명 · 남은 자리 ${rest}</span>
+          ${n > 0 ? `<span class="att-count">✓ 출석 ${att} / ${n}</span>` : ""}
         </div>
         <div class="bar"><div class="fill" style="width:${Math.min(100, Math.round(n / slot.cap * 100))}%"></div></div>
         ${names}
@@ -164,6 +182,23 @@ function render() {
 
   $("list").innerHTML = html;
 }
+
+// 이름 클릭 → 출석 토글 (Supabase 공유 저장 · 낙관적 반영 후 실패 시 되돌림)
+$("list").addEventListener("click", async (e) => {
+  const chip = e.target.closest(".nm[data-id]");
+  if (!chip) return;
+  if (!HAS_ATT) { showToast("출석 저장 컬럼이 없습니다. scripts/event-attended-setup.sql을 Supabase에서 실행하세요.", "error"); return; }
+  const key = chip.dataset.key, id = chip.dataset.id;
+  const row = ROWS.find((r) => r.event_key === key && r.id === id);
+  if (!row) return;
+  const next = !row.attended;
+  row.attended = next; render();
+  const { error } = await supabase.from("event_signups").update({ attended: next }).eq("event_key", key).eq("id", id);
+  if (error) {
+    row.attended = !next; render();
+    showToast(`출석 저장 실패: ${error.message || "네트워크 오류"}`, "error");
+  }
+});
 
 function shortUni(u) {
   return String(u || "").replace(/\s*\(.*$/, "")
