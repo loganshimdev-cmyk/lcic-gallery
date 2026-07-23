@@ -467,29 +467,28 @@
   </section>
 
 
-  <!-- 🥭 7D 망고 공장 견학 신청 (날짜별 선착순 35명 = 1차 25 + 2차 10, 정원·오픈시각은 event_slots 가 정답) -->
+  <!-- 🥭 7D 망고 공장 견학 신청 (7/22~24 마감 · 7/27 추가 회차, 정원·오픈·마감은 event_slots 가 정답) -->
   <section class="card fade-up" id="mango-card" style="display:none">
     <div class="card-title">🥭 7D 망고 공장 견학</div>
     <p class="hop-desc">
       망고로 유명한 <b>7D 망고 공장</b>을 직접 방문해 생산 과정을 견학하고, <b>시식과 구매</b>도 할 수 있는 특별 프로그램이에요.
-      원하는 날짜 하나를 골라 신청해 주세요. 💙
     </p>
 
     <div class="msm-info">
-      <div class="mi"><span class="mi-k">📅 일시</span><span class="mi-v">7월 22일(수) · 23일(목) · 24일(금) 중 <b>택 1</b></span></div>
+      <div class="mi"><span class="mi-k">📅 추가 회차</span><span class="mi-v"><b>7월 27일 (월)</b> — 22·23·24일은 마감</span></div>
       <div class="mi"><span class="mi-k">🕧 출발</span><span class="mi-v">오후 12시 30분</span></div>
       <div class="mi"><span class="mi-k">📍 장소</span><span class="mi-v">7D Mango Factory (Cebu City)</span></div>
       <div class="mi"><span class="mi-k">⏱ 소요 시간</span><span class="mi-v">약 3시간 30분</span></div>
-      <div class="mi"><span class="mi-k">👥 정원</span><span class="mi-v">날짜별 선착순 35명</span></div>
+      <div class="mi"><span class="mi-k">👥 정원</span><span class="mi-v">27일 선착순 <b>25명</b></span></div>
       <div class="mi"><span class="mi-k">💰 비용</span><span class="mi-v">₱200 (현금)</span></div>
-      <div class="mi"><span class="mi-k">🔓 추가 오픈</span><span class="mi-v">7월 17일 (금) 오후 8시 · 날짜별 10자리</span></div>
+      <div class="mi"><span class="mi-k">🔓 신청 오픈</span><span class="mi-v"><b>7월 23일 (목) 오후 8시</b></span></div>
     </div>
 
     <div class="hop-my none" id="mango-my"></div>
     <div class="hop-dates" id="mango-dates"></div>
-    <div class="ev-note">🔓 <b>추가 좌석이 열립니다!</b> 1차 신청(25명)이 모두 마감되어 <b>날짜별 10자리씩</b> 더 준비했어요. <b>7월 17일(금) 오후 8시</b>에 열리며, 역시 <b>선착순</b>입니다. (1차에 신청하신 분은 그대로 유지돼요)</div>
-    <div class="ev-note">🙋 <b>한 사람당 한 날짜만</b> 신청할 수 있어요. 다른 날짜를 누르면 <b>기존 신청이 그 날짜로 옮겨집니다</b> (두 날짜를 같이 신청할 수는 없어요).</div>
-    <div class="ev-note">💳 <b>지금은 결제 없이 신청만 하시면 돼요.</b> 비용 <b>₱200</b>은 <b>7월 20일(월) 기숙사 1층</b>에서 받을 예정이에요.</div>
+    <div class="ev-note">🥭 <b>7월 27일(월) 추가 회차가 열려요!</b> <b>오늘(7/23) 오후 8시</b> 오픈 · 선착순 <b>25명</b>입니다.</div>
+    <div class="ev-note">🚫 <b>22·23·24일 회차에 신청했던 학생</b>은 이번 27일 회차에 <b>신청할 수 없어요</b>. 아직 참가하지 않은 학생에게 기회를 드리기 위해서예요. (기존 회차의 신청 변경·취소도 마감되었어요)</div>
+    <div class="ev-note">💳 <b>지금은 결제 없이 신청만 하시면 돼요.</b> 비용 <b>₱200</b> 납부 방법은 신청자에게 별도로 안내드릴게요.</div>
     <div class="hop-warn">📸 공장 내부는 <b>촬영이 제한</b>될 수 있어요. 견학 당일 <b>학생증과 마스크</b>를 꼭 챙겨 주세요.</div>
     <div class="hop-status" id="mango-status"></div>
   </section>
@@ -1167,8 +1166,9 @@
         { date: "2026-07-22", label: "7월 22일 (수)" },
         { date: "2026-07-23", label: "7월 23일 (목)" },
         { date: "2026-07-24", label: "7월 24일 (금)" },
+        { date: "2026-07-27", label: "7월 27일 (월)" },
       ],
-      confirm: "🥭 망고 공장 견학\n\n· 출발: 오후 12시 30분\n· 비용: ₱200 (7월 20일 월요일, 기숙사 1층에서 납부)\n· 한 사람당 한 날짜만 신청할 수 있어요.\n\n이 날짜로 신청할까요?",
+      confirm: "🥭 망고 공장 견학 (7월 27일 월요일)\n\n· 출발: 오후 12시 30분\n· 비용: ₱200 (납부 방법은 별도 안내)\n· 기존 22~24일 회차에 신청했던 학생은 참가할 수 없어요.\n\n신청할까요?",
     },
     {
       key: "capitol", card: "cap-card", grid: "cap-dates", my: "cap-my", stat: "cap-status",
@@ -1200,6 +1200,8 @@
     if (/EVENT_FULL/i.test(err))     return "죄송해요, 방금 자리가 찼어요. 다른 날짜를 선택해 주세요.";
     if (/EVENT_NOT_OPEN/i.test(err)) return "아직 신청 오픈 전이에요. 오후 8시에 다시 눌러 주세요.";
     if (/EVENT_CLOSED/i.test(err))   return "신청이 마감되었어요.";
+    if (/EVENT_LOCKED/i.test(err))   return "마감된 회차의 신청은 변경·취소할 수 없어요.";
+    if (/EVENT_SLOT_UNKNOWN/i.test(err)) return "아직 신청 준비 중이에요. 잠시 후 다시 시도해 주세요.";
     return "신청 실패 — 다시 시도해 주세요.";
   }
 
@@ -1214,6 +1216,11 @@
   const openOf = (opens, date) => {
     const v = opens && opens[date];
     return v ? new Date(v) : EV_OPEN_FALLBACK;
+  };
+  // 마감(closes_at 경과) 여부 — 마감된 회차는 신규 신청·날짜 변경·취소가 모두 잠긴다(서버 트리거도 동일하게 강제)
+  const closedOf = (closes, date) => {
+    const v = closes && closes[date];
+    return !!v && new Date() >= new Date(v);
   };
 
   async function onEventClick(e, ev, rec) {
@@ -1241,36 +1248,43 @@
   }
 
   async function paintEvent(ev, rec) {
-    let counts = {}, mine = null, caps = {}, opens = {};
+    let counts = {}, mine = null, caps = {}, opens = {}, closes = {};
     try {
       const s = await window.lcicEvents.state(ev.key, evIds[ev.key]);
-      counts = s.counts; mine = s.mine; caps = s.caps; opens = s.opens;
+      counts = s.counts; mine = s.mine; caps = s.caps; opens = s.opens; closes = s.closes;
     } catch (_) { /* 읽기 실패해도 카드는 표시 */ }
     const mineSlot = ev.slots.find((s) => s.date === mine);
+    const mineLocked = !!mine && closedOf(closes, mine);   // 마감된 회차의 참가자 → 다른 회차 신청 불가
 
     // 이미 신청한 학생은 오픈 대기 중에도 본인 신청 상태가 보여야 한다(1차 신청자 보호)
     const my = $(ev.my);
     if (mine && mineSlot) {
       my.className = "hop-my";
-      my.innerHTML = `✅ <b>${mineSlot.label}</b> 신청되었습니다.`;
+      my.innerHTML = `✅ <b>${mineSlot.label}</b> 신청되었습니다.${mineLocked ? " (확정 — 변경·취소 불가)" : ""}`;
     } else { my.className = "hop-my none"; my.innerHTML = ""; }
 
     $(ev.grid).innerHTML = ev.slots.map((s) => {
       const cap = caps[s.date] || ev.cap;
       const openAt = openOf(opens, s.date);
       const preopen = new Date() < openAt;          // 슬롯마다 오픈 시각이 다를 수 있음
+      const closed = closedOf(closes, s.date);      // 마감된 회차(잠금)
       const n = counts[s.date] || 0, rest = Math.max(0, cap - n);
       const isMine = mine === s.date, full = rest <= 0 && !isMine;
       let btn;
-      // 취소는 오픈 대기와 무관하게 항상 가능(서버도 삭제는 막지 않음)
-      if (isMine) btn = `<button class="hd-btn cancel" data-act="cancel">신청 취소</button>`;
+      if (isMine && closed) btn = `<button class="hd-btn" disabled>✅ 참가 확정</button>`;
+      // 취소는 오픈 대기와 무관하게 항상 가능(마감된 회차만 예외 — 서버 트리거도 삭제를 막음)
+      else if (isMine) btn = `<button class="hd-btn cancel" data-act="cancel">신청 취소</button>`;
+      else if (closed) btn = `<button class="hd-btn" disabled>신청 마감</button>`;
       else if (preopen) btn = `<button class="hd-btn" disabled>${fmtOpenTime(openAt)} 오픈</button>`;
+      else if (mineLocked) btn = `<button class="hd-btn" disabled>기존 참가자 신청 불가</button>`;
       else if (full) btn = `<button class="hd-btn" disabled>자리 마감</button>`;
       else btn = `<button class="hd-btn ${mine ? "change" : ""}" data-act="reg" data-date="${s.date}">${mine ? "이 날짜로 변경" : (ev.slots.length > 1 ? "이 날짜로 신청" : "신청하기")}</button>`;
-      const cnt = preopen
+      const cnt = closed
+        ? `신청 <b>${n}</b>명 · 마감`
+        : preopen
         ? `신청 <b>${n}</b> / ${cap}명 · 🔓 ${fmtOpenTime(openAt)} 오픈`
         : `신청 <b>${n}</b> / ${cap}명 · 남은 자리 <span class="rest ${rest === 0 ? "zero" : ""}">${rest}</span>`;
-      return `<div class="hop-date ${isMine ? "mine" : ""} ${full ? "full" : ""}">
+      return `<div class="hop-date ${isMine ? "mine" : ""} ${full || closed ? "full" : ""}">
         <div class="hd-title">${isMine ? "✅ " : ""}${s.label}</div>
         <div class="hd-count">${cnt}</div>
         ${btn}</div>`;
@@ -1440,10 +1454,10 @@ window.lcicMsm = {
 // 🎟 선착순 이벤트(🥭 망고 공장 · 🏛 주청사) → event_signups + event_slots.
 // 정원·오픈시각은 event_slots 의 값을 DB 트리거가 강제 → 클라이언트를 우회해도 초과/조기신청 불가.
 window.lcicEvents = {
-  async state(eventKey, id) {   // { counts: {date:n}, mine: date|null, caps: {date:cap}, opens: {date:opens_at} }
+  async state(eventKey, id) {   // { counts, mine, caps, opens, closes } — 모두 {date: 값} 맵
     const [sig, slots] = await Promise.all([
       supabase.from("event_signups").select("id,slot_date").eq("event_key", eventKey),
-      supabase.from("event_slots").select("slot_date,cap,opens_at").eq("event_key", eventKey),
+      supabase.from("event_slots").select("slot_date,cap,opens_at,closes_at").eq("event_key", eventKey),
     ]);
     if (sig.error) throw sig.error;
     const counts = {}; let mine = null;
@@ -1451,12 +1465,13 @@ window.lcicEvents = {
       counts[r.slot_date] = (counts[r.slot_date] || 0) + 1;
       if (r.id === id) mine = r.slot_date;
     }
-    const caps = {}, opens = {};
+    const caps = {}, opens = {}, closes = {};
     for (const s of (slots.data || [])) {   // 슬롯 조회 실패해도 카드는 표시(폴백 정원·오픈시각 사용)
       caps[s.slot_date] = s.cap;
       opens[s.slot_date] = s.opens_at;
+      closes[s.slot_date] = s.closes_at;
     }
-    return { counts, mine, caps, opens };
+    return { counts, mine, caps, opens, closes };
   },
   async register(eventKey, id, name, university, slot_date) {
     try {
