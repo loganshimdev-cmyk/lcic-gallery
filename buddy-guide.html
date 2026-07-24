@@ -69,6 +69,8 @@
 
   .bg-mail { color: var(--accent-hover); font-weight: 700; text-decoration: none; }
   .bg-mail:hover { text-decoration: underline; }
+  .bg-card p a, .bg-steps a { color: var(--accent-hover); font-weight: 700; text-decoration: none; }
+  .bg-card p a:hover, .bg-steps a:hover { text-decoration: underline; }
 
   /* Screenshots from the actual system */
   .bg-shot { margin: 18px 0 2px; text-align: center; }
@@ -177,8 +179,8 @@
   <!-- What is it -->
   <section class="bg-card fade-up">
     <h2><iconify-icon icon="solar:users-group-rounded-bold-duotone" style="color:var(--accent-hover)"></iconify-icon> <span data-i18n-en="What is a Buddy Session?">버디 세션이란?</span></h2>
-    <p style="color:var(--text-dim); line-height:1.7; margin:0;" data-i18n-en="A buddy session pairs you (international student) with a local LCIC student to practice English, make friends, and learn about local culture &mdash; 50 minutes per session. You book the sessions yourself in the Student System.">
-      버디 세션은 <b>나(국제 학생)</b>와 <b>현지 LCIC 학생</b>을 짝지어 영어를 연습하고, 친구를 사귀고, 현지 문화를 배우는 활동입니다 &mdash; 한 세션 50분. 예약은 <b>Student System에서 직접</b> 합니다.
+    <p style="color:var(--text-dim); line-height:1.7; margin:0;" data-i18n-en="A buddy session pairs you (international student) with a local LCIC student to practice English, make friends, and learn about local culture &mdash; 50 minutes per session. You book the sessions yourself in the <a href='https://lcic-students-system.com/login' target='_blank' rel='noopener'>Student System</a>.">
+      버디 세션은 <b>나(국제 학생)</b>와 <b>현지 LCIC 학생</b>을 짝지어 영어를 연습하고, 친구를 사귀고, 현지 문화를 배우는 활동입니다 &mdash; 한 세션 50분. 예약은 <b><a href="https://lcic-students-system.com/login" target="_blank" rel="noopener">Student System</a>에서 직접</b> 합니다.
     </p>
   </section>
 
@@ -191,7 +193,7 @@
     </div>
     <ol class="bg-steps">
       <li><b data-i18n-en="Check your login credentials">로그인 정보 확인</b><span class="sub" data-i18n-en="Find your Student System ID & password in your LCIC email.">LCIC 이메일에서 Student System 아이디·비밀번호를 확인하세요.</span></li>
-      <li><b data-i18n-en="Open &ldquo;Student Buddy&rdquo;">&ldquo;Student Buddy&rdquo; 열기</b><span class="sub" data-i18n-en="Log in to the Student System and click &ldquo;Student Buddy&rdquo; in the left menu.">Student System에 로그인 후 좌측 메뉴에서 &ldquo;Student Buddy&rdquo;를 클릭.</span></li>
+      <li><b data-i18n-en="Open &ldquo;Student Buddy&rdquo;">&ldquo;Student Buddy&rdquo; 열기</b><span class="sub" data-i18n-en="Log in to the <a href='https://lcic-students-system.com/login' target='_blank' rel='noopener'>Student System</a> (the same site where you upload your documents) and click &ldquo;Student Buddy&rdquo; in the left menu."><a href="https://lcic-students-system.com/login" target="_blank" rel="noopener">Student System</a>(자료 업로드하던 사이트)에 로그인 후 좌측 메뉴에서 &ldquo;Student Buddy&rdquo;를 클릭.</span></li>
       <li><b data-i18n-en="Choose 1:1 or 1:2">1:1 / 1:2 선택</b><span class="sub" data-i18n-en="Tick &ldquo;One to one only&rdquo; at the top if you want a 1:1 session only.">1:1만 원하면 상단의 &ldquo;One to one only&rdquo;를 체크하세요.</span></li>
       <li><b data-i18n-en="Turn on a slot & pick an activity">시간 켜고 활동 선택</b><span class="sub" data-i18n-en="Toggle ON the date/time you want, then choose an activity (Communications / Homework / Review Class).">원하는 날짜·시간 토글을 켜고 활동을 고르세요 (Communications / Homework / Review Class).</span></li>
       <li><b data-i18n-en="Double-check before booking">예약 전 다시 확인</b><span class="sub" data-i18n-en="Make sure it doesn't clash with another schedule. Don't book if you're unsure.">다른 일정과 겹치지 않는지 확인. 확실하지 않으면 예약하지 마세요.</span></li>
@@ -327,8 +329,8 @@
 
       <details>
         <summary><span class="q">Q</span> <span data-i18n-en="How do I book a buddy session?">버디 세션은 어떻게 예약하나요?</span> <iconify-icon class="arr" icon="solar:alt-arrow-down-linear"></iconify-icon></summary>
-        <div class="ans" data-i18n-en="Log in to the <b>Student System</b> &rarr; click <b>Student Buddy</b> in the left menu &rarr; (tick <b>One to one only</b> if you want a 1:1) &rarr; toggle ON a date/time and pick an activity (Communications / Homework / Review Class) &rarr; press <b>Find</b>. You're booked once a local buddy is matched.">
-          <b>Student System</b>에 로그인 &rarr; 좌측 <b>Student Buddy</b> 클릭 &rarr; (1:1만 원하면 <b>One to one only</b> 체크) &rarr; 날짜·시간 토글을 켜고 활동(Communications / Homework / Review Class) 선택 &rarr; <b>Find</b> 클릭. 현지 버디가 매칭되면 예약 완료입니다.
+        <div class="ans" data-i18n-en="Log in to the <b><a href='https://lcic-students-system.com/login' target='_blank' rel='noopener'>Student System</a></b> &rarr; click <b>Student Buddy</b> in the left menu &rarr; (tick <b>One to one only</b> if you want a 1:1) &rarr; toggle ON a date/time and pick an activity (Communications / Homework / Review Class) &rarr; press <b>Find</b>. You're booked once a local buddy is matched.">
+          <b><a href="https://lcic-students-system.com/login" target="_blank" rel="noopener">Student System</a></b>에 로그인 &rarr; 좌측 <b>Student Buddy</b> 클릭 &rarr; (1:1만 원하면 <b>One to one only</b> 체크) &rarr; 날짜·시간 토글을 켜고 활동(Communications / Homework / Review Class) 선택 &rarr; <b>Find</b> 클릭. 현지 버디가 매칭되면 예약 완료입니다.
         </div>
       </details>
 
