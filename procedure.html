@@ -1759,6 +1759,17 @@
     });
   });
 
+  // 딥링크: procedure.html#efset → 매뉴얼 펼치고 EF SET 탭 바로 열기 (status.html EF-SET 카드에서 사용)
+  if (location.hash === "#efset") {
+    const tab = document.querySelector('.m-tab[data-target="tab-efset"]');
+    if (tab) {
+      const det = tab.closest("details.manual-toggle");
+      if (det) det.open = true;
+      tab.click();
+      setTimeout(() => tab.scrollIntoView({ behavior: "smooth", block: "start" }), 200);
+    }
+  }
+
   // Cross-tab jump buttons (data-jump-to="tab-id")
   document.querySelectorAll("[data-jump-to]").forEach((jumpBtn) => {
     jumpBtn.addEventListener("click", () => {
