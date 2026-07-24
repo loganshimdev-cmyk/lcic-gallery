@@ -1582,13 +1582,13 @@ window.lcicEfset = {
   async upload(id, name, university, file, ext) {
     try {
       const mime = ext === "pdf" ? "application/pdf" : ext === "png" ? "image/png" : "image/jpeg";
-      // 학생당 파일 1개 유지 — 이전에 다른 확장자로 올린 파일은 정리
-      const others = ["pdf", "jpg", "jpeg", "png"].filter((e) => e !== ext).map((e) => `${id}.${e}`);
-      try { await supabase.storage.from("efset").remove(others); } catch (_) {}
-      const up = await supabase.storage.from("efset").upload(`${id}.${ext}`, file, { upsert: true, contentType: mime });
+      // 버킷은 익명 열람·수정·삭제가 모두 막혀 있어(비공개) 업로드마다 새 경로에 저장한다.
+      // 최신 파일 경로는 efset_submissions.path 가 정답(담당자는 이 경로만 보면 됨).
+      const path = `${id}/${Date.now()}.${ext}`;
+      const up = await supabase.storage.from("efset").upload(path, file, { contentType: mime });
       if (up.error) return up.error.message || "업로드 오류";
       const row = await supabase.from("efset_submissions").upsert(
-        { id, name, university, ext, uploaded_at: new Date().toISOString() }, { onConflict: "id" });
+        { id, name, university, ext, path, uploaded_at: new Date().toISOString() }, { onConflict: "id" });
       if (row.error) return row.error.message || "기록 오류";
       return null;
     } catch (e) { return e && e.message ? e.message : "네트워크 오류"; }
