@@ -210,6 +210,11 @@
   .ev-note { font-size: 0.86rem; line-height: 1.6; color: var(--text-dim); background: var(--bg-elev);
     border: 1px solid var(--hairline); border-radius: 12px; padding: 11px 13px; margin-bottom: 10px; }
   .ev-note b { color: var(--text); font-weight: 800; }
+  /* 📝 EF-SET 결과지 업로드 줄 */
+  .ef-up { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 4px 0 12px; }
+  .ef-up input[type="file"] { flex: 1; min-width: 200px; font-size: 0.88rem; color: var(--text-dim);
+    border: 1px dashed var(--hairline-strong); border-radius: 12px; padding: 10px 12px; background: var(--bg); }
+  .ef-up .hop-btn { padding: 11px 18px; white-space: nowrap; }
   /* 본문(container-narrow=880px) 옆에 여유가 생기는 넓은 화면에서만 우측 고정.
      좁은 화면에선 위 기본 스타일대로 상단 인라인 카드로 보인다.
      .dash-side = 학생 모임 + 공지 묶음(학생 모임이 항상 공지 위). */
@@ -458,6 +463,37 @@
       <ul class="dn-list" id="dn-list"></ul>
     </aside>
   </div>
+
+  <!-- 📝 EF-SET 결과지 제출 (전체 학생 필수 · 마감 7/29 수) -->
+  <section class="card fade-up" id="efset-card" style="display:none">
+    <div class="card-title">📝 EF-SET 결과지 제출
+      <span style="font-size:0.72em;background:#dc2626;color:#fff;border-radius:999px;padding:2px 10px;font-weight:800;">전체 학생 필수</span>
+    </div>
+    <p class="hop-desc">
+      EF-SET 영어 테스트를 응시하고 <b>결과지(성적표)</b>를 여기에 올려 주세요.
+      <b>모든 학생</b>이 <b>7월 29일(수)까지</b> 제출해야 합니다.
+    </p>
+    <div class="hop-warn">🏫 제출된 결과지는 <b>학교로 전달되는 공식 자료</b>입니다. 예외 없이 <b>전원 필수 제출</b>이니 기한 내에 꼭 올려 주세요.</div>
+
+    <div class="msm-info">
+      <div class="mi"><span class="mi-k">🗓 마감</span><span class="mi-v"><b>7월 29일 (수)</b></span></div>
+      <div class="mi"><span class="mi-k">👥 대상</span><span class="mi-v"><b>전체 학생</b></span></div>
+      <div class="mi"><span class="mi-k">📄 파일</span><span class="mi-v">PDF 또는 결과 화면 캡처(JPG·PNG) · 최대 10MB</span></div>
+      <div class="mi"><span class="mi-k">📖 응시 방법</span><span class="mi-v"><a href="procedure.html#efset" target="_blank" rel="noopener" style="color:var(--accent-deep);font-weight:700;">EF-SET 응시 매뉴얼 보기</a> (efset.org · 90분 테스트)</span></div>
+      <div class="mi"><span class="mi-k">👀 제출 현황</span><span class="mi-v" id="ef-count">—</span></div>
+    </div>
+
+    <div class="hop-my none" id="ef-my"></div>
+
+    <div class="ef-up">
+      <input type="file" id="ef-file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png">
+      <button class="hop-btn" id="ef-btn" type="button">📤 결과지 업로드</button>
+    </div>
+
+    <div class="ev-note">📋 <b>제출 방법</b> · ① <a href="procedure.html#efset" target="_blank" rel="noopener" style="color:var(--accent-deep);font-weight:700;">매뉴얼</a>을 따라 EF-SET 테스트 응시(90분) → ② 결과 Certificate를 <b>PDF로 저장</b>하거나 <b>화면 캡처</b> → ③ 위에서 파일 선택 후 업로드. 다시 올리면 <b>새 파일로 교체</b>돼요.</div>
+    <div class="ev-note">🔒 올린 파일은 <b>본인과 학교 담당자만</b> 확인하며, 다른 학생에게 보이지 않아요.</div>
+    <div class="hop-status" id="ef-status"></div>
+  </section>
 
   <!-- LCIC 제휴 할인 -->
   <section class="card fade-up" id="deal-card" style="display:none">
@@ -768,6 +804,7 @@
     renderHopping(rec);   // 호핑 수요조사 카드
     renderMarshmallow(rec);   // 🍭 마시멜로우 챌린지 신청 카드
     renderEvents(rec);   // 🥭 망고 공장 · 🏛 주청사 선착순 신청 카드
+    renderEfset(rec);    // 📝 EF-SET 결과지 제출 카드
 
     const cl = rec.checklist || {};
     const total = ORDER.length;
@@ -1291,6 +1328,52 @@
     }).join("");
   }
 
+  // ── 📝 EF-SET 결과지 제출 ──
+  // 파일: Supabase Storage 'efset' 버킷 (익명 열람 불가 — 제출 전용, 확인은 담당자 대시보드)
+  // 기록: efset_submissions (id/name/university/ext/uploaded_at) → 제출 현황·본인 제출 여부 표시
+  const EF_DEADLINE = new Date("2026-07-29T23:59:59+08:00");
+  async function renderEfset(rec) {
+    if (!window.lcicEfset) { setTimeout(() => renderEfset(rec), 400); return; }   // 브리지 로드 대기
+    const card = $("efset-card"); if (!card) return;
+    card.style.display = "";
+    const sid = (await sha256hex(CUR_EMAIL || "")).slice(0, 16);
+    $("ef-btn").onclick = () => efUpload(sid);
+    paintEfset(sid);
+  }
+  async function paintEfset(sid) {
+    let rows = [];
+    try { rows = await window.lcicEfset.state(); } catch (_) { /* 조회 실패해도 카드는 표시 */ }
+    const mine = rows.find((r) => r.id === sid);
+    $("ef-count").innerHTML = `현재 <b>${rows.length}명</b> 제출`;
+    const d = Math.ceil((EF_DEADLINE - new Date()) / 86400000) - 1;   // 마감일 당일 = D-0
+    const my = $("ef-my");
+    my.className = "hop-my";
+    if (mine) {
+      const t = new Date(mine.uploaded_at);
+      my.innerHTML = `✅ <b>제출 완료</b> — ${t.getMonth() + 1}/${t.getDate()} ${String(t.getHours()).padStart(2, "0")}:${String(t.getMinutes()).padStart(2, "0")} <span style="font-weight:400;">(다시 올리면 새 파일로 교체돼요)</span>`;
+    } else if (d >= 0) {
+      my.innerHTML = `⏳ 아직 제출 전이에요 — 마감까지 <b>${d === 0 ? "오늘 마감!" : "D-" + d}</b>`;
+    } else {
+      my.innerHTML = `⚠️ <b>마감이 지났어요.</b> 아직 안 냈다면 지금 바로 올려 주세요!`;
+    }
+  }
+  async function efUpload(sid) {
+    const inp = $("ef-file"), stat = $("ef-status"), btn = $("ef-btn");
+    const f = inp.files && inp.files[0];
+    stat.style.color = "#dc2626";
+    if (!f) { stat.textContent = "파일을 먼저 선택해 주세요."; return; }
+    const ext = (f.name.split(".").pop() || "").toLowerCase();
+    if (!["pdf", "jpg", "jpeg", "png"].includes(ext)) { stat.textContent = "PDF 또는 JPG·PNG 파일만 올릴 수 있어요."; return; }
+    if (f.size > 10 * 1024 * 1024) { stat.textContent = "파일이 너무 커요 — 최대 10MB까지 올릴 수 있어요."; return; }
+    btn.disabled = true; stat.style.color = ""; stat.textContent = "업로드 중… 잠시만 기다려 주세요.";
+    const err = await window.lcicEfset.upload(sid, (CUR && CUR.name) || "", (CUR && CUR.uni) || "", f, ext);
+    btn.disabled = false;
+    if (err) { stat.style.color = "#dc2626"; stat.textContent = "업로드 실패 — 다시 시도해 주세요."; return; }
+    stat.textContent = "결과지가 제출되었어요! 감사합니다 🎉";
+    inp.value = "";
+    paintEfset(sid);
+  }
+
   // ── 로그인 ──
   const errEl = $("login-err"), btn = $("login-btn"), btnLabel = $("login-btn-label");
   function showErr() {
@@ -1485,6 +1568,29 @@ window.lcicEvents = {
     try {
       const { error } = await supabase.from("event_signups").delete().eq("event_key", eventKey).eq("id", id);
       return error ? (error.message || "오류") : null;
+    } catch (e) { return e && e.message ? e.message : "네트워크 오류"; }
+  },
+};
+
+// 📝 EF-SET 결과지 제출 → Storage 'efset' 버킷 + efset_submissions 테이블
+window.lcicEfset = {
+  async state() {   // [{id, uploaded_at}] — 제출 현황·본인 제출 여부 표시용
+    const { data, error } = await supabase.from("efset_submissions").select("id,uploaded_at");
+    if (error) throw error;
+    return data || [];
+  },
+  async upload(id, name, university, file, ext) {
+    try {
+      const mime = ext === "pdf" ? "application/pdf" : ext === "png" ? "image/png" : "image/jpeg";
+      // 학생당 파일 1개 유지 — 이전에 다른 확장자로 올린 파일은 정리
+      const others = ["pdf", "jpg", "jpeg", "png"].filter((e) => e !== ext).map((e) => `${id}.${e}`);
+      try { await supabase.storage.from("efset").remove(others); } catch (_) {}
+      const up = await supabase.storage.from("efset").upload(`${id}.${ext}`, file, { upsert: true, contentType: mime });
+      if (up.error) return up.error.message || "업로드 오류";
+      const row = await supabase.from("efset_submissions").upsert(
+        { id, name, university, ext, uploaded_at: new Date().toISOString() }, { onConflict: "id" });
+      if (row.error) return row.error.message || "기록 오류";
+      return null;
     } catch (e) { return e && e.message ? e.message : "네트워크 오류"; }
   },
 };
