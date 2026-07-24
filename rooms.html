@@ -161,6 +161,29 @@
   .fld textarea { resize: vertical; min-height: 56px; }
   .fld .row { display: flex; gap: 10px; } .fld .row > * { flex: 1; }
   .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px; }
+
+  /* 🔔 운영 안내 — status.html .dash-notice 와 동일 스타일.
+     좁은 화면=목록 위 인라인 카드 / 넓은 화면=우측 고정(본문 760px 옆). */
+  .side-notice {
+    margin: 14px 0 16px; padding: 16px 18px;
+    border-radius: 18px; border: 1px solid rgba(245,158,11,0.35);
+    background: rgba(245,158,11,0.07); box-shadow: var(--shadow-sm);
+  }
+  .side-notice .dn-title {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 0.92rem; font-weight: 800; color: #b45309; margin-bottom: 10px;
+  }
+  .side-notice .dn-title iconify-icon { font-size: 19px; color: #d97706; }
+  .side-notice .dn-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 11px; }
+  .side-notice .dn-list li { display: flex; align-items: flex-start; gap: 9px; font-size: 0.9rem; line-height: 1.6; color: #78350f; }
+  .side-notice .dn-list li .dn-ic { flex-shrink: 0; }
+  .side-notice .dn-list li b { color: #92400e; font-weight: 800; }
+  @media (min-width: 1280px) {
+    .side-notice {
+      position: fixed; top: 96px; left: calc(50vw + 396px);
+      width: 240px; z-index: 30; margin: 0;
+    }
+  }
 </style>
 </head>
 <body>
@@ -183,6 +206,17 @@
     <button class="newbtn" id="new-btn">+ 새 모임 만들기</button>
   </div>
   <div id="pin-notice" style="display:none"></div>
+
+  <!-- 🔔 운영 안내 — status.html 공지와 같은 내용. 내용 바꿀 땐 status.html NOTICES 와 같이 수정. -->
+  <aside class="side-notice" aria-label="안내">
+    <div class="dn-title"><iconify-icon icon="solar:bell-bing-bold-duotone"></iconify-icon> 꼭 확인해 주세요</div>
+    <ul class="dn-list">
+      <li><span class="dn-ic">🦀</span><span><b>몬스터크랩 × 삼촌카세</b> <span style="font-size:0.8em;background:#d97706;color:#fff;border-radius:999px;padding:1px 7px;font-weight:800;vertical-align:1px;">NEW</span><br>막탄 시푸드 맛집에 한식 오마카세 <b>"삼촌카세"</b>가 있어요.<br>· LCIC 학생 <b>시푸드 전 품목 20% 할인</b> (주류 제외 · 학생증 지참)<br>· 오마카세 1인 <b>700P~</b> · 전·라면·찌개 등 단품 50여 가지<br>· 한식 메뉴는 <b>3시간 전</b>에 카톡 ID <b>osswin0710</b> 으로 꼭 미리 연락!<br>· <a href="assets/partner/samchonkase-menu.png" target="_blank" rel="noopener" style="color:var(--accent-deep);font-weight:700;">🍜 메뉴판 보기</a> · <a href="https://maps.app.goo.gl/MHErs81Q5z3mPPDy7" target="_blank" rel="noopener" style="color:var(--accent-deep);font-weight:700;">📍 위치 보기</a></span></li>
+      <li><span class="dn-ic">🛂</span><span><b>비자 연장</b><br>프로그램 기간보다 <b>세부(필리핀)에 더 머물다</b> 가시는 분은 <b>비자 연장이 필수</b>이며, <b>개인이 직접</b> 진행하셔야 합니다.</span></li>
+      <li><span class="dn-ic">🤝</span><span><span style="font-size:0.86em;color:var(--text-dim);"><b>제휴 할인</b> · 학생증을 보여주면 할인돼요<br>· 소문난식당(감자탕, 레드코코 안) — LCIC 학생·직원 <b>20% 할인</b> (주류 제외)<br>· 그 외 <b>식당·카페·스파 17곳</b> 5~20% 할인 → <a href="life-guide.html#partner" style="color:var(--accent-deep);font-weight:700;">전체 보기</a></span></span></li>
+    </ul>
+  </aside>
+
   <div id="list"></div>
 </main>
 
