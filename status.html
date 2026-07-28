@@ -810,15 +810,19 @@
     $("d-updated").textContent = rec.updatedAt || STATUS_UPDATED || "";
     // 학생 모임(rooms.html)에서 쓸 신원 저장 (검증된 로그인 후에만)
     try { localStorage.setItem("lcic.me", JSON.stringify({ n: rec.name || "", e: CUR_EMAIL || "" })); } catch (_) {}
-    renderHopping(rec);   // 호핑 수요조사 카드
-    renderMarshmallow(rec);   // 🍭 마시멜로우 챌린지 신청 카드
-    renderEvents(rec);   // 🥭 망고 공장 · 🏛 주청사 선착순 신청 카드
-    renderEfset(rec);    // 📝 EF-SET 결과지 제출 카드
-
-    // ✈️ 8월 입국 학생 전용 — 항공편 카드 복구 + 상단 항공권 확인 배너.
-    //    7월 학생(stay.start가 7월, 이미 입국)은 이 분기를 타지 않아 화면이 그대로다.
+    // ✈️ 8월 입국 학생은 입국 준비 화면만: 7월 운영 카드(EF-SET·이벤트·학생모임·공지)를
+    //    렌더하지 않고, 항공편 카드 복구 + 상단 항공권 확인 배너만 보여준다.
+    //    7월 학생(stay.start가 7월, 이미 입국)은 기존 화면 그대로.
     const augArrival = ((rec.stay || {}).start || "") >= "2026-08-01";
+    if (!augArrival) {
+      renderHopping(rec);   // 호핑 수요조사 카드
+      renderMarshmallow(rec);   // 🍭 마시멜로우 챌린지 신청 카드
+      renderEvents(rec);   // 🥭 망고 공장 · 🏛 주청사 선착순 신청 카드
+      renderEfset(rec);    // 📝 EF-SET 결과지 제출 카드
+    }
     if (augArrival) {
+      // 7월 재학생용 요소 숨김 (학생 모임 + 공지 사이드, 지난 공지·마감된 신청 박스)
+      document.querySelectorAll(".dash-side, #past-box").forEach((el) => { el.style.display = "none"; });
       const sf = document.getElementById("sec-flight");
       if (sf) sf.style.display = "";
       const an = document.getElementById("aug-flight-note");
