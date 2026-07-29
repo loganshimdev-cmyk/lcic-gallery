@@ -759,6 +759,41 @@
     return { time: `${ph}:${pm}`, nextDay };
   }
 
+  // 귀국(출국) LCIC 정문 픽업 시간표 — 운영팀 시트(DEPARTURE 탭) 기준. '출발일|편명' → 정문 픽업 일시.
+  // 이름이 아닌 편명 매칭이라 동명이인 문제 없음. 시트가 바뀌면 이 표만 다시 뽑아 교체.
+  const DEPARTURE_PICKUP = {
+    "2026-07-31|KE602": "2026-07-30 22:00",
+    "2026-08-01|KE602": "2026-07-31 22:00",
+    "2026-08-01|BX712": "2026-07-31 22:00",
+    "2026-08-01|7C2114": "2026-07-31 22:00",
+    "2026-08-01|LJ62": "2026-07-31 23:15",
+    "2026-08-01|LJ32": "2026-07-31 23:15",
+    "2026-08-01|KE5782": "2026-07-31 23:15",
+    "2026-08-01|MU5024": "2026-07-31 23:15",
+    "2026-08-02|KE602": "2026-08-01 22:00",
+    "2026-08-02|BX712": "2026-08-01 22:30",
+    "2026-08-02|7C2114": "2026-08-01 22:30",
+    "2026-08-02|LJ32": "2026-08-01 23:20",
+    "2026-08-03|KE602": "2026-08-02 22:00",
+    "2026-08-03|LJ62": "2026-08-02 23:15",
+    "2026-08-04|KE602": "2026-08-03 22:00",
+    "2026-08-04|BX712": "2026-08-03 22:30",
+    "2026-08-07|BX712": "2026-08-06 22:30",
+    "2026-07-24|PR1854": "2026-07-24 11:00",
+    "2026-08-02|PR2860": "2026-08-01 20:00",
+  };
+  // 'KE 0602' → 'KE602' (공백·항공사 코드 뒤 선행 0 제거)
+  const normFlightNo = (s) => String(s || "").replace(/\s+/g, "").toUpperCase().replace(/^([A-Z0-9]{2})0+(?=\d)/, "$1");
+  function departPickup(rf) {
+    if (!rf || !rf.date || !rf.flightNo) return null;
+    const hit = DEPARTURE_PICKUP[rf.date + "|" + normFlightNo(rf.flightNo)];
+    if (!hit) return null;
+    const [d, t] = hit.split(" ");
+    const [y, m, dd] = d.split("-").map(Number);
+    const wd = "일월화수목금토"[new Date(y, m - 1, dd).getDay()];
+    return { date: `${m}/${dd}(${wd})`, time: t };
+  }
+
   // 학생 공통 운영 안내(여기에 한 줄씩 추가/수정하면 됨)
   // 잠시 숨김 — 아래 두 줄을 NOTICES 안으로 옮기면 안내 카드가 다시 보입니다.
   // { icon: "🤝", t: "<b>버디 세션 신청</b>은 <b>7월 1일까지</b> 꼭 해주세요." },
@@ -770,6 +805,7 @@
   // 잠깐 숨김(7/7 일정 종료) — 다시 띄우려면 아래 항목을 NOTICES 안으로 옮기세요.
   //   { icon: "💱", t: "<b>환전</b> · <b>7월 7일(화)</b><br>· 시간: <b>11:00 ~ 13:00</b><br>· 장소: Admin Building <b>1층</b>" },
   const NOTICES = [
+    { icon: "🛫", t: "<b>귀국(출국) 안내 — 7월 과정</b><br>· 공항 이동은 <b>출발 전날 밤, LCIC 정문</b>에서 다 같이 출발해요. <b>내 픽업 시간</b>은 아래 <b>항공편 카드의 '오는 편'</b>에서 확인하세요.<br>· 🎫 <b>본인 이름이 적힌 '돌아가는' e-ticket</b>(휴대폰 화면/종이) 필수 — <b>없으면 공항 건물 출입이 불가</b>합니다." },
     { icon: "🛂", t: "<b>비자 연장</b><br>프로그램 기간보다 <b>세부(필리핀)에 더 머물다</b> 가시는 분은 <b>비자 연장이 필수</b>입니다. 개인이 직접 진행하지 마시고 <b>꼭 매니저에게 먼저 말씀해 주세요.</b>" },
     { icon: "🤝", t: "<span style=\"font-size:0.86em;color:var(--text-dim);\"><b>제휴 할인</b> · 학생증을 보여주면 할인돼요<br>· 소문난식당(감자탕, 레드코코 안) — LCIC 학생·직원 <b>20% 할인</b> (주류 제외)<br>· 그 외 <b>식당·카페·스파 17곳</b> 5~20% 할인 → <a href=\"life-guide.html#partner\" style=\"color:var(--accent-deep);font-weight:700;\">전체 보기</a></span>" },
   ];
@@ -909,10 +945,23 @@
         `<div class="flight-leg"><div class="leg-tag go"><iconify-icon icon="solar:plane-bold"></iconify-icon> 가는 편 (한국 → 세부)</div>
           <div class="flight-grid">${cell("항공편명", f.flightNo)}${cell("세부 도착 일자", f.departure)}${f.departureTime ? cell("세부 도착 시간", f.departureTime) : ""}</div>
           ${pickupBox}</div>`;
+      // 귀국 픽업: 출발일+편명이 운영 시간표에 있으면 본인 정문 픽업 시각을 보여준다
+      const dpk = departPickup(rf);
+      const backPickup = dpk
+        ? `<div class="pickup-card">
+            <div class="pk-top">
+              <div class="pk-when"><iconify-icon icon="solar:point-on-map-bold-duotone"></iconify-icon>
+                <div><div class="pk-label">LCIC 정문 출발(공항 이동)</div>
+                <div class="pk-time">${escapeHtml(dpk.date)} <b>${escapeHtml(dpk.time)}</b></div></div></div>
+            </div>
+            <div class="pk-desc">출발 전날 밤, <b>LCIC 정문</b>에서 공항으로 함께 출발해요. 짐을 미리 챙겨 <b>시간에 늦지 않게</b> 정문으로 나와 주세요.</div>
+            <div class="pk-meet"><iconify-icon icon="solar:ticket-bold-duotone"></iconify-icon><span>🎫 <b>본인 이름이 적힌 '돌아가는' e-ticket</b>(휴대폰 화면 또는 종이)을 꼭 준비하세요. <b>e-ticket이 없으면 공항 건물에 들어갈 수 없습니다.</b></span></div>
+          </div>`
+        : `<div class="leg-note">공항 <b>드랍</b>은 <b>세부 출발</b> 일자·시각 기준이에요.</div>`;
       const legBack = (rf.flightNo || rf.date)
         ? `<div class="flight-leg"><div class="leg-tag back"><iconify-icon icon="solar:plane-bold" style="transform:scaleX(-1)"></iconify-icon> 오는 편 (세부 → 한국)</div>
           <div class="flight-grid">${cell("항공편명", rf.flightNo)}${cell("세부 출발 일자", rf.date)}${rf.time ? cell("세부 출발 시간", rf.time) : ""}</div>
-          <div class="leg-note">공항 <b>드랍</b>은 <b>세부 출발</b> 일자·시각 기준이에요.</div></div>`
+          ${backPickup}</div>`
         : "";
       flightEl.innerHTML =
         legGo + legBack +
