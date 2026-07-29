@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" class="lazybg">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LCIC 신입생 오리엔테이션 · 8월</title>
-<link rel="icon" type="image/png" href="../orientation-aug/assets/brand/lcic-logo.png">
+<link rel="icon" type="image/png" href="../orientation-aug/assets/brand/lcic-logo.jpg">
 <link rel="stylesheet" href="../orientation-aug/assets/fonts/pretendard/pretendard-local.css">
 <link rel="stylesheet" href="../orientation-aug/assets/fonts/fraunces/fraunces-local.css">
 <style>
@@ -1464,6 +1464,11 @@ body {
 .pic-phone      { --ic: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z'/></svg>"); }
 .pic-party      { --ic: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M5.8 11.3 2 22l10.7-3.79'/><path d='M11.5 9.5 13 8'/><path d='M16 18l5-5'/><path d='M22 2a4.5 4.5 0 0 0-6 0 4.5 4.5 0 0 0 0 6'/><path d='M15 5l4 4'/><path d='M14 17l1-1'/><path d='M7 14l-1 1'/></svg>"); }
 </style>
+
+<style id="lazybg-css">
+  html.lazybg section.slide:not(.bg-on),
+  html.lazybg section.slide:not(.bg-on) * { background-image: none !important; }
+</style>
 </head>
 <body>
 
@@ -1489,7 +1494,7 @@ body {
     body.ot-locked{overflow:hidden;height:100vh;}
   </style>
   <div class="ot-card">
-    <img class="ot-logo" src="../orientation-aug/assets/brand/lcic-logo.png" alt="LCIC">
+    <img class="ot-logo" src="../orientation-aug/assets/brand/lcic-logo.jpg" alt="LCIC">
     <h1>LCIC 신입생 오리엔테이션</h1>
     <p>전달받으신 비밀번호를 입력해 주세요.</p>
     <form id="ot-gate-form" autocomplete="off">
@@ -1606,13 +1611,13 @@ body {
   <span class="section-stamp">Promo Film</span>
   <span class="page-marker"><span>Issue 36</span><span class="rule"></span><span class="pg">03</span></span>
   <div class="slide-inner">
-    <div class="video-stage r d1">
-      <video id="lcic-promo-video" controls preload="metadata" playsinline
-             style="width:100%; height:100%; object-fit: contain; background:#000;">
-        <source src="../orientation-aug/assets/video/lcic-promo.mp4" type="video/mp4">
-        브라우저가 비디오를 지원하지 않습니다.
-      </video>
-    </div>
+    <div class="video-stage r d1" style="display:flex;align-items:center;justify-content:center;text-align:center;">
+        <div style="color:#e8eef7;font-family:'Pretendard',sans-serif;padding:2rem;">
+          <div style="font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;color:#8fa6c4;font-weight:800;margin-bottom:14px;">Promo Film</div>
+          <div style="font-size:clamp(1.3rem,2.4vw,1.9rem);font-weight:800;letter-spacing:-.02em;margin-bottom:10px;">학교 소개 영상</div>
+          <div style="font-size:clamp(.95rem,1.2vw,1.05rem);color:#b8c7db;line-height:1.6;">오리엔테이션 당일 다 함께 시청합니다.</div>
+        </div>
+      </div>
   </div>
 </section>
 
@@ -1650,7 +1655,7 @@ body {
   <div class="slide-inner">
     <div class="map-canvas">
       <div class="map-wrap">
-        <img class="map-img" src="../orientation-aug/assets/photos/around_map_full.png" alt="학교 주변 지도">
+        <img class="map-img" src="../orientation-aug/assets/photos/around_map_full.jpg" alt="학교 주변 지도">
         <div class="school-pin">
           <div class="pulse p1"></div>
           <div class="pulse p2"></div>
@@ -3266,7 +3271,7 @@ body {
         <div class="ph" style="background-image: url('../orientation-aug/assets/photos/lcic/LCIC%20Dormitory/Bedroom/Bedroom_3.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; border: 0;" data-name="bedroom_2.jpg"></div>
       </div>
       <figure class="safe-inset" aria-label="개인 금고">
-        <div class="safe-img" style="background-image: url('../orientation-aug/assets/photos/lcic/LCIC%20Dormitory/Safe.png');"></div>
+        <div class="safe-img" style="background-image: url('../orientation-aug/assets/photos/lcic/LCIC%20Dormitory/Safe.jpg');"></div>
         <figcaption>개인 금고</figcaption>
       </figure>
     </div>
@@ -3325,9 +3330,9 @@ body {
   <div class="slide-inner">
     <div class="photo-side">
       <div class="photo-grid-4">
-        <figure class="pg-card r d1"><div class="pg-img" style="background-image: url('../orientation-aug/assets/photos/lcic/LCIC%20Cafeteria/Cafeteria_Hall.png');"></div></figure>
-        <figure class="pg-card r d2"><div class="pg-img" style="background-image: url('../orientation-aug/assets/photos/lcic/LCIC%20Cafeteria/Breakfast_Buffet.png');"></div></figure>
-        <figure class="pg-card r d3"><div class="pg-img" style="background-image: url('../orientation-aug/assets/photos/lcic/LCIC%20Cafeteria/Tonkatsu.png');"></div></figure>
+        <figure class="pg-card r d1"><div class="pg-img" style="background-image: url('../orientation-aug/assets/photos/lcic/LCIC%20Cafeteria/Cafeteria_Hall.jpg');"></div></figure>
+        <figure class="pg-card r d2"><div class="pg-img" style="background-image: url('../orientation-aug/assets/photos/lcic/LCIC%20Cafeteria/Breakfast_Buffet.jpg');"></div></figure>
+        <figure class="pg-card r d3"><div class="pg-img" style="background-image: url('../orientation-aug/assets/photos/lcic/LCIC%20Cafeteria/Tonkatsu.jpg');"></div></figure>
         <figure class="pg-card r d4"><div class="pg-img" style="background-image: url('../orientation-aug/assets/photos/lcic/LCIC%20Cafeteria/Skewers.jpg');"></div></figure>
       </div>
     </div>
@@ -4076,7 +4081,7 @@ body {
           <figcaption class="pc-cap">Sport Courts</figcaption>
         </figure>
         <figure class="pc-card r d4">
-          <div class="pc-img" style="background-image: url('../orientation-aug/assets/photos/lcic/LCIC%20Activities/Table_Tennis_Room.png');"></div>
+          <div class="pc-img" style="background-image: url('../orientation-aug/assets/photos/lcic/LCIC%20Activities/Table_Tennis_Room.jpg');"></div>
           <figcaption class="pc-cap">Table Tennis</figcaption>
         </figure>
       </div>
@@ -4422,62 +4427,11 @@ body {
     <!-- Mark Ryen Anderson: 16:9 speech video (left) + Info card (right) -->
     <div class="mark-layout" style="display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: clamp(1.2rem, 2.4vw, 2rem); align-items: center; flex: 1; min-height: 0;">
       <!-- Video + custom controls -->
-      <div class="mark-video-wrap r d4" style="display: flex; flex-direction: column; gap: 10px; min-width: 0;">
-        <figure class="mark-video"
-                style="margin: 0; position: relative; aspect-ratio: 16 / 9; background: #000; overflow: hidden; box-shadow: 0 16px 40px -16px rgba(15,23,42,0.35), 0 4px 12px rgba(15,23,42,0.08);">
-          <video class="mark-video-el" muted playsinline preload="metadata"
-                 style="width: 100%; height: 100%; object-fit: contain; background: #000; display: block; cursor: pointer;">
-            <source src="../orientation-aug/assets/videos/mark_speech.mp4" type="video/mp4">
-          </video>
-          <figcaption style="position: absolute; left: 12px; bottom: 12px; padding: 4px 10px; background: rgba(15,23,42,0.7); color: #fff; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; border-radius: 2px; pointer-events: none;">Welcome Message · Mark Anderson</figcaption>
-          <!-- Big center play overlay (visible until first play) -->
-          <button type="button" class="mark-poster-play" aria-label="영상 재생"
-                  style="position: absolute; inset: 0; background: rgba(15,23,42,0.45); border: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: opacity 0.25s ease; z-index: 2;">
-            <span style="display: inline-flex; align-items: center; justify-content: center; width: clamp(64px, 8vw, 96px); height: clamp(64px, 8vw, 96px); background: rgba(255,255,255,0.95); border-radius: 50%; box-shadow: 0 8px 28px rgba(0,0,0,0.35); color: var(--accent); font-size: clamp(1.8rem, 2.6vw, 2.6rem); padding-left: 6px;">▶</span>
-          </button>
-          <!-- State badge: shows current state in corner -->
-          <div class="mark-state-badge" style="position: absolute; top: 12px; right: 12px; padding: 4px 10px; background: rgba(15,23,42,0.7); color: #fff; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em; border-radius: 999px; pointer-events: none; backdrop-filter: blur(4px);">▶ 재생 대기</div>
-        </figure>
-
-        <!-- Time bar / Seek bar -->
-        <div class="mark-timebar" role="group" aria-label="재생 시간 바">
-          <span class="mt-time mt-current">0:00</span>
-          <div class="mt-track" tabindex="0" role="slider" aria-label="재생 위치"
-               aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-            <div class="mt-buffered"></div>
-            <div class="mt-played"></div>
-            <div class="mt-knob"></div>
-          </div>
-          <span class="mt-time mt-duration">0:00</span>
-        </div>
-
-        <!-- Custom playback controls -->
-        <div class="mark-controls" role="group" aria-label="영상 컨트롤"
-             style="display: flex; gap: 8px; align-items: stretch;">
-          <button type="button" class="mc-btn mc-play" aria-label="재생 / 일시정지">
-            <span class="mc-ico mc-ico-play">▶</span>
-            <span class="mc-ico mc-ico-pause" style="display:none;">⏸</span>
-            <span class="mc-lbl mc-lbl-play">재생</span>
-            <span class="mc-lbl mc-lbl-pause" style="display:none;">일시정지</span>
-          </button>
-          <button type="button" class="mc-btn mc-restart" aria-label="다시 재생">
-            <span class="mc-ico">↻</span><span class="mc-lbl">다시 재생</span>
-          </button>
-          <button type="button" class="mc-btn mc-stop" aria-label="정지">
-            <span class="mc-ico">■</span><span class="mc-lbl">정지</span>
-          </button>
-          <button type="button" class="mc-btn mc-mute" aria-label="소리">
-            <span class="mc-ico mc-ico-muted pic pic-volume-x"></span>
-            <span class="mc-ico mc-ico-sound pic pic-volume-2" style="display:none;"></span>
-            <span class="mc-lbl mc-lbl-muted">소리 켜기</span>
-            <span class="mc-lbl mc-lbl-sound" style="display:none;">음소거</span>
-          </button>
-          <button type="button" class="mc-btn mc-fullscreen" aria-label="전체 화면">
-            <span class="mc-ico mc-ico-enter pic pic-maximize"></span>
-            <span class="mc-ico mc-ico-exit pic pic-minimize" style="display:none;"></span>
-            <span class="mc-lbl mc-lbl-enter">전체 화면</span>
-            <span class="mc-lbl mc-lbl-exit" style="display:none;">전체화면 종료</span>
-          </button>
+      <div class="mark-video-wrap r d4" style="display:flex;flex-direction:column;justify-content:center;gap:10px;min-width:0;">
+        <div style="border:1px solid rgba(44,74,115,.2);background:linear-gradient(180deg,#eef4fc 0%,#fff 100%);padding:clamp(1.4rem,2.4vw,2rem);text-align:center;">
+          <div style="font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:#5a6b80;font-weight:800;margin-bottom:12px;">Welcome Message</div>
+          <div style="font-size:clamp(1.15rem,1.9vw,1.5rem);font-weight:800;color:#0e1d2e;letter-spacing:-.02em;margin-bottom:8px;">센터장 인사말 영상</div>
+          <div style="font-size:clamp(.9rem,1.15vw,1rem);color:#5a6b80;line-height:1.6;">오리엔테이션 당일 다 함께 시청합니다.</div>
         </div>
       </div>
 
@@ -5006,6 +4960,48 @@ body {
   }
 
   update();
+})();
+</script>
+
+<script>
+(function(){
+  var docEl = document.documentElement;
+  function showAll(){
+    [].forEach.call(document.querySelectorAll('section.slide'), function(s){ s.classList.add('bg-on'); });
+  }
+  if(!('IntersectionObserver' in window)){ showAll(); return; }
+
+  function init(){
+    var slides = [].slice.call(document.querySelectorAll('section.slide'));
+    if(!slides.length){ docEl.classList.remove('lazybg'); return; }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add('bg-on'); io.unobserve(e.target); }
+      });
+    }, { rootMargin: '800px 0px' });
+    slides.forEach(function(s, i){
+      if(i < 2){ s.classList.add('bg-on'); } else { io.observe(s); }
+    });
+    // 안전장치: 무슨 이유로든 관찰이 안 되면 12초 뒤 전부 표시
+    setTimeout(function(){
+      if(document.querySelectorAll('section.slide.bg-on').length < 3) showAll();
+    }, 12000);
+  }
+
+  function afterLayout(){ requestAnimationFrame(function(){ requestAnimationFrame(init); }); }
+
+  function start(){
+    // 비번 게이트가 열린 뒤에 시작해야 화면 밖 슬라이드가 한꺼번에 잡히지 않는다
+    var gate = document.getElementById('ot-gate');
+    if(!gate){ afterLayout(); return; }
+    var mo = new MutationObserver(function(){
+      if(!document.getElementById('ot-gate')){ mo.disconnect(); afterLayout(); }
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+  }
+
+  if(document.readyState === 'complete') start();
+  else window.addEventListener('load', start);
 })();
 </script>
 </body>
