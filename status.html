@@ -824,8 +824,9 @@
       : (hasRf
         ? `<div class="leg-note">정문 픽업 시간은 <b>확정되는 대로 여기에 표시</b>돼요. 급하면 매니저에게 문의해 주세요.</div>`
         : `<div class="leg-note"><b>귀국 항공편이 등록되어 있지 않아요.</b> e-ticket을 매니저에게 보내 주세요 — 등록되면 여기에 픽업 시간이 표시됩니다.</div>`);
+    const checkout = `<div class="leg-note">🧳 출발 당일은 <b>체크아웃하는 학생이 많아요.</b> <b>미리 나와서 체크아웃</b>해 주세요. <b>ID 카드는 반납하지 않아도 됩니다.</b></div>`;
     const warn = `<div class="flight-warn"><iconify-icon icon="solar:danger-triangle-bold"></iconify-icon><span>🎫 공항에서는 <b>본인 이름이 적힌 '돌아가는' e-ticket</b>(휴대폰 화면 또는 종이)이 꼭 필요해요. <b>없으면 공항 건물에 들어갈 수 없습니다.</b> 미리 캡처해 두세요.</span></div>`;
-    body.innerHTML = grid + pickup + warn;
+    body.innerHTML = grid + pickup + checkout + warn;
     card.style.display = "";
   }
 
