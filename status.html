@@ -471,6 +471,14 @@
     </aside>
   </div>
 
+  <!-- 🛫 귀국(출국) 안내 — 7월 과정 학생용. renderDepart()가 내용을 채우고 표시 -->
+  <section class="card fade-up" id="depart-card" style="display:none">
+    <div class="card-title">🛫 귀국(출국) 안내
+      <span style="font-size:0.72em;background:#0e7490;color:#fff;border-radius:999px;padding:2px 10px;font-weight:800;">7월 과정</span>
+    </div>
+    <div id="depart-body"></div>
+  </section>
+
   <!-- 📝 EF-SET 결과지 제출 (전체 학생 필수 · 마감 7/29 수) -->
   <section class="card fade-up" id="efset-card" style="display:none">
     <div class="card-title">📝 EF-SET 결과지 제출
@@ -794,6 +802,33 @@
     return { date: `${m}/${dd}(${wd})`, time: t };
   }
 
+  // 🛫 귀국(출국) 안내 카드 — 7월 과정 학생에게 표시(항공편 카드는 7월생에겐 숨김이라 별도 카드로).
+  function renderDepart(rec) {
+    const card = document.getElementById("depart-card");
+    const body = document.getElementById("depart-body");
+    if (!card || !body) return;
+    const rf = rec.returnFlight || {};
+    const hasRf = !!(rf.flightNo || rf.date);
+    const dpk = departPickup(rf);
+    const cell = (label, val) => `<div class="flight-cell"><div class="fl-label">${label}</div><div class="fl-val">${escapeHtml(val || "—")}</div></div>`;
+    const grid = hasRf
+      ? `<div class="flight-grid">${cell("항공편명", rf.flightNo)}${cell("세부 출발 일자", rf.date)}${rf.time ? cell("세부 출발 시간", rf.time) : ""}</div>`
+      : "";
+    const pickup = dpk
+      ? `<div class="pickup-card">
+          <div class="pk-top"><div class="pk-when"><iconify-icon icon="solar:point-on-map-bold-duotone"></iconify-icon>
+            <div><div class="pk-label">LCIC 정문 출발(공항 이동)</div>
+            <div class="pk-time">${escapeHtml(dpk.date)} <b>${escapeHtml(dpk.time)}</b></div></div></div></div>
+          <div class="pk-desc">출발 전날 밤, <b>LCIC 정문</b>에서 다 같이 공항으로 출발해요. 짐을 미리 챙겨 <b>시간에 늦지 않게</b> 정문으로 나와 주세요.</div>
+        </div>`
+      : (hasRf
+        ? `<div class="leg-note">정문 픽업 시간은 <b>확정되는 대로 여기에 표시</b>돼요. 급하면 매니저에게 문의해 주세요.</div>`
+        : `<div class="leg-note"><b>귀국 항공편이 등록되어 있지 않아요.</b> e-ticket을 매니저에게 보내 주세요 — 등록되면 여기에 픽업 시간이 표시됩니다.</div>`);
+    const warn = `<div class="flight-warn"><iconify-icon icon="solar:danger-triangle-bold"></iconify-icon><span>🎫 공항에서는 <b>본인 이름이 적힌 '돌아가는' e-ticket</b>(휴대폰 화면 또는 종이)이 꼭 필요해요. <b>없으면 공항 건물에 들어갈 수 없습니다.</b> 미리 캡처해 두세요.</span></div>`;
+    body.innerHTML = grid + pickup + warn;
+    card.style.display = "";
+  }
+
   // 학생 공통 운영 안내(여기에 한 줄씩 추가/수정하면 됨)
   // 잠시 숨김 — 아래 두 줄을 NOTICES 안으로 옮기면 안내 카드가 다시 보입니다.
   // { icon: "🤝", t: "<b>버디 세션 신청</b>은 <b>7월 1일까지</b> 꼭 해주세요." },
@@ -851,6 +886,7 @@
     //    7월 학생(stay.start가 7월, 이미 입국)은 기존 화면 그대로.
     const augArrival = ((rec.stay || {}).start || "") >= "2026-08-01";
     if (!augArrival) {
+      renderDepart(rec);   // 🛫 귀국(출국) 안내 카드 — 정문 픽업 시각 + e-ticket 경고
       renderHopping(rec);   // 호핑 수요조사 카드
       renderMarshmallow(rec);   // 🍭 마시멜로우 챌린지 신청 카드
       renderEvents(rec);   // 🥭 망고 공장 · 🏛 주청사 선착순 신청 카드
