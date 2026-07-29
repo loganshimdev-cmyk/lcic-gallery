@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LCIC Orientation (외박 금지) · Presenter Console</title>
+<link rel="icon" type="image/png" href="assets/brand/lcic-logo.png">
+<link rel="stylesheet" href="assets/fonts/pretendard/pretendard-local.css">
+<style>
+  :root{
+    --bg:#0e1420; --panel:#151d2c; --panel2:#1b2536; --line:rgba(255,255,255,0.10);
+    --ink:#eef2f8; --dim:#9fb0c6; --faint:#6b7c93; --accent:#4a86d6; --accent2:#2c4a73;
+    --warn:#e5484d; --ok:#3fb27f;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:"Pretendard",-apple-system,BlinkMacSystemFont,sans-serif;
+    -webkit-font-smoothing:antialiased; word-break:keep-all;
+    display:flex; flex-direction:column; height:100vh; overflow:hidden;
+  }
+
+  /* ===== Gate ===== */
+  #pg-gate{position:fixed; inset:0; z-index:99999; display:flex; align-items:center; justify-content:center;
+    background:radial-gradient(circle at 50% 30%, #16233a 0%, #0b111c 70%);}
+  #pg-gate .card{width:min(92vw,380px); background:var(--panel); border:1px solid var(--line);
+    border-radius:18px; padding:38px 32px 30px; text-align:center; box-shadow:0 24px 60px -20px rgba(0,0,0,.6);}
+  #pg-gate img{height:48px; margin-bottom:16px;}
+  #pg-gate h1{font-size:1.15rem; font-weight:800; margin-bottom:6px;}
+  #pg-gate p{font-size:.88rem; color:var(--dim); margin-bottom:20px;}
+  #pg-gate form{display:flex; flex-direction:column; gap:12px;}
+  #pg-gate input{width:100%; padding:13px 15px; font-size:1.1rem; text-align:center; letter-spacing:.3em;
+    background:var(--panel2); border:1px solid var(--line); border-radius:10px; color:var(--ink);}
+  #pg-gate input:focus{outline:none; border-color:var(--accent);}
+  #pg-gate button{width:100%; padding:12px; font-size:1rem; font-weight:700; color:#fff;
+    background:var(--accent2); border:0; border-radius:10px; cursor:pointer;}
+  #pg-gate button:hover{background:var(--accent);}
+  #pg-gate .err{color:var(--warn); font-size:.82rem; min-height:18px;}
+  body.locked{overflow:hidden;}
+  body.locked .console{filter:blur(6px); pointer-events:none;}
+
+  /* ===== Console shell ===== */
+  .console{flex:1; display:flex; flex-direction:column; min-height:0;}
+
+  header{
+    display:flex; align-items:center; gap:16px; padding:10px 18px;
+    background:var(--panel); border-bottom:1px solid var(--line); flex:0 0 auto;
+  }
+  .brand{display:flex; align-items:center; gap:9px; font-weight:800; letter-spacing:-.01em;}
+  .brand .tag{font-size:.62rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--bg); background:var(--accent); padding:3px 8px; border-radius:999px;}
+  .timer-wrap{display:flex; align-items:center; gap:8px; margin-left:6px;}
+  #timer{font-variant-numeric:tabular-nums; font-weight:800; font-size:1.25rem; min-width:64px;
+    letter-spacing:.02em;}
+  .tbtn{font-size:.72rem; font-weight:700; color:var(--dim); background:var(--panel2);
+    border:1px solid var(--line); border-radius:7px; padding:6px 10px; cursor:pointer;}
+  .tbtn:hover{color:var(--ink); border-color:var(--accent);}
+  .spacer{flex:1;}
+  #counter{font-variant-numeric:tabular-nums; font-weight:800; font-size:1.1rem; color:var(--dim);}
+  #counter b{color:var(--ink);}
+  #open-aud{font-size:.85rem; font-weight:800; color:#fff; background:var(--accent2);
+    border:0; border-radius:9px; padding:11px 16px; cursor:pointer; display:flex; align-items:center; gap:8px;}
+  #open-aud:hover{background:var(--accent);}
+  #open-aud.live{background:var(--ok);}
+
+  /* ===== Main grid ===== */
+  main{flex:1; display:grid; grid-template-columns:1.7fr 1fr; gap:14px; padding:14px 18px; min-height:0;}
+  .col{display:flex; flex-direction:column; min-height:0; gap:10px;}
+  .pane-label{font-size:.72rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--faint); display:flex; align-items:center; justify-content:space-between;}
+  .stage{position:relative; width:100%; aspect-ratio:16/9; background:#000; border-radius:12px;
+    overflow:hidden; border:1px solid var(--line); box-shadow:0 12px 34px -18px rgba(0,0,0,.7);}
+  .stage.current{box-shadow:0 0 0 2px var(--accent), 0 12px 34px -14px rgba(74,134,214,.5);}
+  .stage iframe{width:100%; height:100%; border:0; pointer-events:none; display:block;}
+  .stage .badge{position:absolute; top:8px; left:8px; z-index:2; font-size:.64rem; font-weight:800;
+    letter-spacing:.1em; text-transform:uppercase; background:rgba(0,0,0,.55); color:#fff;
+    padding:3px 8px; border-radius:6px; backdrop-filter:blur(4px);}
+  .vidctl{position:absolute; bottom:10px; left:50%; transform:translateX(-50%); z-index:3;
+    display:flex; align-items:center; gap:8px; padding:7px 10px; border-radius:10px;
+    background:rgba(10,16,26,.82); backdrop-filter:blur(6px); box-shadow:0 6px 18px -6px rgba(0,0,0,.6);}
+  .vidctl[hidden]{display:none;}
+  .vidctl button{font-size:.82rem; font-weight:800; color:#fff; background:var(--accent2);
+    border:0; border-radius:8px; padding:8px 14px; cursor:pointer;}
+  .vidctl button:hover{background:var(--accent);}
+  .vidctl #v-toggle.playing{background:var(--warn);}
+  .vidctl-note{font-size:.66rem; color:var(--dim); margin-left:2px;}
+
+  .script-box{flex:1; min-height:0; background:var(--panel); border:1px solid var(--line);
+    border-radius:12px; padding:16px 18px; overflow-y:auto;}
+  .script-box h3{font-size:.72rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--accent); margin-bottom:10px;}
+  #script{font-size:1.12rem; line-height:1.72; color:var(--ink);}
+  #script p{margin-bottom:.7em;}
+  #script b{color:#bcd4f2;}
+  #script em{color:var(--faint); font-style:italic;}
+
+  /* ===== Footer ===== */
+  footer{flex:0 0 auto; display:flex; align-items:center; gap:16px; padding:12px 18px;
+    background:var(--panel); border-top:1px solid var(--line);}
+  .navbtn{font-size:1rem; font-weight:800; color:var(--ink); background:var(--panel2);
+    border:1px solid var(--line); border-radius:10px; padding:12px 22px; cursor:pointer; display:flex; align-items:center; gap:8px;}
+  .navbtn:hover{border-color:var(--accent); color:#fff;}
+  .navbtn.primary{background:var(--accent2); border-color:var(--accent2);}
+  .navbtn.primary:hover{background:var(--accent);}
+  .progress-wrap{flex:1; display:flex; align-items:center; gap:12px;}
+  .bar{flex:1; height:6px; background:var(--panel2); border-radius:999px; overflow:hidden;}
+  .bar > i{display:block; height:100%; width:0%; background:var(--accent); border-radius:999px; transition:width .2s;}
+  .jump{display:flex; align-items:center; gap:6px; font-size:.8rem; color:var(--dim);}
+  .jump input{width:52px; padding:6px 8px; text-align:center; background:var(--panel2);
+    border:1px solid var(--line); border-radius:7px; color:var(--ink); font-weight:700;}
+  .jump input:focus{outline:none; border-color:var(--accent);}
+  .hint{font-size:.72rem; color:var(--faint); text-align:center; padding:0 18px 8px;}
+</style>
+</head>
+<body class="locked">
+
+<!-- ===== Gate ===== -->
+<div id="pg-gate" role="dialog" aria-modal="true" aria-label="비밀번호 입력">
+  <div class="card">
+    <img src="assets/brand/lcic-logo.png" alt="LCIC">
+    <h1>발표자 콘솔</h1>
+    <p>발표자용 비밀번호를 입력하세요.</p>
+    <form id="pg-form" autocomplete="off">
+      <input id="pg-pw" type="password" inputmode="numeric" maxlength="12" placeholder="••••" aria-label="비밀번호">
+      <button type="submit">입장</button>
+      <div class="err" id="pg-err" role="alert"></div>
+    </form>
+  </div>
+</div>
+
+<!-- ===== Console ===== -->
+<div class="console">
+  <header>
+    <div class="brand"><span class="tag">Presenter</span> LCIC 오리엔테이션 <span style="color:#e5484d;font-size:.8rem;font-weight:800;">· 외박 금지 버전</span></div>
+    <div class="timer-wrap">
+      <span id="timer">00:00</span>
+      <button class="tbtn" id="t-start">시작</button>
+      <button class="tbtn" id="t-pause">일시정지</button>
+      <button class="tbtn" id="t-reset">리셋</button>
+    </div>
+    <div class="spacer"></div>
+    <div id="counter"><b>1</b> / 31</div>
+    <button id="open-aud"><span>▶</span><span id="open-aud-lbl">관객 탭 열기</span></button>
+  </header>
+
+  <main>
+    <div class="col">
+      <div class="pane-label"><span>현재 슬라이드 (관객 화면과 동일)</span></div>
+      <div class="stage current">
+        <span class="badge">LIVE</span>
+        <div class="vidctl" id="vidctl" hidden>
+          <button id="v-toggle">▶ 영상 재생</button>
+          <button id="v-restart">↻ 처음부터</button>
+          <span class="vidctl-note">소리 안 나면 → <b>관객 탭</b>에서 ▶ 직접 누르기</span>
+        </div>
+        <iframe id="cur-frame" src="index-noovernight.html?screen&preview" title="현재 슬라이드"></iframe>
+      </div>
+    </div>
+    <div class="col">
+      <div class="pane-label"><span id="next-label">다음 · 2</span></div>
+      <div class="stage">
+        <iframe id="next-frame" src="index-noovernight.html?screen&preview" title="다음 슬라이드"></iframe>
+      </div>
+      <div class="script-box">
+        <h3>대본</h3>
+        <div id="script"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <button class="navbtn" id="prev">◀ 이전</button>
+    <div class="progress-wrap">
+      <div class="bar"><i id="bar-fill"></i></div>
+      <div class="jump">이동 <input id="jump" type="number" min="1" max="31" value="1"> / 31</div>
+    </div>
+    <button class="navbtn primary" id="next">다음 ▶</button>
+  </footer>
+  <div class="hint">← / → · Space · PageUp/Down 이동 · 소리 전달: 미트 화면공유 → <b>“Chrome 탭”</b> → 관객 탭 선택 → <b>“탭 오디오도 공유” 체크</b> (창 공유는 소리 안 감)</div>
+</div>
+
+<!-- ===== 대본 데이터 (콘솔 전용 · 로직보다 먼저 로드) ===== -->
+<script>document.write('<script src="present-scripts-noovernight.js?t=' + Date.now() + '"><\/script>');</script>
+
+<script>
+(function(){
+  'use strict';
+
+  // ===== Gate =====
+  var KEY="lcic-ot-present-noovernight-v1", PW="4692";
+  var gate=document.getElementById("pg-gate"),
+      form=document.getElementById("pg-form"),
+      pw=document.getElementById("pg-pw"),
+      err=document.getElementById("pg-err");
+  function unlock(){ gate.remove(); document.body.classList.remove("locked"); boot(); }
+  if(sessionStorage.getItem(KEY)==="1"){ unlock(); }
+  else {
+    form.addEventListener("submit",function(e){
+      e.preventDefault();
+      if(pw.value.trim()===PW){ sessionStorage.setItem(KEY,"1"); unlock(); }
+      else{ err.textContent="비밀번호가 올바르지 않습니다."; pw.value=""; pw.focus(); }
+    });
+    setTimeout(function(){ pw.focus(); }, 50);
+  }
+
+  // ===== Scripts (콘솔 전용 · 학생/관객 미노출) =====
+  var SCRIPTS = window.SCRIPTS || [];
+
+  // ===== Console logic =====
+  function boot(){
+    var TOTAL = 31;
+    var cur = 0;
+    var audienceWin = null;
+    var curFrame = document.getElementById('cur-frame');
+    var nextFrame = document.getElementById('next-frame');
+
+    function send(win, index){
+      if(!win) return;
+      try{ win.postMessage({source:'lcic-ot', action:'goto', index:index}, '*'); }catch(_){}
+    }
+    function nextIdx(){ return Math.min(cur+1, TOTAL-1); }
+    function broadcast(){
+      send(curFrame.contentWindow, cur);
+      send(nextFrame.contentWindow, nextIdx());
+      if(audienceWin && !audienceWin.closed) send(audienceWin, cur);
+    }
+    // 영상 슬라이드(DOM 인덱스): 2=프로모, 28=센터장 인사말
+    var VIDEO_SLIDES = [2, 28];
+    var vPlaying = false;
+    function sendVideo(cmd){
+      var msg = {source:'lcic-ot', action:'video', cmd:cmd};
+      // 관객 창(소리 O) + 현재 미리보기(음소거 확인용)에 함께 전송
+      if(audienceWin && !audienceWin.closed){ try{ audienceWin.postMessage(msg,'*'); }catch(_){} }
+      try{ curFrame.contentWindow.postMessage(msg,'*'); }catch(_){}
+    }
+    function render(){
+      document.getElementById('counter').innerHTML = '<b>'+(cur+1)+'</b> / '+TOTAL;
+      document.getElementById('script').innerHTML = SCRIPTS[cur] || '<em>(이 슬라이드 대본 없음)</em>';
+      document.getElementById('next-label').textContent = (cur+1<TOTAL) ? ('다음 · '+(cur+2)) : '끝 — 다음 없음';
+      document.getElementById('bar-fill').style.width = ((cur+1)/TOTAL*100)+'%';
+      document.getElementById('jump').value = (cur+1);
+      // 영상 컨트롤: 영상 슬라이드에서만 표시, 슬라이드 바뀌면 재생상태 리셋
+      var isVid = VIDEO_SLIDES.indexOf(cur) !== -1;
+      var ctl = document.getElementById('vidctl');
+      ctl.hidden = !isVid;
+      vPlaying = false;
+      var tg = document.getElementById('v-toggle');
+      tg.textContent = '▶ 영상 재생'; tg.classList.remove('playing');
+    }
+    function goto(i){
+      cur = Math.max(0, Math.min(TOTAL-1, i));
+      broadcast(); render();
+    }
+
+    document.getElementById('prev').addEventListener('click', function(){ goto(cur-1); });
+    document.getElementById('next').addEventListener('click', function(){ goto(cur+1); });
+    document.getElementById('jump').addEventListener('change', function(){ goto((parseInt(this.value,10)||1)-1); });
+
+    // 영상 재생/일시정지 · 처음부터 (관객 창 소리 O, 미리보기 음소거로 동기 재생)
+    document.getElementById('v-toggle').addEventListener('click', function(){
+      vPlaying = !vPlaying;
+      sendVideo(vPlaying ? 'play' : 'pause');
+      this.textContent = vPlaying ? '⏸ 일시정지' : '▶ 영상 재생';
+      this.classList.toggle('playing', vPlaying);
+    });
+    document.getElementById('v-restart').addEventListener('click', function(){
+      vPlaying = true;
+      sendVideo('restart');
+      var tg = document.getElementById('v-toggle');
+      tg.textContent = '⏸ 일시정지'; tg.classList.add('playing');
+    });
+
+    window.addEventListener('keydown', function(e){
+      var t=(e.target.tagName||'').toUpperCase();
+      if(t==='INPUT'||t==='TEXTAREA') return;
+      switch(e.key){
+        case 'ArrowRight': case ' ': case 'PageDown': e.preventDefault(); goto(cur+1); break;
+        case 'ArrowLeft': case 'PageUp': e.preventDefault(); goto(cur-1); break;
+        case 'Home': e.preventDefault(); goto(0); break;
+        case 'End': e.preventDefault(); goto(TOTAL-1); break;
+      }
+    });
+
+    // 프레임이 이미 로드됐을 수도(boot 지연 실행), 아직일 수도 있으므로 양쪽 모두 커버
+    curFrame.addEventListener('load', function(){ send(curFrame.contentWindow, cur); setTimeout(broadcast, 400); });
+    nextFrame.addEventListener('load', function(){ send(nextFrame.contentWindow, nextIdx()); setTimeout(broadcast, 400); });
+
+    // 관객 창
+    var openBtn = document.getElementById('open-aud');
+    openBtn.addEventListener('click', function(){
+      if(audienceWin && !audienceWin.closed){ audienceWin.focus(); return; }
+      // 탭으로 엶 (features 없이) → 미트에서 "Chrome 탭 + 탭 오디오 공유"로 소리까지 전달 가능
+      audienceWin = window.open('index-noovernight.html?screen', 'lcic-audience-noovernight');
+      openBtn.classList.add('live');
+      document.getElementById('open-aud-lbl').textContent = '관객 탭 포커스';
+    });
+    window.addEventListener('message', function(e){
+      var d=e.data;
+      if(d && d.source==='lcic-ot-screen' && d.action==='ready'){ send(audienceWin, cur); }
+    });
+
+    // 타이머
+    var t0=null, base=0, tik=null;
+    function fmt(s){ var m=Math.floor(s/60); s=s%60; return (m<10?'0':'')+m+':'+(s<10?'0':'')+s; }
+    function tick(){ document.getElementById('timer').textContent = fmt(base + Math.floor((Date.now()-t0)/1000)); }
+    document.getElementById('t-start').addEventListener('click', function(){ if(tik) return; t0=Date.now(); tik=setInterval(tick,250); });
+    document.getElementById('t-pause').addEventListener('click', function(){ if(!tik) return; base+=Math.floor((Date.now()-t0)/1000); clearInterval(tik); tik=null; });
+    document.getElementById('t-reset').addEventListener('click', function(){ clearInterval(tik); tik=null; base=0; document.getElementById('timer').textContent='00:00'; });
+
+    render();
+    // 초기 동기화: load 이벤트가 boot 전에 이미 지나갔을 수 있으니 명시적으로 여러 번 확정
+    broadcast();
+    setTimeout(broadcast, 400);
+    setTimeout(broadcast, 1000);
+  }
+})();
+</script>
+</body>
+</html>
