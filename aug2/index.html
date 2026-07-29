@@ -5000,8 +5000,9 @@ body {
     mo.observe(document.body, { childList: true, subtree: true });
   }
 
-  if(document.readyState === 'complete') start();
-  else window.addEventListener('load', start);
+  // load 를 기다리면 폰트·사진이 느린 회선에서 수십 초 뒤에야 시작된다. DOM 이면 충분.
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
 })();
 </script>
 </body>
