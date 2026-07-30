@@ -802,6 +802,9 @@
     return { date: `${m}/${dd}(${wd})`, time: t };
   }
 
+  // 버스 미탑승·개별 공항 이동 학생(운영팀 확인, 이름 공백 무시 매칭 — 현재 명단 내 동명이인 없음 확인됨)
+  const SELF_DEPART = new Set(["정민영", "이재륜", "김은수"]);
+
   // 🛫 귀국(출국) 안내 카드 — 7월 과정 학생에게 표시(항공편 카드는 7월생에겐 숨김이라 별도 카드로).
   function renderDepart(rec) {
     const card = document.getElementById("depart-card");
@@ -814,7 +817,10 @@
     const grid = hasRf
       ? `<div class="flight-grid">${cell("항공편명", rf.flightNo)}${cell("세부 출발 일자", rf.date)}${rf.time ? cell("세부 출발 시간", rf.time) : ""}</div>`
       : "";
-    const pickup = dpk
+    const selfDepart = SELF_DEPART.has(String(rec.name || "").replace(/\s+/g, ""));
+    const pickup = selfDepart
+      ? `<div class="leg-note">🚗 학생분은 <b>LCIC 버스 대신 개별적으로 공항까지 이동</b>하기로 확인되었습니다. 항공편 출발 시간에 맞춰 <b>여유 있게</b> 출발해 주세요. (변경을 원하시면 매니저에게 연락)</div>`
+      : dpk
       ? `<div class="pickup-card">
           <div class="pk-top"><div class="pk-when"><iconify-icon icon="solar:point-on-map-bold-duotone"></iconify-icon>
             <div><div class="pk-label">LCIC 정문 출발(공항 이동)</div>
