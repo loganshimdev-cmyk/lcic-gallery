@@ -211,13 +211,13 @@ function applyDepChip(el, checked) {
 }
 function applyAllStates() {
   document.querySelectorAll("#list .nm").forEach((el) => applyChip(el, stateOf(el.dataset.id)));
-  document.querySelectorAll("#list .nmd").forEach((el) => applyDepChip(el, CHECK.get("dep_" + el.dataset.id) === "done"));
+  document.querySelectorAll("#list .nmd").forEach((el) => applyDepChip(el, CHECK.has("dep_" + el.dataset.id)));
   updateCounts();
 }
 function updateCounts() {
   if (TAB === "dep") {
     const grand = (DATA.departs || []).reduce((a, s) => a + s.count, 0);
-    const done = [...CHECK.entries()].filter(([k, v]) => k.startsWith("dep_") && v === "done").length;
+    const done = [...CHECK.keys()].filter((k) => k.startsWith("dep_")).length;
     $("counts").innerHTML =
       `<span class="cbx dorm">✅ 체크됨 <span class="n">${done}</span></span>` +
       `<span class="cbx" style="opacity:.7">미체크 <span class="n">${grand - done}</span></span>` +
@@ -255,16 +255,16 @@ async function onClickName(el) {
 async function onClickDepName(el) {
   if (!checkinReady) { showToast("체크 기능이 아직 켜지지 않았습니다(관리자 SQL 필요).", "error"); return; }
   const id = "dep_" + el.dataset.id;
-  const cur = CHECK.get(id) === "done";
-  if (cur) CHECK.delete(id); else CHECK.set(id, "done");   // 낙관적 업데이트
+  const cur = CHECK.has(id);
+  if (cur) CHECK.delete(id); else CHECK.set(id, "dorm");   // 낙관적 업데이트 (제약상 'dorm' 값 재사용, dep_ 접두사로 구분)
   applyDepChip(el, !cur); updateCounts();
   try {
     const res = !cur
-      ? await supabase.from(TABLE).upsert({ id, status: "done", updated_at: new Date().toISOString() })
+      ? await supabase.from(TABLE).upsert({ id, status: "dorm", updated_at: new Date().toISOString() })
       : await supabase.from(TABLE).delete().eq("id", id);
     if (res.error) throw res.error;
   } catch (_) {
-    if (cur) CHECK.set(id, "done"); else CHECK.delete(id);  // 롤백
+    if (cur) CHECK.set(id, "dorm"); else CHECK.delete(id);  // 롤백
     applyDepChip(el, cur); updateCounts();
     showToast("저장 실패 — 다시 시도해 주세요.", "error");
   }
