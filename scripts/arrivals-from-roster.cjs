@@ -80,6 +80,8 @@ const DEPARTURE_PICKUP = {
   "2026-08-07|BX712": "2026-08-06 22:30",
   "2026-08-02|PR2860": "2026-08-01 20:00",
 };
+// 학생별 정문 출발 예외(운영팀 확인) — 항공편 픽업 시간 대신 표시
+const PICKUP_STUDENT_OVERRIDE = { "이재륜": "7/31 22:00 정문 출발" };
 const normFlightNo = (s) =>
   String(s || "").replace(/\s+/g, "").toUpperCase().replace(/^([A-Z0-9]{2})0+(?=\d)/, "$1");
 
@@ -151,6 +153,7 @@ const normFlightNo = (s) =>
     }
     const st = { id: sid(r.email), n: name, u: cleanUni(r.university) };
     if (selfIds.has(String(r.id))) st.self = true;
+    if (PICKUP_STUDENT_OVERRIDE[name]) st.pk = PICKUP_STUDENT_OVERRIDE[name];
     fm.get(k).students.push(st);
     depUsed++;
   }
