@@ -64,6 +64,14 @@
   .count-bar .cbx .n { font-weight: 800; font-size: 1.02rem; }
   .count-bar .cbx.air .n { color: #1d4ed8; }
   .count-bar .cbx.dorm .n { color: #047857; }
+  .vtabs { display: flex; gap: 8px; margin: 0 0 14px; }
+  .vtabs button { flex: 1; padding: 11px 14px; border-radius: 12px; border: 1px solid var(--hairline);
+    background: var(--bg-elev); font-size: .95rem; font-weight: 800; cursor: pointer; box-shadow: var(--shadow-sm); }
+  .vtabs button.act-arr { background: #1e3a8a; color: #fff; border-color: #1e3a8a; }
+  .vtabs button.act-dep { background: #b91c1c; color: #fff; border-color: #b91c1c; }
+  .nmd { cursor: pointer; user-select: none; }
+  .nmd.st-done { background: #ecfdf5; border-color: #6ee7b7; }
+  .nmd .st { font-size: .72rem; font-weight: 800; color: #047857; }
   .hint { font-size: .78rem; color: var(--text-faint); margin: 0 0 18px; line-height: 1.5; }
   .empty { color: var(--text-faint); text-align: center; padding: 40px; }
 </style>
@@ -87,6 +95,10 @@
       <h1>🛬 도착 · 기숙사 입소 명단</h1>
       <div class="meta" id="meta"></div>
     </div>
+  </div>
+  <div class="vtabs">
+    <button id="tab-arr" type="button">🏠 오는 사람 (입소)</button>
+    <button id="tab-dep" type="button">🛫 가는 사람 (출국)</button>
   </div>
   <div class="count-bar" id="counts"></div>
   <div class="hint" id="hint">이름을 누르면 <b style="color:#1d4ed8;">🛬 공항 도착</b> → <b style="color:#047857;">🏠 기숙사 도착</b> → 해제 순서로 바뀝니다. 담당자 모두에게 공유됩니다.</div>
@@ -139,7 +151,7 @@ $("gate-form").addEventListener("submit", async (e) => {
     $("gate-view").classList.add("hidden");
     $("app-view").classList.remove("hidden");
     await loadCheckins();
-    render();
+    setTab(TAB);
     setInterval(syncCheckins, 15000);   // 팀 공유: 15초마다 동기화
   } catch (_) {
     btn.disabled = false; btn.textContent = "열기";
@@ -170,6 +182,19 @@ async function syncCheckins() {
   } catch (_) { /* 일시적 오류는 조용히 무시 */ }
 }
 
+let TAB = localStorage.getItem("lcic-arrivals-tab") || "arr";
+function setTab(tab) {
+  TAB = tab; localStorage.setItem("lcic-arrivals-tab", tab);
+  $("tab-arr").className = tab === "arr" ? "act-arr" : "";
+  $("tab-dep").className = tab === "dep" ? "act-dep" : "";
+  $("hint").innerHTML = tab === "arr"
+    ? `이름을 누르면 <b style="color:#1d4ed8;">🛬 공항 도착</b> → <b style="color:#047857;">🏠 기숙사 도착</b> → 해제 순서로 바뀝니다. 담당자 모두에게 공유됩니다.`
+    : `이름을 누르면 <b style="color:#047857;">✅ 체크</b> ↔ 해제로 바뀝니다. 담당자 모두에게 공유됩니다.`;
+  render();
+}
+$("tab-arr").addEventListener("click", () => setTab("arr"));
+$("tab-dep").addEventListener("click", () => setTab("dep"));
+
 $("q").addEventListener("input", render);
 
 const stateOf = (id) => CHECK.get(id);
@@ -180,15 +205,28 @@ function applyChip(el, status) {
   else if (status === "dorm") el.classList.add("st-dorm");
   const st = el.querySelector(".st"); if (st) st.textContent = badge(status);
 }
+function applyDepChip(el, checked) {
+  el.classList.toggle("st-done", !!checked);
+  const st = el.querySelector(".st"); if (st) st.textContent = checked ? "✅ 체크" : "";
+}
 function applyAllStates() {
   document.querySelectorAll("#list .nm").forEach((el) => applyChip(el, stateOf(el.dataset.id)));
+  document.querySelectorAll("#list .nmd").forEach((el) => applyDepChip(el, CHECK.get("dep_" + el.dataset.id) === "done"));
   updateCounts();
 }
 function updateCounts() {
+  if (TAB === "dep") {
+    const grand = (DATA.departs || []).reduce((a, s) => a + s.count, 0);
+    const done = [...CHECK.entries()].filter(([k, v]) => k.startsWith("dep_") && v === "done").length;
+    $("counts").innerHTML =
+      `<span class="cbx dorm">✅ 체크됨 <span class="n">${done}</span></span>` +
+      `<span class="cbx" style="opacity:.7">미체크 <span class="n">${grand - done}</span></span>` +
+      `<span class="cbx" style="opacity:.7">전체 <span class="n">${grand}</span></span>`;
+    return;
+  }
   const grand = DATA.sections.reduce((a, s) => a + s.count, 0);
-  const vals = [...CHECK.values()];
-  const air = vals.filter((v) => v === "airport" || v === "dorm").length;
-  const dorm = vals.filter((v) => v === "dorm").length;
+  const air = [...CHECK.entries()].filter(([k, v]) => !k.startsWith("dep_") && (v === "airport" || v === "dorm")).length;
+  const dorm = [...CHECK.entries()].filter(([k, v]) => !k.startsWith("dep_") && v === "dorm").length;
   $("counts").innerHTML =
     `<span class="cbx air">🛬 공항 도착 <span class="n">${air}</span></span>` +
     `<span class="cbx dorm">🏠 기숙사 도착 <span class="n">${dorm}</span></span>` +
@@ -214,8 +252,27 @@ async function onClickName(el) {
   }
 }
 
+async function onClickDepName(el) {
+  if (!checkinReady) { showToast("체크 기능이 아직 켜지지 않았습니다(관리자 SQL 필요).", "error"); return; }
+  const id = "dep_" + el.dataset.id;
+  const cur = CHECK.get(id) === "done";
+  if (cur) CHECK.delete(id); else CHECK.set(id, "done");   // 낙관적 업데이트
+  applyDepChip(el, !cur); updateCounts();
+  try {
+    const res = !cur
+      ? await supabase.from(TABLE).upsert({ id, status: "done", updated_at: new Date().toISOString() })
+      : await supabase.from(TABLE).delete().eq("id", id);
+    if (res.error) throw res.error;
+  } catch (_) {
+    if (cur) CHECK.set(id, "done"); else CHECK.delete(id);  // 롤백
+    applyDepChip(el, cur); updateCounts();
+    showToast("저장 실패 — 다시 시도해 주세요.", "error");
+  }
+}
+
 $("list").addEventListener("click", (e) => {
-  const el = e.target.closest(".nm"); if (el) onClickName(el);
+  const el = e.target.closest(".nm"); if (el) { onClickName(el); return; }
+  const dl = e.target.closest(".nmd"); if (dl) onClickDepName(dl);
 });
 
 function render() {
@@ -225,7 +282,7 @@ function render() {
   $("meta").textContent = `입소 ${grand}명 · 출국 ${depGrand}명 · 비행기편별 · 가나다순${DATA.updated ? " · 갱신 " + DATA.updated : ""}`;
 
   let html = "";
-  for (const s of DATA.sections) {
+  for (const s of (TAB === "arr" ? DATA.sections : [])) {
     let secHtml = "", secShown = 0;
     for (const f of s.flights) {
       const items = f.students.map((st) => {
@@ -251,12 +308,12 @@ function render() {
       ${secHtml}</div>`;
   }
   // ── 🛫 7월 과정 귀국(출국) — 출국일별, 클릭 체크인 없음(출국 관리는 OneSheet) ──
-  for (const s of DATA.departs || []) {
+  for (const s of (TAB === "dep" ? DATA.departs || [] : [])) {
     let secHtml = "", secShown = 0;
     for (const f of s.flights) {
       const items = f.students.map((st) => {
         if (q && !st.n.includes(q)) return null;
-        return `<span class="nmd${q ? " hit" : ""}"><b>${esc(st.n)}</b>${st.u ? `<span class="uni">${esc(st.u)}</span>` : ""}${st.self ? `<span class="selfb">개별이동</span>` : ""}</span>`;
+        return `<span class="nmd${q ? " hit" : ""}" data-id="${esc(st.id)}"><b>${esc(st.n)}</b>${st.u ? `<span class="uni">${esc(st.u)}</span>` : ""}${st.self ? `<span class="selfb">개별이동</span>` : ""}<span class="st"></span></span>`;
       }).filter(Boolean);
       if (!items.length) continue;
       secShown += items.length;
