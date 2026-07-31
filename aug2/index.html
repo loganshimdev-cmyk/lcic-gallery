@@ -1101,6 +1101,25 @@ body {
 .spec-sheet .specs .spec .key { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-faint); }
 .spec-sheet .specs .spec .val { font-size: clamp(0.98rem, 1.3vw, 1.1rem); font-weight: 600; }
 .spec-sheet .specs .spec .val .unit { font-weight: 400; color: var(--text-dim); font-size: 0.85em; margin-left: 4px; }
+.spec-sheet .noise-note {
+  margin-top: clamp(1.1rem, 2.4vh, 1.8rem);
+  padding: clamp(0.9rem, 1.8vh, 1.3rem) clamp(1rem, 1.6vw, 1.4rem);
+  background: rgba(245, 158, 11, 0.09);
+  border-left: 4px solid #f59e0b;
+  border-radius: 6px;
+}
+.spec-sheet .noise-note .nn-badge {
+  display: inline-block; margin-bottom: 9px;
+  padding: 3px 10px; border-radius: 3px;
+  background: #f59e0b; color: #3f2d05;
+  font-size: 0.68rem; font-weight: 800; letter-spacing: 0.1em;
+}
+.spec-sheet .noise-note ul {
+  list-style: none; padding: 0; margin: 0;
+  display: flex; flex-direction: column; gap: 7px;
+  font-size: clamp(0.88rem, 1.1vw, 1rem); line-height: 1.55; color: var(--text-dim);
+}
+.spec-sheet .noise-note b { color: var(--ink); font-weight: 800; }
 @media (max-width: 760px) { .spec-sheet .slide-inner { grid-template-columns: 1fr; } }
 
 /* S13 — Big mosaic 8-cell */
@@ -3311,6 +3330,14 @@ body {
         <div class="spec"><span class="key">Safe</span><span class="val">개인 금고</span></div>
         <div class="spec"><span class="key">Privacy</span><span class="val">1인실 구조</span></div>
       </div>
+      <div class="noise-note r d6">
+        <span class="nn-badge">소음 배려</span>
+        <ul>
+          <li>· 벽이 얇은 편입니다. <b>낮에도 작은 소리로</b> 대화해 주세요.</li>
+          <li>· 문은 <b>세게 닫지 말아</b> 주세요.</li>
+          <li>· <b>밤 10시 이후</b> 이야기는 <b>기숙사 1층 공용 라운지</b>를 이용해 주세요.</li>
+        </ul>
+      </div>
     </div>
   </div>
 </section>
@@ -3364,11 +3391,11 @@ body {
       <div class="kicker r d2">Cafeteria · Daily Menu</div>
       <h2 class="mega-serif r d3" style="font-size: clamp(2.8rem, 5vw, 4.2rem);">학생식당.</h2>
       <div class="menu-list r d4">
-        <div class="meal"><span class="nm">조식 · Breakfast</span><span class="dots"></span><span class="tm">07:00 — 09:00</span></div>
-        <div class="meal"><span class="nm">중식 · Lunch</span><span class="dots"></span><span class="tm">11:00 — 13:00</span></div>
-        <div class="meal"><span class="nm">석식 · Dinner</span><span class="dots"></span><span class="tm">17:00 — 19:00</span></div>
+        <div class="meal"><span class="nm">조식 · Breakfast</span><span class="dots"></span><span class="tm">06:30 — 08:30</span></div>
+        <div class="meal"><span class="nm">중식 · Lunch</span><span class="dots"></span><span class="tm">10:30 — 14:00</span></div>
+        <div class="meal"><span class="nm">석식 · Dinner</span><span class="dots"></span><span class="tm">17:00 — 20:00</span></div>
       </div>
-      <p class="footnote r d5">아침은 뷔페식, 점심·저녁은 정식 4가지 메뉴 중 선택. 밥과 국 무료 추가, 필리핀식 레스토랑 별도 비용 이용 가능.</p>
+      <p class="footnote r d5">아침은 뷔페식, 점심·저녁은 정식 4가지 메뉴 중 선택. 밥과 국 무료 추가, 필리핀식 레스토랑 별도 비용 이용 가능.<br/><b>인원이 많아 식사 시간대를 넉넉하게 조정</b>했습니다. 위 시간 안에 편한 때 오시면 됩니다.</p>
     </div>
   </div>
 </section>
@@ -3497,6 +3524,12 @@ body {
         <figure class="pg-card r d8"><div class="pg-img" style="background-image: url('../orientation-aug/assets/photos/lcic/LCIC%20Clinic/Clinic_2.jpg');"></div></figure>
       </div>
     </div>
+
+    <div class="cc-hospital r d8">
+      <span class="cch-badge">많이 아플 때</span>
+      <p>보건실에서 해결이 어려울 만큼 아프시면 <b>학교 주변 한국인 운영 병원</b>으로 가실 수 있습니다. <b>픽업 차량도 지원</b>되니, 혼자 참지 마시고 <b>한국인 매니저에게 바로 연락</b>해 주세요.</p>
+      <span class="cch-contact">심상현 · 카카오톡 <b>byredo3</b> · <b>+63 969 607 5149</b></span>
+    </div>
   </div>
 
   <style>
@@ -3508,7 +3541,31 @@ body {
     .clinic-collage .cc-header .pts .p .ttl { font-weight: 700; font-size: 0.95rem; }
     .clinic-collage .cc-header .pts .p .desc { font-size: 0.78rem; color: var(--text-dim); line-height: 1.45; }
 
-    .clinic-collage .cc-stage { flex: 1; position: relative; min-height: 540px; display: flex; }
+    .clinic-collage .cc-stage { flex: 1; position: relative; min-height: 420px; display: flex; }
+
+    .clinic-collage .cc-hospital {
+      flex-shrink: 0;
+      display: flex; align-items: center; gap: clamp(0.8rem, 1.6vw, 1.4rem); flex-wrap: wrap;
+      margin-top: clamp(0.6rem, 1.4vh, 1rem);
+      padding: clamp(0.75rem, 1.5vh, 1.1rem) clamp(1rem, 1.8vw, 1.5rem);
+      background: rgba(4, 120, 87, 0.08);
+      border-left: 4px solid var(--success);
+      border-radius: 6px;
+    }
+    .clinic-collage .cc-hospital .cch-badge {
+      flex-shrink: 0; padding: 4px 11px; border-radius: 3px;
+      background: var(--success); color: #fff;
+      font-size: 0.68rem; font-weight: 800; letter-spacing: 0.1em;
+    }
+    .clinic-collage .cc-hospital p {
+      flex: 1; min-width: 260px;
+      font-size: clamp(0.86rem, 1.05vw, 0.98rem); line-height: 1.55; color: var(--text);
+    }
+    .clinic-collage .cc-hospital b { color: var(--ink); font-weight: 800; }
+    .clinic-collage .cc-hospital .cch-contact {
+      flex-shrink: 0; font-size: clamp(0.8rem, 0.95vw, 0.9rem); color: var(--text-dim);
+      padding-left: clamp(0.8rem, 1.6vw, 1.4rem); border-left: 1px solid var(--rule-strong);
+    }
 
     .clinic-collage .cc-bg-word {
       position: absolute; left: 2%; bottom: -10%;
