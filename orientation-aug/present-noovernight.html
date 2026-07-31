@@ -154,13 +154,13 @@
           <button id="v-restart">↻ 처음부터</button>
           <span class="vidctl-note">소리 안 나면 → <b>관객 탭</b>에서 ▶ 직접 누르기</span>
         </div>
-        <iframe id="cur-frame" src="index-noovernight.html?screen&preview" title="현재 슬라이드"></iframe>
+        <iframe id="cur-frame" title="현재 슬라이드"></iframe>
       </div>
     </div>
     <div class="col">
       <div class="pane-label"><span id="next-label">다음 · 2</span></div>
       <div class="stage">
-        <iframe id="next-frame" src="index-noovernight.html?screen&preview" title="다음 슬라이드"></iframe>
+        <iframe id="next-frame" title="다음 슬라이드"></iframe>
       </div>
       <div class="script-box">
         <h3>대본</h3>
@@ -214,6 +214,11 @@
     var audienceWin = null;
     var curFrame = document.getElementById('cur-frame');
     var nextFrame = document.getElementById('next-frame');
+
+    // 캐시된 옛 슬라이드가 뜨는 것을 막는다 (발표 직전 수정분이 바로 반영되도록)
+    var DECK = 'index-noovernight.html?screen&preview&v=' + Date.now();
+    curFrame.src = DECK;
+    nextFrame.src = DECK;
 
     function send(win, index){
       if(!win) return;
@@ -291,7 +296,7 @@
     openBtn.addEventListener('click', function(){
       if(audienceWin && !audienceWin.closed){ audienceWin.focus(); return; }
       // 탭으로 엶 (features 없이) → 미트에서 "Chrome 탭 + 탭 오디오 공유"로 소리까지 전달 가능
-      audienceWin = window.open('index-noovernight.html?screen', 'lcic-audience-noovernight');
+      audienceWin = window.open('index-noovernight.html?screen&v=' + Date.now(), 'lcic-audience-noovernight');
       openBtn.classList.add('live');
       document.getElementById('open-aud-lbl').textContent = '관객 탭 포커스';
     });
