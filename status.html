@@ -827,6 +827,8 @@
 
   // 버스 미탑승·개별 공항 이동 학생(운영팀 확인, 이름 공백 무시 매칭 — 현재 명단 내 동명이인 없음 확인됨)
   const SELF_DEPART = new Set(["정민영", "김은수", "김지수", "박소명"]);
+  // 학생별 정문 출발 시간 예외(운영팀 확인) — 이름 → "YYYY-MM-DD HH:MM"
+  const PICKUP_OVERRIDE = { "이재륜": "2026-07-31 22:00" };
 
   // 🛫 귀국(출국) 안내 카드 — 7월 과정 학생에게 표시(항공편 카드는 7월생에겐 숨김이라 별도 카드로).
   function renderDepart(rec) {
@@ -840,14 +842,22 @@
     const grid = hasRf
       ? `<div class="flight-grid">${cell("항공편명", rf.flightNo)}${cell("세부 출발 일자", rf.date)}${rf.time ? cell("세부 출발 시간", rf.time) : ""}</div>`
       : "";
-    const selfDepart = SELF_DEPART.has(String(rec.name || "").replace(/\s+/g, ""));
+    const cleanNm = String(rec.name || "").replace(/\s+/g, "");
+    const selfDepart = SELF_DEPART.has(cleanNm);
+    let dpk2 = dpk;
+    if (PICKUP_OVERRIDE[cleanNm]) {
+      const [d, tm] = PICKUP_OVERRIDE[cleanNm].split(" ");
+      const [y, m, dd] = d.split("-").map(Number);
+      const wd = "일월화수목금토"[new Date(y, m - 1, dd).getDay()];
+      dpk2 = { date: `${m}/${dd}(${wd})`, time: tm };
+    }
     const pickup = selfDepart
       ? `<div class="leg-note">🚗 학생분은 <b>LCIC 버스 대신 개별적으로 공항까지 이동</b>하기로 확인되었습니다. 항공편 출발 시간에 맞춰 <b>여유 있게</b> 출발해 주세요. (변경을 원하시면 매니저에게 연락)</div>`
-      : dpk
+      : dpk2
       ? `<div class="pickup-card">
           <div class="pk-top"><div class="pk-when"><iconify-icon icon="solar:point-on-map-bold-duotone"></iconify-icon>
             <div><div class="pk-label">LCIC 정문 출발(공항 이동)</div>
-            <div class="pk-time">${escapeHtml(dpk.date)} <b>${escapeHtml(dpk.time)}</b></div></div></div></div>
+            <div class="pk-time">${escapeHtml(dpk2.date)} <b>${escapeHtml(dpk2.time)}</b></div></div></div></div>
           <div class="pk-desc">출발 전날 밤, <b>LCIC 정문</b>에서 다 같이 공항으로 출발해요. 짐을 미리 챙겨 <b>시간에 늦지 않게</b> 정문으로 나와 주세요.</div>
         </div>`
       : (hasRf
@@ -1013,14 +1023,24 @@
         `<div class="flight-leg"><div class="leg-tag go"><iconify-icon icon="solar:plane-bold"></iconify-icon> 가는 편 (한국 → 세부)</div>
           <div class="flight-grid">${cell("항공편명", f.flightNo)}${cell("세부 도착 일자", f.departure)}${f.departureTime ? cell("세부 도착 시간", f.departureTime) : ""}</div>
           ${pickupBox}</div>`;
-      // 귀국 픽업: 출발일+편명이 운영 시간표에 있으면 본인 정문 픽업 시각을 보여준다
+      // 귀국 픽업: 출발일+편명이 운영 시간표에 있으면 본인 정문 픽업 시각을 보여준다(학생별 예외 우선)
       const dpk = departPickup(rf);
-      const backPickup = dpk
+      let dpk2 = dpk;
+      {
+        const nm2 = String(rec.name || "").replace(/\s+/g, "");
+        if (PICKUP_OVERRIDE[nm2]) {
+          const [d, tm] = PICKUP_OVERRIDE[nm2].split(" ");
+          const [y, m, dd] = d.split("-").map(Number);
+          const wd = "일월화수목금토"[new Date(y, m - 1, dd).getDay()];
+          dpk2 = { date: `${m}/${dd}(${wd})`, time: tm };
+        }
+      }
+      const backPickup = dpk2
         ? `<div class="pickup-card">
             <div class="pk-top">
               <div class="pk-when"><iconify-icon icon="solar:point-on-map-bold-duotone"></iconify-icon>
                 <div><div class="pk-label">LCIC 정문 출발(공항 이동)</div>
-                <div class="pk-time">${escapeHtml(dpk.date)} <b>${escapeHtml(dpk.time)}</b></div></div></div>
+                <div class="pk-time">${escapeHtml(dpk2.date)} <b>${escapeHtml(dpk2.time)}</b></div></div></div>
             </div>
             <div class="pk-desc">출발 전날 밤, <b>LCIC 정문</b>에서 공항으로 함께 출발해요. 짐을 미리 챙겨 <b>시간에 늦지 않게</b> 정문으로 나와 주세요.</div>
             <div class="pk-meet"><iconify-icon icon="solar:ticket-bold-duotone"></iconify-icon><span>🎫 <b>본인 이름이 적힌 '돌아가는' e-ticket</b>(휴대폰 화면 또는 종이)을 꼭 준비하세요. <b>e-ticket이 없으면 공항 건물에 들어갈 수 없습니다.</b></span></div>
