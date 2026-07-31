@@ -668,6 +668,29 @@
     <div id="d-checklist"></div>
   </section>
 
+  <!-- 🚤 호핑 투어 수요조사 (8월 입국 학생 전용 · 인원 제한 없음)
+       event_key=hopping_aug · 대상 판별은 EVENTS 의 only(stay.start >= 2026-08-01) -->
+  <section class="card fade-up" id="hopaug-card" style="display:none">
+    <div class="card-title">🚤 호핑 투어 수요조사</div>
+    <p class="hop-desc">
+      세부의 바다를 배로 누비는 <b>호핑 투어</b>를 준비하고 있어요.
+      먼저 <b>몇 명이 가고 싶은지</b> 알아보는 수요조사예요. 관심 있는 학생은 신청해 주세요. 💙
+    </p>
+
+    <div class="msm-info">
+      <div class="mi"><span class="mi-k">📅 예정일</span><span class="mi-v"><b>8월 8일 (토)</b></span></div>
+      <div class="mi"><span class="mi-k">👥 인원</span><span class="mi-v"><b>제한 없음</b> — 신청한 만큼 준비해요</span></div>
+      <div class="mi"><span class="mi-k">💰 비용</span><span class="mi-v">추후 안내</span></div>
+    </div>
+
+    <div class="hop-my none" id="hopaug-my"></div>
+    <div class="hop-dates" id="hopaug-dates"></div>
+    <div class="ev-note">🗓 <b>아직 예정일이라 바뀔 수 있어요.</b> 확정되면 이 페이지에서 다시 안내드릴게요.</div>
+    <div class="ev-note">💳 <b>지금은 결제 없이 신청만 하시면 돼요.</b> 비용과 준비물은 인원이 정해진 뒤 안내드릴게요.</div>
+    <div class="ev-note">🔄 마음이 바뀌면 <b>언제든 취소</b>할 수 있어요.</div>
+    <div class="hop-status" id="hopaug-status"></div>
+  </section>
+
   <!-- 항공편 · 7월 학생에겐 숨김 유지 · 8월 입국 학생에게만 JS(render)가 다시 켬 -->
   <section class="card fade-up" style="display:none" id="sec-flight">
     <div class="card-title"><iconify-icon icon="solar:plane-bold-duotone"></iconify-icon> 항공편 정보 확인</div>
@@ -896,9 +919,11 @@
       renderDepart(rec);   // 🛫 귀국(출국) 안내 카드 — 정문 픽업 시각 + e-ticket 경고
       renderHopping(rec);   // 호핑 수요조사 카드
       renderMarshmallow(rec);   // 🍭 마시멜로우 챌린지 신청 카드
-      renderEvents(rec);   // 🥭 망고 공장 · 🏛 주청사 선착순 신청 카드
       renderEfset(rec);    // 📝 EF-SET 결과지 제출 카드
     }
+    // 🎟 이벤트 카드는 7·8월 모두에서 렌더한다. 대상은 각 항목의 only 가 정하고,
+    //    조건에 맞지 않으면 카드가 숨겨진 채로 남는다(8월 호핑 수요조사 = 8월 입국 학생만).
+    renderEvents(rec);
     if (augArrival) {
       // 7월 재학생용 요소 숨김 (학생 모임 + 공지 사이드, 지난 공지·마감된 신청 박스)
       document.querySelectorAll(".dash-side, #past-box").forEach((el) => { el.style.display = "none"; });
@@ -1337,7 +1362,15 @@
   //     what: "🏛 주청사 방문", cap: 25,
   //     slots: [{ date: "2026-07-21", label: "7월 21일 (화)" }],
   //     confirm: "🏛 세부 주청사(Capitol) 방문\n\n· 출발: 오후 12시 30분 · 정문\n\n신청할까요?" },
-  const EVENTS = [];
+  // only  = 이 카드를 볼 학생 조건(없으면 전원). 8월 입국 학생 판별은 render() 의 augArrival 과 같은 기준.
+  // unlimited = 인원 제한 없는 수요조사(정원·남은 자리 표기를 쓰지 않음). cap 은 서버 트리거용 상한일 뿐.
+  const EVENTS = [
+    { key: "hopping_aug", card: "hopaug-card", grid: "hopaug-dates", my: "hopaug-my", stat: "hopaug-status",
+      what: "🚤 호핑 투어", cap: 9999, unlimited: true,
+      only: (rec) => (((rec.stay || {}).start || "") >= "2026-08-01"),
+      slots: [{ date: "2026-08-08", label: "8월 8일 (토)" }],
+      confirm: "🚤 호핑 투어 수요조사 (8월 8일 토요일 예정)\n\n· 인원 제한 없이 받는 수요조사예요.\n· 예정일은 바뀔 수 있고, 비용·준비물은 인원이 정해진 뒤 안내드려요.\n· 신청 후에도 언제든 취소할 수 있어요.\n\n신청할까요?" },
+  ];
   const evIds = {};
 
   async function renderEvents(rec) {
@@ -1345,6 +1378,7 @@
     const sid = (await sha256hex(CUR_EMAIL || "")).slice(0, 16);
     for (const ev of EVENTS) {
       const card = $(ev.card); if (!card) continue;
+      if (ev.only && !ev.only(rec)) { card.style.display = "none"; continue; }   // 대상 학생이 아니면 카드 자체를 숨김
       card.style.display = "";
       evIds[ev.key] = sid;
       $(ev.grid).onclick = (e) => onEventClick(e, ev, rec);
@@ -1430,7 +1464,8 @@
       const preopen = new Date() < openAt;          // 슬롯마다 오픈 시각이 다를 수 있음
       const closed = closedOf(closes, s.date);      // 마감된 회차(잠금)
       const n = counts[s.date] || 0, rest = Math.max(0, cap - n);
-      const isMine = mine === s.date, full = rest <= 0 && !isMine;
+      const unlimited = !!ev.unlimited;             // 수요조사 — 정원·남은 자리 개념 없음
+      const isMine = mine === s.date, full = !unlimited && rest <= 0 && !isMine;
       let btn;
       if (isMine && closed) btn = `<button class="hd-btn" disabled>✅ 참가 확정</button>`;
       // 취소는 오픈 대기와 무관하게 항상 가능(마감된 회차만 예외 — 서버 트리거도 삭제를 막음)
@@ -1443,7 +1478,10 @@
       const cnt = closed
         ? `신청 <b>${n}</b>명 · 마감`
         : preopen
-        ? `신청 <b>${n}</b> / ${cap}명 · 🔓 ${fmtOpenTime(openAt)} 오픈`
+        ? (unlimited ? `신청 <b>${n}</b>명 · 🔓 ${fmtOpenTime(openAt)} 오픈`
+                     : `신청 <b>${n}</b> / ${cap}명 · 🔓 ${fmtOpenTime(openAt)} 오픈`)
+        : unlimited
+        ? `지금까지 <b>${n}</b>명 신청 · 인원 제한 없음`
         : `신청 <b>${n}</b> / ${cap}명 · 남은 자리 <span class="rest ${rest === 0 ? "zero" : ""}">${rest}</span>`;
       return `<div class="hop-date ${isMine ? "mine" : ""} ${full || closed ? "full" : ""}">
         <div class="hd-title">${isMine ? "✅ " : ""}${s.label}</div>
