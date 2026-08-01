@@ -8,6 +8,8 @@
 <script src="assets/background.js?v=8"></script>
 <link rel="stylesheet" href="assets/shared.css?v=13">
 <script src="assets/i18n.js?v=4" defer></script>
+<!-- 제휴 할인 목록 원본 (deals.html 과 공용). 아래 '제휴 할인' 탭이 이 값을 읽으므로 defer 금지. -->
+<script src="assets/partners.js?v=1"></script>
 <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
 <style>
   /* Tabs */
@@ -402,6 +404,9 @@
         </button>
         <button class="lg-tab" data-target="lg-city" type="button">
           <iconify-icon icon="solar:city-bold-duotone"></iconify-icon> <span data-i18n-en="Cebu Life" data-i18n-zh="宿霧生活" data-i18n-ja="セブ生活">세부 생활</span>
+        </button>
+        <button class="lg-tab" data-target="lg-partner" type="button">
+          <iconify-icon icon="solar:tag-price-bold-duotone"></iconify-icon> <span data-i18n-en="Discounts" data-i18n-zh="合作優惠" data-i18n-ja="提携割引">제휴 할인</span>
         </button>
       </div>
     </div>
@@ -1297,6 +1302,80 @@
         </div>
       </details>
 
+    </div>
+
+    <!-- =========== TAB 5: 제휴 할인 =========== -->
+    <div class="lg-panel" data-panel="lg-partner">
+      <style>
+        .pt-head { margin: 6px 0 14px; }
+        .pt-head p { color: var(--text-dim); font-size: 0.93rem; line-height: 1.6; margin: 6px 0 0; }
+        .pt-chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 14px 0 18px; }
+        .pt-chip { border: 1.5px solid var(--line, #dbe3ef); background: #fff; color: var(--text-dim);
+          border-radius: 999px; padding: 7px 16px; font-size: 0.88rem; font-weight: 700; cursor: pointer; }
+        .pt-chip.active { background: var(--accent-deep, #1d4ed8); border-color: var(--accent-deep, #1d4ed8); color: #fff; }
+        .pt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); gap: 13px; }
+        .pt-card { background: #fff; border: 1px solid var(--line, #e3e9f2); border-radius: 16px;
+          padding: 15px 16px 13px; display: flex; flex-direction: column; gap: 7px;
+          box-shadow: 0 1px 5px rgba(30, 50, 90, 0.05); }
+        .pt-top { display: flex; align-items: flex-start; gap: 8px; }
+        .pt-name { font-weight: 800; color: var(--text); font-size: 0.98rem; line-height: 1.35; flex: 1; }
+        .pt-badges { display: flex; gap: 5px; flex-shrink: 0; }
+        .pt-disc { background: #fee2e2; color: #b91c1c; font-weight: 900; font-size: 0.82rem;
+          border-radius: 8px; padding: 3px 8px; white-space: nowrap; }
+        .pt-new { background: #d97706; color: #fff; font-weight: 800; font-size: 0.72rem;
+          border-radius: 999px; padding: 3px 8px; align-self: center; }
+        .pt-cat { color: var(--text-faint, #8a94a6); font-size: 0.8rem; font-weight: 600; }
+        .pt-benefit { color: var(--text); font-size: 0.88rem; line-height: 1.5; }
+        .pt-note { background: #f6f8fb; border-radius: 9px; padding: 7px 9px; color: var(--text-dim);
+          font-size: 0.82rem; line-height: 1.5; }
+        .pt-links { display: flex; gap: 7px; flex-wrap: wrap; margin-top: auto; padding-top: 4px; }
+        .pt-links a { text-decoration: none; font-size: 0.82rem; font-weight: 700; color: var(--accent-deep, #1d4ed8);
+          background: #eef3fd; border-radius: 8px; padding: 6px 10px; }
+      </style>
+
+      <div class="pt-head">
+        <h3 style="margin:0; color:var(--text);">🏷 LCIC 제휴 할인</h3>
+        <p><b>학생증 또는 쿠폰</b>(매장별 상이)을 제시하면 할인받을 수 있어요. 상세 조건은 매장에서 한 번 더 확인해 주세요.</p>
+      </div>
+      <div class="pt-chips" id="pt-chips">
+        <button class="pt-chip active" data-cat="all" type="button">전체</button>
+        <button class="pt-chip" data-cat="food" type="button">🍽 식당</button>
+        <button class="pt-chip" data-cat="cafe" type="button">☕ 카페</button>
+        <button class="pt-chip" data-cat="spa" type="button">💆 스파 · 다이빙</button>
+      </div>
+      <div class="pt-grid" id="pt-grid"></div>
+
+      <script>
+      // 목록 원본은 assets/partners.js 한 곳에만 있다(deals.html 과 공용).
+      // 업체를 추가·수정하려면 그 파일을 고칠 것 — 여기에 다시 적지 말 것.
+      const PARTNERS = window.LCIC_PARTNERS || [];
+      (function () {
+        const grid = document.getElementById("pt-grid");
+        const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+        function paint(cat) {
+          grid.innerHTML = PARTNERS.filter((p) => cat === "all" || p.cat === cat).map((p) => `
+            <div class="pt-card">
+              <div class="pt-top">
+                <div class="pt-name">${esc(p.name)}</div>
+                <div class="pt-badges">${p.isNew ? '<span class="pt-new">NEW</span>' : ""}<span class="pt-disc">${esc(p.disc)}</span></div>
+              </div>
+              <div class="pt-cat">${esc(p.sub)}</div>
+              <div class="pt-benefit">${esc(p.benefit)}</div>
+              ${p.note ? `<div class="pt-note">💡 ${esc(p.note)}</div>` : ""}
+              <div class="pt-links">
+                ${p.map ? `<a href="${p.map}" target="_blank" rel="noopener">📍 지도</a>` : ""}
+                ${p.menu ? `<a href="${p.menu}" target="_blank" rel="noopener">🍜 메뉴판</a>` : ""}
+              </div>
+            </div>`).join("");
+        }
+        document.getElementById("pt-chips").addEventListener("click", (e) => {
+          const b = e.target.closest(".pt-chip"); if (!b) return;
+          document.querySelectorAll(".pt-chip").forEach((x) => x.classList.toggle("active", x === b));
+          paint(b.dataset.cat);
+        });
+        paint("all");
+      })();
+      </script>
     </div>
 
   </div>

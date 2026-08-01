@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>제휴 할인 · LCIC</title>
+<link rel="icon" type="image/png" href="assets/brand/lcic-logo.png">
+<script src="assets/background.js?v=8"></script>
+<link rel="stylesheet" href="assets/shared.css?v=13">
+<script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+<style>
+  .dl-wrap { max-width: 1080px; margin: 0 auto; padding: 108px 16px 80px; }
+
+  .dl-hero { text-align: center; margin-bottom: 30px; }
+  .dl-hero h1 { margin: 0 0 10px; font-size: clamp(1.6rem, 4vw, 2.2rem); color: var(--text); letter-spacing: -0.02em; }
+  .dl-hero p { margin: 0 auto; max-width: 620px; color: var(--text-dim); font-size: 0.97rem; line-height: 1.7; }
+
+  /* 학생증 안내 — 이 페이지에서 제일 먼저 읽어야 하는 한 줄 */
+  .dl-key { display: flex; align-items: center; gap: 12px; max-width: 620px; margin: 20px auto 0;
+    background: #eef3fd; border: 1px solid #d5e2fb; border-radius: 14px; padding: 13px 16px;
+    color: var(--accent-deep, #1d4ed8); font-size: 0.92rem; font-weight: 700; line-height: 1.55; text-align: left; }
+  .dl-key iconify-icon { font-size: 1.5rem; flex-shrink: 0; }
+
+  .dl-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin: 26px 0 18px; }
+  .dl-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .dl-chip { border: 1.5px solid var(--line, #dbe3ef); background: #fff; color: var(--text-dim);
+    border-radius: 999px; padding: 8px 17px; font-size: 0.89rem; font-weight: 700; cursor: pointer;
+    transition: background .15s, color .15s, border-color .15s; }
+  .dl-chip:hover { border-color: var(--accent-deep, #1d4ed8); color: var(--accent-deep, #1d4ed8); }
+  .dl-chip.active { background: var(--accent-deep, #1d4ed8); border-color: var(--accent-deep, #1d4ed8); color: #fff; }
+  .dl-count { color: var(--text-faint, #8a94a6); font-size: 0.87rem; font-weight: 600; }
+
+  .dl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(272px, 1fr)); gap: 14px; }
+  .dl-card { background: #fff; border: 1px solid var(--line, #e3e9f2); border-radius: 18px;
+    padding: 17px 18px 15px; display: flex; flex-direction: column; gap: 8px;
+    box-shadow: 0 1px 6px rgba(30, 50, 90, 0.05); transition: transform .15s, box-shadow .15s; }
+  .dl-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(30, 50, 90, 0.1); }
+  .dl-top { display: flex; align-items: flex-start; gap: 9px; }
+  .dl-name { font-weight: 800; color: var(--text); font-size: 1.01rem; line-height: 1.35; flex: 1; }
+  .dl-badges { display: flex; gap: 5px; flex-shrink: 0; align-items: center; }
+  .dl-disc { background: #fee2e2; color: #b91c1c; font-weight: 900; font-size: 0.84rem;
+    border-radius: 9px; padding: 4px 9px; white-space: nowrap; }
+  .dl-new { background: #d97706; color: #fff; font-weight: 800; font-size: 0.71rem;
+    border-radius: 999px; padding: 3px 8px; }
+  .dl-sub { color: var(--text-faint, #8a94a6); font-size: 0.81rem; font-weight: 600; }
+  .dl-benefit { color: var(--text); font-size: 0.89rem; line-height: 1.55; }
+  .dl-note { background: #f6f8fb; border-radius: 10px; padding: 8px 10px; color: var(--text-dim);
+    font-size: 0.83rem; line-height: 1.5; }
+  .dl-links { display: flex; gap: 7px; flex-wrap: wrap; margin-top: auto; padding-top: 6px; }
+  .dl-links a { text-decoration: none; font-size: 0.83rem; font-weight: 700; color: var(--accent-deep, #1d4ed8);
+    background: #eef3fd; border-radius: 9px; padding: 7px 11px; }
+  .dl-links a:hover { background: #dfe9fc; }
+
+  .dl-foot { margin-top: 34px; text-align: center; color: var(--text-faint, #8a94a6);
+    font-size: 0.86rem; line-height: 1.7; }
+  .dl-foot b { color: var(--text-dim); }
+
+  @media (max-width: 640px) {
+    .dl-wrap { padding-top: 96px; }
+    .dl-grid { grid-template-columns: 1fr; }
+    .dl-bar { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<a class="brand-mark" href="index.html" aria-label="LCIC 홈으로">
+  <img src="assets/brand/lcic-logo.png" alt="LCIC logo">
+  <span class="brand-name">
+    <span>Lapulapu Cebu</span>
+    <span>International</span>
+    <span>College</span>
+  </span>
+</a>
+
+<nav class="nav-pill">
+  <a href="index.html"><iconify-icon icon="solar:home-2-bold-duotone" inline></iconify-icon> 홈</a>
+  <a href="life-guide.html"><iconify-icon icon="solar:book-bookmark-bold-duotone" inline></iconify-icon> 생활백서</a>
+  <a href="deals.html" class="active"><iconify-icon icon="solar:tag-price-bold-duotone" inline></iconify-icon> 제휴 할인</a>
+  <a href="faq.html"><iconify-icon icon="solar:question-circle-bold-duotone" inline></iconify-icon> 궁금한 사항</a>
+</nav>
+
+<main class="dl-wrap">
+
+  <div class="dl-hero fade-up">
+    <h1>🏷 LCIC 제휴 할인</h1>
+    <p>LCIC 학생·직원에게 할인을 제공하는 제휴 업체예요.<br>세부에서 지내는 동안 마음껏 활용하세요!</p>
+    <div class="dl-key">
+      <iconify-icon icon="solar:card-2-bold-duotone"></iconify-icon>
+      <span>방문해서 <b>LCIC 학생</b>이라고 말하고 <b>학생증</b>(또는 매장별 쿠폰)을 보여주세요.</span>
+    </div>
+  </div>
+
+  <div class="dl-bar fade-up">
+    <div class="dl-chips" id="dl-chips">
+      <button class="dl-chip active" data-cat="all" type="button">전체</button>
+      <button class="dl-chip" data-cat="food" type="button">🍽 식당</button>
+      <button class="dl-chip" data-cat="cafe" type="button">☕ 카페</button>
+      <button class="dl-chip" data-cat="spa" type="button">💆 스파 · 다이빙</button>
+    </div>
+    <div class="dl-count" id="dl-count"></div>
+  </div>
+
+  <div class="dl-grid" id="dl-grid"></div>
+
+  <div class="dl-foot">
+    할인율과 조건은 매장 사정으로 바뀔 수 있어요. <b>주문 전에 매장에서 한 번 더 확인</b>해 주세요.<br>
+    새로 제휴된 곳이 생기면 이 페이지에 바로 올려드릴게요.
+  </div>
+
+</main>
+
+<script src="assets/partners.js?v=1"></script>
+<script>
+(function () {
+  const PARTNERS = window.LCIC_PARTNERS || [];
+  const grid = document.getElementById("dl-grid");
+  const count = document.getElementById("dl-count");
+  const esc = (s) => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  function paint(cat) {
+    const list = PARTNERS.filter((p) => cat === "all" || p.cat === cat);
+    count.textContent = `${list.length}곳`;
+    grid.innerHTML = list.map((p) => `
+      <div class="dl-card">
+        <div class="dl-top">
+          <div class="dl-name">${esc(p.name)}</div>
+          <div class="dl-badges">${p.isNew ? '<span class="dl-new">NEW</span>' : ""}<span class="dl-disc">${esc(p.disc)}</span></div>
+        </div>
+        <div class="dl-sub">${esc(p.sub)}</div>
+        <div class="dl-benefit">${esc(p.benefit)}</div>
+        ${p.note ? `<div class="dl-note">💡 ${esc(p.note)}</div>` : ""}
+        <div class="dl-links">
+          ${p.map ? `<a href="${esc(p.map)}" target="_blank" rel="noopener">📍 지도</a>` : ""}
+          ${p.menu ? `<a href="${esc(p.menu)}" target="_blank" rel="noopener">🍜 메뉴판</a>` : ""}
+        </div>
+      </div>`).join("");
+  }
+
+  document.getElementById("dl-chips").addEventListener("click", (e) => {
+    const b = e.target.closest(".dl-chip"); if (!b) return;
+    document.querySelectorAll(".dl-chip").forEach((x) => x.classList.toggle("active", x === b));
+    paint(b.dataset.cat);
+  });
+
+  paint("all");
+})();
+</script>
+
+</body>
+</html>
