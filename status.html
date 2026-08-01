@@ -9,6 +9,8 @@
 <script src="assets/background.js?v=8"></script>
 <link rel="stylesheet" href="assets/shared.css?v=13">
 <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+<!-- 제휴 할인 목록 원본 (deals.html · life-guide.html 과 공용). 아래 카드가 즉시 읽으므로 defer 금지. -->
+<script src="assets/partners.js?v=1"></script>
 <style>
   /* ── 로그인 게이트 (summer-2026.html 패턴 재사용) ── */
   .gate-wrap {
@@ -87,7 +89,18 @@
   .dash-notice .dn-list li b { color: #92400e; font-weight: 800; }
   .dash-notice .dn-list li .dn-tip { display: block; margin-top: 5px; font-size: 0.85rem; color: #9a5a12; background: rgba(255,255,255,0.5); border-radius: 9px; padding: 7px 9px; }
 
-  /* LCIC 제휴 할인 */
+  /* LCIC 제휴 할인 — deals.html 로 가는 카드 */
+  .deal-go { display: block; text-decoration: none; color: inherit; transition: transform .15s, box-shadow .15s; }
+  .deal-go:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(30, 50, 90, 0.12); }
+  .deal-go .deal-intro { margin-bottom: 12px; }
+  .deal-go-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+  .deal-go-tag { font-size: 0.78rem; font-weight: 700; color: var(--text-dim);
+    background: var(--bg); border: 1px solid var(--hairline); border-radius: 999px; padding: 5px 11px; }
+  .deal-go-tag .g { color: #b91c1c; font-weight: 900; }
+  .deal-go-cta { display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem;
+    font-weight: 800; color: var(--accent); }
+
+  /* LCIC 제휴 할인 (구 인라인 목록 — 지금은 숨김, deals.html 로 이전) */
   .deal-intro { font-size: 0.9rem; color: var(--text-dim); line-height: 1.6; margin: 0 0 14px; }
   .deal-list { display: flex; flex-direction: column; gap: 12px; }
   .deal { display: flex; gap: 12px; padding: 14px; border: 1px solid var(--hairline); border-radius: 16px; background: var(--bg); }
@@ -513,7 +526,18 @@
   </section>
 
   <!-- LCIC 제휴 할인 -->
-  <section class="card fade-up" id="deal-card" style="display:none">
+  <!-- 🤝 제휴 할인 — 목록은 deals.html 에 있고 여기서는 들어가는 문만 연다.
+       업체 수·미리보기는 assets/partners.js 를 읽어 자동으로 채운다(수동 관리 없음). -->
+  <a class="card fade-up deal-go" id="deal-card" href="deals.html">
+    <div class="deal-go-body">
+      <div class="card-title">🤝 LCIC 제휴 할인</div>
+      <p class="deal-intro">식당 · 카페 · 스파까지 <b id="deal-go-count">제휴 업체</b>에서 학생증만 보여주면 할인받을 수 있어요.</p>
+      <div class="deal-go-tags" id="deal-go-tags"></div>
+      <span class="deal-go-cta">전체 할인 보기 <span aria-hidden="true">→</span></span>
+    </div>
+  </a>
+
+  <section class="card fade-up" id="deal-legacy-card" style="display:none">
     <div class="card-title">🤝 LCIC 제휴 할인</div>
     <p class="deal-intro">LCIC 학생·직원에게 할인을 제공하는 제휴 업체예요. 방문 시 <b>LCIC 학생</b>이라고 알려주세요.</p>
     <div class="deal-list" id="deal-list"></div>
@@ -896,21 +920,25 @@
   //   { icon: "🍲", name: "소문난식당", loc: "레드코코 안", badge: "20% 할인",
   //     desc: "소문난 감자탕 맛집. 어학원 <b>학생·직원 20% 할인</b> (주류 제외).",
   //     menu: ["감자탕 ₱900(2인) / ₱1,500(4인)", "족발 ₱1,300", "숯불 돼지불고기 ₱800"] },
-  const DEALS = [];
-  (function renderDeals() {
-    const el = document.getElementById("deal-list");
+  // 🤝 제휴 할인 — 목록 원본은 assets/partners.js (deals.html 과 공용).
+  // 여기서는 업체 수와 상위 할인 몇 개만 미리 보여주고 deals.html 로 보낸다.
+  (function renderDealGate() {
     const card = document.getElementById("deal-card");
-    if (!el || !card) return;
-    if (!DEALS.length) { card.style.display = "none"; return; }
-    el.innerHTML = DEALS.map((d) => `<div class="deal">
-      <div class="deal-ic">${d.icon || "🏷️"}</div>
-      <div class="deal-body">
-        <div class="deal-head"><span class="deal-name">${d.name}</span>${d.loc ? `<span class="deal-loc">${d.loc}</span>` : ""}${d.badge ? `<span class="deal-badge">${d.badge}</span>` : ""}</div>
-        ${d.desc ? `<div class="deal-desc">${d.desc}</div>` : ""}
-        ${(d.menu && d.menu.length) ? `<ul class="deal-menu">${d.menu.map((m) => `<li>${m}</li>`).join("")}</ul>` : ""}
-      </div>
-    </div>`).join("");
-    card.style.display = "";
+    if (!card) return;
+    const list = window.LCIC_PARTNERS || [];
+    if (!list.length) { card.style.display = "none"; return; }   // 데이터 못 읽으면 카드 자체를 숨김
+
+    const cnt = document.getElementById("deal-go-count");
+    if (cnt) cnt.textContent = `제휴 업체 ${list.length}곳`;
+
+    // 할인율이 큰 순으로 4곳만 맛보기 (숫자로 안 떨어지는 "특가" 등은 뒤로)
+    const pct = (d) => { const m = String(d || "").match(/(\d+)\s*%\s*$/) || String(d || "").match(/(\d+)/); return m ? +m[1] : -1; };
+    const tags = document.getElementById("deal-go-tags");
+    if (tags) {
+      tags.innerHTML = list.slice().sort((a, b) => pct(b.disc) - pct(a.disc)).slice(0, 4)
+        .map((p) => `<span class="deal-go-tag">${escapeHtml(p.name)} <span class="g">${escapeHtml(p.disc)}</span></span>`)
+        .join("");
+    }
   })();
 
   let CUR = null, CUR_EMAIL = null;
