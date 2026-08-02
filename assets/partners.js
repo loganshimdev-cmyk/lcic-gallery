@@ -10,7 +10,9 @@
      benefit 실제 혜택 문장 (조건 포함)
      note    주의사항·예약 방법 등 (선택)
      map     구글 지도 링크 (선택)
-     menu    메뉴판 이미지 경로 (선택)
+     menu    메뉴판·안내문 이미지 경로 (선택)
+     menuLabel  menu 링크에 쓸 문구 (선택, 기본 "🍜 메뉴판"). 음식점이 아니면 바꿔 준다.
+     tel     전화번호 (선택). 휴대폰에서 눌러 바로 걸 수 있게 링크가 된다.
      isNew   신규 배지 (선택)
 */
 window.LCIC_PARTNERS = [
@@ -18,7 +20,10 @@ window.LCIC_PARTNERS = [
     benefit: "LCIC 학생 시푸드 전 품목 20% 할인 (주류 제외 · 학생증 지참) · 오마카세 1인 700P~",
     note: "한식 메뉴는 3시간 전에 카톡 osswin0710 으로 미리 예약!",
     map: "https://maps.app.goo.gl/MHErs81Q5z3mPPDy7", menu: "assets/partner/samchonkase-menu.png", isNew: true },
-  { name: "소문난식당", cat: "food", sub: "감자탕 · 레드코코 안", disc: "20%", benefit: "LCIC 학생·직원 20% 할인 (주류 제외)" },
+  { name: "소문난식당", cat: "food", sub: "감자탕 · 레드코코 안", disc: "20%",
+    benefit: "LCIC 학생·직원 20% 할인 (주류 제외)",
+    note: "감자탕 ₱900(2인) / ₱1,500(4인) · 족발 ₱1,300 · 숯불 돼지불고기 ₱800",
+    menu: "assets/partner/somunnan-menu.png" },
   { name: "Rami Korean Restaurant", cat: "food", sub: "한식당", disc: "15%", benefit: "15% 할인" },
   { name: "라식당", cat: "food", sub: "한식당", disc: "10%", benefit: "10% 할인 · 4명 이상이면 픽업/드랍 제공" },
   { name: "Cabana Restaurant", cat: "food", sub: "해산물 · 바다 뷰", disc: "10%", benefit: "10% 할인 (쿠폰 필요)" },
@@ -36,4 +41,8 @@ window.LCIC_PARTNERS = [
   { name: "Cheeva Spa", cat: "spa", sub: "스파 · 마사지", disc: "20%", benefit: "20% 할인" },
   { name: "Ocean Massage", cat: "spa", sub: "마사지", disc: "20%", benefit: "20% 할인" },
   { name: "A&B Dive Shop", cat: "spa", sub: "다이빙 숍", disc: "특가", benefit: "학생증 제시 — 2일 자격증 코스(식사·숙박 포함) PHP 11,000" },
+  { name: "COCORABIN 네일샵", cat: "spa", sub: "네일 · 뷰티", disc: "10%",
+    benefit: "시술 요금 10% 할인 · 픽업/드랍 무료 · 카페 음료 무료 (학생증 필참)",
+    note: "예약 — 전화 032 328 5887 · 스마트 0969 378 8158 · 카톡 cocorabin · 페이스북 cocorabin nail",
+    tel: "0323285887", menu: "assets/partner/cocorabin-poster.png", menuLabel: "🖼 안내문 · 예약 QR", isNew: true },
 ];
