@@ -118,15 +118,16 @@
         <div class="tab-group">
           <button type="button" class="tab-parent">🎉 액티비티 ▾</button>
           <div class="tab-menu">
+            <button data-tab="hopaug">🚤 호핑 수요조사 (8월)</button>
             <button data-tab="rooms">🏀 학생 모임</button>
-            <button data-tab="events">🎟 이벤트 신청자 (망고·주청사·호핑)</button>
+            <button data-tab="events">🎟 이벤트 신청자 (전체)</button>
           </div>
         </div>
         <div class="tab-group">
           <button type="button" class="tab-parent">🗂 지난 예약 ▾</button>
           <div class="tab-menu">
             <button data-tab="marshmallow">🍭 마시멜로우</button>
-            <button data-tab="hopping">🚤 호핑 수요조사</button>
+            <button data-tab="hopping">🚤 호핑 예약자 (7월)</button>
           </div>
         </div>
       </div>
@@ -149,6 +150,9 @@
     </section>
     <section id="tab-hopping" class="hidden">
       <iframe id="hopping-frame" title="호핑 수요조사" style="width:100%; height:calc(100vh - 200px); border:1px solid var(--hairline); border-radius:16px; background:#fff;"></iframe>
+    </section>
+    <section id="tab-hopaug" class="hidden">
+      <iframe id="hopaug-frame" title="호핑 수요조사 (8월)" style="width:100%; height:calc(100vh - 200px); border:1px solid var(--hairline); border-radius:16px; background:#fff;"></iframe>
     </section>
     <section id="tab-rooms" class="hidden">
       <iframe id="rooms-frame" title="학생 모임" style="width:100%; height:calc(100vh - 200px); border:1px solid var(--hairline); border-radius:16px; background:#fff;"></iframe>
@@ -271,6 +275,7 @@ function switchTab(tab, btn) {
   $("tab-summer").classList.toggle("hidden", tab !== "summer");
   $("tab-arrivals").classList.toggle("hidden", tab !== "arrivals");
   $("tab-hopping").classList.toggle("hidden", tab !== "hopping");
+  $("tab-hopaug").classList.toggle("hidden", tab !== "hopaug");
   $("tab-rooms").classList.toggle("hidden", tab !== "rooms");
   $("tab-events").classList.toggle("hidden", tab !== "events");
   $("tab-marshmallow").classList.toggle("hidden", tab !== "marshmallow");
@@ -278,6 +283,8 @@ function switchTab(tab, btn) {
   $("tab-pay").classList.toggle("hidden", tab !== "pay");
   if (tab === "arrivals") { const f = $("arrivals-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "arrivals.html"); }
   if (tab === "hopping") { const f = $("hopping-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "hopping.html"); }
+  // 8월 호핑은 events.html 을 ?only= 로 재사용한다(별도 페이지 없음).
+  if (tab === "hopaug") { const f = $("hopaug-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "events.html?only=hopping_aug"); }
   if (tab === "rooms") { const f = $("rooms-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "rooms.html?admin=1"); }
   if (tab === "events") { const f = $("events-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "events.html"); }
   if (tab === "marshmallow") { const f = $("marshmallow-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "marshmallow.html"); }

@@ -108,6 +108,16 @@ const EVENTS = [
     ] },
 ];
 
+// ?only=<event_key> 를 주면 그 이벤트만 보여준다.
+// 팀보드(team.html)의 "🚤 호핑 8월" 탭이 events.html?only=hopping_aug 로 이 화면을 재사용한다.
+const ONLY = new URLSearchParams(location.search).get("only");
+const VIEW = ONLY ? EVENTS.filter((e) => e.key === ONLY) : EVENTS;
+if (ONLY && VIEW.length) {
+  document.title = VIEW[0].title + " · LCIC";
+  const t = document.querySelector("#app-view h1");
+  if (t) t.textContent = VIEW[0].icon + " " + VIEW[0].title;
+}
+
 let ROWS = [];
 let ready = false;
 
@@ -148,7 +158,7 @@ $("q").addEventListener("input", render);
 function render() {
   const q = ($("q").value || "").trim();
 
-  const html = EVENTS.map((ev) => {
+  const html = VIEW.map((ev) => {
     const evRows = ROWS.filter((r) => r.event_key === ev.key);
     const evTotal = evRows.length;
     const evCap = ev.slots.reduce((s, x) => s + x.cap, 0);
