@@ -96,7 +96,7 @@
       <button class="dl-chip active" data-cat="all" type="button">전체</button>
       <button class="dl-chip" data-cat="food" type="button">🍽 식당</button>
       <button class="dl-chip" data-cat="cafe" type="button">☕ 카페</button>
-      <button class="dl-chip" data-cat="spa" type="button">💆 스파 · 다이빙</button>
+      <button class="dl-chip" data-cat="spa" type="button">💆 스파 · 네일 · 다이빙</button>
     </div>
     <div class="dl-count" id="dl-count"></div>
   </div>
@@ -132,7 +132,8 @@
         ${p.note ? `<div class="dl-note">💡 ${esc(p.note)}</div>` : ""}
         <div class="dl-links">
           ${p.map ? `<a href="${esc(p.map)}" target="_blank" rel="noopener">📍 지도</a>` : ""}
-          ${p.menu ? `<a href="${esc(p.menu)}" target="_blank" rel="noopener">🍜 메뉴판</a>` : ""}
+          ${p.menu ? `<a href="${esc(p.menu)}" target="_blank" rel="noopener">${esc(p.menuLabel || "🍜 메뉴판")}</a>` : ""}
+          ${p.tel ? `<a href="tel:${esc(p.tel)}">📞 전화</a>` : ""}
         </div>
       </div>`).join("");
   }
