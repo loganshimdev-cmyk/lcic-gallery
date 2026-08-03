@@ -468,8 +468,8 @@
 
   <!-- 우측 컬럼(데스크탑=우측 고정 / 모바일=상단 인라인) — 학생 모임이 항상 공지 위 -->
   <div class="dash-side">
-    <!-- 학생 모임 진입 -->
-    <section class="card fade-up" style="text-align:center;">
+    <!-- 학생 모임 진입 — 7·8월 학생 모두에게 보인다(8월 분기에서 숨기지 않음) -->
+    <section class="card fade-up" id="meet-card" style="text-align:center;">
       <div class="card-title" style="justify-content:center;">🏀 학생 모임</div>
       <p style="color:var(--text-dim); font-size:0.92rem; line-height:1.6; margin:2px 0 15px;">
         농구·그랩 같이 타기·쇼핑 등 <b>같이 놀 사람</b>을 찾아보세요. 직접 모임을 만들 수도 있어요!
@@ -963,8 +963,9 @@
     //    조건에 맞지 않으면 카드가 숨겨진 채로 남는다(8월 호핑 수요조사 = 8월 입국 학생만).
     renderEvents(rec);
     if (augArrival) {
-      // 7월 재학생용 요소 숨김 (학생 모임 + 공지 사이드, 지난 공지·마감된 신청 박스)
-      document.querySelectorAll(".dash-side, #past-box").forEach((el) => { el.style.display = "none"; });
+      // 7월 재학생용 요소 숨김 (7월 공지 사이드, 지난 공지·마감된 신청 박스).
+      // 🏀 학생 모임(#meet-card)은 8월 학생도 쓸 수 있어야 하므로 숨기지 않는다.
+      document.querySelectorAll("#dash-notice, #past-box").forEach((el) => { el.style.display = "none"; });
       const sf = document.getElementById("sec-flight");
       if (sf) sf.style.display = "";
       const an = document.getElementById("aug-flight-note");
