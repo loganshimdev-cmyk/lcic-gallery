@@ -692,25 +692,29 @@
     <div id="d-checklist"></div>
   </section>
 
-  <!-- 🚤 호핑 투어 수요조사 (8월 입국 학생 전용 · 인원 제한 없음)
+  <!-- 🚤 호핑 투어 신청 (8월 입국 학생 전용 · 인원 제한 없음 · 8/8 확정)
        event_key=hopping_aug · 대상 판별은 EVENTS 의 only(stay.start >= 2026-08-01) -->
   <section class="card fade-up" id="hopaug-card" style="display:none">
-    <div class="card-title">🚤 호핑 투어 수요조사</div>
+    <div class="card-title">🚤 호핑 투어 신청</div>
     <p class="hop-desc">
-      세부의 바다를 배로 누비는 <b>호핑 투어</b>를 준비하고 있어요.
-      먼저 <b>몇 명이 가고 싶은지</b> 알아보는 수요조사예요. 관심 있는 학생은 신청해 주세요. 💙
+      세부의 바다를 배로 누비는 <b>호핑 투어</b>, 8월 8일 토요일에 다 함께 가요!
+      스노클링 · 낚시 · 배 위에서 먹는 점심까지 하루 코스예요. 💙
     </p>
 
     <div class="msm-info">
-      <div class="mi"><span class="mi-k">📅 예정일</span><span class="mi-v"><b>8월 8일 (토)</b></span></div>
+      <div class="mi"><span class="mi-k">📅 날짜</span><span class="mi-v"><b>8월 8일 (토)</b></span></div>
+      <div class="mi"><span class="mi-k">🚌 미팅</span><span class="mi-v"><b>오전 9시</b> · 학교 픽업</span></div>
+      <div class="mi"><span class="mi-k">🗺 일정</span><span class="mi-v">선착장 → 스노클링 → 낚시 → 점심 → 선착장 (오후 2시경 도착)</span></div>
+      <div class="mi"><span class="mi-k">💰 비용</span><span class="mi-v"><b>₱2,500</b> · 현장에서 직접 납부</span></div>
       <div class="mi"><span class="mi-k">👥 인원</span><span class="mi-v"><b>제한 없음</b> — 신청한 만큼 준비해요</span></div>
-      <div class="mi"><span class="mi-k">💰 비용</span><span class="mi-v">추후 안내</span></div>
     </div>
 
     <div class="hop-my none" id="hopaug-my"></div>
     <div class="hop-dates" id="hopaug-dates"></div>
-    <div class="ev-note">🗓 <b>아직 예정일이라 바뀔 수 있어요.</b> 확정되면 이 페이지에서 다시 안내드릴게요.</div>
-    <div class="ev-note">💳 <b>지금은 결제 없이 신청만 하시면 돼요.</b> 비용과 준비물은 인원이 정해진 뒤 안내드릴게요.</div>
+    <div class="ev-note">💵 <b>비용 ₱2,500은 당일 현장에서 직접 냅니다.</b> 거스름돈이 없으니 <b>금액에 맞게</b> 준비해 주세요.</div>
+    <div class="ev-note">🎒 <b>챙겨오세요</b> — 수영복, 젖어도 되는 신발, 모자, 선크림, 매너팁(인당 ₱50)</div>
+    <div class="ev-note">🎁 <b>학교에서 준비해요</b> — 스노클링 장비, 물, 음료, 수건, 주전부리</div>
+    <div class="ev-note">🚻 <b>미팅 전에 화장실 꼭 다녀오세요!</b></div>
     <div class="ev-note">🔄 마음이 바뀌면 <b>언제든 취소</b>할 수 있어요.</div>
     <div class="hop-status" id="hopaug-status"></div>
   </section>
@@ -1420,7 +1424,7 @@
       what: "🚤 호핑 투어", cap: 9999, unlimited: true,
       only: (rec) => (((rec.stay || {}).start || "") >= "2026-08-01"),
       slots: [{ date: "2026-08-08", label: "8월 8일 (토)" }],
-      confirm: "🚤 호핑 투어 수요조사 (8월 8일 토요일 예정)\n\n· 인원 제한 없이 받는 수요조사예요.\n· 예정일은 바뀔 수 있고, 비용·준비물은 인원이 정해진 뒤 안내드려요.\n· 신청 후에도 언제든 취소할 수 있어요.\n\n신청할까요?" },
+      confirm: "🚤 호핑 투어 (8월 8일 토요일)\n\n· 미팅: 오전 9시 · 학교 픽업\n· 비용: ₱2,500 — 당일 현장에서 직접 납부 (거스름돈 없음)\n· 매너팁 인당 ₱50 별도\n· 신청 후에도 언제든 취소할 수 있어요.\n\n신청할까요?" },
   ];
   const evIds = {};
 
