@@ -9,6 +9,8 @@
 <script src="assets/background.js?v=8"></script>
 <link rel="stylesheet" href="assets/shared.css?v=13">
 <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+<!-- 제휴 할인 목록 원본 (status.html · deals.html 과 공용). 아래 카드가 즉시 읽으므로 defer 금지. -->
+<script src="assets/partners.js?v=1"></script>
 <style>
   .wrap { max-width: 760px; margin: 0 auto; padding: 26px 18px 100px; }
   .head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 6px; }
@@ -178,8 +180,30 @@
   .side-notice .dn-list li { display: flex; align-items: flex-start; gap: 9px; font-size: 0.9rem; line-height: 1.6; color: #78350f; }
   .side-notice .dn-list li .dn-ic { flex-shrink: 0; }
   .side-notice .dn-list li b { color: #92400e; font-weight: 800; }
+
+  /* 🤝 제휴 할인 카드 — status.html 의 카드와 같은 내용. 업체 수·미리보기는
+     assets/partners.js 를 읽어 자동으로 채운다(여기서 수동 관리하지 말 것). */
+  .side-col { margin: 14px 0 16px; }
+  .side-col .side-notice { margin: 0 0 12px; }
+  .side-deal {
+    display: block; text-decoration: none; color: inherit;
+    padding: 16px 18px; border-radius: 18px; border: 1px solid var(--hairline);
+    background: var(--bg-elev); box-shadow: var(--shadow-sm);
+    transition: transform .15s, box-shadow .15s;
+  }
+  .side-deal:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(30, 50, 90, 0.12); }
+  .side-deal .sd-title { font-size: 0.82rem; font-weight: 700; letter-spacing: 0.02em;
+    color: var(--text-dim); text-transform: uppercase; margin-bottom: 10px; }
+  .side-deal .sd-intro { font-size: 0.88rem; color: var(--text-dim); line-height: 1.6; margin: 0 0 11px; }
+  .deal-go-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .deal-go-tag { font-size: 0.78rem; font-weight: 700; color: var(--text-dim);
+    background: var(--bg); border: 1px solid var(--hairline); border-radius: 999px; padding: 5px 11px; }
+  .deal-go-tag .g { color: #b91c1c; font-weight: 900; }
+  .deal-go-cta { display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem;
+    font-weight: 800; color: var(--accent); }
+
   @media (min-width: 1280px) {
-    .side-notice {
+    .side-col {
       position: fixed; top: 96px; left: calc(50vw + 396px);
       width: 240px; z-index: 30; margin: 0;
     }
@@ -207,15 +231,23 @@
   </div>
   <div id="pin-notice" style="display:none"></div>
 
-  <!-- 🔔 운영 안내 — status.html 공지와 같은 내용. 내용 바꿀 땐 status.html NOTICES 와 같이 수정. -->
-  <aside class="side-notice" aria-label="안내">
-    <div class="dn-title"><iconify-icon icon="solar:bell-bing-bold-duotone"></iconify-icon> 꼭 확인해 주세요</div>
-    <ul class="dn-list">
-      <li><span class="dn-ic">🛂</span><span><b>비자 연장</b><br>프로그램 기간보다 <b>세부(필리핀)에 더 머물다</b> 가시는 분은 <b>비자 연장이 필수</b>이며, <b>개인이 직접</b> 진행하셔야 합니다.</span></li>
-      <li><span class="dn-ic">🦀</span><span><b>몬스터크랩 × 삼촌카세</b> <span style="font-size:0.8em;background:#d97706;color:#fff;border-radius:999px;padding:1px 7px;font-weight:800;vertical-align:1px;">NEW</span><br>막탄 시푸드 맛집에 한식 오마카세 <b>"삼촌카세"</b>가 있어요.<br>· LCIC 학생 <b>시푸드 전 품목 20% 할인</b> (주류 제외 · 학생증 지참)<br>· 오마카세 1인 <b>700P~</b> · 전·라면·찌개 등 단품 50여 가지<br>· 한식 메뉴는 <b>3시간 전</b>에 카톡 ID <b>osswin0710</b> 으로 꼭 미리 연락!<br>· <a href="assets/partner/samchonkase-menu.png" target="_blank" rel="noopener" style="color:var(--accent-deep);font-weight:700;">🍜 메뉴판 보기</a> · <a href="https://maps.app.goo.gl/MHErs81Q5z3mPPDy7" target="_blank" rel="noopener" style="color:var(--accent-deep);font-weight:700;">📍 위치 보기</a></span></li>
-      <li><span class="dn-ic">🤝</span><span><span style="font-size:0.86em;color:var(--text-dim);"><b>제휴 할인</b> · 학생증을 보여주면 할인돼요<br>· 소문난식당(감자탕, 레드코코 안) — LCIC 학생·직원 <b>20% 할인</b> (주류 제외)<br>· 그 외 <b>식당·카페·스파 17곳</b> 5~20% 할인 → <a href="life-guide.html#partner" style="color:var(--accent-deep);font-weight:700;">전체 보기</a></span></span></li>
-    </ul>
-  </aside>
+  <div class="side-col">
+    <!-- 🔔 운영 안내 — status.html 공지와 같은 내용. 내용 바꿀 땐 status.html NOTICES 와 같이 수정. -->
+    <aside class="side-notice" aria-label="안내">
+      <div class="dn-title"><iconify-icon icon="solar:bell-bing-bold-duotone"></iconify-icon> 꼭 확인해 주세요</div>
+      <ul class="dn-list">
+        <li><span class="dn-ic">🛂</span><span><b>비자 연장</b><br>프로그램 기간보다 <b>세부(필리핀)에 더 머물다</b> 가시는 분은 <b>비자 연장이 필수</b>이며, <b>개인이 직접</b> 진행하셔야 합니다.</span></li>
+      </ul>
+    </aside>
+
+    <!-- 🤝 제휴 할인 — status.html 의 카드와 동일. 업체 목록은 deals.html 에 있고 여기서는 문만 연다. -->
+    <a class="side-deal" id="deal-card" href="deals.html">
+      <div class="sd-title">🤝 LCIC 제휴 할인</div>
+      <p class="sd-intro">식당 · 카페 · 스파까지 <b id="deal-go-count">제휴 업체</b>에서 학생증만 보여주면 할인받을 수 있어요.</p>
+      <div class="deal-go-tags" id="deal-go-tags"></div>
+      <span class="deal-go-cta">전체 할인 보기 <span aria-hidden="true">→</span></span>
+    </a>
+  </div>
 
   <div id="list"></div>
 </main>
@@ -234,6 +266,29 @@
     <button class="campus-send" type="submit">전송</button>
   </form>
 </section>
+
+<!-- 🤝 제휴 할인 카드 채우기 — status.html 의 renderDealGate 와 같은 로직 -->
+<script>
+(function renderDealGate() {
+  const card = document.getElementById("deal-card");
+  if (!card) return;
+  const list = window.LCIC_PARTNERS || [];
+  if (!list.length) { card.style.display = "none"; return; }   // 데이터 못 읽으면 카드 자체를 숨김
+  const esc = (s) => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  const cnt = document.getElementById("deal-go-count");
+  if (cnt) cnt.textContent = `제휴 업체 ${list.length}곳`;
+
+  // 할인율이 큰 순으로 4곳만 맛보기 (숫자로 안 떨어지는 "특가" 등은 뒤로)
+  const pct = (d) => { const m = String(d || "").match(/(\d+)\s*%\s*$/) || String(d || "").match(/(\d+)/); return m ? +m[1] : -1; };
+  const tags = document.getElementById("deal-go-tags");
+  if (tags) {
+    tags.innerHTML = list.slice().sort((a, b) => pct(b.disc) - pct(a.disc)).slice(0, 4)
+      .map((p) => `<span class="deal-go-tag">${esc(p.name)} <span class="g">${esc(p.disc)}</span></span>`)
+      .join("");
+  }
+})();
+</script>
 
 <script type="module">
 import { supabase } from "./assets/supabase.js?v=4";
