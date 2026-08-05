@@ -491,7 +491,8 @@ function render() {
   const today = todayStr();
   const upcoming = rooms.filter((r) => !r.event_date || r.event_date >= today);
   upcoming.sort((a, b) => (b.official ? 1 : 0) - (a.official ? 1 : 0));   // 공식(운영진) 모임 상단
-  const past = rooms.filter((r) => r.event_date && r.event_date < today);
+  // 지난 모임은 최근 날짜가 위로 오도록 뒤집는다(예정 모임은 가까운 날짜가 위 = 오름차순 유지).
+  const past = rooms.filter((r) => r.event_date && r.event_date < today).reverse();
 
   let html = "";
   if (!ADMIN) html += `<div class="list-hint">💛 <b>1~2명이어도 좋아요!</b> 부담 없이 모임을 올리거나 <b>관심있어요</b>로 가볍게 참여해 보세요.</div>`;
