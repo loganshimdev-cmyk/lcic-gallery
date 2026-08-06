@@ -696,18 +696,20 @@
   </section>
 
   <!-- 🚤 호핑 투어 (8월 입국 학생 전용) — 8/8(토) 회차는 기상 악화로 취소(2026-08-06).
+       대체 일정 8/22(토)는 아직 신청을 열지 않았다(안내만).
        event_key=hopping_aug · 대상 판별은 EVENTS 의 only(stay.start >= 2026-08-01)
        EVENTS 항목에 cancelled:true 를 두면 신청 버튼·인원 표시 없이 아래 안내만 보인다.
        다음 회차를 열 때: cancelled 를 지우고 slots 날짜를 새로 넣은 뒤, 아래 안내 문구를
        원래 신청 안내(예약 정보 · 준비물 · 마감 규정)로 되돌리면 된다. -->
   <section class="card fade-up" id="hopaug-card" style="display:none">
-    <div class="card-title">🚤 호핑 투어 — 8월 8일(토) 취소</div>
+    <div class="card-title">🚤 호핑 투어 — 8월 8일(토) 취소 · <b>8월 22일(토)</b>로 대체</div>
     <div class="ev-note ev-warn">⛔ <b>기상 악화로 8월 8일(토) 호핑 투어가 취소되었습니다.</b>
       바다 상황이 좋지 않아 여러분의 안전을 위해 부득이하게 일정을 접게 되었어요.
       신청해 주신 분들께 죄송합니다.</div>
-    <div class="ev-note">💰 비용은 <b>당일 현장 납부</b>였기 때문에 따로 <b>환불 절차는 없어요.</b></div>
-    <div class="ev-note">🗓 <b>다음 호핑은 8월 14일(금)경 다시 신청을 받을 예정</b>이에요.
-      날짜가 확정되면 이 화면에 다시 안내드릴게요.</div>
+    <div class="ev-note">🗓 <b>대신 8월 22일(토)에 진행합니다.</b> 코스와 비용은 그대로예요.</div>
+    <div class="ev-note">💰 8월 8일 회차의 비용은 <b>당일 현장 납부</b>였기 때문에 따로 <b>환불 절차는 없어요.</b></div>
+    <div class="ev-note">✍️ <b>8월 22일 신청은 다시 받습니다.</b> 신청이 열리면 이 화면에 안내드릴게요 —
+      <b>8월 8일에 신청하셨던 분도 다시 신청해 주셔야 해요.</b></div>
   </section>
 
   <!-- 항공편 · 7월 학생에겐 숨김 유지 · 8월 입국 학생에게만 JS(render)가 다시 켬 -->
