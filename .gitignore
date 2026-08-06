@@ -23,6 +23,9 @@ _*.html
 _*.png
 scripts/encrypt-staff.cjs
 scripts/staff-tools.json
+scripts/encrypt-dorm.cjs
+scripts/dorm-data.json
+scripts/_dorm/
 
 # 발표자 콘솔은 로컬 전용 (온라인 미배포)
 orientation-aug/present.html

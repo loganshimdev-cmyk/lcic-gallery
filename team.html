@@ -114,6 +114,7 @@
           </div>
         </div>
         <button data-tab="arrivals">🛬 도착/입소</button>
+        <button data-tab="dorm">🏠 기숙사</button>
         <button data-tab="pay" id="tab-btn-pay" class="hidden">💰 납부현황</button>
         <div class="tab-group">
           <button type="button" class="tab-parent">🎉 액티비티 ▾</button>
@@ -147,6 +148,9 @@
     </section>
     <section id="tab-arrivals" class="hidden">
       <iframe id="arrivals-frame" title="도착/입소 명단" style="width:100%; height:calc(100vh - 200px); border:1px solid var(--hairline); border-radius:16px; background:#fff;"></iframe>
+    </section>
+    <section id="tab-dorm" class="hidden">
+      <iframe id="dorm-frame" title="기숙사 야간 당직 (NDIC)" style="width:100%; height:calc(100vh - 200px); border:1px solid var(--hairline); border-radius:16px; background:#fff;"></iframe>
     </section>
     <section id="tab-hopping" class="hidden">
       <iframe id="hopping-frame" title="호핑 수요조사" style="width:100%; height:calc(100vh - 200px); border:1px solid var(--hairline); border-radius:16px; background:#fff;"></iframe>
@@ -274,6 +278,7 @@ function switchTab(tab, btn) {
   $("tab-calendar").classList.toggle("hidden", tab !== "calendar");
   $("tab-summer").classList.toggle("hidden", tab !== "summer");
   $("tab-arrivals").classList.toggle("hidden", tab !== "arrivals");
+  $("tab-dorm").classList.toggle("hidden", tab !== "dorm");
   $("tab-hopping").classList.toggle("hidden", tab !== "hopping");
   $("tab-hopaug").classList.toggle("hidden", tab !== "hopaug");
   $("tab-rooms").classList.toggle("hidden", tab !== "rooms");
@@ -282,6 +287,7 @@ function switchTab(tab, btn) {
   $("tab-peakday").classList.toggle("hidden", tab !== "peakday");
   $("tab-pay").classList.toggle("hidden", tab !== "pay");
   if (tab === "arrivals") { const f = $("arrivals-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "arrivals.html"); }
+  if (tab === "dorm") { const f = $("dorm-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "dorm.html"); }
   if (tab === "hopping") { const f = $("hopping-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "hopping.html"); }
   // 8월 호핑은 events.html 을 ?only= 로 재사용한다(별도 페이지 없음).
   if (tab === "hopaug") { const f = $("hopaug-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "events.html?only=hopping_aug"); }
