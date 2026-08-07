@@ -24,7 +24,6 @@ window.LCIC_PARTNERS = [
     benefit: "LCIC 학생·직원 20% 할인 (주류 제외)",
     note: "감자탕 ₱900(2인) / ₱1,500(4인) · 족발 ₱1,300 · 숯불 돼지불고기 ₱800",
     menu: "assets/partner/somunnan-menu.png" },
-  { name: "Rami Korean Restaurant", cat: "food", sub: "한식당", disc: "15%", benefit: "15% 할인" },
   { name: "라식당", cat: "food", sub: "한식당", disc: "10%", benefit: "10% 할인 · 4명 이상이면 픽업/드랍 제공" },
   { name: "Cabana Restaurant", cat: "food", sub: "해산물 · 바다 뷰", disc: "10%", benefit: "10% 할인 (쿠폰 필요)" },
   { name: "Cook Pub", cat: "food", sub: "한식당", disc: "10%", benefit: "10% 할인" },
