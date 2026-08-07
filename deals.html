@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>제휴 할인 · LCIC</title>
+<title data-i18n-en="Partner Discounts · LCIC" data-i18n-zh="合作優惠 · LCIC" data-i18n-ja="提携割引 · LCIC">제휴 할인 · LCIC</title>
 <link rel="icon" type="image/png" href="assets/brand/lcic-logo.png">
 <script src="assets/background.js?v=8"></script>
 <link rel="stylesheet" href="assets/shared.css?v=13">
+<script src="assets/i18n.js?v=4" defer></script>
 <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
 <style>
   .dl-wrap { max-width: 1080px; margin: 0 auto; padding: 108px 16px 80px; }
@@ -74,77 +75,104 @@
 </a>
 
 <nav class="nav-pill">
-  <a href="index.html"><iconify-icon icon="solar:home-2-bold-duotone" inline></iconify-icon> 홈</a>
-  <a href="life-guide.html"><iconify-icon icon="solar:book-bookmark-bold-duotone" inline></iconify-icon> 생활백서</a>
-  <a href="deals.html" class="active"><iconify-icon icon="solar:tag-price-bold-duotone" inline></iconify-icon> 제휴 할인</a>
-  <a href="faq.html"><iconify-icon icon="solar:question-circle-bold-duotone" inline></iconify-icon> 궁금한 사항</a>
+  <a href="index.html"><iconify-icon icon="solar:home-2-bold-duotone" inline></iconify-icon> <span data-i18n-en="Home" data-i18n-zh="首頁" data-i18n-ja="ホーム">홈</span></a>
+  <a href="life-guide.html"><iconify-icon icon="solar:book-bookmark-bold-duotone" inline></iconify-icon> <span data-i18n-en="Life Guide" data-i18n-zh="生活指南" data-i18n-ja="生活ガイド">생활백서</span></a>
+  <a href="deals.html" class="active"><iconify-icon icon="solar:tag-price-bold-duotone" inline></iconify-icon> <span data-i18n-en="Partner Discounts" data-i18n-zh="合作優惠" data-i18n-ja="提携割引">제휴 할인</span></a>
+  <a href="faq.html"><iconify-icon icon="solar:question-circle-bold-duotone" inline></iconify-icon> <span data-i18n-en="FAQ" data-i18n-zh="常見問題" data-i18n-ja="よくある質問">궁금한 사항</span></a>
+  <div class="lang-toggle" data-lang-toggle role="group" aria-label="Language">
+    <button type="button" data-lang-to="ko">KO</button>
+    <button type="button" data-lang-to="en">EN</button>
+    <button type="button" data-lang-to="zh">中</button>
+    <button type="button" data-lang-to="ja">日</button>
+  </div>
 </nav>
 
 <main class="dl-wrap">
 
   <div class="dl-hero fade-up">
-    <h1>🏷 LCIC 제휴 할인</h1>
-    <p>LCIC 학생·직원에게 할인을 제공하는 제휴 업체예요.<br>세부에서 지내는 동안 마음껏 활용하세요!</p>
+    <h1 data-i18n-en="🏷 LCIC Partner Discounts" data-i18n-zh="🏷 LCIC 合作優惠" data-i18n-ja="🏷 LCIC 提携割引">🏷 LCIC 제휴 할인</h1>
+    <p data-i18n-en="Partner venues that give LCIC students and staff a discount.<br>Make the most of them while you're in Cebu!" data-i18n-zh="為 LCIC 學生與教職員提供折扣的合作店家。<br>在宿霧的期間請多多利用！" data-i18n-ja="LCIC の学生・スタッフに割引を提供している提携店です。<br>セブ滞在中にぜひご利用ください！">LCIC 학생·직원에게 할인을 제공하는 제휴 업체예요.<br>세부에서 지내는 동안 마음껏 활용하세요!</p>
     <div class="dl-key">
       <iconify-icon icon="solar:card-2-bold-duotone"></iconify-icon>
-      <span>방문해서 <b>LCIC 학생</b>이라고 말하고 <b>학생증</b>(또는 매장별 쿠폰)을 보여주세요.</span>
+      <span data-i18n-en="At the venue, say you're an <b>LCIC student</b> and show your <b>student ID</b> (or the venue's coupon)." data-i18n-zh="到店時請告知您是 <b>LCIC 學生</b>,並出示 <b>學生證</b>(或該店的優惠券)。" data-i18n-ja="お店で <b>LCIC の学生</b> だと伝え、<b>学生証</b>(または店舗ごとのクーポン)を提示してください。">방문해서 <b>LCIC 학생</b>이라고 말하고 <b>학생증</b>(또는 매장별 쿠폰)을 보여주세요.</span>
     </div>
   </div>
 
   <div class="dl-bar fade-up">
     <div class="dl-chips" id="dl-chips">
-      <button class="dl-chip active" data-cat="all" type="button">전체</button>
-      <button class="dl-chip" data-cat="food" type="button">🍽 식당</button>
-      <button class="dl-chip" data-cat="cafe" type="button">☕ 카페</button>
-      <button class="dl-chip" data-cat="spa" type="button">💆 스파 · 네일 · 다이빙</button>
+      <button class="dl-chip active" data-cat="all" type="button" data-i18n-en="All" data-i18n-zh="全部" data-i18n-ja="すべて">전체</button>
+      <button class="dl-chip" data-cat="food" type="button" data-i18n-en="🍽 Restaurants" data-i18n-zh="🍽 餐廳" data-i18n-ja="🍽 レストラン">🍽 식당</button>
+      <button class="dl-chip" data-cat="cafe" type="button" data-i18n-en="☕ Cafes" data-i18n-zh="☕ 咖啡廳" data-i18n-ja="☕ カフェ">☕ 카페</button>
+      <button class="dl-chip" data-cat="spa" type="button" data-i18n-en="💆 Spa · nail · diving" data-i18n-zh="💆 水療 · 美甲 · 潛水" data-i18n-ja="💆 スパ · ネイル · ダイビング">💆 스파 · 네일 · 다이빙</button>
     </div>
     <div class="dl-count" id="dl-count"></div>
   </div>
 
   <div class="dl-grid" id="dl-grid"></div>
 
-  <div class="dl-foot">
+  <div class="dl-foot" data-i18n-en="Discounts and conditions can change at the venue's discretion. <b>Please confirm with the venue before ordering.</b><br>New partners are posted on this page as soon as they join." data-i18n-zh="折扣與條件可能因店家而異動。<b>點餐前請再向店家確認一次。</b><br>新增的合作店家會立即公布於本頁面。" data-i18n-ja="割引率や条件は店舗の都合で変わることがあります。<b>注文前に店舗でもう一度ご確認ください。</b><br>新しい提携店ができたら、このページですぐにお知らせします。">
     할인율과 조건은 매장 사정으로 바뀔 수 있어요. <b>주문 전에 매장에서 한 번 더 확인</b>해 주세요.<br>
     새로 제휴된 곳이 생기면 이 페이지에 바로 올려드릴게요.
   </div>
 
 </main>
 
-<script src="assets/partners.js?v=2"></script>
+<script src="assets/partners.js?v=3"></script>
 <script>
+// 카드는 JS 로 그리므로 data-i18n 이 안 먹는다. assets/partners.js 의 t 를
+// window.lcicLang.t() 로 골라 쓰고, 언어가 바뀌면 통째로 다시 그린다.
 (function () {
   const PARTNERS = window.LCIC_PARTNERS || [];
   const grid = document.getElementById("dl-grid");
   const count = document.getElementById("dl-count");
   const esc = (s) => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  let currentCat = "all";
 
-  function paint(cat) {
-    const list = PARTNERS.filter((p) => cat === "all" || p.cat === cat);
-    count.textContent = `${list.length}곳`;
-    grid.innerHTML = list.map((p) => `
+  // 번역이 없으면 ja → zh → en → ko 순으로 내려간다(i18n.js 가 처리).
+  const pick = (map) => (window.lcicLang ? window.lcicLang.t(map) : map.ko);
+  function loc(p, field) {
+    const of = (lang) => (p.t && p.t[lang] && p.t[lang][field]) || "";
+    return pick({ ko: p[field] || "", en: of("en"), zh: of("zh"), ja: of("ja") });
+  }
+
+  function paint() {
+    const list = PARTNERS.filter((p) => currentCat === "all" || p.cat === currentCat);
+    const unit = pick({ ko: `${list.length}곳`, en: `${list.length} places`, zh: `${list.length} 家`, ja: `${list.length} 店` });
+    const mapLabel = pick({ ko: "📍 지도", en: "📍 Map", zh: "📍 地圖", ja: "📍 地図" });
+    const menuFallback = pick({ ko: "🍜 메뉴판", en: "🍜 Menu", zh: "🍜 菜單", ja: "🍜 メニュー" });
+    const telLabel = pick({ ko: "📞 전화", en: "📞 Call", zh: "📞 電話", ja: "📞 電話" });
+
+    count.textContent = unit;
+    grid.innerHTML = list.map((p) => {
+      const note = loc(p, "note");
+      return `
       <div class="dl-card">
         <div class="dl-top">
-          <div class="dl-name">${esc(p.name)}</div>
-          <div class="dl-badges">${p.isNew ? '<span class="dl-new">NEW</span>' : ""}<span class="dl-disc">${esc(p.disc)}</span></div>
+          <div class="dl-name">${esc(loc(p, "name"))}</div>
+          <div class="dl-badges">${p.isNew ? '<span class="dl-new">NEW</span>' : ""}<span class="dl-disc">${esc(loc(p, "disc"))}</span></div>
         </div>
-        <div class="dl-sub">${esc(p.sub)}</div>
-        <div class="dl-benefit">${esc(p.benefit)}</div>
-        ${p.note ? `<div class="dl-note">💡 ${esc(p.note)}</div>` : ""}
+        <div class="dl-sub">${esc(loc(p, "sub"))}</div>
+        <div class="dl-benefit">${esc(loc(p, "benefit"))}</div>
+        ${note ? `<div class="dl-note">💡 ${esc(note)}</div>` : ""}
         <div class="dl-links">
-          ${p.map ? `<a href="${esc(p.map)}" target="_blank" rel="noopener">📍 지도</a>` : ""}
-          ${p.menu ? `<a href="${esc(p.menu)}" target="_blank" rel="noopener">${esc(p.menuLabel || "🍜 메뉴판")}</a>` : ""}
-          ${p.tel ? `<a href="tel:${esc(p.tel)}">📞 전화</a>` : ""}
+          ${p.map ? `<a href="${esc(p.map)}" target="_blank" rel="noopener">${mapLabel}</a>` : ""}
+          ${p.menu ? `<a href="${esc(p.menu)}" target="_blank" rel="noopener">${esc(loc(p, "menuLabel") || menuFallback)}</a>` : ""}
+          ${p.tel ? `<a href="tel:${esc(p.tel)}">${telLabel}</a>` : ""}
         </div>
-      </div>`).join("");
+      </div>`;
+    }).join("");
   }
 
   document.getElementById("dl-chips").addEventListener("click", (e) => {
     const b = e.target.closest(".dl-chip"); if (!b) return;
     document.querySelectorAll(".dl-chip").forEach((x) => x.classList.toggle("active", x === b));
-    paint(b.dataset.cat);
+    currentCat = b.dataset.cat;
+    paint();
   });
 
-  paint("all");
+  document.addEventListener("lcic:langchange", paint);
+  // i18n.js 는 defer 라 이 인라인 스크립트보다 늦게 뜬다 — 준비된 뒤에 그린다.
+  document.addEventListener("DOMContentLoaded", paint);
 })();
 </script>
 
