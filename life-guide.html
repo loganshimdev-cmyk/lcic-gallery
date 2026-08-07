@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="assets/shared.css?v=13">
 <script src="assets/i18n.js?v=4" defer></script>
 <!-- 제휴 할인 목록 원본 (deals.html 과 공용). 아래 '제휴 할인' 탭이 이 값을 읽으므로 defer 금지. -->
-<script src="assets/partners.js?v=1"></script>
+<script src="assets/partners.js?v=2"></script>
 <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
 <style>
   /* Tabs */
@@ -1265,36 +1265,30 @@
         <div class="body">
           <p data-i18n-en="Places that offer a discount when you show your LCIC student ID or a coupon." data-i18n-zh="出示 LCIC 學生證或優惠券可以享有折扣的店家。" data-i18n-ja="LCIC の学生証またはクーポンを提示すると割引が受けられるお店です。">LCIC 학생증 또는 쿠폰을 제시하면 할인을 받을 수 있는 업체입니다.</p>
 
+          <!-- 목록 원본은 assets/partners.js 한 곳에만 있다(deals.html · 제휴 할인 탭과 공용).
+               업체를 추가·수정하려면 그 파일을 고칠 것 — 여기에 다시 적지 말 것. -->
           <h4 style="margin: 22px 0 9px; color: var(--text); font-weight: 700;" data-i18n-en="Restaurants" data-i18n-zh="餐廳" data-i18n-ja="レストラン">식당</h4>
-          <table class="kv-table">
-            <tr><th>몬스터크랩 × 삼촌카세 <span style="font-weight:400;color:var(--text-faint);font-size:.86em;" data-i18n-en="(Seafood &middot; Korean omakase &middot; Mactan)" data-i18n-zh="(海鮮 &middot; 韓式無菜單料理 &middot; 麥克坦)" data-i18n-ja="(シーフード &middot; 韓国オマカセ &middot; マクタン)">(시푸드 · 한식 오마카세 · 막탄)</span></th><td data-i18n-en="LCIC students &mdash; <b>20% off</b> all seafood (alcohol excluded &middot; student ID required)" data-i18n-zh="LCIC 學生 &mdash; 海鮮全品項 <b>8 折</b>(酒類除外 &middot; 需出示學生證)" data-i18n-ja="LCIC の学生 &mdash; シーフード全品 <b>20% オフ</b>(酒類を除く &middot; 学生証提示)">LCIC 학생 시푸드 전 품목 <b>20% 할인</b> (주류 제외 · 학생증 지참)</td></tr>
-            <tr><th>소문난식당 <span style="font-weight:400;color:var(--text-faint);font-size:.86em;" data-i18n-en="(Korean stew &middot; inside Red Coco)" data-i18n-zh="(韓式馬鈴薯排骨湯 &middot; Red Coco 內)" data-i18n-ja="(カムジャタン &middot; Red Coco 内)">(감자탕 · 레드코코 안)</span></th><td data-i18n-en="LCIC students &amp; staff &mdash; <b>20% off</b> (alcohol excluded)" data-i18n-zh="LCIC 學生與教職員 &mdash; <b>8 折</b>(酒類除外)" data-i18n-ja="LCIC の学生・スタッフ &mdash; <b>20% オフ</b>(酒類を除く)">LCIC 학생·직원 <b>20% 할인</b> (주류 제외)</td></tr>
-            <tr><th>라식당 <span style="font-weight:400;color:var(--text-faint);font-size:.86em;" data-i18n-en="(Korean)" data-i18n-zh="(韓式料理)" data-i18n-ja="(韓国料理)">(한식당)</span></th><td data-i18n-en="10% off &middot; free pick-up/drop-off for groups of 4+" data-i18n-zh="9 折 &middot; 4 人以上提供接送" data-i18n-ja="10% オフ &middot; 4 名以上は送迎あり">10% 할인 · <b>4명 이상이면 픽업/드랍 제공</b></td></tr>
-            <tr><th>Cabana Restaurant <span style="font-weight:400;color:var(--text-faint);font-size:.86em;" data-i18n-en="(Seafood &middot; sea view)" data-i18n-zh="(海鮮 &middot; 海景)" data-i18n-ja="(シーフード &middot; オーシャンビュー)">(해산물 · 바다 뷰)</span></th><td data-i18n-en="10% off (coupon required)" data-i18n-zh="9 折(需出示優惠券)" data-i18n-ja="10% オフ(クーポン提示要)">10% 할인 (쿠폰 필요)</td></tr>
-            <tr><th>Cook Pub <span style="font-weight:400;color:var(--text-faint);font-size:.86em;" data-i18n-en="(Korean)" data-i18n-zh="(韓式料理)" data-i18n-ja="(韓国料理)">(한식당)</span></th><td data-i18n-en="10% off" data-i18n-zh="9 折" data-i18n-ja="10% オフ">10% 할인</td></tr>
-            <tr><th>Euphoria <span style="font-weight:400;color:var(--text-faint);font-size:.86em;" data-i18n-en="(International &middot; fusion)" data-i18n-zh="(異國料理 &middot; 創意料理)" data-i18n-ja="(各国料理 &middot; フュージョン)">(세계 음식 · 퓨전)</span></th><td data-i18n-en="10% off" data-i18n-zh="9 折" data-i18n-ja="10% オフ">10% 할인</td></tr>
-            <tr><th>Moreno Pizza <span style="font-weight:400;color:var(--text-faint);font-size:.86em;" data-i18n-en="(Pizza)" data-i18n-zh="(披薩)" data-i18n-ja="(ピザ)">(피자)</span></th><td data-i18n-en="10% off" data-i18n-zh="9 折" data-i18n-ja="10% オフ">10% 할인</td></tr>
-            <tr><th>Pho19 Mactan <span style="font-weight:400;color:var(--text-faint);font-size:.86em;" data-i18n-en="(Vietnamese pho)" data-i18n-zh="(越南河粉)" data-i18n-ja="(ベトナムフォー)">(베트남 쌀국수)</span></th><td data-i18n-en="10% off" data-i18n-zh="9 折" data-i18n-ja="10% オフ">10% 할인</td></tr>
-            <tr><th>Mactan Kaya Korean Restaurant <span style="font-weight:400;color:var(--text-faint);font-size:.86em;" data-i18n-en="(Korean)" data-i18n-zh="(韓式料理)" data-i18n-ja="(韓国料理)">(한식당)</span></th><td data-i18n-en="5% off" data-i18n-zh="95 折" data-i18n-ja="5% オフ">5% 할인</td></tr>
-            <tr><th>Nimo Brew <span style="font-weight:400;color:var(--text-faint);font-size:.86em;" data-i18n-en="(International &middot; fusion)" data-i18n-zh="(異國料理 &middot; 創意料理)" data-i18n-ja="(各国料理 &middot; フュージョン)">(세계 음식 · 퓨전)</span></th><td data-i18n-en="5% off" data-i18n-zh="95 折" data-i18n-ja="5% オフ">5% 할인</td></tr>
-          </table>
+          <table class="kv-table" id="lgp-food"></table>
 
           <h4 style="margin: 22px 0 9px; color: var(--text); font-weight: 700;" data-i18n-en="Cafes" data-i18n-zh="咖啡廳" data-i18n-ja="カフェ">카페</h4>
-          <table class="kv-table">
-            <tr><th>Flavour Coffee Station <span style="font-weight:400;color:var(--text-faint);font-size:.86em;" data-i18n-en="(Cafe)" data-i18n-zh="(咖啡廳)" data-i18n-ja="(カフェ)">(카페)</span></th><td data-i18n-en="15% off" data-i18n-zh="85 折" data-i18n-ja="15% オフ">15% 할인</td></tr>
-            <tr><th>Unfinished Coffee Shop <span style="white-space:nowrap">Lapu-Lapu</span> <span style="font-weight:400;color:var(--text-faint);font-size:.86em;" data-i18n-en="(Cafe)" data-i18n-zh="(咖啡廳)" data-i18n-ja="(カフェ)">(카페)</span></th><td data-i18n-en="10% off" data-i18n-zh="9 折" data-i18n-ja="10% オフ">10% 할인</td></tr>
-            <tr><th>Vibe Bar and Cafe <span style="font-weight:400;color:var(--text-faint);font-size:.86em;" data-i18n-en="(Bar &middot; cafe)" data-i18n-zh="(酒吧 &middot; 咖啡廳)" data-i18n-ja="(バー &middot; カフェ)">(바 &middot; 카페)</span></th><td data-i18n-en="13% off" data-i18n-zh="87 折" data-i18n-ja="13% オフ">13% 할인</td></tr>
-            <tr><th>UkeHub Cafe <span style="font-weight:400;color:var(--text-faint);font-size:.86em;" data-i18n-en="(Cafe)" data-i18n-zh="(咖啡廳)" data-i18n-ja="(カフェ)">(카페)</span></th><td data-i18n-en="5% off food / 10% off drinks" data-i18n-zh="餐點 95 折 / 飲料 9 折" data-i18n-ja="フード 5% オフ / ドリンク 10% オフ">음식 5% / 음료 10% 할인</td></tr>
-            <tr><th>Buzzed Station <span style="font-weight:400;color:var(--text-faint);font-size:.86em;" data-i18n-en="(Cafe)" data-i18n-zh="(咖啡廳)" data-i18n-ja="(カフェ)">(카페)</span></th><td data-i18n-en="5% off food / 20% off drinks 5&ndash;8 p.m." data-i18n-zh="餐點 95 折 / 下午 5&ndash;8 點飲料 8 折" data-i18n-ja="フード 5% オフ / 17&ndash;20 時はドリンク 20% オフ">음식 5% / 오후 5-8시 음료 20% 할인</td></tr>
-          </table>
+          <table class="kv-table" id="lgp-cafe"></table>
 
           <h4 style="margin: 22px 0 9px; color: var(--text); font-weight: 700;" data-i18n-en="Spa, nail &amp; diving" data-i18n-zh="水療 &middot; 美甲 &amp; 潛水" data-i18n-ja="スパ &middot; ネイル &amp; ダイビング">스파 · 네일 · 다이빙</h4>
-          <table class="kv-table">
-            <tr><th>A&amp;B Dive Shop <span style="font-weight:400;color:var(--text-faint);font-size:.86em;" data-i18n-en="(Dive shop)" data-i18n-zh="(潛水店)" data-i18n-ja="(ダイビングショップ)">(다이빙 숍)</span></th><td data-i18n-en="LCIC student ID &mdash; 2-day certification course (meals &amp; lodging included) <b>PHP 11,000</b>" data-i18n-zh="出示 LCIC 學生證 &mdash; 2 日證照課程(含三餐與住宿)<b>PHP 11,000</b>" data-i18n-ja="LCIC 学生証提示 &mdash; 2 日間のライセンス取得コース(食事・宿泊込み)<b>PHP 11,000</b>">LCIC 학생증 — 2일 자격증 코스(식사·숙박 포함) <b>PHP 11,000</b></td></tr>
-            <tr><th>Cheeva Spa <span style="font-weight:400;color:var(--text-faint);font-size:.86em;" data-i18n-en="(Spa &middot; massage)" data-i18n-zh="(水療 &middot; 按摩)" data-i18n-ja="(スパ &middot; マッサージ)">(스파 · 마사지)</span></th><td data-i18n-en="20% off" data-i18n-zh="8 折" data-i18n-ja="20% オフ">20% 할인</td></tr>
-            <tr><th>Ocean Massage <span style="font-weight:400;color:var(--text-faint);font-size:.86em;" data-i18n-en="(Massage)" data-i18n-zh="(按摩)" data-i18n-ja="(マッサージ)">(마사지)</span></th><td data-i18n-en="20% off" data-i18n-zh="8 折" data-i18n-ja="20% オフ">20% 할인</td></tr>
-            <tr><th>COCORABIN <span style="font-weight:400;color:var(--text-faint);font-size:.86em;" data-i18n-en="(Nail &middot; beauty)" data-i18n-zh="(美甲 &middot; 美容)" data-i18n-ja="(ネイル &middot; ビューティー)">(네일 · 뷰티)</span></th><td data-i18n-en="<b>10% off</b> services &middot; free pick-up/drop-off &middot; free cafe drink (student ID required)" data-i18n-zh="服務 <b>9 折</b> &middot; 免費接送 &middot; 免費咖啡飲品(需出示學生證)" data-i18n-ja="施術 <b>10% オフ</b> &middot; 送迎無料 &middot; カフェドリンク無料(学生証提示)">시술 요금 <b>10% 할인</b> · 픽업/드랍 무료 · 카페 음료 무료 (학생증 필참)</td></tr>
-          </table>
+          <table class="kv-table" id="lgp-spa"></table>
+          <script>
+          (function () {
+            const esc = (s) => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+            const sub = "font-weight:400;color:var(--text-faint);font-size:.86em;";
+            const note = "display:block;margin-top:3px;color:var(--text-faint);font-size:.86em;";
+            (window.LCIC_PARTNERS || []).forEach((p) => {
+              const el = document.getElementById("lgp-" + p.cat);
+              if (!el) return;
+              el.insertAdjacentHTML("beforeend",
+                `<tr><th>${esc(p.name)} <span style="${sub}">(${esc(p.sub)})</span></th>` +
+                `<td>${esc(p.benefit)}${p.note ? `<span style="${note}">💡 ${esc(p.note)}</span>` : ""}</td></tr>`);
+            });
+          })();
+          </script>
           <div class="lg-callout note">
             <iconify-icon icon="solar:info-circle-bold-duotone"></iconify-icon>
             <span data-i18n-en="<b>How partner discounts work</b> &middot; Show your student ID or a coupon (varies by venue) to get the discount. Confirm the details with each venue directly." data-i18n-zh="<b>合作優惠的使用方式</b> &middot; 出示學生證或優惠券(各店家不同)就可享折扣。詳細條件請直接向店家確認。" data-i18n-ja="<b>提携割引の使い方</b> &middot; 学生証またはクーポン(店舗により異なる)を提示すると割引が適用されます。詳細は各店舗に直接ご確認ください。"><b>제휴 할인 사용법</b> · 학생증 또는 쿠폰(매장별 상이)을 제시하면 할인 적용됩니다. 상세 조건은 매장에 직접 확인해주세요.</span>
