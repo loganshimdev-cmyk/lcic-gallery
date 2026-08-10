@@ -495,20 +495,20 @@
     <div id="depart-body"></div>
   </section>
 
-  <!-- 📝 EF-SET 결과지 제출 (전체 학생 필수 · 마감 7/29 수) -->
+  <!-- 📝 EF-SET 결과지 제출 (차수별 대상·마감은 renderEfset 의 EF_ROUNDS 가 정한다.
+       현재 진행 차수 = 인제대학교 · 6주차 수요일 8/12 마감) -->
   <section class="card fade-up" id="efset-card" style="display:none">
     <div class="card-title">📝 EF-SET 결과지 제출
-      <span style="font-size:0.72em;background:#dc2626;color:#fff;border-radius:999px;padding:2px 10px;font-weight:800;">전체 학생 필수</span>
+      <span id="ef-badge" style="font-size:0.72em;background:#dc2626;color:#fff;border-radius:999px;padding:2px 10px;font-weight:800;">전체 학생 필수</span>
     </div>
-    <p class="hop-desc">
+    <p class="hop-desc" id="ef-desc">
       EF-SET 영어 테스트를 응시하고 <b>결과지(성적표)</b>를 여기에 올려 주세요.
-      <b>모든 학생</b>이 <b>7월 29일(수)까지</b> 제출해야 합니다.
     </p>
-    <div class="hop-warn">🏫 제출된 결과지는 <b>학교로 전달되는 공식 자료</b>입니다. 예외 없이 <b>전원 필수 제출</b>이니 기한 내에 꼭 올려 주세요.</div>
+    <div class="hop-warn" id="ef-warn">🏫 제출된 결과지는 <b>학교(소속 대학)로 보고되는 공식 자료</b>입니다. 예외 없이 <b>전원 필수 제출</b>이니 기한 내에 꼭 올려 주세요.</div>
 
     <div class="msm-info">
-      <div class="mi"><span class="mi-k">🗓 마감</span><span class="mi-v"><b>7월 29일 (수)</b></span></div>
-      <div class="mi"><span class="mi-k">👥 대상</span><span class="mi-v"><b>전체 학생</b></span></div>
+      <div class="mi"><span class="mi-k">🗓 마감</span><span class="mi-v" id="ef-due"><b>7월 29일 (수)</b></span></div>
+      <div class="mi"><span class="mi-k">👥 대상</span><span class="mi-v" id="ef-target"><b>전체 학생</b></span></div>
       <div class="mi"><span class="mi-k">📄 파일</span><span class="mi-v">PDF 또는 결과 화면 캡처(JPG·PNG) · 최대 10MB</span></div>
       <div class="mi"><span class="mi-k">📖 응시 방법</span><span class="mi-v"><a href="procedure.html#efset" target="_blank" rel="noopener" style="color:var(--accent-deep);font-weight:700;">EF-SET 응시 매뉴얼 보기</a> (efset.org · 90분 테스트)</span></div>
       <div class="mi"><span class="mi-k">🖼 샘플</span><span class="mi-v"><a href="assets/efset-sample.png" target="_blank" rel="noopener" style="color:var(--accent-deep);font-weight:700;">결과지 샘플 보기</a> — 이런 형태여야 해요</span></div>
@@ -1546,11 +1546,50 @@
   // ── 📝 EF-SET 결과지 제출 ──
   // 파일: Supabase Storage 'efset' 버킷 (익명 열람 불가 — 제출 전용, 확인은 담당자 대시보드)
   // 기록: efset_submissions (id/name/university/ext/uploaded_at) → 제출 현황·본인 제출 여부 표시
-  const EF_DEADLINE = new Date("2026-07-29T23:59:59+08:00");
+  // 차수(대학)별 대상·마감. 7월 차수(전북대·백석대 등)는 7/29 로 이미 끝났고,
+  // 지금 진행 중인 차수는 6주 과정인 인제대학교(07/05~08/15) — 6주차 수요일 8/12 마감.
+  // 다음 차수가 생기면 EF_ROUNDS 에 한 줄 추가하고 pickEfRound 만 고치면 된다.
+  const EF_ROUNDS = {
+    inje: {
+      due: "2026-08-12", label: "8월 12일 (수)", note: "6주차 수요일",
+      badge: "인제대 필수", target: "인제대학교 학생 전원",
+      desc: `EF-SET 영어 테스트를 응시하고 <b>결과지(성적표)</b>를 여기에 올려 주세요.
+             <b>인제대학교 학생</b>은 <b>6주차 수요일인 8월 12일(수)까지</b> 제출해야 합니다.`,
+      warn: `🏫 제출된 결과지는 <b>학교(소속 대학)로 보고되는 공식 자료</b>입니다.
+             예외 없이 <b>전원 필수 제출</b>이니 기한 내에 꼭 올려 주세요.`,
+    },
+    past: {
+      due: "2026-07-29", label: "7월 29일 (수)", note: "",
+      badge: "미제출", target: "아직 제출하지 않은 학생",
+      desc: `EF-SET 결과지가 <b>아직 제출되지 않았어요.</b> 마감(7월 29일)은 지났지만
+             학교로 보고되는 필수 자료이니 <b>지금이라도</b> 올려 주세요.`,
+      warn: `🏫 제출된 결과지는 <b>학교(소속 대학)로 보고되는 공식 자료</b>입니다.
+             아직 안 낸 학생은 <b>지금 바로</b> 올려 주세요.`,
+    },
+  };
+  const isInjeUni = (u) => /인제|inje/i.test(String(u || ""));
+  let EF_ROUND = EF_ROUNDS.past;
+  let EF_DEADLINE = new Date(EF_ROUNDS.past.due + "T23:59:59+08:00");
+  let EF_MINE_INJE = false;
+
+  function applyEfCopy() {
+    EF_DEADLINE = new Date(EF_ROUND.due + "T23:59:59+08:00");
+    $("ef-badge").textContent = EF_ROUND.badge;
+    $("ef-desc").innerHTML = EF_ROUND.desc;
+    $("ef-warn").innerHTML = EF_ROUND.warn;
+    $("ef-due").innerHTML = `<b>${EF_ROUND.label}</b>${EF_ROUND.note ? ` <span style="font-weight:400;">(${EF_ROUND.note})</span>` : ""}`;
+    $("ef-target").innerHTML = `<b>${EF_ROUND.target}</b>`;
+  }
+
   async function renderEfset(rec) {
     if (!window.lcicEfset) { setTimeout(() => renderEfset(rec), 400); return; }   // 브리지 로드 대기
     const card = $("efset-card"); if (!card) return;
-    card.style.display = "";
+    EF_MINE_INJE = isInjeUni(rec.uni);
+    EF_ROUND = EF_MINE_INJE ? EF_ROUNDS.inje : EF_ROUNDS.past;
+    applyEfCopy();
+    // 진행 중인 차수(인제대)는 바로 카드를 연다. 지난 차수 학생은 미제출일 때만
+    // paintEfset 이 카드를 열어 준다(이미 낸 학생에게 마감 지난 카드를 다시 보이지 않게).
+    if (EF_MINE_INJE) card.style.display = "";
     const sid = (await sha256hex(CUR_EMAIL || "")).slice(0, 16);
     $("ef-btn").onclick = () => efUpload(sid);
     paintEfset(sid);
@@ -1559,7 +1598,15 @@
     let rows = [];
     try { rows = await window.lcicEfset.state(); } catch (_) { /* 조회 실패해도 카드는 표시 */ }
     const mine = rows.find((r) => r.id === sid);
-    $("ef-count").innerHTML = `현재 <b>${rows.length}명</b> 제출`;
+    const card = $("efset-card");
+    if (!EF_MINE_INJE) {
+      if (mine) { card.style.display = "none"; return; }   // 지난 차수 + 제출 완료 → 카드 숨김
+      card.style.display = "";
+    }
+    // 제출 현황은 같은 차수끼리만 센다 — 인제대 10명 옆에 7월 차수 수백 명이 뜨면 뜻이 없다.
+    const cnt = EF_MINE_INJE ? rows.filter((r) => isInjeUni(r.university)).length : rows.length;
+    const who = EF_MINE_INJE ? "인제대학교 " : "현재 ";
+    $("ef-count").innerHTML = `${who}<b>${cnt}명</b> 제출`;
     const d = Math.ceil((EF_DEADLINE - new Date()) / 86400000) - 1;   // 마감일 당일 = D-0
     const my = $("ef-my");
     my.className = "hop-my";
@@ -1789,10 +1836,12 @@ window.lcicEvents = {
 
 // 📝 EF-SET 결과지 제출 → Storage 'efset' 버킷 + efset_submissions 테이블
 window.lcicEfset = {
-  async state() {   // [{id, uploaded_at}] — 제출 현황·본인 제출 여부 표시용
-    const { data, error } = await supabase.from("efset_submissions").select("id,uploaded_at");
-    if (error) throw error;
-    return data || [];
+  async state() {   // [{id, uploaded_at, university}] — 제출 현황·본인 제출 여부 표시용
+    // university 는 차수(대학)별 제출 수를 세는 데 쓴다. 정책상 막혀 있으면 예전 컬럼만 읽는다.
+    let q = await supabase.from("efset_submissions").select("id,uploaded_at,university");
+    if (q.error) q = await supabase.from("efset_submissions").select("id,uploaded_at");
+    if (q.error) throw q.error;
+    return q.data || [];
   },
   async upload(id, name, university, file, ext) {
     try {
