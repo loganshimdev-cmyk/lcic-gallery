@@ -119,7 +119,7 @@
         <div class="tab-group">
           <button type="button" class="tab-parent">🎉 액티비티 ▾</button>
           <div class="tab-menu">
-            <button data-tab="hopaug">🚤 호핑 신청자 (8월)</button>
+            <button data-tab="mangoaug">🥭 망고 공장 (8월)</button>
             <button data-tab="rooms">🏀 학생 모임</button>
             <button data-tab="events">🎟 이벤트 신청자 (전체)</button>
           </div>
@@ -127,6 +127,8 @@
         <div class="tab-group">
           <button type="button" class="tab-parent">🗂 지난 예약 ▾</button>
           <div class="tab-menu">
+            <button data-tab="hopaug">🚤 호핑 신청자 (8/8)</button>
+            <button data-tab="mangojul">🥭 망고 공장 (7월)</button>
             <button data-tab="marshmallow">🍭 마시멜로우</button>
             <button data-tab="hopping">🚤 호핑 예약자 (7월)</button>
           </div>
@@ -157,6 +159,12 @@
     </section>
     <section id="tab-hopaug" class="hidden">
       <iframe id="hopaug-frame" title="호핑 신청자 (8월)" style="width:100%; height:calc(100vh - 200px); border:1px solid var(--hairline); border-radius:16px; background:#fff;"></iframe>
+    </section>
+    <section id="tab-mangoaug" class="hidden">
+      <iframe id="mangoaug-frame" title="망고 공장 신청자 (8월)" style="width:100%; height:calc(100vh - 200px); border:1px solid var(--hairline); border-radius:16px; background:#fff;"></iframe>
+    </section>
+    <section id="tab-mangojul" class="hidden">
+      <iframe id="mangojul-frame" title="망고 공장 신청자 (7월)" style="width:100%; height:calc(100vh - 200px); border:1px solid var(--hairline); border-radius:16px; background:#fff;"></iframe>
     </section>
     <section id="tab-rooms" class="hidden">
       <iframe id="rooms-frame" title="학생 모임" style="width:100%; height:calc(100vh - 200px); border:1px solid var(--hairline); border-radius:16px; background:#fff;"></iframe>
@@ -281,6 +289,8 @@ function switchTab(tab, btn) {
   $("tab-dorm").classList.toggle("hidden", tab !== "dorm");
   $("tab-hopping").classList.toggle("hidden", tab !== "hopping");
   $("tab-hopaug").classList.toggle("hidden", tab !== "hopaug");
+  $("tab-mangoaug").classList.toggle("hidden", tab !== "mangoaug");
+  $("tab-mangojul").classList.toggle("hidden", tab !== "mangojul");
   $("tab-rooms").classList.toggle("hidden", tab !== "rooms");
   $("tab-events").classList.toggle("hidden", tab !== "events");
   $("tab-marshmallow").classList.toggle("hidden", tab !== "marshmallow");
@@ -289,8 +299,10 @@ function switchTab(tab, btn) {
   if (tab === "arrivals") { const f = $("arrivals-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "arrivals.html"); }
   if (tab === "dorm") { const f = $("dorm-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "dorm.html"); }
   if (tab === "hopping") { const f = $("hopping-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "hopping.html"); }
-  // 8월 호핑은 events.html 을 ?only= 로 재사용한다(별도 페이지 없음).
+  // 호핑 8월·망고는 events.html 을 ?only= 로 재사용한다(별도 페이지 없음).
   if (tab === "hopaug") { const f = $("hopaug-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "events.html?only=hopping_aug"); }
+  if (tab === "mangoaug") { const f = $("mangoaug-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "events.html?only=mango_aug"); }
+  if (tab === "mangojul") { const f = $("mangojul-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "events.html?only=mango_jul"); }
   if (tab === "rooms") { const f = $("rooms-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "rooms.html?admin=1"); }
   if (tab === "events") { const f = $("events-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "events.html"); }
   if (tab === "marshmallow") { const f = $("marshmallow-frame"); if (!f.getAttribute("src")) f.setAttribute("src", "marshmallow.html"); }

@@ -89,29 +89,40 @@ const esc = (s) => (s == null ? "" : String(s)).replace(/&/g, "&amp;").replace(/
 
 const PW = "8686";
 // 표시 정의(라벨·정원). status.html EVENTS 와 동일하게 유지.
+// id = 팀보드 탭이 ?only= 로 고르는 값. 같은 event_key(mango)를 7월·8월 회차로 나눠 보기 위해 쓴다.
+//      없으면 key 를 그대로 쓴다(기존 ?only=hopping_aug 링크 호환).
 const EVENTS = [
-  { key: "mango", icon: "🥭", title: "망고 공장 견학", sub: "출발 오후 12:30 · 약 3시간 30분 · ₱200",
+  // ── 진행 중 ────────────────────────────────────────────────────────────
+  { id: "mango_aug", key: "mango", icon: "🥭", title: "망고 공장 견학 · 8월 회차",
+    sub: "8/18(화)·8/19(수) · 출발 오후 12:30 · 약 3시간 30분 · ₱200 현금 · 날짜별 25명 · 8/13(목) 23:59 신청 마감(이후 변경·취소 불가) · 8월 입국 학생에게만 카드가 보임",
+    slots: [
+      { date: "2026-08-18", label: "8월 18일 (화)", cap: 25 },
+      { date: "2026-08-19", label: "8월 19일 (수)", cap: 25 },
+    ] },
+  // ── 지난 회차 ──────────────────────────────────────────────────────────
+  { id: "mango_jul", key: "mango", icon: "🥭", title: "망고 공장 견학 · 7월 회차 (종료)",
+    sub: "출발 오후 12:30 · 약 3시간 30분 · ₱200 · 7월 학생 대상 · 마감됨",
     slots: [
       { date: "2026-07-22", label: "7월 22일 (수)", cap: 35 },
       { date: "2026-07-23", label: "7월 23일 (목)", cap: 35 },
       { date: "2026-07-24", label: "7월 24일 (금)", cap: 35 },
       { date: "2026-07-27", label: "7월 27일 (월) · 추가 회차", cap: 25 },
     ] },
-  { key: "capitol", icon: "🏛", title: "세부 주청사(Capitol) 방문", sub: "7/21(화) · 12:30 정문 출발 · 약 2시간 · 국제방문관 포함",
+  { id: "capitol", key: "capitol", icon: "🏛", title: "세부 주청사(Capitol) 방문 (종료)", sub: "7/21(화) · 12:30 정문 출발 · 약 2시간 · 국제방문관 포함",
     slots: [
       { date: "2026-07-21", label: "7월 21일 (화)", cap: 25 },
     ] },
   // cap:0 = 인원 제한 없는 수요조사(정원·남은 자리 대신 신청 인원만 표시)
-  { key: "hopping_aug", icon: "🚤", title: "호핑 투어 신청 · 8월 학생", sub: "8/8(토) · 9시 학교 픽업 · ₱2,500 현장 납부 · 인원 제한 없음 · 8/5(수) 23:59 신청 마감(이후 취소·환불 불가) · 8월 입국 학생에게만 카드가 보임",
+  { id: "hopping_aug", key: "hopping_aug", icon: "🚤", title: "호핑 투어 신청 · 8월 학생 (종료)", sub: "8/8(토) · 9시 학교 픽업 · ₱2,500 현장 납부 · 인원 제한 없음 · 8/5(수) 23:59 신청 마감(이후 취소·환불 불가) · 8월 입국 학생에게만 카드가 보임",
     slots: [
       { date: "2026-08-08", label: "8월 8일 (토)", cap: 0 },
     ] },
 ];
 
-// ?only=<event_key> 를 주면 그 이벤트만 보여준다.
-// 팀보드(team.html)의 "🚤 호핑 8월" 탭이 events.html?only=hopping_aug 로 이 화면을 재사용한다.
+// ?only=<id> 를 주면 그 항목만 보여준다.
+// 팀보드(team.html)의 "🥭 망고 8월"·"🚤 호핑 8월" 탭이 이 화면을 재사용한다.
 const ONLY = new URLSearchParams(location.search).get("only");
-const VIEW = ONLY ? EVENTS.filter((e) => e.key === ONLY) : EVENTS;
+const VIEW = ONLY ? EVENTS.filter((e) => (e.id || e.key) === ONLY) : EVENTS;
 if (ONLY && VIEW.length) {
   document.title = VIEW[0].title + " · LCIC";
   const t = document.querySelector("#app-view h1");
@@ -159,7 +170,9 @@ function render() {
   const q = ($("q").value || "").trim();
 
   const html = VIEW.map((ev) => {
-    const evRows = ROWS.filter((r) => r.event_key === ev.key);
+    // 같은 event_key 를 회차별로 나눠 보므로(mango 7월·8월) 이 항목의 날짜만 센다.
+    const dates = new Set(ev.slots.map((s) => s.date));
+    const evRows = ROWS.filter((r) => r.event_key === ev.key && dates.has(r.slot_date));
     const evTotal = evRows.length;
     const evCap = ev.slots.reduce((s, x) => s + x.cap, 0);
 
