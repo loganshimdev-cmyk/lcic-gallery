@@ -903,7 +903,7 @@
   //   { icon: "💱", t: "<b>환전</b> · <b>7월 7일(화)</b><br>· 시간: <b>11:00 ~ 13:00</b><br>· 장소: Admin Building <b>1층</b>" },
   const NOTICES = [
     { icon: "🛫", t: "<b>귀국(출국) 안내 — 7월 과정</b><br>· 공항 이동은 <b>출발 전날 밤, LCIC 정문</b>에서 다 같이 출발해요. <b>내 픽업 시간</b>은 아래 <b>항공편 카드의 '오는 편'</b>에서 확인하세요.<br>· 🎫 <b>본인 이름이 적힌 '돌아가는' e-ticket</b>(휴대폰 화면/종이) 필수 — <b>없으면 공항 건물 출입이 불가</b>합니다." },
-    { icon: "🛂", t: "<b>비자 연장</b><br>프로그램 기간보다 <b>세부(필리핀)에 더 머물다</b> 가시는 분은 <b>비자 연장이 필수</b>입니다. 개인이 직접 진행하지 마시고 <b>꼭 매니저에게 먼저 말씀해 주세요.</b>" },
+    { icon: "🛂", t: "<b>비자 연장</b><br>프로그램 기간보다 <b>세부(필리핀)에 더 머물다</b> 가시는 분은 <b>비자 연장이 필수</b>입니다. <b>한국인 매니저에게 연락해 주세요.</b>" },
     { icon: "🤝", t: "<span style=\"font-size:0.86em;color:var(--text-dim);\"><b>제휴 할인</b> · 학생증을 보여주면 할인돼요<br>· 소문난식당(감자탕, 레드코코 안) — LCIC 학생·직원 <b>20% 할인</b> (주류 제외)<br>· 그 외 <b>식당·카페·스파 17곳</b> 5~20% 할인 → <a href=\"life-guide.html#partner\" style=\"color:var(--accent-deep);font-weight:700;\">전체 보기</a></span>" },
   ];
   (function renderNotices() {
@@ -1020,7 +1020,7 @@
     // 비자 연장 안내 (개인 연장자 대상)
     const VISA_NOTE =
       `<div class="visa-note"><div class="visa-title"><iconify-icon icon="solar:passport-bold"></iconify-icon> 비자 연장 안내</div>
-        <div>프로그램 기간보다 <b>세부에 더 머물다 가시는 분</b>은 <b>비자 연장이 필수</b>입니다. 개인이 직접 진행하지 마시고 <b>꼭 매니저에게 먼저 말씀해 주세요.</b></div></div>`;
+        <div>프로그램 기간보다 <b>세부에 더 머물다 가시는 분</b>은 <b>비자 연장이 필수</b>입니다. <b>한국인 매니저에게 연락해 주세요.</b></div></div>`;
 
     // 항공편 (왕복: 가는 편 / 오는 편)
     const f = rec.flight || {};
@@ -1396,7 +1396,9 @@
   // 새 이벤트 추가: event_slots 에 행을 넣고 EVENTS 에 항목 하나만 추가하면 끝(SQL 재실행 불필요).
   // 오픈 시각은 슬롯마다 다를 수 있다(예: 추가 좌석을 나중에 여는 경우).
   // 항상 DB(event_slots.opens_at)를 우선 쓰고, 조회 실패 시에만 아래 폴백을 쓴다.
-  const EV_OPEN_FALLBACK = new Date("2026-07-16T20:00:00+08:00");   // 1차 오픈 (세부 UTC+8)
+  // ⚠️ 폴백은 '진행 중인 회차의 오픈 시각'으로 맞춰 둔다. 슬롯 SQL 이 아직 안 돌았을 때
+  //    지난 날짜를 폴백으로 두면 버튼이 열린 것처럼 보이고, 눌러도 EVENT_SLOT_UNKNOWN 이 난다.
+  const EV_OPEN_FALLBACK = new Date("2026-08-11T20:00:00+08:00");   // 망고 8월 회차 오픈 (세부 UTC+8)
   // 종료된 이벤트(7/21 주청사) — 2026-07-29 마감 처리. 다시 열려면 아래 주석 항목을 EVENTS 안으로.
   //   { key: "capitol", card: "cap-card", grid: "cap-dates", my: "cap-my", stat: "cap-status",
   //     what: "🏛 주청사 방문", cap: 25,
