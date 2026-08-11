@@ -9,7 +9,7 @@
 --      (event_enforce_cap 트리거가 마감된 슬롯에서의 slot_date 변경을 EVENT_LOCKED 로 막는다)
 --   2) 새 슬롯 8/18(화)·8/19(수) — 날짜별 정원 25명
 --      · opens_at  2026-08-11(화) 20:00 (세부 UTC+8)  → 그 전 신청은 EVENT_NOT_OPEN
---      · closes_at 2026-08-14(금) 23:59:59            → 그 후 신청·변경·취소 모두 잠김
+--      · closes_at 2026-08-13(목) 23:59:59            → 그 후 신청·변경·취소 모두 잠김
 --
 -- ※ 트리거(event_enforce_cap · event_lock_delete)는 event-mango-0727.sql 에서 이미 만들었다.
 --   여기서는 슬롯만 다룬다.
@@ -25,9 +25,9 @@ update public.event_slots
 insert into public.event_slots (event_key, slot_date, label, cap, opens_at, closes_at)
 values
   ('mango', '2026-08-18', '8월 18일 (화)', 25,
-   timestamptz '2026-08-11 20:00:00+08', timestamptz '2026-08-14 23:59:59+08'),
+   timestamptz '2026-08-11 20:00:00+08', timestamptz '2026-08-13 23:59:59+08'),
   ('mango', '2026-08-19', '8월 19일 (수)', 25,
-   timestamptz '2026-08-11 20:00:00+08', timestamptz '2026-08-14 23:59:59+08')
+   timestamptz '2026-08-11 20:00:00+08', timestamptz '2026-08-13 23:59:59+08')
 on conflict (event_key, slot_date) do update
   set label    = excluded.label,
       cap      = excluded.cap,
@@ -48,5 +48,5 @@ select event_key, slot_date, label, cap, opens_at, closes_at,
 --                  and slot_date >= '2026-08-01' order by slot_date, created_at;
 --   정원 늘리기: update public.event_slots set cap = 30
 --                 where event_key = 'mango' and slot_date in ('2026-08-18','2026-08-19');
---   마감 연장:   update public.event_slots set closes_at = timestamptz '2026-08-16 23:59:59+08'
+--   마감 연장:   update public.event_slots set closes_at = timestamptz '2026-08-15 23:59:59+08'
 --                 where event_key = 'mango' and slot_date >= '2026-08-01';
