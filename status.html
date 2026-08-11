@@ -217,7 +217,7 @@
   .hop-info .hi-tip { font-size: 0.86rem; line-height: 1.6; color: #b45309; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.3); border-radius: 12px; padding: 11px 13px; }
   .hop-info .hi-tip b { color: #92400e; font-weight: 800; }
   /* 🥭 망고 공장 · 🏛 주청사 — 선착순 이벤트(event_signups). 호핑 날짜 카드 스타일 재사용. */
-  #mango-dates { grid-template-columns: repeat(3, 1fr); }
+  #mango-dates { grid-template-columns: repeat(2, 1fr); }
   @media (max-width: 620px) { #mango-dates { grid-template-columns: 1fr; } }
   #cap-dates { grid-template-columns: 1fr; }
   .ev-note { font-size: 0.86rem; line-height: 1.6; color: var(--text-dim); background: var(--bg-elev);
@@ -555,20 +555,21 @@
     </p>
 
     <div class="msm-info">
-      <div class="mi"><span class="mi-k">📅 추가 회차</span><span class="mi-v"><b>7월 27일 (월)</b> — 22·23·24일은 마감</span></div>
+      <div class="mi"><span class="mi-k">📅 회차</span><span class="mi-v"><b>8월 18일 (화) · 8월 19일 (수)</b> — 둘 중 하루 선택</span></div>
       <div class="mi"><span class="mi-k">🕧 출발</span><span class="mi-v">오후 12시 30분</span></div>
       <div class="mi"><span class="mi-k">📍 장소</span><span class="mi-v">7D Mango Factory (Cebu City)</span></div>
       <div class="mi"><span class="mi-k">⏱ 소요 시간</span><span class="mi-v">약 3시간 30분</span></div>
-      <div class="mi"><span class="mi-k">👥 정원</span><span class="mi-v">27일 선착순 <b>25명</b></span></div>
+      <div class="mi"><span class="mi-k">👥 정원</span><span class="mi-v">날짜별 선착순 <b>25명</b></span></div>
       <div class="mi"><span class="mi-k">💰 비용</span><span class="mi-v">₱200 (현금)</span></div>
-      <div class="mi"><span class="mi-k">🔓 신청 오픈</span><span class="mi-v"><b>7월 23일 (목) 오후 8시</b></span></div>
+      <div class="mi"><span class="mi-k">🔓 신청 오픈</span><span class="mi-v"><b>8월 11일 (화) 오후 8시</b></span></div>
+      <div class="mi"><span class="mi-k">⛔ 신청 마감</span><span class="mi-v"><b>8월 14일 (금) 밤 11시 59분</b></span></div>
     </div>
 
     <div class="hop-my none" id="mango-my"></div>
     <div class="hop-dates" id="mango-dates"></div>
-    <div class="ev-note">🥭 <b>7월 27일(월) 추가 회차가 열려요!</b> <b>오늘(7/23) 오후 8시</b> 오픈 · 선착순 <b>25명</b>입니다.</div>
-    <div class="ev-note">🚫 <b>22·23·24일 회차에 신청했던 학생</b>은 이번 27일 회차에 <b>신청할 수 없어요</b>. 아직 참가하지 않은 학생에게 기회를 드리기 위해서예요. (기존 회차의 신청 변경·취소도 마감되었어요)</div>
+    <div class="ev-note">🥭 <b>두 날짜 중 하루만</b> 신청할 수 있어요. 날짜별 <b>선착순 25명</b>이라 자리가 차면 다른 날짜를 골라 주세요.</div>
     <div class="ev-note">💳 <b>지금은 결제 없이 신청만 하시면 돼요.</b> 비용 <b>₱200</b> 납부 방법은 신청자에게 별도로 안내드릴게요.</div>
+    <div class="ev-note ev-warn">⛔ <b>8월 14일(금) 밤 11시 59분에 마감</b>돼요. 그전까지는 날짜 변경·취소가 자유롭지만, <b>마감 후에는 변경·취소가 불가능</b>합니다.</div>
     <div class="hop-warn">📸 공장 내부는 <b>촬영이 제한</b>될 수 있어요. 견학 당일 <b>학생증과 마스크</b>를 꼭 챙겨 주세요.</div>
     <div class="hop-status" id="mango-status"></div>
   </section>
@@ -1396,16 +1397,7 @@
   // 오픈 시각은 슬롯마다 다를 수 있다(예: 추가 좌석을 나중에 여는 경우).
   // 항상 DB(event_slots.opens_at)를 우선 쓰고, 조회 실패 시에만 아래 폴백을 쓴다.
   const EV_OPEN_FALLBACK = new Date("2026-07-16T20:00:00+08:00");   // 1차 오픈 (세부 UTC+8)
-  // 종료된 이벤트(7/27 망고 공장 · 7/21 주청사) — 2026-07-29 마감 처리. 다시 열려면 아래 주석 항목을 EVENTS 안으로.
-  //   { key: "mango", card: "mango-card", grid: "mango-dates", my: "mango-my", stat: "mango-status",
-  //     what: "🥭 망고 공장 견학", cap: 35,
-  //     slots: [
-  //       { date: "2026-07-22", label: "7월 22일 (수)" },
-  //       { date: "2026-07-23", label: "7월 23일 (목)" },
-  //       { date: "2026-07-24", label: "7월 24일 (금)" },
-  //       { date: "2026-07-27", label: "7월 27일 (월)" },
-  //     ],
-  //     confirm: "🥭 망고 공장 견학 (7월 27일 월요일)\n\n· 출발: 오후 12시 30분\n· 비용: ₱200 (납부 방법은 별도 안내)\n· 기존 22~24일 회차에 신청했던 학생은 참가할 수 없어요.\n\n신청할까요?" },
+  // 종료된 이벤트(7/21 주청사) — 2026-07-29 마감 처리. 다시 열려면 아래 주석 항목을 EVENTS 안으로.
   //   { key: "capitol", card: "cap-card", grid: "cap-dates", my: "cap-my", stat: "cap-status",
   //     what: "🏛 주청사 방문", cap: 25,
   //     slots: [{ date: "2026-07-21", label: "7월 21일 (화)" }],
@@ -1415,6 +1407,16 @@
   // cancelled = 취소된 회차. 카드는 대상 학생에게 그대로 보이되(취소 사실을 알아야 하므로)
   //             신청 버튼·실시간 인원은 그리지 않는다. 안내 문구는 카드 HTML 에 직접 쓴다.
   const EVENTS = [
+    // 🥭 망고 공장 8월 회차 — 8월 입국 학생만(인제대는 7/5 입국이라 자동 제외).
+    //    7월 회차(7/22~7/27)는 event_slots.closes_at 으로 잠겨 있어 여기 slots 에 넣지 않는다.
+    { key: "mango", card: "mango-card", grid: "mango-dates", my: "mango-my", stat: "mango-status",
+      what: "🥭 망고 공장 견학", cap: 25,
+      only: (rec) => (((rec.stay || {}).start || "") >= "2026-08-01"),
+      slots: [
+        { date: "2026-08-18", label: "8월 18일 (화)" },
+        { date: "2026-08-19", label: "8월 19일 (수)" },
+      ],
+      confirm: "🥭 7D 망고 공장 견학\n\n· 선택한 날짜로 신청됩니다 (두 날짜 중 하루만 가능)\n· 출발: 오후 12시 30분 · 소요 약 3시간 30분\n· 비용: ₱200 현금 (납부 방법은 별도 안내)\n\n⛔ 신청 마감: 8월 14일(금) 밤 11시 59분\n마감 후에는 날짜 변경·취소가 되지 않아요.\n(마감 전까지는 언제든 바꿀 수 있어요)\n\n신청할까요?" },
     { key: "hopping_aug", card: "hopaug-card", grid: "hopaug-dates", my: "hopaug-my", stat: "hopaug-status",
       what: "🚤 호핑 투어", cap: 9999, unlimited: true, cancelled: true,
       only: (rec) => (((rec.stay || {}).start || "") >= "2026-08-01"),
