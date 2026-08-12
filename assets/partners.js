@@ -249,16 +249,6 @@ window.LCIC_PARTNERS = [
       zh: { sub: "水療 · 按摩", benefit: "8 折 · 單人也提供免費接送" },
       ja: { sub: "スパ · マッサージ", benefit: "20% オフ · 1 名でも送迎無料" },
     } },
-  { name: "A&B Dive Shop", cat: "spa", sub: "다이빙 숍", disc: "특가",
-    benefit: "학생증 제시 — 2일 자격증 코스(식사·숙박 포함) PHP 11,000",
-    t: {
-      en: { sub: "Dive shop", disc: "Deal",
-        benefit: "Show your student ID — 2-day certification course (meals & lodging included) PHP 11,000" },
-      zh: { sub: "潛水店", disc: "特價",
-        benefit: "出示學生證 — 2 日證照課程(含三餐與住宿)PHP 11,000" },
-      ja: { sub: "ダイビングショップ", disc: "特価",
-        benefit: "学生証提示 — 2 日間のライセンス取得コース(食事・宿泊込み)PHP 11,000" },
-    } },
   { name: "M beauty salon and Nails", cat: "spa", sub: "미용실 · 네일 · Salinas Premier", disc: "10%",
     benefit: "10% 할인", isNew: true,
     t: {
