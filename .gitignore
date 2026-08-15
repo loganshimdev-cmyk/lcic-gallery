@@ -15,6 +15,7 @@ scripts/encrypt-buddy.cjs
 scripts/encrypt-arrivals.cjs
 scripts/encrypt-attendance.cjs
 .gstack/
+.superpowers/
 scripts/sheet-to-report.cjs
 scripts/make-agency-page.cjs
 scripts/agencies.json
