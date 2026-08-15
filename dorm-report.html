@@ -3,261 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dormitory Inspection Report · LCIC</title>
+<title>Dorm Inspection Report · Moved</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" type="image/png" href="assets/brand/lcic-logo.png">
 <link rel="stylesheet" href="assets/shared.css?v=8">
 <style>
-  :root {
-    --good:#16a34a; --warn:#d97706; --crit:#dc2626; --ink:#0f172a;
-    --line:rgba(15,23,42,.08); --faint:#94a3b8;
-  }
-  body { background:#f6f8fb; }
-  .wrap { max-width:1080px; margin:0 auto; padding:34px 22px 80px; }
-
-  /* password gate */
-  .gate { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; padding:24px; }
-  .gate-card { width:100%; max-width:380px; padding:38px 32px; border-radius:24px; }
-  .gate-card h2 { margin-bottom:4px; }
-  .gate-card p { color:var(--text-dim); font-size:.86rem; margin-bottom:20px; }
-  .gate-card input { width:100%; margin-bottom:12px; }
-  .hidden { display:none !important; }
-
-  /* header */
-  .rhead { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:22px; }
-  .eyebrow { font-size:.72rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); }
-  .rhead h1 { font-size:clamp(1.6rem,3.4vw,2.2rem); font-weight:800; letter-spacing:-.02em; line-height:1.1; margin-top:6px; text-wrap:balance; }
-  .rhead .meta { font-size:.85rem; color:var(--faint); margin-top:6px; }
-  .verdict { display:inline-flex; align-items:center; gap:8px; padding:9px 16px; border-radius:999px; font-weight:700; font-size:.9rem; }
-  .verdict .d { width:9px; height:9px; border-radius:50%; }
-  .verdict.good { background:rgba(22,163,74,.12); color:#15803d; } .verdict.good .d { background:var(--good); }
-  .verdict.warn { background:rgba(217,119,6,.12); color:#b45309; } .verdict.warn .d { background:var(--warn); }
-  .verdict.crit { background:rgba(220,38,38,.10); color:#b91c1c; } .verdict.crit .d { background:var(--crit); }
-
-  /* assessment */
-  .assess { background:var(--accent-tint); border:1px solid var(--accent-soft); border-radius:18px; padding:20px 22px; margin-bottom:22px; }
-  .assess p { font-size:1.02rem; line-height:1.6; color:var(--ink); }
-  .assess p + p { margin-top:9px; }
-  .assess b { font-weight:800; }
-
-  /* KPI strip */
-  .kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:22px; }
-  @media (max-width:760px){ .kpis { grid-template-columns:repeat(2,1fr); } }
-  .kpi { background:var(--bg-elev); border:1px solid var(--line); border-radius:16px; padding:18px 18px; }
-  .kpi .lab { font-size:.72rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); }
-  .kpi .num { font-size:2.1rem; font-weight:800; letter-spacing:-.02em; margin-top:8px; font-variant-numeric:tabular-nums; line-height:1; }
-  .kpi .sub { font-size:.78rem; color:var(--text-dim); margin-top:7px; }
-  .kpi .num.crit { color:var(--crit); } .kpi .num.good { color:var(--good); } .kpi .num.warn { color:var(--warn); }
-
-  /* charts */
-  .charts { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
-  @media (max-width:860px){ .charts { grid-template-columns:1fr; } }
-  .card { background:var(--bg-elev); border:1px solid var(--line); border-radius:18px; padding:20px; }
-  .card h3 { font-size:.9rem; font-weight:700; color:var(--text-dim); margin-bottom:16px; }
-  .donut { width:150px; height:150px; border-radius:50%; margin:2px auto 16px; display:flex; align-items:center; justify-content:center; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-  .donut-hole { width:106px; height:106px; border-radius:50%; background:var(--bg-elev); display:flex; flex-direction:column; align-items:center; justify-content:center; }
-  .donut-hole b { font-size:1.7rem; font-weight:800; letter-spacing:-.02em; }
-  .donut-hole span { font-size:.74rem; color:var(--faint); font-variant-numeric:tabular-nums; }
-  .legend { display:flex; flex-direction:column; gap:6px; font-size:.82rem; color:var(--text-dim); }
-  .legend i { display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:8px; vertical-align:middle; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-  .bar-row { display:flex; align-items:center; gap:10px; margin-bottom:11px; font-size:.84rem; }
-  .bar-row:last-child { margin-bottom:0; }
-  .bar-lab { width:104px; flex-shrink:0; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .bar-track { flex:1; height:10px; background:var(--line); border-radius:6px; overflow:hidden; }
-  .bar-fill { display:block; height:100%; border-radius:6px; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-  .bar-val { width:38px; text-align:right; flex-shrink:0; color:var(--faint); font-variant-numeric:tabular-nums; font-weight:600; }
-  .bar-row.clickable { cursor:pointer; border-radius:8px; padding:3px 6px; margin-left:-6px; margin-right:-6px; transition:background .15s; }
-  .bar-row.clickable:hover { background:var(--accent-tint); }
-  .drill-hint { font-size:.74rem; color:var(--faint); margin-top:14px; }
-
-  .rfoot { margin-top:26px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; font-size:.78rem; color:var(--faint); }
-
-  .toast { position:fixed; top:24px; left:50%; transform:translateX(-50%); background:#111; color:#fff; font-weight:600; font-size:.9rem; padding:11px 20px; border-radius:12px; opacity:0; transition:opacity .25s; pointer-events:none; z-index:100; }
-  .toast.show { opacity:1; } .toast.error { background:var(--crit); }
-
-  @media print {
-    body { background:#fff; }
-    .wrap { padding:0; max-width:none; }
-    #print-btn, .gate { display:none !important; }
-    .card, .kpi, .assess { border-color:#ddd; box-shadow:none; }
-    .charts { grid-template-columns:1fr 1fr 1fr; }
-  }
+  .moved { max-width: 520px; margin: 12vh auto; padding: 40px 32px; text-align: center; }
+  .moved h1 { margin-bottom: 10px; }
+  .moved p { margin-bottom: 22px; line-height: 1.6; }
+  .moved .go { display: inline-block; padding: 14px 28px; border-radius: 14px;
+               background: #1d4ed8; color: #fff; font-weight: 600; text-decoration: none; }
+  .moved .go:hover { background: #1e40af; }
+  .moved .note { margin-top: 26px; font-size: 13px; color: #64748b; }
 </style>
 </head>
 <body>
-
-<!-- password gate -->
-<div id="gate" class="gate">
-  <div class="gate-card glass">
-    <h2>Inspection Report</h2>
-    <p>Enter the report password to continue.</p>
-    <form id="gate-form">
-      <input id="gate-pw" class="input" type="password" placeholder="Password" autocomplete="current-password" required>
-      <button class="btn-primary" type="submit" style="width:100%;">View report</button>
-    </form>
-  </div>
-</div>
-
-<!-- report -->
-<main id="report" class="wrap hidden">
-  <div class="rhead">
-    <div>
-      <div class="eyebrow">LCIC · Dormitory Operations</div>
-      <h1>Dormitory Inspection Status Report</h1>
-      <div id="gen-date" class="meta"></div>
-    </div>
-    <div id="verdict"></div>
-  </div>
-
-  <div id="assess" class="assess"></div>
-
-  <div id="kpis" class="kpis"></div>
-
-  <div class="charts">
-    <div class="card"><h3>Inspection coverage</h3><div id="c-donut"></div></div>
-    <div class="card"><h3>Issues by category</h3><div id="c-cats"></div></div>
-    <div class="card"><h3>Coverage by building</h3><div id="c-bldg"></div></div>
-  </div>
-
-  <div class="rfoot">
-    <span id="foot-note"></span>
-    <div style="display:flex; gap:10px; flex-wrap:wrap;">
-      <button id="details-btn" class="btn-primary" style="font-size:.85rem;">View detailed dashboard →</button>
-      <button id="print-btn" class="btn-ghost" style="font-size:.8rem;">🖨 Print / Save PDF</button>
-    </div>
-  </div>
+<main class="moved card">
+  <h1>This page has moved</h1>
+  <p>The dormitory inspection report is now part of the LCIC staff system.<br>
+     Sign in to view it.</p>
+  <a class="go" href="https://system.lcic-campus.com/dorm/report">Go to the new system</a>
+  <p class="note">Please update your bookmark to
+     <strong>system.lcic-campus.com</strong>.<br>
+     The report is restricted to managers now — it no longer opens without a sign-in.</p>
 </main>
-
-<div class="toast" id="toast"></div>
-
-<script type="module">
-import { listRooms, listInspections, latestByRoom, CHECK_ITEMS } from "./assets/room-check-data.js?v=8";
-
-const $ = (id) => document.getElementById(id);
-const SHORT = { aircon:"Aircon", electrical:"Electrical", openings:"Doors/Win/Safe",
-                furniture:"Furniture", structure:"Walls/Floor", other:"Clean/Other" };
-const toast = $("toast");
-function showToast(m, t=""){ toast.textContent=m; toast.className=`toast show ${t}`; setTimeout(()=>toast.classList.remove("show"),2200); }
-const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
-const pct = (n, d) => d ? Math.round(n / d * 100) : 0;
-
-// ---- password gate ----
-const KEY = "lcic-dorm-report-ok";
-function unlock(){ $("gate").classList.add("hidden"); $("report").classList.remove("hidden"); load(); }
-$("gate-form").addEventListener("submit", (e) => {
-  e.preventDefault();
-  if ($("gate-pw").value === "lcic8686") { sessionStorage.setItem(KEY, "1"); unlock(); }
-  else showToast("Incorrect password", "error");
-});
-if (sessionStorage.getItem(KEY)) unlock();
-
-// ---- load + compute ----
-async function load(){
-  let rooms, latest;
-  try {
-    rooms = await listRooms();
-    latest = latestByRoom(await listInspections());
-  } catch (err) { showToast("Failed to load data", "error"); return; }
-
-  const total = rooms.length;
-  let inspected=0, occupied=0, notInspected=0, openIssues=0, resolved=0, inProgress=0;
-  const cats = CHECK_ITEMS.map(ci => ({ key:ci.key, short:SHORT[ci.key]||ci.key, count:0 }));
-  const cix = Object.fromEntries(cats.map((c,i)=>[c.key,i]));
-  const bldg = {};
-  for (const r of rooms){
-    const b = r.building || "—"; bldg[b] ??= { done:0, total:0 }; bldg[b].total++;
-    const rec = latest.get(r.id);
-    if (!rec){ notInspected++; continue; }
-    if (rec.status === "occupied"){ occupied++; bldg[b].done++; continue; }
-    inspected++; bldg[b].done++;
-    if (rec.has_issues){
-      if (rec.resolved) resolved++; else openIssues++;
-      if (!rec.resolved && (rec.fix_status==="ack"||rec.fix_status==="progress")) inProgress++;
-      (rec.items||[]).forEach(it=>{ if(it.status==="problem" && it.key in cix) cats[cix[it.key]].count++; });
-    }
-  }
-  const handled = inspected + occupied;
-  const coverage = pct(handled, total);
-  const issueRooms = openIssues + resolved;
-  const issueRate = pct(issueRooms, inspected);
-  const resolveRate = pct(resolved, issueRooms);
-  const sortedCats = [...cats].sort((a,b)=>b.count-a.count);
-  const top = sortedCats.filter(c=>c.count>0);
-
-  // date
-  $("gen-date").textContent = "As of " + new Date().toLocaleString("en-US", { dateStyle:"long", timeStyle:"short" });
-  $("foot-note").textContent = `Live data from ${total} rooms · confidential — internal use`;
-
-  // verdict
-  let vClass, vText;
-  if (coverage < 60) { vClass="warn"; vText="Inspection in progress"; }
-  else if (issueRate >= 25) { vClass="crit"; vText="Needs attention"; }
-  else { vClass="good"; vText="On track"; }
-  $("verdict").innerHTML = `<span class="verdict ${vClass}"><span class="d"></span>${vText}</span>`;
-
-  // assessment (executive, 3 lines)
-  const top2 = top.slice(0,2).map(c=>`${c.short} (${c.count})`).join(" and ") || "none reported";
-  const handlingText = resolved===0 && inProgress===0
-    ? "Issue resolution has not started yet"
-    : `Resolution is underway — <b>${resolved}</b> resolved, <b>${inProgress}</b> in progress`;
-  $("assess").innerHTML =
-    `<p>Inspection is <b>${coverage}% complete</b> — ${inspected} of ${total} rooms inspected, ${occupied} occupied (pending revisit), ${notInspected} not yet started.</p>
-     <p><b>${openIssues}</b> rooms currently have unresolved issues (${issueRate}% of inspected rooms). The most common problems are <b>${top2}</b>.</p>
-     <p>${handlingText}.</p>`;
-
-  // KPIs
-  const kpi = (lab, num, sub, cls="") => `<div class="kpi"><div class="lab">${lab}</div><div class="num ${cls}">${num}</div><div class="sub">${sub}</div></div>`;
-  $("kpis").innerHTML =
-    kpi("Coverage", coverage + "%", `${handled} of ${total} rooms`) +
-    kpi("Open issues", openIssues, `${issueRate}% of inspected rooms`, openIssues ? "crit" : "good") +
-    kpi("Resolved", resolved, issueRooms ? `${resolveRate}% of ${issueRooms} issues` : "no issues yet", "good") +
-    kpi("Occupied", occupied, "pending revisit", occupied ? "warn" : "");
-
-  // donut (inspected blue + occupied amber + remaining grey)
-  const dI = pct(inspected, total) * 3.6, dO = pct(occupied, total) * 3.6;
-  const g = `conic-gradient(var(--accent) 0 ${dI}deg, var(--warn) ${dI}deg ${dI+dO}deg, var(--line) ${dI+dO}deg 360deg)`;
-  $("c-donut").innerHTML = `
-    <div class="donut" style="background:${g}"><div class="donut-hole"><b>${coverage}%</b><span>${handled}/${total}</span></div></div>
-    <div class="legend">
-      <span><i style="background:var(--accent)"></i>Inspected ${inspected}</span>
-      <span><i style="background:var(--warn)"></i>Occupied ${occupied}</span>
-      <span><i style="background:var(--line)"></i>Not inspected ${notInspected}</span>
-    </div>`;
-
-  // issues by category (sorted desc) — click a row to drill into details
-  const maxC = Math.max(1, ...top.map(c=>c.count));
-  $("c-cats").innerHTML = (top.length
-    ? top.map(c=>`<div class="bar-row clickable" data-cat="${esc(c.key)}" title="View ${esc(c.short)} issues in detail"><span class="bar-lab">${esc(c.short)}</span>
-        <span class="bar-track"><span class="bar-fill" style="width:${pct(c.count,maxC)}%; background:var(--crit)"></span></span>
-        <span class="bar-val">${c.count}</span></div>`).join("")
-    : `<div style="color:var(--faint); font-size:.85rem;">No issues reported.</div>`)
-    + (top.length ? `<div class="drill-hint">Tap a category to see the rooms →</div>` : "");
-  $("c-cats").querySelectorAll("[data-cat]").forEach(el =>
-    el.addEventListener("click", () => openDetails(el.dataset.cat)));
-
-  // coverage by building
-  $("c-bldg").innerHTML = Object.entries(bldg).sort().map(([label,v])=>{
-    const p = pct(v.done, v.total);
-    return `<div class="bar-row"><span class="bar-lab">${esc(label)}</span>
-      <span class="bar-track"><span class="bar-fill" style="width:${p}%; background:var(--accent)"></span></span>
-      <span class="bar-val">${p}%</span></div>`;
-  }).join("");
-}
-
-// drill-down: open the full (read-only) admin dashboard, optionally filtered to a category
-function openDetails(cat) {
-  localStorage.setItem("lcic-dorm-inspector", JSON.stringify(
-    { id: "report-viewer", username: "report", name: "Report Viewer", gender: null, role: "admin" }));
-  location.href = "room-check.html" + (cat ? "#cat=" + encodeURIComponent(cat) : "");
-}
-$("details-btn").addEventListener("click", () => openDetails(""));
-$("print-btn").addEventListener("click", () => window.print());
-
-// keep it live while open: refresh on return-to-tab and every 60s
-const isOpen = () => !$("report").classList.contains("hidden");
-document.addEventListener("visibilitychange", () => { if (!document.hidden && isOpen()) load(); });
-window.addEventListener("focus", () => { if (isOpen()) load(); });
-setInterval(() => { if (isOpen() && document.visibilityState === "visible") load(); }, 60000);
-</script>
 </body>
 </html>
