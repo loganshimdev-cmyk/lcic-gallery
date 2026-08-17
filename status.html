@@ -696,21 +696,45 @@
     <div id="d-checklist"></div>
   </section>
 
-  <!-- 🚤 호핑 투어 (8월 입국 학생 전용) — 8/8(토) 회차는 기상 악화로 취소(2026-08-06).
-       대체 일정 8/22(토)는 아직 신청을 열지 않았다(안내만).
-       event_key=hopping_aug · 대상 판별은 EVENTS 의 only(stay.start >= 2026-08-01)
-       EVENTS 항목에 cancelled:true 를 두면 신청 버튼·인원 표시 없이 아래 안내만 보인다.
-       다음 회차를 열 때: cancelled 를 지우고 slots 날짜를 새로 넣은 뒤, 아래 안내 문구를
-       원래 신청 안내(예약 정보 · 준비물 · 마감 규정)로 되돌리면 된다. -->
+  <!-- 🚤 호핑 투어 (8월 입국 학생 전용) — 8/8(토) 회차가 기상 악화로 취소되어(2026-08-06)
+       대체 회차 8/22(토) 신청을 새로 받는다(2026-08-17 오픈).
+       event_key=hopping_aug22 (8/8 회차는 hopping_aug — 명단을 기록으로 남기려고 키를 새로 뒀다.
+         같은 키를 재사용하면 8/8 신청자 36명이 upsert 대상이 되어 버튼이 '이 날짜로 변경'으로
+         나오고, 8/8 슬롯이 마감되면 EVENT_LOCKED 로 재신청 자체가 막힌다.)
+       대상 판별은 EVENTS 의 only(stay.start >= 2026-08-01) — 인제대(7/5 입국·8/15 귀국)는 안 보인다.
+       슬롯 등록 SQL: scripts/event-hopping-aug22.sql -->
   <section class="card fade-up" id="hopaug-card" style="display:none">
-    <div class="card-title">🚤 호핑 투어 — 8월 8일(토) 취소 · <b>8월 22일(토)</b>로 대체</div>
-    <div class="ev-note ev-warn">⛔ <b>기상 악화로 8월 8일(토) 호핑 투어가 취소되었습니다.</b>
-      바다 상황이 좋지 않아 여러분의 안전을 위해 부득이하게 일정을 접게 되었어요.
-      신청해 주신 분들께 죄송합니다.</div>
-    <div class="ev-note">🗓 <b>대신 8월 22일(토)에 진행합니다.</b> 코스와 비용은 그대로예요.</div>
-    <div class="ev-note">💰 8월 8일 회차의 비용은 <b>당일 현장 납부</b>였기 때문에 따로 <b>환불 절차는 없어요.</b></div>
-    <div class="ev-note">✍️ <b>8월 22일 신청은 다시 받습니다.</b> 신청이 열리면 이 화면에 안내드릴게요 —
-      <b>8월 8일에 신청하셨던 분도 다시 신청해 주셔야 해요.</b></div>
+    <div class="card-title">🚤 호핑 투어 <b>8월 22일 (토)</b> — 신청 다시 받아요</div>
+    <p class="hop-desc">
+      기상 악화로 취소됐던 호핑 투어를 <b>8월 22일 토요일</b>에 다시 진행합니다.
+      스노클링 · 낚시 · 배 위에서 먹는 점심까지 하루 코스예요. 💙
+    </p>
+
+    <div class="ev-note ev-warn">✍️ <b>8월 8일에 신청하셨던 분도 다시 신청해 주세요.</b>
+      이전 신청은 취소된 회차라 <b>이번 회차로 자동 이어지지 않아요.</b></div>
+
+    <div class="msm-info">
+      <div class="mi"><span class="mi-k">📅 날짜</span><span class="mi-v"><b>8월 22일 (토)</b></span></div>
+      <div class="mi"><span class="mi-k">🚌 미팅</span><span class="mi-v"><b>오전 9시</b> · 학교 픽업</span></div>
+      <div class="mi"><span class="mi-k">🗺 일정</span><span class="mi-v">선착장 → 스노클링 → 낚시 → 점심 → 선착장 (오후 2시경 도착)</span></div>
+      <div class="mi"><span class="mi-k">💰 비용</span><span class="mi-v"><b>₱2,500</b> · 현장에서 직접 납부</span></div>
+      <div class="mi"><span class="mi-k">⏰ 신청 마감</span><span class="mi-v"><b>8월 19일 (수) 밤 11시 59분</b></span></div>
+      <div class="mi"><span class="mi-k">👥 인원</span><span class="mi-v"><b>제한 없음</b> — 신청한 만큼 준비해요</span></div>
+    </div>
+
+    <div class="hop-my none" id="hopaug-my"></div>
+    <div class="hop-dates" id="hopaug-dates"></div>
+    <div class="ev-note">💵 <b>비용 ₱2,500은 당일 현장에서 직접 냅니다.</b> 거스름돈이 없으니 <b>금액에 맞게</b> 준비해 주세요.</div>
+    <div class="ev-note">🎒 <b>챙겨오세요</b> — 수영복, 젖어도 되는 신발, 모자, 선크림, 매너팁(인당 ₱50)</div>
+    <div class="ev-note">🎁 <b>학교에서 준비해요</b> — 스노클링 장비, 물, 음료, 수건, 주전부리</div>
+    <div class="ev-note">🌏 <b>같이 가고 싶은 다른 국적 친구가 있나요?</b> 이 신청 화면은 한국 학생용이라
+      친구는 여기서 신청이 안 돼요. <b>한국인 매니저에게 따로 연락해 주세요</b> — 함께 갈 수 있게 도와드릴게요.</div>
+    <div class="ev-note">🚻 <b>미팅 전에 화장실 꼭 다녀오세요!</b></div>
+    <div class="ev-note ev-warn">⛔ <b>마감 후에는 취소·환불이 되지 않습니다.</b>
+      마감된 인원에 맞춰 배와 식사를 예약하기 때문에, 마감 뒤에 못 가시게 되어도
+      <b>비용은 그대로 납부해야 해요.</b> 신중하게 신청해 주세요.</div>
+    <div class="ev-note">🔄 <b>마감 전</b>에는 언제든 취소할 수 있어요.</div>
+    <div class="hop-status" id="hopaug-status"></div>
   </section>
 
   <!-- 항공편 · 7월 학생에겐 숨김 유지 · 8월 입국 학생에게만 JS(render)가 다시 켬 -->
@@ -1420,11 +1444,15 @@
         { date: "2026-08-19", label: "8월 19일 (수)" },
       ],
       confirm: "🥭 7D 망고 공장 견학\n\n· 선택한 날짜로 신청됩니다 (두 날짜 중 하루만 가능)\n· 출발: 오후 12시 30분 · 소요 약 3시간 30분\n· 비용: ₱200 현금 (납부 방법은 별도 안내)\n\n⛔ 신청 마감: 8월 13일(목) 밤 11시 59분\n마감 후에는 날짜 변경·취소가 되지 않아요.\n(마감 전까지는 언제든 바꿀 수 있어요)\n\n신청할까요?" },
-    { key: "hopping_aug", card: "hopaug-card", grid: "hopaug-dates", my: "hopaug-my", stat: "hopaug-status",
-      what: "🚤 호핑 투어", cap: 9999, unlimited: true, cancelled: true,
+    // 🚤 호핑 투어 8/22(토) — 기상 악화로 취소된 8/8 회차의 대체. 신청을 처음부터 다시 받는다.
+    //    키를 hopping_aug → hopping_aug22 로 새로 뗀 이유: 같은 키를 쓰면 8/8 신청자 36명이
+    //    upsert 대상이 되어 버튼이 "이 날짜로 변경"으로 나오고, 8/8 슬롯을 마감하는 순간
+    //    트리거가 EVENT_LOCKED 로 재신청을 막는다. 8/8 명단은 hopping_aug 에 그대로 보존.
+    { key: "hopping_aug22", card: "hopaug-card", grid: "hopaug-dates", my: "hopaug-my", stat: "hopaug-status",
+      what: "🚤 호핑 투어", cap: 9999, unlimited: true,
       only: (rec) => (((rec.stay || {}).start || "") >= "2026-08-01"),
-      slots: [{ date: "2026-08-08", label: "8월 8일 (토)" }],
-      confirm: "🚤 호핑 투어 (8월 8일 토요일)\n\n· 미팅: 오전 9시 · 학교 픽업\n· 비용: ₱2,500 — 당일 현장에서 직접 납부 (거스름돈 없음)\n· 매너팁 인당 ₱50 별도\n\n⛔ 신청 마감: 8월 5일(수) 밤 11시 59분\n마감 후에는 취소·환불이 되지 않고, 못 가시게 되어도 비용은 납부하셔야 합니다.\n(마감 전까지는 언제든 취소할 수 있어요)\n\n신청할까요?" },
+      slots: [{ date: "2026-08-22", label: "8월 22일 (토)" }],
+      confirm: "🚤 호핑 투어 (8월 22일 토요일)\n\n· 미팅: 오전 9시 · 학교 픽업\n· 비용: ₱2,500 — 당일 현장에서 직접 납부 (거스름돈 없음)\n· 매너팁 인당 ₱50 별도\n\n⛔ 신청 마감: 8월 19일(수) 밤 11시 59분\n마감 후에는 취소·환불이 되지 않고, 못 가시게 되어도 비용은 납부하셔야 합니다.\n(마감 전까지는 언제든 취소할 수 있어요)\n\n신청할까요?" },
   ];
   const evIds = {};
 
