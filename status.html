@@ -509,6 +509,38 @@
     <div class="hop-status" id="hopaug-status"></div>
   </section>
 
+  <!-- 📄 SSP 사본 제출 — 백석대학교 7월 학생 전용(renderSsp 의 SSP_TARGET 이 대상을 정한다).
+       파일: Supabase Storage 'ssp' 버킷(비공개 — 익명은 업로드만, 열람 불가)
+       기록: ssp_submissions (id/name/university/cohort/ext/path/uploaded_at)
+       셋업 SQL: scripts/ssp-upload-setup.sql (대시보드에서 1회 실행)
+       다른 차수로 열 때는 SSP_TARGET 만 고치면 된다. -->
+  <section class="card fade-up" id="ssp-card" style="display:none">
+    <div class="card-title">📄 SSP 사본 제출
+      <span id="ssp-badge" style="font-size:0.72em;background:#0e7490;color:#fff;border-radius:999px;padding:2px 10px;font-weight:800;">백석대학교</span>
+    </div>
+    <p class="hop-desc" id="ssp-desc">
+      필리핀 이민청에서 받은 <b>SSP(특별학습허가서) 사본</b>을 여기에 올려 주세요.
+    </p>
+
+    <div class="msm-info">
+      <div class="mi"><span class="mi-k">👥 대상</span><span class="mi-v" id="ssp-target"><b>백석대학교 7월 과정 학생</b></span></div>
+      <div class="mi"><span class="mi-k">📄 파일</span><span class="mi-v">PDF 또는 사진(JPG·PNG) · 최대 10MB</span></div>
+      <div class="mi"><span class="mi-k">👀 제출 현황</span><span class="mi-v" id="ssp-count">—</span></div>
+    </div>
+
+    <div class="hop-my none" id="ssp-my"></div>
+
+    <div class="ef-up">
+      <input type="file" id="ssp-file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png">
+      <button class="hop-btn" id="ssp-btn" type="button">📤 SSP 사본 올리기</button>
+    </div>
+
+    <div class="ev-note">📷 <b>사진으로 찍어 올려도 괜찮아요</b> — 글자와 네 모서리가 잘리지 않게, 밝은 곳에서 찍어 주세요.</div>
+    <div class="ev-note">🔁 다시 올리면 <b>새 파일로 교체</b>돼요. 잘못 올렸으면 그냥 다시 올리면 됩니다.</div>
+    <div class="ev-note">🔒 올린 파일은 <b>본인과 학교 담당자만</b> 확인하며, 다른 학생에게 보이지 않아요.</div>
+    <div class="hop-status" id="ssp-status"></div>
+  </section>
+
   <!-- 우측 컬럼(데스크탑=우측 고정 / 모바일=상단 인라인) — 학생 모임이 항상 공지 위 -->
   <div class="dash-side">
     <!-- 학생 모임 진입 — 7·8월 학생 모두에게 보인다(8월 분기에서 숨기지 않음) -->
@@ -984,6 +1016,7 @@
     // 🎟 이벤트 카드는 7·8월 모두에서 렌더한다. 대상은 각 항목의 only 가 정하고,
     //    조건에 맞지 않으면 카드가 숨겨진 채로 남는다(8월 호핑 수요조사 = 8월 입국 학생만).
     renderEvents(rec);
+    renderSsp(rec);      // 📄 SSP 사본 제출 — 백석대 7월 학생에게만 보인다(차수 분기와 무관)
     if (augArrival) {
       // 7월 재학생용 요소 숨김 (7월 공지 사이드, 지난 공지·마감된 신청 박스).
       // 🏀 학생 모임(#meet-card)은 8월 학생도 쓸 수 있어야 하므로 숨기지 않는다.
@@ -1663,6 +1696,81 @@
     paintEfset(sid);
   }
 
+  // ── 📄 SSP 사본 제출 (백석대학교 7월 과정) ──
+  // 파일: Supabase Storage 'ssp' 버킷(비공개 — 익명은 업로드만 가능, 열람 불가)
+  // 기록: ssp_submissions — cohort 로 차수를 구분해 제출 현황을 그 차수 안에서만 센다.
+  // 다른 대학·차수에 열어 줄 때는 SSP_TARGET 한 곳만 고치면 된다.
+  //   uni  = encrypt-status.cjs 의 cleanUni 를 거친 값이라 "백석대학교(Baekseok University)"·
+  //          "백석대학교 (Other)" 가 모두 "백석대학교"로 들어온다. 완전 일치로 비교하므로
+  //          "백석문화대학교"(8월 과정)는 대상에서 자연히 빠진다.
+  const SSP_TARGET = {
+    cohort: "baekseok-2026-07",
+    uni: "백석대학교",
+    stayBefore: "2026-08-01",          // 이 날짜보다 먼저 시작한 과정 = 7월 과정
+    badge: "백석대학교",
+    target: "백석대학교 7월 과정 학생",
+  };
+  function isSspTarget(rec) {
+    if (String(rec.uni || "").trim() !== SSP_TARGET.uni) return false;
+    const start = (rec.stay || {}).start || "";
+    return !!start && start < SSP_TARGET.stayBefore;
+  }
+
+  async function renderSsp(rec) {
+    const card = $("ssp-card"); if (!card) return;
+    if (!isSspTarget(rec)) { card.style.display = "none"; return; }
+    if (!window.lcicSsp) { setTimeout(() => renderSsp(rec), 400); return; }   // 브리지 로드 대기
+    const sid = (await sha256hex(CUR_EMAIL || "")).slice(0, 16);
+
+    // ⚠️ 접수처(ssp_submissions 테이블·ssp 버킷)가 아직 없으면 카드를 아예 띄우지 않는다.
+    //    올릴 수 없는 업로드 칸을 보여 주는 것보다 안 보이는 편이 낫다.
+    //    → scripts/ssp-upload-setup.sql 을 Supabase 대시보드에서 실행하면 그때부터 보인다.
+    let mine;
+    try { mine = await window.lcicSsp.mine(sid); }
+    catch (_) { card.style.display = "none"; return; }
+
+    $("ssp-badge").textContent = SSP_TARGET.badge;
+    $("ssp-target").innerHTML = `<b>${escapeHtml(SSP_TARGET.target)}</b>`;
+    card.style.display = "";
+    $("ssp-btn").onclick = () => sspUpload(sid);
+    paintSsp(sid, mine);
+  }
+
+  async function paintSsp(sid, mine) {
+    let cnt = null;
+    if (mine === undefined) {
+      try { mine = await window.lcicSsp.mine(sid); } catch (_) { mine = null; }
+    }
+    try { cnt = await window.lcicSsp.count(SSP_TARGET.cohort); } catch (_) {}
+    $("ssp-count").innerHTML = cnt === null ? "—" : `<b>${cnt}명</b> 제출`;
+    const my = $("ssp-my");
+    my.className = "hop-my";
+    if (mine) {
+      const t = new Date(mine.uploaded_at);
+      my.innerHTML = `✅ <b>제출 완료</b> — ${t.getMonth() + 1}/${t.getDate()} ${String(t.getHours()).padStart(2, "0")}:${String(t.getMinutes()).padStart(2, "0")} <span style="font-weight:400;">(다시 올리면 새 파일로 교체돼요)</span>`;
+    } else {
+      my.innerHTML = `⏳ 아직 제출 전이에요 — 아래에서 파일을 올려 주세요.`;
+    }
+  }
+
+  async function sspUpload(sid) {
+    const inp = $("ssp-file"), stat = $("ssp-status"), b = $("ssp-btn");
+    const f = inp.files && inp.files[0];
+    stat.style.color = "#dc2626";
+    if (!f) { stat.textContent = "파일을 먼저 선택해 주세요."; return; }
+    const ext = (f.name.split(".").pop() || "").toLowerCase();
+    if (!["pdf", "jpg", "jpeg", "png"].includes(ext)) { stat.textContent = "PDF 또는 JPG·PNG 파일만 올릴 수 있어요."; return; }
+    if (f.size > 10 * 1024 * 1024) { stat.textContent = "파일이 너무 커요 — 최대 10MB까지 올릴 수 있어요."; return; }
+    b.disabled = true; stat.style.color = ""; stat.textContent = "업로드 중… 잠시만 기다려 주세요.";
+    const err = await window.lcicSsp.upload(sid, (CUR && CUR.name) || "", (CUR && CUR.uni) || "",
+      SSP_TARGET.cohort, f, ext);
+    b.disabled = false;
+    if (err) { stat.style.color = "#dc2626"; stat.textContent = "업로드 실패 — 다시 시도해 주세요."; return; }
+    stat.textContent = "SSP 사본이 제출되었어요! 감사합니다 🎉";
+    inp.value = "";
+    paintSsp(sid);
+  }
+
   // ── 로그인 ──
   const errEl = $("login-err"), btn = $("login-btn"), btnLabel = $("login-btn-label");
   function showErr() {
@@ -1862,6 +1970,40 @@ window.lcicEvents = {
 };
 
 // 📝 EF-SET 결과지 제출 → Storage 'efset' 버킷 + efset_submissions 테이블
+// 📄 SSP 사본 제출 — 비공개 버킷 'ssp' 업로드 + ssp_submissions 기록
+// 셋업 SQL: scripts/ssp-upload-setup.sql
+// 이름 목록을 브라우저로 내려받지 않으려고, 본인 행은 id 로 한 건만 읽고
+// 제출 인원은 head 카운트만 받는다(다른 학생 이름이 클라이언트로 오지 않는다).
+window.lcicSsp = {
+  async mine(id) {
+    const q = await supabase.from("ssp_submissions")
+      .select("id,uploaded_at,ext").eq("id", id).maybeSingle();
+    if (q.error) throw q.error;
+    return q.data || null;
+  },
+  async count(cohort) {
+    const q = await supabase.from("ssp_submissions")
+      .select("id", { count: "exact", head: true }).eq("cohort", cohort);
+    if (q.error) throw q.error;
+    return q.count || 0;
+  },
+  async upload(id, name, university, cohort, file, ext) {
+    try {
+      const mime = ext === "pdf" ? "application/pdf" : ext === "png" ? "image/png" : "image/jpeg";
+      // 버킷이 비공개라 교체·삭제가 안 된다 → 업로드마다 새 경로에 저장하고
+      // 최신 파일 경로는 ssp_submissions.path 가 정답(담당자는 이 경로만 보면 됨).
+      const path = `${id}/${Date.now()}.${ext}`;
+      const up = await supabase.storage.from("ssp").upload(path, file, { contentType: mime });
+      if (up.error) return up.error.message || "업로드 오류";
+      const row = await supabase.from("ssp_submissions").upsert(
+        { id, name, university, cohort, ext, path, uploaded_at: new Date().toISOString() },
+        { onConflict: "id" });
+      if (row.error) return row.error.message || "기록 오류";
+      return null;
+    } catch (e) { return e && e.message ? e.message : "네트워크 오류"; }
+  },
+};
+
 window.lcicEfset = {
   async state() {   // [{id, uploaded_at, university}] — 제출 현황·본인 제출 여부 표시용
     // university 는 차수(대학)별 제출 수를 세는 데 쓴다. 정책상 막혀 있으면 예전 컬럼만 읽는다.
