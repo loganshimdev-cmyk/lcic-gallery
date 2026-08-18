@@ -1632,6 +1632,19 @@
              <span style="font-weight:400;">(결과는 소속 대학에도 전달됩니다.)</span>`,
     },
   };
+  // 🔁 수료 EF-SET 결과지가 확인되지 않은 학생 — 이 명단은 status.html 업로드 기록이 아니라
+  //    수료 평가 원본 EF-SET_입학수료_비교_백석대.csv 의 상태='미제출'을 기준으로 만들었다
+  //    (Downloads/LCIC_2026-07_수료/03_EF-SET평가/백석대/).
+  //    이 중 3명(강다인·김소연·김나영)은 7/30에 파일을 올렸지만 수료 시험 4영역 점수가
+  //    확인되지 않아, 업로드 기록이 있어도 카드를 다시 열어 준다.
+  //    값은 sha256(이메일)[:16] — 이메일 원문이 페이지에 남지 않게 한 것(호핑·EF-SET과 같은 규칙).
+  //    백석대 7월 10명 · 2026-08-18 기준. 다 걷히면 이 배열을 비우면 된다.
+  const EF_RESUBMIT = new Set([
+    "b55be74ed90fadf5", "123bc43c1f6b7917", "597ef487b014c7f1", "3b578e7ce7dbe199",
+    "5c7ba8defc4d9446", "7c640c8f30b69b5b", "d152e9da935048c2", "e5b9166f162c926a",
+    "e42d3c97791c7431", "2079c27350367315",
+  ]);
+
   const isInjeUni = (u) => /인제|inje/i.test(String(u || ""));
   let EF_ROUND = EF_ROUNDS.past;
   let EF_DEADLINE = new Date(EF_ROUNDS.past.due + "T23:59:59+08:00");
@@ -1663,11 +1676,14 @@
     let rows = [];
     try { rows = await window.lcicEfset.state(); } catch (_) { /* 조회 실패해도 카드는 표시 */ }
     const mine = rows.find((r) => r.id === sid);
-    EF_SUBMITTED = !!mine;
+    // 올린 기록이 있어도 수료 결과지가 확인 안 된 학생은 '아직 낼 것이 남은' 상태로 본다.
+    const redo = EF_RESUBMIT.has(sid);
+    const needEf = redo || !mine;
+    EF_SUBMITTED = !needEf;
     syncSspEfNote();          // SSP 대상자라면 두 카드를 붙여 준다
     const card = $("efset-card");
     if (!EF_MINE_INJE) {
-      if (mine) { card.style.display = "none"; return; }   // 지난 차수 + 제출 완료 → 카드 숨김
+      if (!needEf) { card.style.display = "none"; return; }   // 지난 차수 + 제출 완료 → 카드 숨김
       card.style.display = "";
     }
     // 제출 현황은 같은 차수끼리만 센다 — 인제대 10명 옆에 7월 차수 수백 명이 뜨면 뜻이 없다.
@@ -1677,7 +1693,15 @@
     const d = Math.ceil((EF_DEADLINE - new Date()) / 86400000) - 1;   // 마감일 당일 = D-0
     const my = $("ef-my");
     my.className = "hop-my";
-    if (mine) {
+    if (redo && mine) {
+      const t = new Date(mine.uploaded_at);
+      my.className = "hop-my";
+      my.innerHTML = `⚠️ <b>수료 시험 결과지가 확인되지 않았어요.</b> 과정 <b>마지막에 본 EF-SET</b> 결과지를
+        4영역(Reading·Listening·Writing·Speaking) 점수가 모두 보이게 다시 올려 주세요.
+        <span style="font-weight:400;">(${t.getMonth() + 1}/${t.getDate()}에 올려 주신 파일에서는 확인되지 않았어요)</span>`;
+    } else if (redo) {
+      my.innerHTML = `⚠️ <b>수료 시험 결과지가 아직 제출되지 않았어요.</b> 과정 <b>마지막에 본 EF-SET</b> 결과지를 올려 주세요.`;
+    } else if (mine) {
       const t = new Date(mine.uploaded_at);
       my.innerHTML = `✅ <b>제출 완료</b> — ${t.getMonth() + 1}/${t.getDate()} ${String(t.getHours()).padStart(2, "0")}:${String(t.getMinutes()).padStart(2, "0")} <span style="font-weight:400;">(다시 올리면 새 파일로 교체돼요)</span>`;
     } else if (d >= 0) {
