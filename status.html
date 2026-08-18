@@ -1645,6 +1645,13 @@
     "e42d3c97791c7431", "2079c27350367315",
   ]);
 
+  // 🔢 수료 결과지를 냈지만 '총점만' 보이는 캡처라 4영역 비교가 안 된 학생 (같은 CSV 의
+  //    상태='비교불가' + 비고='총점만 캡처'). 백석대 7월 4명 · 2026-08-18 기준.
+  //    ※ 입학 자료가 없어 비교불가인 학생(이혜진·윤상재)은 수료 결과지가 온전하므로 대상이 아니다.
+  const EF_PARTIAL = new Set([
+    "56a91147089ed3c5", "1ae7f975c3afffd9", "ae94b859601779ed", "3872d2751f3bb99c",
+  ]);
+
   const isInjeUni = (u) => /인제|inje/i.test(String(u || ""));
   let EF_ROUND = EF_ROUNDS.past;
   let EF_DEADLINE = new Date(EF_ROUNDS.past.due + "T23:59:59+08:00");
@@ -1678,7 +1685,8 @@
     const mine = rows.find((r) => r.id === sid);
     // 올린 기록이 있어도 수료 결과지가 확인 안 된 학생은 '아직 낼 것이 남은' 상태로 본다.
     const redo = EF_RESUBMIT.has(sid);
-    const needEf = redo || !mine;
+    const partial = EF_PARTIAL.has(sid);
+    const needEf = redo || partial || !mine;
     EF_SUBMITTED = !needEf;
     syncSspEfNote();          // SSP 대상자라면 두 카드를 붙여 준다
     const card = $("efset-card");
@@ -1693,7 +1701,12 @@
     const d = Math.ceil((EF_DEADLINE - new Date()) / 86400000) - 1;   // 마감일 당일 = D-0
     const my = $("ef-my");
     my.className = "hop-my";
-    if (redo && mine) {
+    if (partial) {
+      my.className = "hop-my";
+      my.innerHTML = `⚠️ <b>총점만 보이는 결과지가 제출됐어요.</b> 점수 비교를 하려면
+        <b>4영역(Reading·Listening·Writing·Speaking) 점수가 모두 보이는 결과지</b>가 필요해요.
+        <span style="font-weight:400;">아래 <b>샘플</b>처럼 나온 화면으로 다시 올려 주세요.</span>`;
+    } else if (redo && mine) {
       const t = new Date(mine.uploaded_at);
       my.className = "hop-my";
       my.innerHTML = `⚠️ <b>수료 시험 결과지가 확인되지 않았어요.</b> 과정 <b>마지막에 본 EF-SET</b> 결과지를
