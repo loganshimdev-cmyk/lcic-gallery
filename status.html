@@ -530,6 +530,11 @@
 
     <div class="hop-my none" id="ssp-my"></div>
 
+    <!-- EF-SET 결과지도 아직이면 여기서 알려 주고, EF-SET 카드를 이 카드 바로 밑으로 옮겨
+         한자리에서 둘 다 끝내게 한다 (syncSspEfNote). -->
+    <div class="ev-note ev-warn" id="ssp-ef-note" style="display:none">📝 <b>EF-SET 결과지도 아직 안 올렸어요.</b>
+      바로 <b>아래 카드</b>에서 같이 올려 주세요.</div>
+
     <div class="ef-up">
       <input type="file" id="ssp-file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png">
       <button class="hop-btn" id="ssp-btn" type="button">📤 SSP 사본 올리기</button>
@@ -1658,6 +1663,8 @@
     let rows = [];
     try { rows = await window.lcicEfset.state(); } catch (_) { /* 조회 실패해도 카드는 표시 */ }
     const mine = rows.find((r) => r.id === sid);
+    EF_SUBMITTED = !!mine;
+    syncSspEfNote();          // SSP 대상자라면 두 카드를 붙여 준다
     const card = $("efset-card");
     if (!EF_MINE_INJE) {
       if (mine) { card.style.display = "none"; return; }   // 지난 차수 + 제출 완료 → 카드 숨김
@@ -1710,6 +1717,19 @@
     badge: "백석대학교",
     target: "백석대학교 7월 과정 학생",
   };
+  // SSP 대상자이면서 EF-SET 결과지도 안 낸 학생에게는 두 카드를 붙여 보여 준다.
+  // (renderSsp 와 paintEfset 이 각각 자기 몫을 채운 뒤 이 함수를 부른다)
+  let SSP_ACTIVE = false;        // 백석대 7월 대상자인가
+  let EF_SUBMITTED = null;       // EF-SET 제출 여부 (null = 아직 조회 전)
+  function syncSspEfNote() {
+    const note = $("ssp-ef-note"); if (!note) return;
+    const show = SSP_ACTIVE && EF_SUBMITTED === false;
+    note.style.display = show ? "" : "none";
+    if (!show) return;
+    const ssp = $("ssp-card"), ef = $("efset-card");
+    if (ssp && ef && ef.previousElementSibling !== ssp) ssp.after(ef);
+  }
+
   function isSspTarget(rec) {
     if (String(rec.uni || "").trim() !== SSP_TARGET.uni) return false;
     const start = (rec.stay || {}).start || "";
@@ -1718,7 +1738,7 @@
 
   async function renderSsp(rec) {
     const card = $("ssp-card"); if (!card) return;
-    if (!isSspTarget(rec)) { card.style.display = "none"; return; }
+    if (!isSspTarget(rec)) { card.style.display = "none"; SSP_ACTIVE = false; syncSspEfNote(); return; }
     if (!window.lcicSsp) { setTimeout(() => renderSsp(rec), 400); return; }   // 브리지 로드 대기
     const sid = (await sha256hex(CUR_EMAIL || "")).slice(0, 16);
 
@@ -1727,12 +1747,14 @@
     //    → scripts/ssp-upload-setup.sql 을 Supabase 대시보드에서 실행하면 그때부터 보인다.
     let mine;
     try { mine = await window.lcicSsp.mine(sid); }
-    catch (_) { card.style.display = "none"; return; }
+    catch (_) { card.style.display = "none"; SSP_ACTIVE = false; syncSspEfNote(); return; }
 
     $("ssp-badge").textContent = SSP_TARGET.badge;
     $("ssp-target").innerHTML = `<b>${escapeHtml(SSP_TARGET.target)}</b>`;
     card.style.display = "";
     $("ssp-btn").onclick = () => sspUpload(sid);
+    SSP_ACTIVE = true;
+    syncSspEfNote();
     paintSsp(sid, mine);
   }
 
