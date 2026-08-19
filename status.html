@@ -586,7 +586,7 @@
     <div class="msm-info">
       <div class="mi"><span class="mi-k">🗓 마감</span><span class="mi-v" id="ef-due"><b>7월 29일 (수)</b></span></div>
       <div class="mi"><span class="mi-k">👥 대상</span><span class="mi-v" id="ef-target"><b>전체 학생</b></span></div>
-      <div class="mi"><span class="mi-k">📄 파일</span><span class="mi-v">PDF 또는 결과 화면 캡처(JPG·PNG) · 최대 10MB</span></div>
+      <div class="mi"><span class="mi-k">📄 파일</span><span class="mi-v">PDF 또는 결과 화면 캡처(JPG·PNG) · <b>2장까지</b> · 각 최대 10MB</span></div>
       <div class="mi"><span class="mi-k">📖 응시 방법</span><span class="mi-v"><a href="procedure.html#efset" target="_blank" rel="noopener" style="color:var(--accent-deep);font-weight:700;">EF-SET 응시 매뉴얼 보기</a> (efset.org · 90분 테스트)</span></div>
       <div class="mi"><span class="mi-k">🖼 샘플</span><span class="mi-v"><a href="assets/efset-sample.png" target="_blank" rel="noopener" style="color:var(--accent-deep);font-weight:700;">결과지 샘플 보기</a> — 이런 형태여야 해요</span></div>
       <div class="mi"><span class="mi-k">👀 제출 현황</span><span class="mi-v" id="ef-count">—</span></div>
@@ -595,12 +595,14 @@
     <div class="hop-my none" id="ef-my"></div>
 
     <div class="ef-up">
-      <input type="file" id="ef-file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png">
+      <input type="file" id="ef-file" multiple accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png">
       <button class="hop-btn" id="ef-btn" type="button">📤 결과지 업로드</button>
     </div>
+    <div class="hop-status" id="ef-picked" style="display:none"></div>
 
     <div class="ev-note">📋 <b>제출 방법</b> · ① <a href="procedure.html#efset" target="_blank" rel="noopener" style="color:var(--accent-deep);font-weight:700;">매뉴얼</a>을 따라 EF-SET 테스트 응시(90분) → ② 결과 Certificate를 <b>PDF로 저장</b>하거나 <b>화면 캡처</b> → ③ 위에서 파일 선택 후 업로드. 다시 올리면 <b>새 파일로 교체</b>돼요.</div>
     <div class="ev-note">✅ <a href="assets/efset-sample.png" target="_blank" rel="noopener" style="color:var(--accent-deep);font-weight:700;">샘플</a>처럼 <b>4개 영역(Reading·Listening·Writing·Speaking) 점수가 모두 보이는 결과지</b>여야 해요. 총점만 나온 화면은 인정되지 않아요.</div>
+    <div class="ev-note">🖼 <b>한 화면에 다 안 나오면 2장까지 올릴 수 있어요.</b> 총점 화면과 4영역 점수 화면을 각각 캡처해서 <b>두 장을 한 번에 선택</b>해 주세요. (휴대폰은 사진 고르는 화면에서 두 장을 차례로 탭하면 되고, PC는 Ctrl 또는 Shift를 누른 채 고르면 돼요)</div>
     <div class="ev-note">🔒 올린 파일은 <b>본인과 학교 담당자만</b> 확인하며, 다른 학생에게 보이지 않아요.</div>
     <div class="hop-status" id="ef-status"></div>
   </section>
@@ -1677,6 +1679,7 @@
     if (EF_MINE_INJE) card.style.display = "";
     const sid = (await sha256hex(CUR_EMAIL || "")).slice(0, 16);
     $("ef-btn").onclick = () => efUpload(sid);
+    $("ef-file").onchange = efShowPicked;      // 몇 장 골랐는지 바로 보여 준다
     paintEfset(sid);
   }
   async function paintEfset(sid) {
@@ -1705,7 +1708,8 @@
       my.className = "hop-my";
       my.innerHTML = `⚠️ <b>총점만 보이는 결과지가 제출됐어요.</b> 점수 비교를 하려면
         <b>4영역(Reading·Listening·Writing·Speaking) 점수가 모두 보이는 결과지</b>가 필요해요.
-        <span style="font-weight:400;">아래 <b>샘플</b>처럼 나온 화면으로 다시 올려 주세요.</span>`;
+        <span style="font-weight:400;">아래 <b>샘플</b>처럼 나온 화면으로 다시 올려 주세요.
+        한 화면에 다 안 나오면 <b>총점 화면 + 4영역 화면 두 장을 함께</b> 올리셔도 돼요.</span>`;
     } else if (redo && mine) {
       const t = new Date(mine.uploaded_at);
       my.className = "hop-my";
@@ -1723,20 +1727,53 @@
       my.innerHTML = `⚠️ <b>마감이 지났어요.</b> 아직 안 냈다면 지금 바로 올려 주세요!`;
     }
   }
+  // 결과 화면이 총점·4영역으로 나뉘어 캡처되는 경우가 많아 2장까지 받는다.
+  const EF_MAX_FILES = 2;
+
+  function efShowPicked() {
+    const inp = $("ef-file"), box = $("ef-picked");
+    if (!inp || !box) return;
+    const fs = Array.from(inp.files || []);
+    if (!fs.length) { box.style.display = "none"; box.textContent = ""; return; }
+    box.style.display = "";
+    box.style.color = fs.length > EF_MAX_FILES ? "#dc2626" : "";
+    box.innerHTML = fs.length > EF_MAX_FILES
+      ? `⚠️ <b>${fs.length}개</b>를 골랐어요 — 파일은 <b>${EF_MAX_FILES}장까지</b>만 올릴 수 있어요.`
+      : `📎 선택한 파일 <b>${fs.length}장</b> · ${fs.map((f) => f.name).join(" · ")}`;
+  }
+
   async function efUpload(sid) {
     const inp = $("ef-file"), stat = $("ef-status"), btn = $("ef-btn");
-    const f = inp.files && inp.files[0];
+    const files = Array.from((inp && inp.files) || []);
     stat.style.color = "#dc2626";
-    if (!f) { stat.textContent = "파일을 먼저 선택해 주세요."; return; }
-    const ext = (f.name.split(".").pop() || "").toLowerCase();
-    if (!["pdf", "jpg", "jpeg", "png"].includes(ext)) { stat.textContent = "PDF 또는 JPG·PNG 파일만 올릴 수 있어요."; return; }
-    if (f.size > 10 * 1024 * 1024) { stat.textContent = "파일이 너무 커요 — 최대 10MB까지 올릴 수 있어요."; return; }
-    btn.disabled = true; stat.style.color = ""; stat.textContent = "업로드 중… 잠시만 기다려 주세요.";
-    const err = await window.lcicEfset.upload(sid, (CUR && CUR.name) || "", (CUR && CUR.uni) || "", f, ext);
+    if (!files.length) { stat.textContent = "파일을 먼저 선택해 주세요."; return; }
+    if (files.length > EF_MAX_FILES) {
+      stat.textContent = `파일은 ${EF_MAX_FILES}장까지만 올릴 수 있어요 — ${files.length}장을 고르셨어요.`;
+      return;
+    }
+    const picked = [];
+    for (const f of files) {
+      const ext = (f.name.split(".").pop() || "").toLowerCase();
+      if (!["pdf", "jpg", "jpeg", "png"].includes(ext)) {
+        stat.textContent = `PDF 또는 JPG·PNG 파일만 올릴 수 있어요 — "${f.name}"`; return;
+      }
+      if (f.size > 10 * 1024 * 1024) {
+        stat.textContent = `파일이 너무 커요 — 한 장에 최대 10MB예요 ("${f.name}")`; return;
+      }
+      picked.push({ file: f, ext });
+    }
+    btn.disabled = true; stat.style.color = "";
+    stat.textContent = picked.length > 1
+      ? `업로드 중… (${picked.length}장) 잠시만 기다려 주세요.`
+      : "업로드 중… 잠시만 기다려 주세요.";
+    const err = await window.lcicEfset.upload(sid, (CUR && CUR.name) || "", (CUR && CUR.uni) || "", picked);
     btn.disabled = false;
     if (err) { stat.style.color = "#dc2626"; stat.textContent = "업로드 실패 — 다시 시도해 주세요."; return; }
-    stat.textContent = "결과지가 제출되었어요! 감사합니다 🎉";
+    stat.textContent = picked.length > 1
+      ? `결과지 ${picked.length}장이 제출되었어요! 감사합니다 🎉`
+      : "결과지가 제출되었어요! 감사합니다 🎉";
     inp.value = "";
+    efShowPicked();
     paintEfset(sid);
   }
 
@@ -2071,16 +2108,27 @@ window.lcicEfset = {
     if (q.error) throw q.error;
     return q.data || [];
   },
-  async upload(id, name, university, file, ext) {
+  // files = [{file, ext}, ...] — 결과 화면이 총점·4영역으로 나뉘어 캡처되는 경우가 있어 2장까지 받는다.
+  async upload(id, name, university, files) {
     try {
-      const mime = ext === "pdf" ? "application/pdf" : ext === "png" ? "image/png" : "image/jpeg";
+      const list = Array.isArray(files) ? files : [files];
+      if (!list.length) return "파일이 없어요";
       // 버킷은 익명 열람·수정·삭제가 모두 막혀 있어(비공개) 업로드마다 새 경로에 저장한다.
       // 최신 파일 경로는 efset_submissions.path 가 정답(담당자는 이 경로만 보면 됨).
-      const path = `${id}/${Date.now()}.${ext}`;
-      const up = await supabase.storage.from("efset").upload(path, file, { contentType: mime });
-      if (up.error) return up.error.message || "업로드 오류";
+      // 2장을 올리면 path 에 쉼표로 이어 붙인다 — "a.png,b.png" 처럼.
+      const stamp = Date.now();
+      const paths = [];
+      for (let i = 0; i < list.length; i++) {
+        const { file, ext } = list[i];
+        const mime = ext === "pdf" ? "application/pdf" : ext === "png" ? "image/png" : "image/jpeg";
+        const path = `${id}/${stamp}-${i + 1}.${ext}`;
+        const up = await supabase.storage.from("efset").upload(path, file, { contentType: mime });
+        if (up.error) return up.error.message || "업로드 오류";
+        paths.push(path);
+      }
       const row = await supabase.from("efset_submissions").upsert(
-        { id, name, university, ext, path, uploaded_at: new Date().toISOString() }, { onConflict: "id" });
+        { id, name, university, ext: list[0].ext, path: paths.join(","),
+          uploaded_at: new Date().toISOString() }, { onConflict: "id" });
       if (row.error) return row.error.message || "기록 오류";
       return null;
     } catch (e) { return e && e.message ? e.message : "네트워크 오류"; }

@@ -3,9 +3,12 @@
 --
 -- 구성
 --   Storage 버킷 'efset'      = 결과지 파일 (비공개 · 익명은 업로드만 가능, 열람·수정·삭제 불가)
---                                경로 = <학생id 16자>/<타임스탬프>.<pdf|jpg|jpeg|png>
+--                                경로 = <학생id 16자>/<타임스탬프>-<1|2>.<pdf|jpg|jpeg|png>
 --                                ※ 비공개 버킷은 SELECT 정책 없이는 교체·삭제가 안 되므로
 --                                  재업로드는 항상 새 경로에 저장. 최신 파일 = efset_submissions.path
+--                                ※ 2026-08-19 부터 한 번에 2장까지 올릴 수 있다(총점 화면 + 4영역 화면).
+--                                  2장이면 path 에 쉼표로 이어 붙는다 — "id/175...-1.png,id/175...-2.png"
+--                                  → 스키마 변경 없음. 담당자는 path 를 쉼표로 나눠서 보면 된다.
 --   efset_submissions 테이블  = 제출 기록 (제출 현황 표시 + id↔이름·최신 파일 경로 매핑)
 --
 -- 담당자 확인 방법
@@ -56,7 +59,11 @@ grant select, insert, update on public.efset_submissions to anon, authenticated;
 select id, name, public, file_size_limit from storage.buckets where id = 'efset';
 
 -- 참고 · 운영 중 자주 쓰는 쿼리
---   명단 뽑기(이름·대학·최신 파일 경로):
---     select name, university, path, uploaded_at
+--   명단 뽑기(이름·대학·최신 파일 경로 · 장수):
+--     select name, university, path,
+--            array_length(string_to_array(path, ','), 1) as 장수, uploaded_at
+--       from public.efset_submissions order by university, name;
+--   파일 한 장을 한 줄로 펼쳐 보기(2장 올린 학생 확인용):
+--     select name, university, unnest(string_to_array(path, ',')) as file, uploaded_at
 --       from public.efset_submissions order by university, name;
 --   제출 인원:  select count(*) from public.efset_submissions;
