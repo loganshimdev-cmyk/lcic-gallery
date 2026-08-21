@@ -13,7 +13,7 @@
   .sub { color:#6b7280; font-size:.85rem; margin-bottom:20px; }
   .gate { max-width:340px; margin:16vh auto; text-align:center; }
   .gate input { width:100%; padding:12px; border:1px solid #cbd5e1; border-radius:10px; font-size:1rem; }
-  .gate button.primary { margin-top:10px; width:100%; padding:12px; border:0; border-radius:10px; background:#2563eb; color:#fff; font-size:1rem; cursor:pointer; }
+  .gate button.primary { margin-top:10px; width:100%; padding:12px; border:0; border-radius:10px; background:var(--accent); color:#fff; font-size:1rem; cursor:pointer; }
   .gate .err { color:#dc2626; font-size:.85rem; min-height:1.2em; margin-top:8px; }
   .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:24px; }
   .card { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:14px 16px; }
@@ -28,13 +28,13 @@
   tr.past td { color:#9ca3af; }
   .toggle { display:inline-flex; gap:6px; margin-bottom:10px; }
   .toggle button { padding:6px 12px; border:1px solid #cbd5e1; background:#fff; border-radius:8px; cursor:pointer; font-size:.8rem; }
-  .toggle button.on { background:#2563eb; color:#fff; border-color:#2563eb; }
+  .toggle button.on { background:var(--accent); color:#fff; border-color:var(--accent); }
   .langbar { display:flex; justify-content:flex-end; gap:4px; margin-bottom:8px; }
   .langbar button { padding:4px 10px; border:1px solid #cbd5e1; background:#fff; border-radius:999px; cursor:pointer; font-size:.75rem; color:#6b7280; }
   .langbar button.on { background:#111827; color:#fff; border-color:#111827; }
-  .slotA { color:#2563eb; } .slotB { color:#7c3aed; }
+  .slotA { color:var(--accent); } .slotB { color:#7c3aed; }
   .bar { height:6px; background:#e5e7eb; border-radius:3px; overflow:hidden; }
-  .bar > i { display:block; height:100%; background:#2563eb; }
+  .bar > i { display:block; height:100%; background:var(--accent); }
 </style>
 </head>
 <body>

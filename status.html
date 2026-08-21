@@ -311,8 +311,8 @@
   .flight-leg .leg-note b { color: var(--text); font-weight: 700; }
   /* 픽업 예정 시간 카드 */
   .pickup-card { margin-top: 12px; padding: 16px 16px 14px; border-radius: 14px;
-    background: linear-gradient(120deg, rgba(37,99,235,0.10), rgba(59,130,246,0.05));
-    border: 1px solid rgba(37,99,235,0.28); }
+    background: linear-gradient(120deg, rgba(0,85,166,0.10), rgba(0,85,166,0.05));
+    border: 1px solid rgba(0,85,166,0.28); }
   .pickup-card .pk-top { display: flex; align-items: flex-start; gap: 18px; flex-wrap: wrap; }
   .pickup-card .pk-when { display: flex; align-items: center; gap: 11px; }
   .pickup-card .pk-when iconify-icon { font-size: 34px; color: var(--accent-deep); flex-shrink: 0; }
@@ -326,7 +326,7 @@
   .pickup-card .pk-desc { margin-top: 12px; font-size: 0.87rem; line-height: 1.6; color: var(--text-dim); }
   .pickup-card .pk-desc b { color: var(--accent-deep); font-weight: 800; }
   .pickup-card .pk-meet { margin-top: 10px; padding: 11px 13px; border-radius: 11px;
-    background: rgba(255,255,255,0.65); border: 1px solid rgba(37,99,235,0.18);
+    background: rgba(255,255,255,0.65); border: 1px solid rgba(0,85,166,0.18);
     font-size: 0.87rem; line-height: 1.6; color: var(--text); display: flex; gap: 9px; align-items: flex-start; }
   .pickup-card .pk-meet iconify-icon { font-size: 20px; color: var(--accent); flex-shrink: 0; margin-top: 1px; }
   .pickup-card .pk-meet span { word-break: keep-all; }
@@ -350,11 +350,11 @@
   .fee-note li { margin: 4px 0; }
   .fee-note .fee-ex { margin-top: 5px; font-size: 0.82rem; line-height: 1.55; opacity: 0.92; }
   .visa-note { margin-top: 12px; padding: 13px 15px; border-radius: 12px;
-    background: rgba(37,99,235,0.06); border: 1px solid rgba(37,99,235,0.26);
+    background: rgba(0,85,166,0.06); border: 1px solid rgba(0,85,166,0.26);
     color: #1e40af; font-size: 0.88rem; line-height: 1.7; }
-  .visa-note .visa-title { display: flex; align-items: center; gap: 7px; font-weight: 800; color: #1d4ed8; margin-bottom: 6px; }
+  .visa-note .visa-title { display: flex; align-items: center; gap: 7px; font-weight: 800; color: var(--accent-deep); margin-bottom: 6px; }
   .visa-note .visa-title iconify-icon { font-size: 18px; }
-  .visa-note b { color: #1e3a8a; font-weight: 800; }
+  .visa-note b { color: var(--accent-deep); font-weight: 800; }
   .fee-note b { color: #92400e; font-weight: 800; }
   @media (max-width: 520px) { .flight-grid { grid-template-columns: 1fr; } }
 

@@ -52,8 +52,8 @@
   .nm b { font-weight: 700; }
   .nm .uni { font-size: .68rem; color: var(--text-faint); }
   .nm .st { font-size: .72rem; font-weight: 800; white-space: nowrap; }
-  .nm.st-airport { background: rgba(37,99,235,.13); border-color: rgba(37,99,235,.45); }
-  .nm.st-airport .st { color: #1d4ed8; }
+  .nm.st-airport { background: rgba(0,85,166,.13); border-color: rgba(0,85,166,.45); }
+  .nm.st-airport .st { color: var(--accent-deep); }
   .nm.st-dorm { background: rgba(5,150,105,.16); border-color: rgba(5,150,105,.5); }
   .nm.st-dorm .st { color: #047857; }
   .nm.hit { box-shadow: 0 0 0 2px rgba(202,138,4,.75); }
@@ -62,12 +62,12 @@
   .count-bar .cbx { display: inline-flex; align-items: center; gap: 7px; padding: 9px 15px; border-radius: 12px;
     background: var(--bg-elev); border: 1px solid var(--hairline); font-size: .86rem; font-weight: 700; box-shadow: var(--shadow-sm); }
   .count-bar .cbx .n { font-weight: 800; font-size: 1.02rem; }
-  .count-bar .cbx.air .n { color: #1d4ed8; }
+  .count-bar .cbx.air .n { color: var(--accent-deep); }
   .count-bar .cbx.dorm .n { color: #047857; }
   .vtabs { display: flex; gap: 8px; margin: 0 0 14px; }
   .vtabs button { flex: 1; padding: 11px 14px; border-radius: 12px; border: 1px solid var(--hairline);
     background: var(--bg-elev); font-size: .95rem; font-weight: 800; cursor: pointer; box-shadow: var(--shadow-sm); }
-  .vtabs button.act-arr { background: #1e3a8a; color: #fff; border-color: #1e3a8a; }
+  .vtabs button.act-arr { background: var(--accent-deep); color: #fff; border-color: var(--accent-deep); }
   .vtabs button.act-dep { background: #b91c1c; color: #fff; border-color: #b91c1c; }
   .nmd { cursor: pointer; user-select: none; }
   .nmd.st-done { background: #ecfdf5; border-color: #6ee7b7; }
@@ -101,7 +101,7 @@
     <button id="tab-dep" type="button">🛫 가는 학생 (출국)</button>
   </div>
   <div class="count-bar" id="counts"></div>
-  <div class="hint" id="hint">이름을 누르면 <b style="color:#1d4ed8;">🛬 공항 도착</b> → <b style="color:#047857;">🏠 기숙사 도착</b> → 해제 순서로 바뀝니다. 담당자 모두에게 공유됩니다.</div>
+  <div class="hint" id="hint">이름을 누르면 <b style="color:var(--accent-deep);">🛬 공항 도착</b> → <b style="color:#047857;">🏠 기숙사 도착</b> → 해제 순서로 바뀝니다. 담당자 모두에게 공유됩니다.</div>
   <div class="search"><input class="input" id="q" type="search" placeholder="이름 검색"></div>
   <div id="list"></div>
 </main>
@@ -188,7 +188,7 @@ function setTab(tab) {
   $("tab-arr").className = tab === "arr" ? "act-arr" : "";
   $("tab-dep").className = tab === "dep" ? "act-dep" : "";
   $("hint").innerHTML = tab === "arr"
-    ? `이름을 누르면 <b style="color:#1d4ed8;">🛬 공항 도착</b> → <b style="color:#047857;">🏠 기숙사 도착</b> → 해제 순서로 바뀝니다. 담당자 모두에게 공유됩니다.`
+    ? `이름을 누르면 <b style="color:var(--accent-deep);">🛬 공항 도착</b> → <b style="color:#047857;">🏠 기숙사 도착</b> → 해제 순서로 바뀝니다. 담당자 모두에게 공유됩니다.`
     : `이름을 누르면 <b style="color:#047857;">✅ 체크</b> ↔ 해제로 바뀝니다. 담당자 모두에게 공유됩니다.`;
   render();
 }
