@@ -466,49 +466,6 @@
        미제출 안내가 필요하면 아래 '항공편 정보 확인' 카드(#sec-flight)가 그대로 처리한다
        (정보가 틀리면 '정보가 틀려요', 항공편이 없으면 '항공권 제출하기' 접수 박스). -->
 
-  <!-- 🚤 호핑 투어 (8월 입국 학생 전용) — 진행 중인 신청이라 최상단(인사말 바로 아래)에 둔다.
-       8/8(토) 회차가 기상 악화로 취소되어(2026-08-06) 대체 회차 8/22(토) 신청을 새로 받는다(2026-08-17 오픈).
-       event_key=hopping_aug22 (8/8 회차는 hopping_aug — 명단을 기록으로 남기려고 키를 새로 뒀다.
-         같은 키를 재사용하면 8/8 신청자 36명이 upsert 대상이 되어 버튼이 '이 날짜로 변경'으로
-         나오고, 8/8 슬롯이 마감되면 EVENT_LOCKED 로 재신청 자체가 막힌다.)
-       대상 판별은 EVENTS 의 only(stay.start >= 2026-08-01) — 인제대(7/5 입국·8/15 귀국)는 안 보인다.
-       이모지는 제목·정보줄 라벨·경고 박스·목록형 안내에만 붙인다(줄마다 붙이면 과하다).
-       카톡으로 보내는 공지 문구는 이모지 없이 별도로 쓴다(카톡에선 서식이 안 먹어 산만해진다).
-       슬롯 등록 SQL: scripts/event-hopping-aug22.sql -->
-  <section class="card fade-up" id="hopaug-card" style="display:none">
-    <div class="card-title">🚤 호핑 투어 <b>8월 22일 (토)</b> — 신청 다시 받아요</div>
-    <p class="hop-desc">
-      기상 악화로 취소됐던 호핑 투어를 <b>8월 22일 토요일</b>에 다시 진행합니다.
-      스노클링 · 낚시 · 배 위에서 먹는 점심까지 하루 코스예요. 💙
-    </p>
-
-    <div class="ev-note ev-warn">✍️ <b>8월 8일에 신청하셨던 분도 다시 신청해 주세요.</b>
-      이전 신청은 취소된 회차라 <b>이번 회차로 자동 이어지지 않아요.</b></div>
-
-    <div class="msm-info">
-      <div class="mi"><span class="mi-k">📅 날짜</span><span class="mi-v"><b>8월 22일 (토)</b></span></div>
-      <div class="mi"><span class="mi-k">🚌 미팅</span><span class="mi-v"><b>오전 9시</b> · 학교 픽업</span></div>
-      <div class="mi"><span class="mi-k">🗺 일정</span><span class="mi-v">선착장 → 스노클링 → 낚시 → 점심 → 선착장 (오후 2시경 도착)</span></div>
-      <div class="mi"><span class="mi-k">💰 비용</span><span class="mi-v"><b>₱2,500</b> · 현장에서 직접 납부</span></div>
-      <div class="mi"><span class="mi-k">⏰ 신청 마감</span><span class="mi-v"><b>8월 19일 (수) 밤 11시 59분</b></span></div>
-      <div class="mi"><span class="mi-k">👥 인원</span><span class="mi-v"><b>제한 없음</b> — 신청한 만큼 준비해요</span></div>
-    </div>
-
-    <div class="hop-my none" id="hopaug-my"></div>
-    <div class="hop-dates" id="hopaug-dates"></div>
-    <div class="ev-note"><b>비용 ₱2,500은 당일 현장에서 직접 냅니다.</b> 거스름돈이 없으니 <b>금액에 맞게</b> 준비해 주세요.</div>
-    <div class="ev-note">🎒 <b>챙겨오세요</b> — 수영복, 젖어도 되는 신발, 모자, 선크림, 매너팁(인당 ₱50)</div>
-    <div class="ev-note">🎁 <b>학교에서 준비해요</b> — 스노클링 장비, 물, 음료, 수건, 주전부리</div>
-    <div class="ev-note">🌏 <b>같이 가고 싶은 다른 국적 친구가 있나요?</b> 이 신청 화면은 한국 학생용이라
-      친구는 여기서 신청이 안 돼요. <b>한국인 매니저에게 따로 연락해 주세요</b> — 함께 갈 수 있게 도와드릴게요.</div>
-    <div class="ev-note"><b>미팅 전에 화장실 꼭 다녀오세요!</b></div>
-    <div class="ev-note ev-warn">⛔ <b>마감 후에는 취소·환불이 되지 않습니다.</b>
-      마감된 인원에 맞춰 배와 식사를 예약하기 때문에, 마감 뒤에 못 가시게 되어도
-      <b>비용은 그대로 납부해야 해요.</b> 신중하게 신청해 주세요.</div>
-    <div class="ev-note"><b>마감 전</b>에는 언제든 취소할 수 있어요.</div>
-    <div class="hop-status" id="hopaug-status"></div>
-  </section>
-
   <!-- 📄 SSP 사본 제출 — 백석대학교 7월 학생 전용(renderSsp 의 SSP_TARGET 이 대상을 정한다).
        파일: Supabase Storage 'ssp' 버킷(비공개 — 익명은 업로드만, 열람 불가)
        기록: ssp_submissions (id/name/university/cohort/ext/path/uploaded_at)
@@ -573,7 +530,8 @@
   </section>
 
   <!-- 📝 EF-SET 결과지 제출 (차수별 대상·마감은 renderEfset 의 EF_ROUNDS 가 정한다.
-       현재 진행 차수 = 인제대학교 · 6주차 목요일 8/13 마감) -->
+       현재 진행 차수 = 8월 과정(08/02~08/29) · 마감 8월 27일(목).
+       아래 마감·대상 문구는 기본값일 뿐 applyEfCopy 가 차수 값으로 덮어쓴다. -->
   <section class="card fade-up" id="efset-card" style="display:none">
     <div class="card-title">📝 EF-SET 결과지 제출
       <span id="ef-badge" style="font-size:0.72em;background:#dc2626;color:#fff;border-radius:999px;padding:2px 10px;font-weight:800;">전체 학생 필수</span>
@@ -586,7 +544,7 @@
     <div class="msm-info">
       <div class="mi"><span class="mi-k">🗓 마감</span><span class="mi-v" id="ef-due"><b>7월 29일 (수)</b></span></div>
       <div class="mi"><span class="mi-k">👥 대상</span><span class="mi-v" id="ef-target"><b>전체 학생</b></span></div>
-      <div class="mi"><span class="mi-k">📄 파일</span><span class="mi-v">PDF 또는 결과 화면 캡처(JPG·PNG) · <b>2장까지</b> · 각 최대 10MB</span></div>
+      <div class="mi"><span class="mi-k">📄 파일</span><span class="mi-v">PDF 또는 결과 화면 캡처(JPG·PNG) · <b>여러 장(최대 5장)</b> · 각 최대 10MB</span></div>
       <div class="mi"><span class="mi-k">📖 응시 방법</span><span class="mi-v"><a href="procedure.html#efset" target="_blank" rel="noopener" style="color:var(--accent-deep);font-weight:700;">EF-SET 응시 매뉴얼 보기</a> (efset.org · 90분 테스트)</span></div>
       <div class="mi"><span class="mi-k">🖼 샘플</span><span class="mi-v"><a href="assets/efset-sample.png" target="_blank" rel="noopener" style="color:var(--accent-deep);font-weight:700;">결과지 샘플 보기</a> — 이런 형태여야 해요</span></div>
       <div class="mi"><span class="mi-k">👀 제출 현황</span><span class="mi-v" id="ef-count">—</span></div>
@@ -602,7 +560,7 @@
 
     <div class="ev-note">📋 <b>제출 방법</b> · ① <a href="procedure.html#efset" target="_blank" rel="noopener" style="color:var(--accent-deep);font-weight:700;">매뉴얼</a>을 따라 EF-SET 테스트 응시(90분) → ② 결과 Certificate를 <b>PDF로 저장</b>하거나 <b>화면 캡처</b> → ③ 위에서 파일 선택 후 업로드. 다시 올리면 <b>새 파일로 교체</b>돼요.</div>
     <div class="ev-note">✅ <a href="assets/efset-sample.png" target="_blank" rel="noopener" style="color:var(--accent-deep);font-weight:700;">샘플</a>처럼 <b>4개 영역(Reading·Listening·Writing·Speaking) 점수가 모두 보이는 결과지</b>여야 해요. 총점만 나온 화면은 인정되지 않아요.</div>
-    <div class="ev-note">🖼 <b>한 화면에 다 안 나오면 2장까지 올릴 수 있어요.</b> 총점 화면과 4영역 점수 화면을 각각 캡처해서 <b>두 장을 한 번에 선택</b>해 주세요. (휴대폰은 사진 고르는 화면에서 두 장을 차례로 탭하면 되고, PC는 Ctrl 또는 Shift를 누른 채 고르면 돼요)</div>
+    <div class="ev-note">🖼 <b>한 화면에 다 안 나오면 여러 장(최대 5장)을 함께 올릴 수 있어요.</b> 총점 화면과 4영역 점수 화면을 각각 캡처해서 <b>한 번에 선택</b>해 주세요. (휴대폰은 사진 고르는 화면에서 차례로 탭하면 되고, PC는 Ctrl 또는 Shift를 누른 채 고르면 돼요)</div>
     <div class="ev-note">🔒 올린 파일은 <b>본인과 학교 담당자만</b> 확인하며, 다른 학생에게 보이지 않아요.</div>
     <div class="hop-status" id="ef-status"></div>
   </section>
@@ -625,33 +583,6 @@
     <div class="deal-list" id="deal-list"></div>
   </section>
 
-
-  <!-- 🥭 7D 망고 공장 견학 신청 (7/22~24 마감 · 7/27 추가 회차, 정원·오픈·마감은 event_slots 가 정답) -->
-  <section class="card fade-up" id="mango-card" style="display:none">
-    <div class="card-title">🥭 7D 망고 공장 견학</div>
-    <p class="hop-desc">
-      망고로 유명한 <b>7D 망고 공장</b>을 직접 방문해 생산 과정을 견학하고, <b>시식과 구매</b>도 할 수 있는 특별 프로그램이에요.
-    </p>
-
-    <div class="msm-info">
-      <div class="mi"><span class="mi-k">📅 회차</span><span class="mi-v"><b>8월 18일 (화) · 8월 19일 (수)</b> — 둘 중 하루 선택</span></div>
-      <div class="mi"><span class="mi-k">🕧 출발</span><span class="mi-v">오후 12시 30분</span></div>
-      <div class="mi"><span class="mi-k">📍 장소</span><span class="mi-v">7D Mango Factory (Cebu City)</span></div>
-      <div class="mi"><span class="mi-k">⏱ 소요 시간</span><span class="mi-v">약 3시간 30분</span></div>
-      <div class="mi"><span class="mi-k">👥 정원</span><span class="mi-v">날짜별 선착순 <b>25명</b></span></div>
-      <div class="mi"><span class="mi-k">💰 비용</span><span class="mi-v">₱200 (현금)</span></div>
-      <div class="mi"><span class="mi-k">🔓 신청 오픈</span><span class="mi-v"><b>8월 11일 (화) 오후 8시</b></span></div>
-      <div class="mi"><span class="mi-k">⛔ 신청 마감</span><span class="mi-v"><b>8월 13일 (목) 밤 11시 59분</b></span></div>
-    </div>
-
-    <div class="hop-my none" id="mango-my"></div>
-    <div class="hop-dates" id="mango-dates"></div>
-    <div class="ev-note">🥭 <b>두 날짜 중 하루만</b> 신청할 수 있어요. 날짜별 <b>선착순 25명</b>이라 자리가 차면 다른 날짜를 골라 주세요.</div>
-    <div class="ev-note">💳 <b>지금은 결제 없이 신청만 하시면 돼요.</b> 비용 <b>₱200</b> 납부 방법은 신청자에게 별도로 안내드릴게요.</div>
-    <div class="ev-note ev-warn">⛔ <b>8월 13일(목) 밤 11시 59분에 마감</b>돼요. 그전까지는 날짜 변경·취소가 자유롭지만, <b>마감 후에는 변경·취소가 불가능</b>합니다.</div>
-    <div class="hop-warn">📸 공장 내부는 <b>촬영이 제한</b>될 수 있어요. 견학 당일 <b>학생증과 마스크</b>를 꼭 챙겨 주세요.</div>
-    <div class="hop-status" id="mango-status"></div>
-  </section>
 
   <!-- 🏛 세부 주청사(Capitol) 방문 신청 (선착순 25명) -->
   <section class="card fade-up" id="cap-card" style="display:none">
@@ -682,6 +613,76 @@
 
   <details class="past-box fade-up" id="past-box">
     <summary>🗂 지난 공지 · 마감된 신청 보기</summary>
+
+    <!-- 🚤 호핑 투어 (8월 입국 학생 전용) — 8/22(토) 회차가 끝나 지난 공지 안으로 내렸다(2026-08-24).
+       8/8(토) 회차가 기상 악화로 취소되어(2026-08-06) 대체 회차 8/22(토) 신청을 새로 받았다(2026-08-17 오픈).
+       event_key=hopping_aug22 (8/8 회차는 hopping_aug — 명단을 기록으로 남기려고 키를 새로 뒀다.
+         같은 키를 재사용하면 8/8 신청자 36명이 upsert 대상이 되어 버튼이 '이 날짜로 변경'으로
+         나오고, 8/8 슬롯이 마감되면 EVENT_LOCKED 로 재신청 자체가 막힌다.)
+       대상 판별은 EVENTS 의 only(stay.start >= 2026-08-01) — 인제대(7/5 입국·8/15 귀국)는 안 보인다.
+       이모지는 제목·정보줄 라벨·경고 박스·목록형 안내에만 붙인다(줄마다 붙이면 과하다).
+       카톡으로 보내는 공지 문구는 이모지 없이 별도로 쓴다(카톡에선 서식이 안 먹어 산만해진다).
+       슬롯 등록 SQL: scripts/event-hopping-aug22.sql -->
+    <section class="card" id="hopaug-card" style="display:none">
+    <div class="card-title">🚤 호핑 투어 <b>8월 22일 (토)</b> — 신청 다시 받아요</div>
+    <p class="hop-desc">
+      기상 악화로 취소됐던 호핑 투어를 <b>8월 22일 토요일</b>에 다시 진행합니다.
+      스노클링 · 낚시 · 배 위에서 먹는 점심까지 하루 코스예요. 💙
+    </p>
+
+    <div class="ev-note ev-warn">✍️ <b>8월 8일에 신청하셨던 분도 다시 신청해 주세요.</b>
+      이전 신청은 취소된 회차라 <b>이번 회차로 자동 이어지지 않아요.</b></div>
+
+    <div class="msm-info">
+      <div class="mi"><span class="mi-k">📅 날짜</span><span class="mi-v"><b>8월 22일 (토)</b></span></div>
+      <div class="mi"><span class="mi-k">🚌 미팅</span><span class="mi-v"><b>오전 9시</b> · 학교 픽업</span></div>
+      <div class="mi"><span class="mi-k">🗺 일정</span><span class="mi-v">선착장 → 스노클링 → 낚시 → 점심 → 선착장 (오후 2시경 도착)</span></div>
+      <div class="mi"><span class="mi-k">💰 비용</span><span class="mi-v"><b>₱2,500</b> · 현장에서 직접 납부</span></div>
+      <div class="mi"><span class="mi-k">⏰ 신청 마감</span><span class="mi-v"><b>8월 19일 (수) 밤 11시 59분</b></span></div>
+      <div class="mi"><span class="mi-k">👥 인원</span><span class="mi-v"><b>제한 없음</b> — 신청한 만큼 준비해요</span></div>
+    </div>
+
+    <div class="hop-my none" id="hopaug-my"></div>
+    <div class="hop-dates" id="hopaug-dates"></div>
+    <div class="ev-note"><b>비용 ₱2,500은 당일 현장에서 직접 냅니다.</b> 거스름돈이 없으니 <b>금액에 맞게</b> 준비해 주세요.</div>
+    <div class="ev-note">🎒 <b>챙겨오세요</b> — 수영복, 젖어도 되는 신발, 모자, 선크림, 매너팁(인당 ₱50)</div>
+    <div class="ev-note">🎁 <b>학교에서 준비해요</b> — 스노클링 장비, 물, 음료, 수건, 주전부리</div>
+    <div class="ev-note">🌏 <b>같이 가고 싶은 다른 국적 친구가 있나요?</b> 이 신청 화면은 한국 학생용이라
+      친구는 여기서 신청이 안 돼요. <b>한국인 매니저에게 따로 연락해 주세요</b> — 함께 갈 수 있게 도와드릴게요.</div>
+    <div class="ev-note"><b>미팅 전에 화장실 꼭 다녀오세요!</b></div>
+    <div class="ev-note ev-warn">⛔ <b>마감 후에는 취소·환불이 되지 않습니다.</b>
+      마감된 인원에 맞춰 배와 식사를 예약하기 때문에, 마감 뒤에 못 가시게 되어도
+      <b>비용은 그대로 납부해야 해요.</b> 신중하게 신청해 주세요.</div>
+    <div class="ev-note"><b>마감 전</b>에는 언제든 취소할 수 있어요.</div>
+    <div class="hop-status" id="hopaug-status"></div>
+    </section>
+
+    <!-- 🥭 7D 망고 공장 견학 신청 (7/22~24 마감 · 7/27 추가 회차, 정원·오픈·마감은 event_slots 가 정답) -->
+    <section class="card" id="mango-card" style="display:none">
+    <div class="card-title">🥭 7D 망고 공장 견학</div>
+    <p class="hop-desc">
+      망고로 유명한 <b>7D 망고 공장</b>을 직접 방문해 생산 과정을 견학하고, <b>시식과 구매</b>도 할 수 있는 특별 프로그램이에요.
+    </p>
+
+    <div class="msm-info">
+      <div class="mi"><span class="mi-k">📅 회차</span><span class="mi-v"><b>8월 18일 (화) · 8월 19일 (수)</b> — 둘 중 하루 선택</span></div>
+      <div class="mi"><span class="mi-k">🕧 출발</span><span class="mi-v">오후 12시 30분</span></div>
+      <div class="mi"><span class="mi-k">📍 장소</span><span class="mi-v">7D Mango Factory (Cebu City)</span></div>
+      <div class="mi"><span class="mi-k">⏱ 소요 시간</span><span class="mi-v">약 3시간 30분</span></div>
+      <div class="mi"><span class="mi-k">👥 정원</span><span class="mi-v">날짜별 선착순 <b>25명</b></span></div>
+      <div class="mi"><span class="mi-k">💰 비용</span><span class="mi-v">₱200 (현금)</span></div>
+      <div class="mi"><span class="mi-k">🔓 신청 오픈</span><span class="mi-v"><b>8월 11일 (화) 오후 8시</b></span></div>
+      <div class="mi"><span class="mi-k">⛔ 신청 마감</span><span class="mi-v"><b>8월 13일 (목) 밤 11시 59분</b></span></div>
+    </div>
+
+    <div class="hop-my none" id="mango-my"></div>
+    <div class="hop-dates" id="mango-dates"></div>
+    <div class="ev-note">🥭 <b>두 날짜 중 하루만</b> 신청할 수 있어요. 날짜별 <b>선착순 25명</b>이라 자리가 차면 다른 날짜를 골라 주세요.</div>
+    <div class="ev-note">💳 <b>지금은 결제 없이 신청만 하시면 돼요.</b> 비용 <b>₱200</b> 납부 방법은 신청자에게 별도로 안내드릴게요.</div>
+    <div class="ev-note ev-warn">⛔ <b>8월 13일(목) 밤 11시 59분에 마감</b>돼요. 그전까지는 날짜 변경·취소가 자유롭지만, <b>마감 후에는 변경·취소가 불가능</b>합니다.</div>
+    <div class="hop-warn">📸 공장 내부는 <b>촬영이 제한</b>될 수 있어요. 견학 당일 <b>학생증과 마스크</b>를 꼭 챙겨 주세요.</div>
+    <div class="hop-status" id="mango-status"></div>
+    </section>
 
     <!-- 호핑 투어 참가 신청 (수요조사) -->
     <section class="card" id="hop-card" style="display:none">
@@ -1010,24 +1011,28 @@
     $("d-updated").textContent = rec.updatedAt || STATUS_UPDATED || "";
     // 학생 모임(rooms.html)에서 쓸 신원 저장 (검증된 로그인 후에만)
     try { localStorage.setItem("lcic.me", JSON.stringify({ n: rec.name || "", e: CUR_EMAIL || "" })); } catch (_) {}
-    // ✈️ 8월 입국 학생은 입국 준비 화면만: 7월 운영 카드(EF-SET·이벤트·학생모임·공지)를
-    //    렌더하지 않고, 항공편 카드 복구 + 상단 항공권 확인 배너만 보여준다.
+    // ✈️ 8월 입국 학생에게는 7월 전용 카드(귀국 안내·7월 이벤트 신청)를 렌더하지 않는다.
     //    7월 학생(stay.start가 7월, 이미 입국)은 기존 화면 그대로.
     const augArrival = ((rec.stay || {}).start || "") >= "2026-08-01";
     if (!augArrival) {
       renderDepart(rec);   // 🛫 귀국(출국) 안내 카드 — 정문 픽업 시각 + e-ticket 경고
       renderHopping(rec);   // 호핑 수요조사 카드
       renderMarshmallow(rec);   // 🍭 마시멜로우 챌린지 신청 카드
-      renderEfset(rec);    // 📝 EF-SET 결과지 제출 카드
     }
+    // 📝 EF-SET 결과지 제출 — 7·8월 모두 렌더한다. 차수·마감은 EF_ROUNDS 가 정하고,
+    //    8월 과정(08/02~08/29)은 진행 중인 차수라 카드가 바로 열린다(마감 8/27 목).
+    renderEfset(rec);
     // 🎟 이벤트 카드는 7·8월 모두에서 렌더한다. 대상은 각 항목의 only 가 정하고,
     //    조건에 맞지 않으면 카드가 숨겨진 채로 남는다(8월 호핑 수요조사 = 8월 입국 학생만).
     renderEvents(rec);
     renderSsp(rec);      // 📄 SSP 사본 제출 — 백석대 7월 학생에게만 보인다(차수 분기와 무관)
     if (augArrival) {
-      // 7월 재학생용 요소 숨김 (7월 공지 사이드, 지난 공지·마감된 신청 박스).
+      // 7월 재학생용 요소 숨김 (7월 공지 사이드).
       // 🏀 학생 모임(#meet-card)은 8월 학생도 쓸 수 있어야 하므로 숨기지 않는다.
-      document.querySelectorAll("#dash-notice, #past-box").forEach((el) => { el.style.display = "none"; });
+      // 🗂 지난 공지 박스(#past-box)는 8월 학생에게도 보인다 — 끝난 8월 신청(망고·호핑 8/22)이
+      //    이 안으로 들어가 있어서다. 7월 카드(호핑 수요조사·마시멜로우)는 렌더하지 않으므로
+      //    8월 학생에게는 접힌 상자 안에서도 보이지 않는다.
+      document.querySelectorAll("#dash-notice").forEach((el) => { el.style.display = "none"; });
       // 🧑‍💼 운영자(staff) 계정은 여권·항공권이 필요 없으므로 항공편 카드를 건너뛴다.
       const isStaff = !!rec.staff;
       const sf = document.getElementById("sec-flight");
@@ -1611,12 +1616,25 @@
   // ── 📝 EF-SET 결과지 제출 ──
   // 파일: Supabase Storage 'efset' 버킷 (익명 열람 불가 — 제출 전용, 확인은 담당자 대시보드)
   // 기록: efset_submissions (id/name/university/ext/uploaded_at) → 제출 현황·본인 제출 여부 표시
-  // 차수(대학)별 대상·마감. 7월 차수(전북대·백석대 등)는 7/29 로 이미 끝났고,
-  // 지금 진행 중인 차수는 6주 과정인 인제대학교(07/05~08/15) — 6주차 목요일 8/13 마감.
-  // 다음 차수가 생기면 EF_ROUNDS 에 한 줄 추가하고 pickEfRound 만 고치면 된다.
+  // 차수(대학)별 대상·마감. 7월 차수(전북대·백석대 등)는 7/29, 인제대(6주)는 8/13 으로 끝났고,
+  // 지금 진행 중인 차수는 8월 과정(08/02~08/29 · 전북대·구미대·백석문화대 54명) — 마지막 주 목요일 8/27 마감.
+  // 다음 차수가 생기면 EF_ROUNDS 에 한 줄 추가하고 renderEfset 의 차수 선택만 고치면 된다.
+  //   since = 이 차수의 제출로 인정하는 시작 시각. 제출 현황·본인 제출 여부를 이 시각 이후 업로드로만
+  //           센다(같은 대학이 7월에도 왔기 때문에 university 만으로는 차수를 가를 수 없다).
   const EF_ROUNDS = {
+    aug: {
+      due: "2026-08-27", label: "8월 27일 (목)", note: "귀국 주 목요일",
+      since: "2026-08-24T00:00:00+08:00", who: "8월 과정 ",
+      badge: "전체 학생 필수", target: "8월 과정 학생 전원",
+      desc: `EF-SET 영어 테스트를 응시하고 <b>결과지(성적표)</b>를 여기에 올려 주세요.
+             <b>8월 과정 학생 전원</b>이 <b>8월 27일(목)까지</b> 제출해야 합니다.`,
+      warn: `🏫 제출된 결과지는 <b>학교(소속 대학)로 보고되는 공식 자료</b>입니다.
+             예외 없이 <b>전원 필수 제출</b>이니 기한 내에 꼭 올려 주세요.
+             <span style="font-weight:400;">(4영역 점수가 모두 보이는 결과지여야 해요.)</span>`,
+    },
     inje: {
       due: "2026-08-13", label: "8월 13일 (목)", note: "6주차 목요일",
+      injeOnly: true, who: "인제대학교 ",
       badge: "인제대 필수", target: "인제대학교 학생 전원",
       desc: `EF-SET 영어 테스트를 응시하고 <b>결과지(성적표)</b>를 여기에 올려 주세요.
              <b>인제대학교 학생</b>은 <b>6주차 목요일인 8월 13일(목)까지</b> 제출해야 합니다.`,
@@ -1655,12 +1673,17 @@
   ]);
 
   const isInjeUni = (u) => /인제|inje/i.test(String(u || ""));
+  const isAugCohort = (rec) => (((rec || {}).stay || {}).start || "") >= "2026-08-01";
   let EF_ROUND = EF_ROUNDS.past;
   let EF_DEADLINE = new Date(EF_ROUNDS.past.due + "T23:59:59+08:00");
-  let EF_MINE_INJE = false;
+  // 진행 중인 차수인가 — 진행 중이면 이미 낸 학생에게도 카드를 계속 보여 준다(교체 업로드 가능).
+  // 지난 차수(past)는 미제출 학생에게만 열린다.
+  let EF_ACTIVE = false;
+  let EF_SINCE = null;    // 이 차수의 제출로 인정할 시작 시각 (없으면 전체)
 
   function applyEfCopy() {
     EF_DEADLINE = new Date(EF_ROUND.due + "T23:59:59+08:00");
+    EF_SINCE = EF_ROUND.since ? new Date(EF_ROUND.since) : null;
     $("ef-badge").textContent = EF_ROUND.badge;
     $("ef-desc").innerHTML = EF_ROUND.desc;
     $("ef-warn").innerHTML = EF_ROUND.warn;
@@ -1671,12 +1694,14 @@
   async function renderEfset(rec) {
     if (!window.lcicEfset) { setTimeout(() => renderEfset(rec), 400); return; }   // 브리지 로드 대기
     const card = $("efset-card"); if (!card) return;
-    EF_MINE_INJE = isInjeUni(rec.uni);
-    EF_ROUND = EF_MINE_INJE ? EF_ROUNDS.inje : EF_ROUNDS.past;
+    // 8월 과정(08/02~08/29) → 진행 중인 aug 차수. 인제대는 8/13 로 끝난 차수라 미제출자만 열린다.
+    const aug = isAugCohort(rec);
+    EF_ROUND = aug ? EF_ROUNDS.aug : isInjeUni(rec.uni) ? EF_ROUNDS.inje : EF_ROUNDS.past;
+    EF_ACTIVE = aug;
     applyEfCopy();
-    // 진행 중인 차수(인제대)는 바로 카드를 연다. 지난 차수 학생은 미제출일 때만
+    // 진행 중인 차수는 바로 카드를 연다. 지난 차수 학생은 미제출일 때만
     // paintEfset 이 카드를 열어 준다(이미 낸 학생에게 마감 지난 카드를 다시 보이지 않게).
-    if (EF_MINE_INJE) card.style.display = "";
+    if (EF_ACTIVE) card.style.display = "";
     const sid = (await sha256hex(CUR_EMAIL || "")).slice(0, 16);
     $("ef-btn").onclick = () => efUpload(sid);
     $("ef-file").onchange = efShowPicked;      // 몇 장 골랐는지 바로 보여 준다
@@ -1685,7 +1710,12 @@
   async function paintEfset(sid) {
     let rows = [];
     try { rows = await window.lcicEfset.state(); } catch (_) { /* 조회 실패해도 카드는 표시 */ }
-    const mine = rows.find((r) => r.id === sid);
+    // 이 차수의 제출만 본다 — since(업로드 시각)·injeOnly(대학)로 거른다.
+    // 같은 대학이 7월에도 왔기 때문에 university 만으로는 차수를 가를 수 없다.
+    const inRound = (r) => (!EF_SINCE || new Date(r.uploaded_at) >= EF_SINCE)
+      && (!EF_ROUND.injeOnly || isInjeUni(r.university));
+    const roundRows = rows.filter(inRound);
+    const mine = roundRows.find((r) => r.id === sid);
     // 올린 기록이 있어도 수료 결과지가 확인 안 된 학생은 '아직 낼 것이 남은' 상태로 본다.
     const redo = EF_RESUBMIT.has(sid);
     const partial = EF_PARTIAL.has(sid);
@@ -1693,13 +1723,13 @@
     EF_SUBMITTED = !needEf;
     syncSspEfNote();          // SSP 대상자라면 두 카드를 붙여 준다
     const card = $("efset-card");
-    if (!EF_MINE_INJE) {
+    if (!EF_ACTIVE) {
       if (!needEf) { card.style.display = "none"; return; }   // 지난 차수 + 제출 완료 → 카드 숨김
       card.style.display = "";
     }
-    // 제출 현황은 같은 차수끼리만 센다 — 인제대 10명 옆에 7월 차수 수백 명이 뜨면 뜻이 없다.
-    const cnt = EF_MINE_INJE ? rows.filter((r) => isInjeUni(r.university)).length : rows.length;
-    const who = EF_MINE_INJE ? "인제대학교 " : "현재 ";
+    // 제출 현황은 같은 차수끼리만 센다 — 8월 54명 옆에 7월 차수 수백 명이 뜨면 뜻이 없다.
+    const cnt = roundRows.length;
+    const who = EF_ROUND.who || "현재 ";
     $("ef-count").innerHTML = `${who}<b>${cnt}명</b> 제출`;
     const d = Math.ceil((EF_DEADLINE - new Date()) / 86400000) - 1;   // 마감일 당일 = D-0
     const my = $("ef-my");
@@ -1709,7 +1739,7 @@
       my.innerHTML = `⚠️ <b>총점만 보이는 결과지가 제출됐어요.</b> 점수 비교를 하려면
         <b>4영역(Reading·Listening·Writing·Speaking) 점수가 모두 보이는 결과지</b>가 필요해요.
         <span style="font-weight:400;">아래 <b>샘플</b>처럼 나온 화면으로 다시 올려 주세요.
-        한 화면에 다 안 나오면 <b>총점 화면 + 4영역 화면 두 장을 함께</b> 올리셔도 돼요.</span>`;
+        한 화면에 다 안 나오면 <b>총점 화면 + 4영역 화면을 여러 장 함께</b> 올리셔도 돼요.</span>`;
     } else if (redo && mine) {
       const t = new Date(mine.uploaded_at);
       my.className = "hop-my";
@@ -1727,8 +1757,9 @@
       my.innerHTML = `⚠️ <b>마감이 지났어요.</b> 아직 안 냈다면 지금 바로 올려 주세요!`;
     }
   }
-  // 결과 화면이 총점·4영역으로 나뉘어 캡처되는 경우가 많아 2장까지 받는다.
-  const EF_MAX_FILES = 2;
+  // 결과 화면이 총점·4영역으로 나뉘어 캡처되는 경우가 많아 여러 장을 받는다.
+  // 4영역을 한 장씩 따로 캡처해 오는 학생이 있어 5장까지 열어 뒀다(2026-08-24).
+  const EF_MAX_FILES = 5;
 
   function efShowPicked() {
     const inp = $("ef-file"), box = $("ef-picked");
@@ -2108,14 +2139,14 @@ window.lcicEfset = {
     if (q.error) throw q.error;
     return q.data || [];
   },
-  // files = [{file, ext}, ...] — 결과 화면이 총점·4영역으로 나뉘어 캡처되는 경우가 있어 2장까지 받는다.
+  // files = [{file, ext}, ...] — 결과 화면이 총점·4영역으로 나뉘어 캡처되는 경우가 있어 여러 장을 받는다.
   async upload(id, name, university, files) {
     try {
       const list = Array.isArray(files) ? files : [files];
       if (!list.length) return "파일이 없어요";
       // 버킷은 익명 열람·수정·삭제가 모두 막혀 있어(비공개) 업로드마다 새 경로에 저장한다.
       // 최신 파일 경로는 efset_submissions.path 가 정답(담당자는 이 경로만 보면 됨).
-      // 2장을 올리면 path 에 쉼표로 이어 붙인다 — "a.png,b.png" 처럼.
+      // 여러 장을 올리면 path 에 쉼표로 이어 붙인다 — "a.png,b.png" 처럼.
       const stamp = Date.now();
       const paths = [];
       for (let i = 0; i < list.length; i++) {
