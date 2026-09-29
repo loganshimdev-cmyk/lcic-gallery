@@ -7,7 +7,8 @@
 (function () {
   const STORAGE_KEY = "lcic-lang";
   const SUPPORTED = ["ko", "en", "zh", "ja"];
-  const DEFAULT_LANG = "ko";
+  // 처음 오는 사람은 영어로 시작한다(2026-09-29). 한 번 고른 언어는 lcic-lang 에 남아 그대로 간다.
+  const DEFAULT_LANG = "en";
   // <html lang="..."> uses BCP-47 codes; Traditional Chinese (Taiwan).
   const HTML_LANG = { ko: "ko", en: "en", zh: "zh-TW", ja: "ja" };
 
