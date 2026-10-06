@@ -17,7 +17,7 @@ const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 
-const password = process.argv[2] || "8686"; // 담당자 페이지 통일 비번
+const password = process.argv[2] || "lcic!8686"; // 도착/입소 비번 (2026-10-06 변경)
 const fromISO = process.argv[3] || "2026-07-31";
 const toISO = process.argv[4] || "2026-08-04";
 const htmlPath = path.join(__dirname, "..", "arrivals.html");
