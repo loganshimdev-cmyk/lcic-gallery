@@ -466,3 +466,19 @@ create policy "admin can delete buddy checkins"
 보안: `dorm_inspectors`는 RLS on이지만 anon SELECT 정책이 없어 `password_hash`가
 클라이언트에서 조회되지 않는다(로그인 RPC만 SECURITY DEFINER로 접근). `dorm_rooms`
 읽기·`dorm_inspections` 읽기/작성만 anon에 열려 있다. 계정 발급은 대시보드에서만.
+
+---
+
+# 관리자 명단 site_admins (2026-10-09 변경)
+
+이 DB는 system.lcic-campus.com 과 같은 DB라서 `to authenticated using (true)` 는
+"학생·에이전시까지 로그인한 누구나"가 된다. 그래서 위 문서의 관리자 정책
+(student_applications, status_reports, buddy_checkins, course_registrations, status_views,
+faqs·notices 쓰기, status-reports 버킷 열기·삭제)을 `public.is_site_admin()` 으로 바꿨다.
+위쪽 SQL 의 `to authenticated using (true)` 를 다시 실행하지 말 것.
+
+- 명단: `public.site_admins(email)` — SQL Editor 에서만 보고 고친다.
+- 관리자 추가: `insert into public.site_admins (email, note) values ('이메일', '메모');`
+- 명단에 없는 계정으로 관리자 페이지에 들어가면 목록이 비고, 페이지 위에 안내가 뜬다.
+- 새 관리자 표를 만들 때도 정책은 `using (public.is_site_admin())` 으로 쓴다.
+- 적용 SQL·되돌리기: Drive 문서\LCIC-점검-SQL-2026-10-09\3·4번 파일.

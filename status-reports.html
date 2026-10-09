@@ -221,13 +221,29 @@ const withTimeout = (promise, ms) => Promise.race([promise, new Promise((res) =>
 
 // 인증 상태는 onAuthStateChange 의 session 으로만 화면을 바꾼다.
 // (클릭마다 getSession 을 호출하지 않으므로, 일시적 지연으로 튕겨 로그아웃되지 않는다.)
+// 관리자 명단(site_admins)에 없는 계정이면 DB가 빈 목록을 돌려준다 — 왜 비었는지 알린다.
+// is_site_admin 함수가 없거나 오류면 조용히 넘어간다. (onAuthStateChange 안에서 바로 부르면 멈추므로 setTimeout)
+function checkSiteAdmin() {
+  setTimeout(async () => {
+    const { data, error } = await supabase.rpc("is_site_admin");
+    const old = document.getElementById("not-admin-note");
+    if (old) old.remove();
+    if (error || data !== false) return;
+    const n = document.createElement("div");
+    n.id = "not-admin-note";
+    n.style.cssText = "margin:12px 0;padding:12px 16px;border-radius:10px;background:#fff4e5;color:#8a4b00;font-size:0.9rem;";
+    n.textContent = "이 계정은 관리자 명단(site_admins)에 없어서 목록이 비어 보입니다. 명단에 추가해야 볼 수 있습니다.";
+    document.getElementById("admin-view").prepend(n);
+  }, 0);
+}
+
 let loadedOnce = false;
 function applySession(session) {
   if (session) {
     $("login-view").classList.add("hidden");
     $("admin-view").classList.remove("hidden");
     $("user-email").textContent = session.user.email;
-    if (!loadedOnce) { loadedOnce = true; loadActive(); }   // 데이터는 처음 1번만 (토큰 갱신마다 재로딩 방지)
+    if (!loadedOnce) { loadedOnce = true; loadActive(); checkSiteAdmin(); }   // 데이터는 처음 1번만 (토큰 갱신마다 재로딩 방지)
   } else {
     loadedOnce = false;
     $("admin-view").classList.add("hidden");
