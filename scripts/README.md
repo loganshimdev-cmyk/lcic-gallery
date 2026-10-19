@@ -64,6 +64,7 @@ Supabase와 무관하며 `pip install pillow fonttools brotli` 만 있으면 된
 | `orientation-optimize-assets.py` | 공유 사진·로고 축소 (145MB → 13MB) |
 | `orientation-subset-fonts.py` | Pretendard·Fraunces 서브셋 (6.9MB → 0.6MB) |
 | `orientation-patch-lazy.py` | 영상 `preload="none"` + 배경/이미지 지연 로딩 |
+| `orientation-build-offline.py` | 인터넷 없이 열리는 **단일 HTML** 로 묶기 (사진·폰트 base64 내장) |
 
 ```bash
 python scripts/orientation-optimize-assets.py            # 미리보기
@@ -71,6 +72,9 @@ python scripts/orientation-optimize-assets.py --apply    # 적용
 python scripts/orientation-subset-fonts.py --apply
 python scripts/orientation-patch-lazy.py                 # 멱등, 바로 적용
 python scripts/orientation-build-dankook.py
+python scripts/orientation-build-offline.py orientation-dankook \
+       --out "~/Downloads/LCIC-오리엔테이션-오프라인/LCIC-오리엔테이션-2027년1월.html" \
+       --title "LCIC 신입생 오리엔테이션 · 2027년 1월"
 ```
 
 ### 알아둘 것
@@ -84,3 +88,5 @@ python scripts/orientation-build-dankook.py
 - 영상 2개(홍보 54MB + 센터장 인사말 58MB)는 줄이지 않았다. `preload="none"` 이라
   재생 버튼을 눌러야 받는다.
 - 측정값(2026-10-19): 첫 화면 262MB·92초 → **1.0MB·2.4초**, 32쪽 전부 봐도 13.9MB.
+- 오프라인본은 영상을 빼고 만든다(18.7MB). mp4 2개는 같은 드라이브 폴더에
+  따로 올려서 쓰고, 덱의 영상 자리에는 "같은 폴더의 mp4 를 열어 보세요" 안내가 뜬다.
