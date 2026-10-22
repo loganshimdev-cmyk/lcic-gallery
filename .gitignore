@@ -28,6 +28,9 @@ scripts/encrypt-dorm.cjs
 scripts/dorm-data.json
 scripts/_dorm/
 
-# 발표자 콘솔은 로컬 전용 (온라인 미배포)
-orientation-aug/present.html
-orientation-aug/present-scripts.js
+# 발표자 콘솔은 로컬 전용 (온라인 미배포) — 덱 전체에 적용
+orientation*/present*.html
+orientation*/present*.js
+
+# 개별 학생을 수기로 넣는 1회성 SQL (이름 등 개인정보 포함) — 커밋 금지
+scripts/_*.sql
