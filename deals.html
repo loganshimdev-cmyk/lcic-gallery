@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title data-i18n-en="Partner Discounts · LCIC" data-i18n-zh="合作優惠 · LCIC" data-i18n-ja="提携割引 · LCIC">제휴 할인 · LCIC</title>
+<title data-i18n-en="Partner Discounts · LCIC" data-i18n-zh="合作優惠 · LCIC" data-i18n-ja="提携割引 · LCIC" data-i18n-zh-cn="合作优惠 · LCIC" data-i18n-vi="Ưu đãi đối tác · LCIC" data-i18n-th="ส่วนลดร้านพันธมิตร · LCIC">제휴 할인 · LCIC</title>
 <link rel="icon" type="image/png" href="assets/brand/lcic-logo.png">
 <script src="assets/background.js?v=8"></script>
-<link rel="stylesheet" href="assets/shared.css?v=13">
-<script src="assets/i18n.js?v=5" defer></script>
-<script src="assets/nav-menu.js?v=1" defer></script>
+<link rel="stylesheet" href="assets/shared.css?v=15">
+<script src="assets/i18n.js?v=7" defer></script>
+<script src="assets/nav-menu.js?v=2" defer></script>
 <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
 <style>
   .dl-wrap { max-width: 1080px; margin: 0 auto; padding: 108px 16px 80px; }
@@ -76,42 +76,48 @@
 </a>
 
 <nav class="nav-pill">
-  <a href="index.html"><iconify-icon icon="solar:home-2-bold-duotone" inline></iconify-icon> <span data-i18n-en="Home" data-i18n-zh="首頁" data-i18n-ja="ホーム">홈</span></a>
-  <a href="life-guide.html"><iconify-icon icon="solar:book-bookmark-bold-duotone" inline></iconify-icon> <span data-i18n-en="Life Guide" data-i18n-zh="生活指南" data-i18n-ja="生活ガイド">생활백서</span></a>
-  <a href="deals.html" class="active"><iconify-icon icon="solar:tag-price-bold-duotone" inline></iconify-icon> <span data-i18n-en="Partner Discounts" data-i18n-zh="合作優惠" data-i18n-ja="提携割引">제휴 할인</span></a>
-  <a href="faq.html"><iconify-icon icon="solar:question-circle-bold-duotone" inline></iconify-icon> <span data-i18n-en="FAQ" data-i18n-zh="常見問題" data-i18n-ja="よくある質問">궁금한 사항</span></a>
+  <a href="index.html"><iconify-icon icon="solar:home-2-bold-duotone" inline></iconify-icon> <span data-i18n-en="Home" data-i18n-zh="首頁" data-i18n-ja="ホーム" data-i18n-zh-cn="首页" data-i18n-vi="Trang chủ" data-i18n-th="หน้าแรก">홈</span></a>
+  <a href="life-guide.html"><iconify-icon icon="solar:book-bookmark-bold-duotone" inline></iconify-icon> <span data-i18n-en="Life Guide" data-i18n-zh="生活指南" data-i18n-ja="生活ガイド" data-i18n-zh-cn="生活指南" data-i18n-vi="Cẩm nang sinh hoạt" data-i18n-th="คู่มือการใช้ชีวิต">생활백서</span></a>
+  <a href="deals.html" class="active"><iconify-icon icon="solar:tag-price-bold-duotone" inline></iconify-icon> <span data-i18n-en="Partner Discounts" data-i18n-zh="合作優惠" data-i18n-ja="提携割引" data-i18n-zh-cn="合作优惠" data-i18n-vi="Ưu đãi đối tác" data-i18n-th="ส่วนลดร้านพันธมิตร">제휴 할인</span></a>
+  <a href="faq.html"><iconify-icon icon="solar:question-circle-bold-duotone" inline></iconify-icon> <span data-i18n-en="FAQ" data-i18n-zh="常見問題" data-i18n-ja="よくある質問" data-i18n-zh-cn="常见问题" data-i18n-vi="Câu hỏi thường gặp" data-i18n-th="คำถามที่พบบ่อย">궁금한 사항</span></a>
   <div class="lang-toggle" data-lang-toggle role="group" aria-label="Language">
-    <button type="button" data-lang-to="ko">KO</button>
-    <button type="button" data-lang-to="en">EN</button>
-    <button type="button" data-lang-to="zh">中</button>
-    <button type="button" data-lang-to="ja">日</button>
-  </div>
+    <button type="button" class="lang-current" aria-haspopup="true" aria-expanded="false" aria-label="Language"><span data-lang-current>EN</span></button>
+    <div class="lang-menu">
+      <button type="button" data-lang-to="ko"><span class="lang-name">한국어</span><span class="lang-code">KO</span></button>
+      <button type="button" data-lang-to="en"><span class="lang-name">English</span><span class="lang-code">EN</span></button>
+      <button type="button" data-lang-to="zh"><span class="lang-name">繁體中文</span><span class="lang-code">繁中</span></button>
+      <button type="button" data-lang-to="zh-cn"><span class="lang-name">简体中文</span><span class="lang-code">简中</span></button>
+      <button type="button" data-lang-to="ja"><span class="lang-name">日本語</span><span class="lang-code">日</span></button>
+      <button type="button" data-lang-to="vi"><span class="lang-name">Tiếng Việt</span><span class="lang-code">VI</span></button>
+      <button type="button" data-lang-to="th"><span class="lang-name">ภาษาไทย</span><span class="lang-code">TH</span></button>
+    </div>
+</div>
 </nav>
 
 <main class="dl-wrap">
 
   <div class="dl-hero fade-up">
-    <h1 data-i18n-en="🏷 LCIC Partner Discounts" data-i18n-zh="🏷 LCIC 合作優惠" data-i18n-ja="🏷 LCIC 提携割引">🏷 LCIC 제휴 할인</h1>
-    <p data-i18n-en="Partner venues that give LCIC students and staff a discount.<br>Make the most of them while you're in Cebu!" data-i18n-zh="為 LCIC 學生與教職員提供折扣的合作店家。<br>在宿霧的期間請多多利用！" data-i18n-ja="LCIC の学生・スタッフに割引を提供している提携店です。<br>セブ滞在中にぜひご利用ください！">LCIC 학생·직원에게 할인을 제공하는 제휴 업체예요.<br>세부에서 지내는 동안 마음껏 활용하세요!</p>
+    <h1 data-i18n-en="🏷 LCIC Partner Discounts" data-i18n-zh="🏷 LCIC 合作優惠" data-i18n-ja="🏷 LCIC 提携割引" data-i18n-zh-cn="🏷 LCIC 合作优惠" data-i18n-vi="🏷 Ưu đãi đối tác LCIC" data-i18n-th="🏷 ส่วนลดร้านพันธมิตร LCIC">🏷 LCIC 제휴 할인</h1>
+    <p data-i18n-en="Partner venues that give LCIC students and staff a discount.<br>Make the most of them while you're in Cebu!" data-i18n-zh="為 LCIC 學生與教職員提供折扣的合作店家。<br>在宿霧的期間請多多利用！" data-i18n-ja="LCIC の学生・スタッフに割引を提供している提携店です。<br>セブ滞在中にぜひご利用ください！" data-i18n-zh-cn="为 LCIC 学生与教职员提供折扣的合作店家。<br>在宿务期间请多多利用！" data-i18n-vi="Các cửa hàng đối tác giảm giá cho học viên và nhân viên LCIC.<br>Hãy tận dụng thật nhiều khi ở Cebu nhé!" data-i18n-th="ร้านพันธมิตรที่ให้ส่วนลดแก่นักเรียนและพนักงาน LCIC<br>อยู่เซบูเมื่อไหร่ ใช้ให้คุ้มเลย!">LCIC 학생·직원에게 할인을 제공하는 제휴 업체예요.<br>세부에서 지내는 동안 마음껏 활용하세요!</p>
     <div class="dl-key">
       <iconify-icon icon="solar:card-2-bold-duotone"></iconify-icon>
-      <span data-i18n-en="At the venue, say you're an <b>LCIC student</b> and show your <b>student ID</b> (or the venue's coupon)." data-i18n-zh="到店時請告知您是 <b>LCIC 學生</b>,並出示 <b>學生證</b>(或該店的優惠券)。" data-i18n-ja="お店で <b>LCIC の学生</b> だと伝え、<b>学生証</b>(または店舗ごとのクーポン)を提示してください。">방문해서 <b>LCIC 학생</b>이라고 말하고 <b>학생증</b>(또는 매장별 쿠폰)을 보여주세요.</span>
+      <span data-i18n-en="At the venue, say you're an <b>LCIC student</b> and show your <b>student ID</b> (or the venue's coupon)." data-i18n-zh="到店時請告知您是 <b>LCIC 學生</b>,並出示 <b>學生證</b>(或該店的優惠券)。" data-i18n-ja="お店で <b>LCIC の学生</b> だと伝え、<b>学生証</b>(または店舗ごとのクーポン)を提示してください。" data-i18n-zh-cn="到店时请告知您是 <b>LCIC 学生</b>，并出示<b>学生证</b>（或该店的优惠券）。" data-i18n-vi="Tại cửa hàng, hãy nói bạn là <b>học viên LCIC</b> và xuất trình <b>thẻ học viên</b> (hoặc phiếu giảm giá của cửa hàng)." data-i18n-th="ที่ร้าน ให้แจ้งว่าเป็น<b>นักเรียน LCIC</b> และแสดง<b>บัตรนักเรียน</b> (หรือคูปองของร้าน)">방문해서 <b>LCIC 학생</b>이라고 말하고 <b>학생증</b>(또는 매장별 쿠폰)을 보여주세요.</span>
     </div>
   </div>
 
   <div class="dl-bar fade-up">
     <div class="dl-chips" id="dl-chips">
-      <button class="dl-chip active" data-cat="all" type="button" data-i18n-en="All" data-i18n-zh="全部" data-i18n-ja="すべて">전체</button>
-      <button class="dl-chip" data-cat="food" type="button" data-i18n-en="🍽 Restaurants" data-i18n-zh="🍽 餐廳" data-i18n-ja="🍽 レストラン">🍽 식당</button>
-      <button class="dl-chip" data-cat="cafe" type="button" data-i18n-en="☕ Cafes" data-i18n-zh="☕ 咖啡廳" data-i18n-ja="☕ カフェ">☕ 카페</button>
-      <button class="dl-chip" data-cat="spa" type="button" data-i18n-en="💆 Spa · nail · diving" data-i18n-zh="💆 水療 · 美甲 · 潛水" data-i18n-ja="💆 スパ · ネイル · ダイビング">💆 스파 · 네일 · 다이빙</button>
+      <button class="dl-chip active" data-cat="all" type="button" data-i18n-en="All" data-i18n-zh="全部" data-i18n-ja="すべて" data-i18n-zh-cn="全部" data-i18n-vi="Tất cả" data-i18n-th="ทั้งหมด">전체</button>
+      <button class="dl-chip" data-cat="food" type="button" data-i18n-en="🍽 Restaurants" data-i18n-zh="🍽 餐廳" data-i18n-ja="🍽 レストラン" data-i18n-zh-cn="🍽 餐厅" data-i18n-vi="🍽 Nhà hàng" data-i18n-th="🍽 ร้านอาหาร">🍽 식당</button>
+      <button class="dl-chip" data-cat="cafe" type="button" data-i18n-en="☕ Cafes" data-i18n-zh="☕ 咖啡廳" data-i18n-ja="☕ カフェ" data-i18n-zh-cn="☕ 咖啡厅" data-i18n-vi="☕ Quán cà phê" data-i18n-th="☕ คาเฟ่">☕ 카페</button>
+      <button class="dl-chip" data-cat="spa" type="button" data-i18n-en="💆 Spa · nail · diving" data-i18n-zh="💆 水療 · 美甲 · 潛水" data-i18n-ja="💆 スパ · ネイル · ダイビング" data-i18n-zh-cn="💆 水疗 · 美甲 · 潜水" data-i18n-vi="💆 Spa · làm móng · lặn biển" data-i18n-th="💆 สปา · ทำเล็บ · ดำน้ำ">💆 스파 · 네일 · 다이빙</button>
     </div>
     <div class="dl-count" id="dl-count"></div>
   </div>
 
   <div class="dl-grid" id="dl-grid"></div>
 
-  <div class="dl-foot" data-i18n-en="Discounts and conditions can change at the venue's discretion. <b>Please confirm with the venue before ordering.</b><br>New partners are posted on this page as soon as they join." data-i18n-zh="折扣與條件可能因店家而異動。<b>點餐前請再向店家確認一次。</b><br>新增的合作店家會立即公布於本頁面。" data-i18n-ja="割引率や条件は店舗の都合で変わることがあります。<b>注文前に店舗でもう一度ご確認ください。</b><br>新しい提携店ができたら、このページですぐにお知らせします。">
+  <div class="dl-foot" data-i18n-en="Discounts and conditions can change at the venue's discretion. <b>Please confirm with the venue before ordering.</b><br>New partners are posted on this page as soon as they join." data-i18n-zh="折扣與條件可能因店家而異動。<b>點餐前請再向店家確認一次。</b><br>新增的合作店家會立即公布於本頁面。" data-i18n-ja="割引率や条件は店舗の都合で変わることがあります。<b>注文前に店舗でもう一度ご確認ください。</b><br>新しい提携店ができたら、このページですぐにお知らせします。" data-i18n-zh-cn="折扣与条件可能因店家情况而变动。<b>点餐前请再向店家确认一次。</b><br>新增的合作店家会立即公布在本页面。" data-i18n-vi="Mức giảm giá và điều kiện có thể thay đổi tùy cửa hàng. <b>Vui lòng xác nhận lại với cửa hàng trước khi gọi món.</b><br>Khi có đối tác mới, chúng tôi sẽ đăng ngay trên trang này." data-i18n-th="ส่วนลดและเงื่อนไขอาจเปลี่ยนแปลงได้ตามแต่ละร้าน <b>กรุณาสอบถามร้านอีกครั้งก่อนสั่ง</b><br>เมื่อมีร้านพันธมิตรใหม่ เราจะประกาศในหน้านี้ทันที">
     할인율과 조건은 매장 사정으로 바뀔 수 있어요. <b>주문 전에 매장에서 한 번 더 확인</b>해 주세요.<br>
     새로 제휴된 곳이 생기면 이 페이지에 바로 올려드릴게요.
   </div>
@@ -129,7 +135,8 @@
   const esc = (s) => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   let currentCat = "all";
 
-  // 번역이 없으면 ja → zh → en → ko 순으로 내려간다(i18n.js 가 처리).
+  // 번역이 없으면 ja → zh → en → ko 순으로 내려간다(i18n.js 가 처리). 업체 정보는 ko·en·zh·ja 만 있어서
+  // 간체는 번체를 화면에서 간체로 바꿔 보여 주고, 베트남어·태국어는 영어로 나온다.
   const pick = (map) => (window.lcicLang ? window.lcicLang.t(map) : map.ko);
   function loc(p, field) {
     const of = (lang) => (p.t && p.t[lang] && p.t[lang][field]) || "";
@@ -138,10 +145,10 @@
 
   function paint() {
     const list = PARTNERS.filter((p) => currentCat === "all" || p.cat === currentCat);
-    const unit = pick({ ko: `${list.length}곳`, en: `${list.length} places`, zh: `${list.length} 家`, ja: `${list.length} 店` });
-    const mapLabel = pick({ ko: "📍 지도", en: "📍 Map", zh: "📍 地圖", ja: "📍 地図" });
-    const menuFallback = pick({ ko: "🍜 메뉴판", en: "🍜 Menu", zh: "🍜 菜單", ja: "🍜 メニュー" });
-    const telLabel = pick({ ko: "📞 전화", en: "📞 Call", zh: "📞 電話", ja: "📞 電話" });
+    const unit = pick({ ko: `${list.length}곳`, en: `${list.length} places`, zh: `${list.length} 家`, ja: `${list.length} 店`, "zh-cn": `${list.length} 家`, vi: `${list.length} địa điểm`, th: `${list.length} ร้าน` });
+    const mapLabel = pick({ ko: "📍 지도", en: "📍 Map", zh: "📍 地圖", ja: "📍 地図", "zh-cn": "📍 地图", vi: "📍 Bản đồ", th: "📍 แผนที่" });
+    const menuFallback = pick({ ko: "🍜 메뉴판", en: "🍜 Menu", zh: "🍜 菜單", ja: "🍜 メニュー", "zh-cn": "🍜 菜单", vi: "🍜 Thực đơn", th: "🍜 เมนู" });
+    const telLabel = pick({ ko: "📞 전화", en: "📞 Call", zh: "📞 電話", ja: "📞 電話", "zh-cn": "📞 电话", vi: "📞 Gọi điện", th: "📞 โทร" });
 
     count.textContent = unit;
     grid.innerHTML = list.map((p) => {
