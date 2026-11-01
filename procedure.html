@@ -1489,7 +1489,7 @@
     </div>
 
     <!-- Step 4 -->
-    <div class="step fade-up delay-3" id="enroll" style="scroll-margin-top: 100px;">
+    <div class="step fade-up delay-3">
       <div class="step-num">4</div>
       <div class="step-card">
         <div class="step-head">
@@ -1497,52 +1497,18 @@
           <h3 data-i18n-en="Register for courses" data-i18n-zh="選課" data-i18n-ja="履修登録">수강 신청</h3>
           <span class="step-actor" data-i18n-en="You do this" data-i18n-zh="學生自行辦理" data-i18n-ja="学生ご自身で対応">학생 진행</span>
         </div>
-        <p class="step-desc" data-i18n-en="Pick the courses that match your assigned level yourself. You register in <b>Enroll</b> (Course Registration) on the LCIC CAMPUS screens, and your courses are confirmed as soon as you submit." data-i18n-zh="依照分到的程度,自己選擇要上的課程。在 LCIC CAMPUS 畫面的 <b>Enroll</b>(Course Registration)選課,送出後立即確定。" data-i18n-ja="判定されたレベルに合わせて、受講する科目を自分で選びます。LCIC CAMPUS 画面の <b>Enroll</b>(Course Registration)で登録し、送信するとすぐに確定します。">
-          배정받은 레벨에 맞춰 수강 과목을 직접 고릅니다.
-          LCIC CAMPUS 화면의 <b>Enroll</b>(Course Registration)에서 신청하며, 제출하면 바로 확정됩니다.
+        <p class="step-desc" data-i18n-en="Pick the courses that match your assigned level. Beyond the core classes, there are electives too &mdash; follow the prompts in the student registration system to enroll." data-i18n-zh="依照分到的程度選課。除了必修之外還有選修課程,請依照學生註冊系統的指示完成選課。" data-i18n-ja="判定されたレベルに合わせてコースを選択します。必修科目に加えて選択科目もあります &mdash; 学生登録システムの案内に沿って履修登録を完了してください。">
+          배정받은 레벨에 맞춰 수강 과목을 선택합니다.
+          정규 수업 외에도 선택 과목이 마련되어 있으니 학생 등록 시스템에서 안내에 따라 신청해주세요.
         </p>
 
-        <details class="manual-toggle">
-          <summary>
-            <iconify-icon icon="solar:book-2-bold-duotone"></iconify-icon>
-            <span data-i18n-en="Open the course registration manual" data-i18n-zh="查看選課操作說明" data-i18n-ja="履修登録の手順を見る">수강신청 매뉴얼 자세히 보기</span>
-            <span class="chevron"><iconify-icon icon="solar:alt-arrow-down-linear"></iconify-icon></span>
-          </summary>
-          <div class="manual-body">
-
-            <ol class="manual-steps">
-
-              <li class="m-step">
-                <span class="m-num">1</span>
-                <div class="m-text">
-                  <h4 data-i18n-en="Log in &rarr; Enroll" data-i18n-zh="登入 &rarr; Enroll" data-i18n-ja="ログイン &rarr; Enroll">로그인 → Enroll</h4>
-                  <p data-i18n-en="Log in at <a href='https://lcic-campus.com/login' target='_blank' rel='noopener' style='color:var(--accent); text-decoration:underline; text-underline-offset:2px;'>lcic-campus.com/login</a> and press <b>Enroll</b> on the Home screen." data-i18n-zh="到 <a href='https://lcic-campus.com/login' target='_blank' rel='noopener' style='color:var(--accent); text-decoration:underline; text-underline-offset:2px;'>lcic-campus.com/login</a> 登入後,在 Home 畫面按 <b>Enroll</b>。" data-i18n-ja="<a href='https://lcic-campus.com/login' target='_blank' rel='noopener' style='color:var(--accent); text-decoration:underline; text-underline-offset:2px;'>lcic-campus.com/login</a> でログインし、Home 画面の <b>Enroll</b> を押します。"><a href="https://lcic-campus.com/login" target="_blank" rel="noopener" style="color:var(--accent); text-decoration:underline; text-underline-offset:2px;">lcic-campus.com/login</a>에 로그인한 뒤 Home 화면의 <b>Enroll</b>을 누릅니다.</p>
-                  <figure class="m-figure" style="max-width: 300px;"><img src="assets/manual/app-home-phone.png" alt="LCIC CAMPUS home screen on a phone"></figure>
-                  <div class="m-caption" data-i18n-en="LCIC CAMPUS home (phone) &mdash; Enroll is under Quick actions" data-i18n-zh="LCIC CAMPUS 首頁(手機)&mdash; Enroll 在 Quick actions 裡" data-i18n-ja="LCIC CAMPUS のホーム(スマートフォン)&mdash; Enroll は Quick actions にあります">LCIC CAMPUS 첫 화면(휴대폰) — 바로가기(Quick actions)에 Enroll이 있습니다</div>
-                </div>
-              </li>
-
-              <li class="m-step">
-                <span class="m-num">2</span>
-                <div class="m-text">
-                  <h4 data-i18n-en="Add courses &rarr; Submit" data-i18n-zh="加入課程 &rarr; Submit" data-i18n-ja="科目を追加 &rarr; Submit">과목 담기 → Submit</h4>
-                  <p data-i18n-en="Under <b>Available courses</b>, press <b>Add</b> next to a course (press <b>Remove</b> to take it out) and check <b>My timetable</b> on the right. The counter at the top (e.g. 2/5 selected) shows how many you have picked &mdash; up to 5 by default; follow the minimum shown there. While &ldquo;Not saved yet&rdquo; is shown nothing is saved &mdash; press <b>Submit</b> and you will see &ldquo;Saved &mdash; you are registered for N course(s).&rdquo;" data-i18n-zh="在 <b>Available courses</b> 中,按課程旁的 <b>Add</b>(要拿掉就按 <b>Remove</b>),並在右側 <b>My timetable</b> 確認課表。上方的數字(例:2/5 selected)是目前選了幾門 &mdash; 預設最多 5 門,最少門數請依畫面顯示。看到「Not saved yet」時代表還沒儲存 &mdash; 按下 <b>Submit</b> 後會出現「Saved &mdash; you are registered for N course(s).」。" data-i18n-ja="<b>Available courses</b> で科目の横の <b>Add</b> を押し(外すときは <b>Remove</b>)、右側の <b>My timetable</b> で時間割を確認します。上の数字(例:2/5 selected)が選んだ科目数です &mdash; 初期設定では最大 5 科目、最低科目数は画面の表示に従ってください。「Not saved yet」と表示されている間はまだ保存されていません &mdash; <b>Submit</b> を押すと「Saved &mdash; you are registered for N course(s).」と表示されます。"><b>Available courses</b>에서 과목 옆 <b>Add</b>를 누르고(빼려면 <b>Remove</b>), 오른쪽 <b>My timetable</b>에서 시간표를 확인합니다. 위의 숫자(예: 2/5 selected)가 지금 고른 과목 수입니다 — 기본 최대 5과목이며, 최소 과목 수는 화면 표시를 따르세요. "Not saved yet"이 보이면 아직 저장 전입니다 — <b>Submit</b>을 누르면 "Saved — you are registered for N course(s)."가 나오며 확정됩니다.</p>
-                  <figure class="m-figure"><img src="assets/manual/enroll-01.png" alt="Course Registration &mdash; available courses and My timetable"></figure>
-                  <div class="m-caption" data-i18n-en="Course Registration &mdash; courses you add (blue) appear in My timetable; press Submit to save" data-i18n-zh="Course Registration &mdash; 加入的課程(藍色)會顯示在 My timetable,按 Submit 才會儲存" data-i18n-ja="Course Registration &mdash; 追加した科目(青)が My timetable に表示されます。Submit を押すと保存されます">수강신청 화면 — 담은 과목(파란색)이 My timetable에 표시되고, Submit을 눌러야 저장됩니다</div>
-                  <div class="m-callout m-callout-warn">
-                    <iconify-icon icon="solar:calendar-bold-duotone"></iconify-icon>
-                    <span data-i18n-en="<b>Deadline</b> &middot; Registration and changes close automatically at <b>5 pm on Thursday of the first week</b> (Philippine time)." data-i18n-zh="<b>截止時間</b> &middot; 選課與變更會在<b>第一週星期四下午 5 點</b>(菲律賓時間)自動截止。" data-i18n-ja="<b>締め切り</b> &middot; 履修登録と変更は<b>第 1 週の木曜日 午後 5 時</b>(フィリピン時間)に自動で締め切られます。"><b>마감</b> · 수강신청·변경은 <b>첫째 주 목요일 오후 5시</b>(필리핀 시간)에 자동으로 마감됩니다.</span>
-                  </div>
-                  <div class="m-callout m-callout-tip">
-                    <iconify-icon icon="solar:info-circle-bold-duotone"></iconify-icon>
-                    <span data-i18n-en="<b>Don&rsquo;t see Enroll?</b> &middot; Some universities have a fixed timetable &mdash; you then go straight to your timetable. If you see &ldquo;You are not assigned to a session yet,&rdquo; contact the office." data-i18n-zh="<b>看不到 Enroll?</b> &middot; 部分大學的課表是固定的,這種情況會直接顯示課表。如果出現「You are not assigned to a session yet」,請聯絡辦公室。" data-i18n-ja="<b>Enroll が見当たらない場合</b> &middot; 時間割が決まっている大学では、そのまま時間割が表示されます。「You are not assigned to a session yet」と表示された場合は、事務室にお問い合わせください。"><b>Enroll이 안 보이면</b> · 시간표가 정해져 있는 대학은 Enroll 없이 시간표가 바로 나옵니다. "You are not assigned to a session yet."가 나오면 사무실에 문의해 주세요.</span>
-                  </div>
-                </div>
-              </li>
-
-            </ol>
-          </div>
-        </details>
+        <div class="manual-link">
+          <a href="assets/manual/MyCamu-User-Guide-Korean.pdf" target="_blank" rel="noopener">
+            <iconify-icon icon="solar:document-text-bold-duotone"></iconify-icon>
+            <span data-i18n-en="Open the MyCamu course registration guide (PDF)" data-i18n-zh="開啟 MyCamu 選課操作說明(PDF)" data-i18n-ja="MyCamu 履修登録ガイドを開く(PDF)">MyCamu 수강신청 매뉴얼 열기 (PDF)</span>
+            <span class="chevron"><iconify-icon icon="solar:arrow-right-up-linear"></iconify-icon></span>
+          </a>
+        </div>
       </div>
     </div>
 
@@ -1808,14 +1774,6 @@
   });
 
   // 딥링크: procedure.html#efset → 매뉴얼 펼치고 EF SET 탭 바로 열기 (status.html EF-SET 카드에서 사용)
-  // 딥링크: procedure.html#enroll → 수강신청 매뉴얼 펼치기 (status.html 수강신청 카드에서 사용)
-  if (location.hash === "#enroll") {
-    const box = document.getElementById("enroll");
-    const det = box && box.querySelector("details.manual-toggle");
-    if (det) det.open = true;
-    if (box) setTimeout(() => box.scrollIntoView({ behavior: "smooth", block: "start" }), 200);
-  }
-
   if (location.hash === "#efset") {
     const tab = document.querySelector('.m-tab[data-target="tab-efset"]');
     if (tab) {
